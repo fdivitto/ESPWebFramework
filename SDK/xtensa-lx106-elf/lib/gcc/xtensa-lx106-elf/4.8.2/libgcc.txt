@@ -1,0 +1,2213 @@
+In archive libgcc.a:
+
+_mulsi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000005 .hidden __mulsi3
+
+
+
+_divsi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000064 .hidden __divsi3
+
+
+
+_modsi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000049 .hidden __modsi3
+
+
+
+_udivsi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	0000004c .hidden __udivsi3
+
+
+
+_umodsi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000039 .hidden __umodsi3
+
+
+
+_umulsidi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000048 .hidden __umulsidi3
+
+
+
+_clz.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .rodata	00000000 .rodata
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     O .rodata	00000000 .hidden __nsau_data
+
+
+
+_clzsi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000005 .hidden __clzsi2
+
+
+
+_ctzsi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000011 .hidden __ctzsi2
+
+
+
+_ffssi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000011 .hidden __ffssi2
+
+
+
+_ashldi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000017 .hidden __ashldi3
+
+
+
+_ashrdi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000018 .hidden __ashrdi3
+
+
+
+_lshrdi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000017 .hidden __lshrdi3
+
+
+
+_negsf2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __negsf2
+
+
+
+_addsubsf3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l       .text	00000000 __addsf3_aux
+000000e4 l       .text	00000000 __subsf3_aux
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+0000001c g     F .text	00000000 .hidden __addsf3
+00000104 g     F .text	00000000 .hidden __subsf3
+
+
+
+_mulsf3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l       .text	00000000 __mulsf3_aux
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000078 g     F .text	00000000 .hidden __mulsf3
+
+
+
+_divsf3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l       .text	00000000 __divsf3_aux
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+0000007c g     F .text	00000000 .hidden __divsf3
+
+
+
+_cmpsf2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __eqsf2
+00000000 g     F .text	00000000 .hidden __nesf2
+00000028 g     F .text	00000000 .hidden __gtsf2
+00000048 g     F .text	00000000 .hidden __lesf2
+00000094 g     F .text	00000000 .hidden __gesf2
+000000b4 g     F .text	00000000 .hidden __ltsf2
+00000100 g     F .text	00000000 .hidden __unordsf2
+
+
+
+_fixsfsi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __fixsfsi
+
+
+
+_fixsfdi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __fixsfdi
+
+
+
+_fixunssfsi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __fixunssfsi
+
+
+
+_fixunssfdi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __fixunssfdi
+
+
+
+_floatsisf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __floatunsisf
+00000008 g     F .text	00000000 .hidden __floatsisf
+
+
+
+_floatunsisf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_floatdisf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __floatundisf
+0000000c g     F .text	00000000 .hidden __floatdisf
+
+
+
+_floatundisf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_negdf2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __negdf2
+
+
+
+_addsubdf3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l       .text	00000000 __adddf3_aux
+0000014c l       .text	00000000 __subdf3_aux
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000020 g     F .text	00000000 .hidden __adddf3
+00000170 g     F .text	00000000 .hidden __subdf3
+
+
+
+_muldf3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l       .text	00000000 __muldf3_aux
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+000000e0 g     F .text	00000000 .hidden __muldf3
+
+
+
+_divdf3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l       .text	00000000 __divdf3_aux
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+000000e8 g     F .text	00000000 .hidden __divdf3
+
+
+
+_cmpdf2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __eqdf2
+00000000 g     F .text	00000000 .hidden __nedf2
+00000030 g     F .text	00000000 .hidden __gtdf2
+00000054 g     F .text	00000000 .hidden __ledf2
+000000b8 g     F .text	00000000 .hidden __gedf2
+000000dc g     F .text	00000000 .hidden __ltdf2
+00000140 g     F .text	00000000 .hidden __unorddf2
+
+
+
+_fixdfsi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __fixdfsi
+
+
+
+_fixdfdi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __fixdfdi
+
+
+
+_fixunsdfsi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __fixunsdfsi
+
+
+
+_fixunsdfdi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __fixunsdfdi
+
+
+
+_floatsidf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __floatunsidf
+00000008 g     F .text	00000000 .hidden __floatsidf
+
+
+
+_floatunsidf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_floatdidf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __floatundidf
+0000000c g     F .text	00000000 .hidden __floatdidf
+
+
+
+_floatundidf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_truncdfsf2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __truncdfsf2
+
+
+
+_extendsfdf2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000000 .hidden __extendsfdf2
+
+
+
+_muldi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000036 .hidden __muldi3
+00000000         *UND*	00000000 __umulsidi3
+
+
+
+_negdi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000012 .hidden __negdi2
+
+
+
+_cmpdi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	0000001a .hidden __cmpdi2
+
+
+
+_ucmpdi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	0000001a .hidden __ucmpdi2
+
+
+
+_clear_cache.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000002 .hidden __clear_cache
+
+
+
+_trampoline.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+__main.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_absvsi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	0000001b .hidden __absvsi2
+00000000         *UND*	00000000 abort
+
+
+
+_absvdi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000028 .hidden __absvdi2
+00000000         *UND*	00000000 abort
+
+
+
+_addvsi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	0000002d .hidden __addvsi3
+00000000         *UND*	00000000 abort
+
+
+
+_addvdi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000046 .hidden __addvdi3
+00000000         *UND*	00000000 abort
+
+
+
+_subvsi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000031 .hidden __subvsi3
+00000000         *UND*	00000000 abort
+
+
+
+_subvdi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	0000004a .hidden __subvdi3
+00000000         *UND*	00000000 abort
+
+
+
+_mulvsi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __muldi3
+00000000 g     F .text	0000002b .hidden __mulvsi3
+00000000         *UND*	00000000 abort
+
+
+
+_mulvdi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __muldi3
+00000000 g     F .text	00000176 .hidden __mulvdi3
+00000000         *UND*	00000000 abort
+
+
+
+_negvsi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000029 .hidden __negvsi2
+00000000         *UND*	00000000 abort
+
+
+
+_negvdi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000044 .hidden __negvdi2
+00000000         *UND*	00000000 abort
+
+
+
+_ctors.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_ffsdi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	0000001f .hidden __ffsdi2
+
+
+
+_clzdi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000011 .hidden __clzdi2
+
+
+
+_ctzdi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	0000001b .hidden __ctzdi2
+
+
+
+_popcount_tab.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .rodata	00000000 .rodata
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     O .rodata	00000100 .hidden __popcount_tab
+
+
+
+_popcountsi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __popcount_tab
+00000000 g     F .text	00000021 .hidden __popcountsi2
+
+
+
+_popcountdi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __popcount_tab
+00000000 g     F .text	0000004d .hidden __popcountdi2
+
+
+
+_paritysi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000023 .hidden __paritysi2
+
+
+
+_paritydi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000026 .hidden __paritydi2
+
+
+
+_powisf2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __mulsf3
+00000000         *UND*	00000000 __divsf3
+00000000 g     F .text	00000063 .hidden __powisf2
+
+
+
+_powidf2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __muldf3
+00000000         *UND*	00000000 __divdf3
+00000000 g     F .text	00000088 .hidden __powidf2
+
+
+
+_powixf2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_powitf2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_mulsc3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __mulsf3
+00000000         *UND*	00000000 __subsf3
+00000000         *UND*	00000000 __addsf3
+00000000         *UND*	00000000 __nesf2
+00000000         *UND*	00000000 __eqsf2
+00000000 g     F .text	00000413 .hidden __mulsc3
+
+
+
+_muldc3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __muldf3
+00000000         *UND*	00000000 __subdf3
+00000000         *UND*	00000000 __adddf3
+00000000         *UND*	00000000 __nedf2
+00000000         *UND*	00000000 __eqdf2
+00000000 g     F .text	000006cf .hidden __muldc3
+
+
+
+_mulxc3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_multc3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_divsc3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __ltsf2
+00000000         *UND*	00000000 __divsf3
+00000000         *UND*	00000000 __mulsf3
+00000000         *UND*	00000000 __addsf3
+00000000         *UND*	00000000 __subsf3
+00000000         *UND*	00000000 __nesf2
+00000000         *UND*	00000000 __eqsf2
+00000000 g     F .text	000003cb .hidden __divsc3
+
+
+
+_divdc3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __ltdf2
+00000000         *UND*	00000000 __divdf3
+00000000         *UND*	00000000 __muldf3
+00000000         *UND*	00000000 __adddf3
+00000000         *UND*	00000000 __subdf3
+00000000         *UND*	00000000 __nedf2
+00000000         *UND*	00000000 __eqdf2
+00000000 g     F .text	000005af .hidden __divdc3
+
+
+
+_divxc3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_divtc3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_bswapsi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000023 .hidden __bswapsi2
+
+
+
+_bswapdi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000059 .hidden __bswapdi2
+
+
+
+_clrsbsi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000015 .hidden __clrsbsi2
+
+
+
+_clrsbdi2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000033 .hidden __clrsbdi2
+
+
+
+_fixunsxfsi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_fixxfdi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_fixtfdi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_fixunsxfdi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_fixunstfdi.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_floatdixf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_floatditf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_floatundixf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_floatunditf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+_eprintf.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+__gcc_bcmp.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000034 .hidden __gcc_bcmp
+
+
+
+_divdi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __umodsi3
+00000000         *UND*	00000000 __udivsi3
+00000000 g     F .text	0000041b .hidden __divdi3
+00000000         *UND*	00000000 __umulsidi3
+
+
+
+_moddi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __umodsi3
+00000000         *UND*	00000000 __udivsi3
+00000000 g     F .text	000003bf .hidden __moddi3
+00000000         *UND*	00000000 __umulsidi3
+
+
+
+_udivdi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __umodsi3
+00000000         *UND*	00000000 __udivsi3
+00000000 g     F .text	000003b5 .hidden __udivdi3
+00000000         *UND*	00000000 __umulsidi3
+
+
+
+_umoddi3.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __umodsi3
+00000000         *UND*	00000000 __udivsi3
+00000000 g     F .text	00000366 .hidden __umoddi3
+00000000         *UND*	00000000 __umulsidi3
+
+
+
+_udiv_w_sdiv.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000004 .hidden __udiv_w_sdiv
+
+
+
+_udivmoddi4.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 libgcc2.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __umodsi3
+00000000         *UND*	00000000 __udivsi3
+00000000 g     F .text	00000473 .hidden __udivmoddi4
+00000000         *UND*	00000000 __umulsidi3
+
+
+
+lib2funcs.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000005 .hidden __xtensa_sync_caches
+
+
+
+enable-execute-stack.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 enable-execute-stack.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000002 .hidden __enable_execute_stack
+
+
+
+unwind-dw2-xtensa.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 unwind-dw2-xtensa.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l     F .text	00000036 read_sleb128
+00000038 l     F .text	000000b2 uw_update_context_1
+000000ec l     F .text	00000061 uw_init_context_1
+00000150 l     F .text	0000010d read_encoded_value_with_base
+00000000 l    d  .rodata	00000000 .rodata
+00000260 l     F .text	00000050 base_of_encoded_value
+000002b0 l     F .text	00000042 uw_install_context_1
+000002f4 l     F .text	0000003e uw_update_context
+00000334 l     F .text	0000022b uw_frame_state_for
+00000560 l     F .text	00000071 _Unwind_RaiseException_Phase2
+000005d4 l     F .text	000000a8 _Unwind_ForcedUnwind_Phase2
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 memcpy
+00000000         *UND*	00000000 memset
+00000000         *UND*	00000000 abort
+00000000         *UND*	00000000 _Unwind_Find_FDE
+00000000         *UND*	00000000 strlen
+0000067c g     F .text	00000012 .hidden _Unwind_GetGR
+00000690 g     F .text	00000004 .hidden _Unwind_GetCFA
+00000694 g     F .text	00000012 .hidden _Unwind_SetGR
+000006a8 g     F .text	00000004 .hidden _Unwind_GetIP
+000006ac g     F .text	0000000b .hidden _Unwind_GetIPInfo
+000006b8 g     F .text	00000004 .hidden _Unwind_SetIP
+000006bc g     F .text	00000004 .hidden _Unwind_GetLanguageSpecificData
+000006c0 g     F .text	00000004 .hidden _Unwind_GetRegionStart
+000006c4 g     F .text	00000020 .hidden _Unwind_FindEnclosingFunction
+000006e4 g     F .text	00000004 .hidden _Unwind_GetDataRelBase
+000006e8 g     F .text	00000004 .hidden _Unwind_GetTextRelBase
+000006ec g     F .text	000000b2 .hidden _Unwind_RaiseException
+000007a0 g     F .text	00000066 .hidden _Unwind_ForcedUnwind
+00000808 g     F .text	00000078 .hidden _Unwind_Resume
+00000880 g     F .text	00000073 .hidden _Unwind_Resume_or_Rethrow
+000008f4 g     F .text	00000017 .hidden _Unwind_DeleteException
+0000090c g     F .text	00000069 .hidden _Unwind_Backtrace
+
+
+
+unwind-dw2-fde.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 unwind-dw2-fde.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l     F .text	00000036 read_sleb128
+00000038 l     F .text	00000087 frame_downheap
+000000c0 l     F .text	0000007e frame_heapsort
+00000140 l     F .text	0000003f size_of_encoded_value
+00000180 l     F .text	0000010d read_encoded_value_with_base
+00000000 l    d  .rodata	00000000 .rodata
+00000290 l     F .text	000000c7 get_cie_encoding
+00000358 l     F .text	0000004d fde_unencoded_compare
+000003a8 l     F .text	00000048 base_from_object$isra$4
+000003f0 l     F .text	00000063 fde_single_encoding_compare
+00000454 l     F .text	000000e6 classify_object_over_fdes
+0000053c l     F .text	000000eb linear_search_fdes
+00000628 l     F .text	00000083 fde_mixed_encoding_compare
+000006ac l     F .text	000000ef add_fdes
+00000000 l     O .bss	00000004 marker$3646
+00000004 l     O .bss	00000008 terminator$3752
+0000079c l     F .text	00000458 search_object
+00000010 l     O .bss	00000004 unseen_objects
+0000000c l     O .bss	00000004 seen_objects
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 abort
+00000000         *UND*	00000000 strlen
+00000000         *UND*	00000000 malloc
+00000000         *UND*	00000000 free
+00000bf4 g     F .text	00000020 .hidden __register_frame_info_bases
+00000c14 g     F .text	00000022 .hidden __register_frame_info
+00000c38 g     F .text	0000003a .hidden __register_frame
+00000c74 g     F .text	0000001a .hidden __register_frame_info_table_bases
+00000c90 g     F .text	0000001c .hidden __register_frame_info_table
+00000cac g     F .text	00000034 .hidden __register_frame_table
+00000ce0 g     F .text	0000008e .hidden __deregister_frame_info_bases
+00000d70 g     F .text	0000000f .hidden __deregister_frame_info
+00000d80 g     F .text	00000019 .hidden __deregister_frame
+00000d9c g     F .text	000000d9 .hidden _Unwind_Find_FDE
+
+
+
+unwind-sjlj.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 unwind-sjlj.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+unwind-c.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 unwind-c.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l     F .text	00000063 base_of_encoded_value
+00000064 l     F .text	00000127 read_encoded_value_with_base
+00000000 l    d  .rodata	00000000 .rodata
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 _Unwind_GetTextRelBase
+00000000         *UND*	00000000 _Unwind_GetDataRelBase
+00000000         *UND*	00000000 _Unwind_GetRegionStart
+00000000         *UND*	00000000 abort
+0000018c g     F .text	00000192 .hidden __gcc_personality_v0
+00000000         *UND*	00000000 _Unwind_GetLanguageSpecificData
+00000000         *UND*	00000000 _Unwind_GetIP
+00000000         *UND*	00000000 _Unwind_SetGR
+00000000         *UND*	00000000 _Unwind_SetIP
+
+
+
+emutls.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 emutls.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000075 .hidden __emutls_get_address
+00000000         *UND*	00000000 malloc
+00000000         *UND*	00000000 abort
+00000000         *UND*	00000000 memcpy
+00000000         *UND*	00000000 memset
+00000078 g     F .text	0000001f .hidden __emutls_register_common
+
+

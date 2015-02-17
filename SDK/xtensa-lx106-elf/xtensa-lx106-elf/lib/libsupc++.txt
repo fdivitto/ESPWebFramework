@@ -1,0 +1,2654 @@
+In archive libsupc++.a:
+
+array_type_info.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 array_type_info.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZN10__cxxabiv117__array_type_infoD2Ev	00000000 .text._ZN10__cxxabiv117__array_type_infoD2Ev
+00000000 l    d  .text._ZN10__cxxabiv117__array_type_infoD0Ev	00000000 .text._ZN10__cxxabiv117__array_type_infoD0Ev
+00000000 l    d  .rodata._ZTSN10__cxxabiv117__array_type_infoE	00000000 .rodata._ZTSN10__cxxabiv117__array_type_infoE
+00000000 l    d  .rodata._ZTIN10__cxxabiv117__array_type_infoE	00000000 .rodata._ZTIN10__cxxabiv117__array_type_infoE
+00000000 l    d  .rodata._ZTVN10__cxxabiv117__array_type_infoE	00000000 .rodata._ZTVN10__cxxabiv117__array_type_infoE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN10__cxxabiv117__array_type_infoD2Ev	00000000 .literal._ZN10__cxxabiv117__array_type_infoD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv117__array_type_infoD0Ev	00000000 .literal._ZN10__cxxabiv117__array_type_infoD0Ev
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv117__array_type_infoE	00000000 .xt.prop._ZTSN10__cxxabiv117__array_type_infoE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv117__array_type_infoE	00000000 .xt.prop._ZTIN10__cxxabiv117__array_type_infoE
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv117__array_type_infoE	00000000 .xt.prop._ZTVN10__cxxabiv117__array_type_infoE
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000  w    O .rodata._ZTVN10__cxxabiv117__array_type_infoE	00000020 _ZTVN10__cxxabiv117__array_type_infoE
+00000000 g     F .text._ZN10__cxxabiv117__array_type_infoD2Ev	00000014 _ZN10__cxxabiv117__array_type_infoD2Ev
+00000000         *UND*	00000000 _ZNSt9type_infoD2Ev
+00000000 g     F .text._ZN10__cxxabiv117__array_type_infoD2Ev	00000014 _ZN10__cxxabiv117__array_type_infoD1Ev
+00000000 g     F .text._ZN10__cxxabiv117__array_type_infoD0Ev	00000022 _ZN10__cxxabiv117__array_type_infoD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000  w    O .rodata._ZTSN10__cxxabiv117__array_type_infoE	00000022 _ZTSN10__cxxabiv117__array_type_infoE
+00000000  w    O .rodata._ZTIN10__cxxabiv117__array_type_infoE	0000000c _ZTIN10__cxxabiv117__array_type_infoE
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTISt9type_info
+00000000         *UND*	00000000 _ZNKSt9type_info14__is_pointer_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info15__is_function_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info10__do_catchEPKS_PPvj
+00000000         *UND*	00000000 _ZNKSt9type_info11__do_upcastEPKN10__cxxabiv117__class_type_infoEPPv
+
+
+
+atexit_arm.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 atexit_arm.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+atexit_thread.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 atexit_thread.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZN12_GLOBAL__N_13runEv	00000000 .text._ZN12_GLOBAL__N_13runEv
+00000000 l     O .bss._ZN12_GLOBAL__N_113single_threadE	00000004 _ZN12_GLOBAL__N_113single_threadE
+00000000 l     F .text._ZN12_GLOBAL__N_13runEv	00000037 _ZN12_GLOBAL__N_13runEv
+00000000 l    d  .text.__cxa_thread_atexit	00000000 .text.__cxa_thread_atexit
+00000000 l     O .bss._ZZ19__cxa_thread_atexitE6queued	00000001 _ZZ19__cxa_thread_atexitE6queued
+00000000 l    d  .bss._ZZ19__cxa_thread_atexitE6queued	00000000 .bss._ZZ19__cxa_thread_atexitE6queued
+00000000 l    d  .bss._ZN12_GLOBAL__N_113single_threadE	00000000 .bss._ZN12_GLOBAL__N_113single_threadE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN12_GLOBAL__N_13runEv	00000000 .literal._ZN12_GLOBAL__N_13runEv
+00000000 l    d  .literal.__cxa_thread_atexit	00000000 .literal.__cxa_thread_atexit
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 _ZdlPv
+00000000         *UND*	00000000 _ZSt7nothrow
+00000000 g     F .text.__cxa_thread_atexit	00000051 __cxa_thread_atexit
+00000000         *UND*	00000000 atexit
+00000000         *UND*	00000000 _ZnwjRKSt9nothrow_t
+
+
+
+bad_alloc.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 bad_alloc.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .rodata.str1.4	00000000 .rodata.str1.4
+00000000 l    d  .text._ZNKSt9bad_alloc4whatEv	00000000 .text._ZNKSt9bad_alloc4whatEv
+00000000 l    d  .text._ZNSt9bad_allocD2Ev	00000000 .text._ZNSt9bad_allocD2Ev
+00000000 l    d  .text._ZNSt9bad_allocD0Ev	00000000 .text._ZNSt9bad_allocD0Ev
+00000000 l    d  .rodata._ZTSSt9bad_alloc	00000000 .rodata._ZTSSt9bad_alloc
+00000000 l    d  .rodata._ZTISt9bad_alloc	00000000 .rodata._ZTISt9bad_alloc
+00000000 l    d  .rodata._ZTVSt9bad_alloc	00000000 .rodata._ZTVSt9bad_alloc
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZNKSt9bad_alloc4whatEv	00000000 .literal._ZNKSt9bad_alloc4whatEv
+00000000 l    d  .literal._ZNSt9bad_allocD2Ev	00000000 .literal._ZNSt9bad_allocD2Ev
+00000000 l    d  .literal._ZNSt9bad_allocD0Ev	00000000 .literal._ZNSt9bad_allocD0Ev
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSSt9bad_alloc	00000000 .xt.prop._ZTSSt9bad_alloc
+00000000 l    d  .xt.prop._ZTISt9bad_alloc	00000000 .xt.prop._ZTISt9bad_alloc
+00000000 l    d  .xt.prop._ZTVSt9bad_alloc	00000000 .xt.prop._ZTVSt9bad_alloc
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 g     F .text._ZNKSt9bad_alloc4whatEv	00000005 _ZNKSt9bad_alloc4whatEv
+00000000  w    O .rodata._ZTVSt9bad_alloc	00000014 _ZTVSt9bad_alloc
+00000000 g     F .text._ZNSt9bad_allocD2Ev	00000014 _ZNSt9bad_allocD2Ev
+00000000         *UND*	00000000 _ZNSt9exceptionD2Ev
+00000000 g     F .text._ZNSt9bad_allocD2Ev	00000014 _ZNSt9bad_allocD1Ev
+00000000 g     F .text._ZNSt9bad_allocD0Ev	00000022 _ZNSt9bad_allocD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000  w    O .rodata._ZTSSt9bad_alloc	0000000d _ZTSSt9bad_alloc
+00000000  w    O .rodata._ZTISt9bad_alloc	0000000c _ZTISt9bad_alloc
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTISt9exception
+
+
+
+bad_cast.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 bad_cast.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .rodata.str1.4	00000000 .rodata.str1.4
+00000000 l    d  .text._ZNKSt8bad_cast4whatEv	00000000 .text._ZNKSt8bad_cast4whatEv
+00000000 l    d  .text._ZNSt8bad_castD2Ev	00000000 .text._ZNSt8bad_castD2Ev
+00000000 l    d  .text._ZNSt8bad_castD0Ev	00000000 .text._ZNSt8bad_castD0Ev
+00000000 l    d  .rodata._ZTSSt8bad_cast	00000000 .rodata._ZTSSt8bad_cast
+00000000 l    d  .rodata._ZTISt8bad_cast	00000000 .rodata._ZTISt8bad_cast
+00000000 l    d  .rodata._ZTVSt8bad_cast	00000000 .rodata._ZTVSt8bad_cast
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZNKSt8bad_cast4whatEv	00000000 .literal._ZNKSt8bad_cast4whatEv
+00000000 l    d  .literal._ZNSt8bad_castD2Ev	00000000 .literal._ZNSt8bad_castD2Ev
+00000000 l    d  .literal._ZNSt8bad_castD0Ev	00000000 .literal._ZNSt8bad_castD0Ev
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSSt8bad_cast	00000000 .xt.prop._ZTSSt8bad_cast
+00000000 l    d  .xt.prop._ZTISt8bad_cast	00000000 .xt.prop._ZTISt8bad_cast
+00000000 l    d  .xt.prop._ZTVSt8bad_cast	00000000 .xt.prop._ZTVSt8bad_cast
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 g     F .text._ZNKSt8bad_cast4whatEv	00000005 _ZNKSt8bad_cast4whatEv
+00000000  w    O .rodata._ZTVSt8bad_cast	00000014 _ZTVSt8bad_cast
+00000000 g     F .text._ZNSt8bad_castD2Ev	00000014 _ZNSt8bad_castD2Ev
+00000000         *UND*	00000000 _ZNSt9exceptionD2Ev
+00000000 g     F .text._ZNSt8bad_castD2Ev	00000014 _ZNSt8bad_castD1Ev
+00000000 g     F .text._ZNSt8bad_castD0Ev	00000022 _ZNSt8bad_castD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000  w    O .rodata._ZTSSt8bad_cast	0000000c _ZTSSt8bad_cast
+00000000  w    O .rodata._ZTISt8bad_cast	0000000c _ZTISt8bad_cast
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTISt9exception
+
+
+
+bad_typeid.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 bad_typeid.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .rodata.str1.4	00000000 .rodata.str1.4
+00000000 l    d  .text._ZNKSt10bad_typeid4whatEv	00000000 .text._ZNKSt10bad_typeid4whatEv
+00000000 l    d  .text._ZNSt10bad_typeidD2Ev	00000000 .text._ZNSt10bad_typeidD2Ev
+00000000 l    d  .text._ZNSt10bad_typeidD0Ev	00000000 .text._ZNSt10bad_typeidD0Ev
+00000000 l    d  .rodata._ZTSSt10bad_typeid	00000000 .rodata._ZTSSt10bad_typeid
+00000000 l    d  .rodata._ZTISt10bad_typeid	00000000 .rodata._ZTISt10bad_typeid
+00000000 l    d  .rodata._ZTVSt10bad_typeid	00000000 .rodata._ZTVSt10bad_typeid
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZNKSt10bad_typeid4whatEv	00000000 .literal._ZNKSt10bad_typeid4whatEv
+00000000 l    d  .literal._ZNSt10bad_typeidD2Ev	00000000 .literal._ZNSt10bad_typeidD2Ev
+00000000 l    d  .literal._ZNSt10bad_typeidD0Ev	00000000 .literal._ZNSt10bad_typeidD0Ev
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSSt10bad_typeid	00000000 .xt.prop._ZTSSt10bad_typeid
+00000000 l    d  .xt.prop._ZTISt10bad_typeid	00000000 .xt.prop._ZTISt10bad_typeid
+00000000 l    d  .xt.prop._ZTVSt10bad_typeid	00000000 .xt.prop._ZTVSt10bad_typeid
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 g     F .text._ZNKSt10bad_typeid4whatEv	00000005 _ZNKSt10bad_typeid4whatEv
+00000000  w    O .rodata._ZTVSt10bad_typeid	00000014 _ZTVSt10bad_typeid
+00000000 g     F .text._ZNSt10bad_typeidD2Ev	00000014 _ZNSt10bad_typeidD2Ev
+00000000         *UND*	00000000 _ZNSt9exceptionD2Ev
+00000000 g     F .text._ZNSt10bad_typeidD2Ev	00000014 _ZNSt10bad_typeidD1Ev
+00000000 g     F .text._ZNSt10bad_typeidD0Ev	00000022 _ZNSt10bad_typeidD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000  w    O .rodata._ZTSSt10bad_typeid	0000000f _ZTSSt10bad_typeid
+00000000  w    O .rodata._ZTISt10bad_typeid	0000000c _ZTISt10bad_typeid
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTISt9exception
+
+
+
+class_type_info.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 class_type_info.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PPv	00000000 .text._ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PPv
+00000000 l    d  .text._ZNK10__cxxabiv117__class_type_info20__do_find_public_srcEiPKvPKS0_S2_	00000000 .text._ZNK10__cxxabiv117__class_type_info20__do_find_public_srcEiPKvPKS0_S2_
+00000000 l    d  .text._ZN10__cxxabiv117__class_type_infoD2Ev	00000000 .text._ZN10__cxxabiv117__class_type_infoD2Ev
+00000000 l    d  .text._ZN10__cxxabiv117__class_type_infoD0Ev	00000000 .text._ZN10__cxxabiv117__class_type_infoD0Ev
+00000000 l    d  .text._ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PKvRNS0_15__upcast_resultE	00000000 .text._ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PKvRNS0_15__upcast_resultE
+00000000 l    d  .text._ZNK10__cxxabiv117__class_type_info10__do_catchEPKSt9type_infoPPvj	00000000 .text._ZNK10__cxxabiv117__class_type_info10__do_catchEPKSt9type_infoPPvj
+00000000 l    d  .text._ZNK10__cxxabiv117__class_type_info12__do_dyncastEiNS0_10__sub_kindEPKS0_PKvS3_S5_RNS0_16__dyncast_resultE	00000000 .text._ZNK10__cxxabiv117__class_type_info12__do_dyncastEiNS0_10__sub_kindEPKS0_PKvS3_S5_RNS0_16__dyncast_resultE
+00000000 l    d  .rodata._ZTSN10__cxxabiv117__class_type_infoE	00000000 .rodata._ZTSN10__cxxabiv117__class_type_infoE
+00000000 l    d  .rodata._ZTIN10__cxxabiv117__class_type_infoE	00000000 .rodata._ZTIN10__cxxabiv117__class_type_infoE
+00000000 l    d  .rodata._ZTVN10__cxxabiv117__class_type_infoE	00000000 .rodata._ZTVN10__cxxabiv117__class_type_infoE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN10__cxxabiv117__class_type_infoD2Ev	00000000 .literal._ZN10__cxxabiv117__class_type_infoD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv117__class_type_infoD0Ev	00000000 .literal._ZN10__cxxabiv117__class_type_infoD0Ev
+00000000 l    d  .literal._ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PKvRNS0_15__upcast_resultE	00000000 .literal._ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PKvRNS0_15__upcast_resultE
+00000000 l    d  .literal._ZNK10__cxxabiv117__class_type_info10__do_catchEPKSt9type_infoPPvj	00000000 .literal._ZNK10__cxxabiv117__class_type_info10__do_catchEPKSt9type_infoPPvj
+00000000 l    d  .literal._ZNK10__cxxabiv117__class_type_info12__do_dyncastEiNS0_10__sub_kindEPKS0_PKvS3_S5_RNS0_16__dyncast_resultE	00000000 .literal._ZNK10__cxxabiv117__class_type_info12__do_dyncastEiNS0_10__sub_kindEPKS0_PKvS3_S5_RNS0_16__dyncast_resultE
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv117__class_type_infoE	00000000 .xt.prop._ZTSN10__cxxabiv117__class_type_infoE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv117__class_type_infoE	00000000 .xt.prop._ZTIN10__cxxabiv117__class_type_infoE
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv117__class_type_infoE	00000000 .xt.prop._ZTVN10__cxxabiv117__class_type_infoE
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 g     F .text._ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PPv	0000003f _ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PPv
+00000000 g     F .text._ZNK10__cxxabiv117__class_type_info20__do_find_public_srcEiPKvPKS0_S2_	0000000c _ZNK10__cxxabiv117__class_type_info20__do_find_public_srcEiPKvPKS0_S2_
+00000000  w    O .rodata._ZTVN10__cxxabiv117__class_type_infoE	0000002c _ZTVN10__cxxabiv117__class_type_infoE
+00000000 g     F .text._ZN10__cxxabiv117__class_type_infoD2Ev	00000014 _ZN10__cxxabiv117__class_type_infoD2Ev
+00000000         *UND*	00000000 _ZNSt9type_infoD2Ev
+00000000 g     F .text._ZN10__cxxabiv117__class_type_infoD2Ev	00000014 _ZN10__cxxabiv117__class_type_infoD1Ev
+00000000 g     F .text._ZN10__cxxabiv117__class_type_infoD0Ev	00000022 _ZN10__cxxabiv117__class_type_infoD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000 g     F .text._ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PKvRNS0_15__upcast_resultE	00000043 _ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PKvRNS0_15__upcast_resultE
+00000000         *UND*	00000000 strcmp
+00000000 g     F .text._ZNK10__cxxabiv117__class_type_info10__do_catchEPKSt9type_infoPPvj	00000062 _ZNK10__cxxabiv117__class_type_info10__do_catchEPKSt9type_infoPPvj
+00000000 g     F .text._ZNK10__cxxabiv117__class_type_info12__do_dyncastEiNS0_10__sub_kindEPKS0_PKvS3_S5_RNS0_16__dyncast_resultE	00000071 _ZNK10__cxxabiv117__class_type_info12__do_dyncastEiNS0_10__sub_kindEPKS0_PKvS3_S5_RNS0_16__dyncast_resultE
+00000000  w    O .rodata._ZTSN10__cxxabiv117__class_type_infoE	00000022 _ZTSN10__cxxabiv117__class_type_infoE
+00000000  w    O .rodata._ZTIN10__cxxabiv117__class_type_infoE	0000000c _ZTIN10__cxxabiv117__class_type_infoE
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTISt9type_info
+00000000         *UND*	00000000 _ZNKSt9type_info14__is_pointer_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info15__is_function_pEv
+
+
+
+del_op.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 del_op.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZdlPv	00000000 .text._ZdlPv
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZdlPv	00000000 .literal._ZdlPv
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text._ZdlPv	00000011 _ZdlPv
+00000000         *UND*	00000000 free
+
+
+
+del_opnt.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 del_opnt.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZdlPvRKSt9nothrow_t	00000000 .text._ZdlPvRKSt9nothrow_t
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZdlPvRKSt9nothrow_t	00000000 .literal._ZdlPvRKSt9nothrow_t
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text._ZdlPvRKSt9nothrow_t	0000000f _ZdlPvRKSt9nothrow_t
+00000000         *UND*	00000000 free
+
+
+
+del_opv.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 del_opv.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZdaPv	00000000 .text._ZdaPv
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZdaPv	00000000 .literal._ZdaPv
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text._ZdaPv	0000000f _ZdaPv
+00000000         *UND*	00000000 _ZdlPv
+
+
+
+del_opvnt.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 del_opvnt.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZdaPvRKSt9nothrow_t	00000000 .text._ZdaPvRKSt9nothrow_t
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZdaPvRKSt9nothrow_t	00000000 .literal._ZdaPvRKSt9nothrow_t
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text._ZdaPvRKSt9nothrow_t	0000000f _ZdaPvRKSt9nothrow_t
+00000000         *UND*	00000000 _ZdlPv
+
+
+
+dyncast.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 dyncast.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text.__dynamic_cast	00000000 .text.__dynamic_cast
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text.__dynamic_cast	000000ba __dynamic_cast
+
+
+
+eh_alloc.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_alloc.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text.__cxa_allocate_exception	00000000 .text.__cxa_allocate_exception
+00000000 l     O .bss._ZL14emergency_used	00000004 _ZL14emergency_used
+00000000 l     O .bss._ZL16emergency_buffer	00000800 _ZL16emergency_buffer
+00000000 l    d  .text.__cxa_free_exception	00000000 .text.__cxa_free_exception
+00000000 l    d  .text.__cxa_allocate_dependent_exception	00000000 .text.__cxa_allocate_dependent_exception
+00000000 l     O .bss._ZL15dependents_used	00000004 _ZL15dependents_used
+00000000 l     O .bss._ZL17dependents_buffer	00000140 _ZL17dependents_buffer
+00000000 l    d  .text.__cxa_free_dependent_exception	00000000 .text.__cxa_free_dependent_exception
+00000000 l    d  .bss._ZL15dependents_used	00000000 .bss._ZL15dependents_used
+00000000 l    d  .bss._ZL17dependents_buffer	00000000 .bss._ZL17dependents_buffer
+00000000 l    d  .bss._ZL14emergency_used	00000000 .bss._ZL14emergency_used
+00000000 l    d  .bss._ZL16emergency_buffer	00000000 .bss._ZL16emergency_buffer
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal.__cxa_allocate_exception	00000000 .literal.__cxa_allocate_exception
+00000000 l    d  .literal.__cxa_free_exception	00000000 .literal.__cxa_free_exception
+00000000 l    d  .literal.__cxa_allocate_dependent_exception	00000000 .literal.__cxa_allocate_dependent_exception
+00000000 l    d  .literal.__cxa_free_dependent_exception	00000000 .literal.__cxa_free_dependent_exception
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text.__cxa_allocate_exception	00000070 __cxa_allocate_exception
+00000000         *UND*	00000000 malloc
+00000000         *UND*	00000000 __cxa_get_globals
+00000000         *UND*	00000000 memset
+00000000         *UND*	00000000 _ZSt9terminatev
+00000000 g     F .text.__cxa_free_exception	00000039 __cxa_free_exception
+00000000         *UND*	00000000 free
+00000000 g     F .text.__cxa_allocate_dependent_exception	00000063 __cxa_allocate_dependent_exception
+00000000         *UND*	00000000 __udivsi3
+00000000 g     F .text.__cxa_free_dependent_exception	0000003d __cxa_free_dependent_exception
+
+
+
+eh_arm.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_arm.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+eh_aux_runtime.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_aux_runtime.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text.__cxa_bad_cast	00000000 .text.__cxa_bad_cast
+00000000 l    d  .text.__cxa_bad_typeid	00000000 .text.__cxa_bad_typeid
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal.__cxa_bad_cast	00000000 .literal.__cxa_bad_cast
+00000000 l    d  .literal.__cxa_bad_typeid	00000000 .literal.__cxa_bad_typeid
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 _ZTVSt8bad_cast
+00000000         *UND*	00000000 _ZTISt8bad_cast
+00000000         *UND*	00000000 _ZNSt8bad_castD1Ev
+00000000 g     F .text.__cxa_bad_cast	0000001a __cxa_bad_cast
+00000000         *UND*	00000000 __cxa_allocate_exception
+00000000         *UND*	00000000 __cxa_throw
+00000000         *UND*	00000000 _ZTVSt10bad_typeid
+00000000         *UND*	00000000 _ZTISt10bad_typeid
+00000000         *UND*	00000000 _ZNSt10bad_typeidD1Ev
+00000000 g     F .text.__cxa_bad_typeid	0000001a __cxa_bad_typeid
+
+
+
+eh_call.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_call.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text.__cxa_call_terminate	00000000 .text.__cxa_call_terminate
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal.__cxa_call_terminate	00000000 .literal.__cxa_call_terminate
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text.__cxa_call_terminate	00000038 __cxa_call_terminate
+00000000         *UND*	00000000 __cxa_begin_catch
+00000000         *UND*	00000000 _ZN10__cxxabiv111__terminateEPFvvE
+00000000         *UND*	00000000 _ZSt9terminatev
+
+
+
+eh_catch.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_catch.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text.__cxa_get_exception_ptr	00000000 .text.__cxa_get_exception_ptr
+00000000 l    d  .text.__cxa_begin_catch	00000000 .text.__cxa_begin_catch
+00000000 l    d  .text.__cxa_end_catch	00000000 .text.__cxa_end_catch
+00000000 l    d  .text._ZSt18uncaught_exceptionv	00000000 .text._ZSt18uncaught_exceptionv
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal.__cxa_begin_catch	00000000 .literal.__cxa_begin_catch
+00000000 l    d  .literal.__cxa_end_catch	00000000 .literal.__cxa_end_catch
+00000000 l    d  .literal._ZSt18uncaught_exceptionv	00000000 .literal._ZSt18uncaught_exceptionv
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text.__cxa_get_exception_ptr	00000007 __cxa_get_exception_ptr
+00000000 g     F .text.__cxa_begin_catch	00000060 __cxa_begin_catch
+00000000         *UND*	00000000 __cxa_get_globals
+00000000         *UND*	00000000 _ZSt9terminatev
+00000000 g     F .text.__cxa_end_catch	0000006b __cxa_end_catch
+00000000         *UND*	00000000 __cxa_get_globals_fast
+00000000         *UND*	00000000 _Unwind_DeleteException
+00000000 g     F .text._ZSt18uncaught_exceptionv	00000018 _ZSt18uncaught_exceptionv
+
+
+
+eh_exception.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_exception.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZNSt9exceptionD2Ev	00000000 .text._ZNSt9exceptionD2Ev
+00000000 l    d  .text._ZNSt13bad_exceptionD2Ev	00000000 .text._ZNSt13bad_exceptionD2Ev
+00000000 l    d  .text._ZN10__cxxabiv115__forced_unwindD2Ev	00000000 .text._ZN10__cxxabiv115__forced_unwindD2Ev
+00000000 l    d  .text._ZN10__cxxabiv119__foreign_exceptionD2Ev	00000000 .text._ZN10__cxxabiv119__foreign_exceptionD2Ev
+00000000 l    d  .rodata.str1.4	00000000 .rodata.str1.4
+00000000 l    d  .text._ZNKSt9exception4whatEv	00000000 .text._ZNKSt9exception4whatEv
+00000000 l    d  .text._ZNKSt13bad_exception4whatEv	00000000 .text._ZNKSt13bad_exception4whatEv
+00000000 l    d  .text._ZNSt9exceptionD0Ev	00000000 .text._ZNSt9exceptionD0Ev
+00000000 l    d  .text._ZNSt13bad_exceptionD0Ev	00000000 .text._ZNSt13bad_exceptionD0Ev
+00000000 l    d  .text._ZN10__cxxabiv115__forced_unwindD0Ev	00000000 .text._ZN10__cxxabiv115__forced_unwindD0Ev
+00000000 l    d  .text._ZN10__cxxabiv119__foreign_exceptionD0Ev	00000000 .text._ZN10__cxxabiv119__foreign_exceptionD0Ev
+00000000 l    d  .rodata._ZTSSt9exception	00000000 .rodata._ZTSSt9exception
+00000000 l    d  .rodata._ZTISt9exception	00000000 .rodata._ZTISt9exception
+00000000 l    d  .rodata._ZTSSt13bad_exception	00000000 .rodata._ZTSSt13bad_exception
+00000000 l    d  .rodata._ZTISt13bad_exception	00000000 .rodata._ZTISt13bad_exception
+00000000 l    d  .rodata._ZTSN10__cxxabiv115__forced_unwindE	00000000 .rodata._ZTSN10__cxxabiv115__forced_unwindE
+00000000 l    d  .rodata._ZTIN10__cxxabiv115__forced_unwindE	00000000 .rodata._ZTIN10__cxxabiv115__forced_unwindE
+00000000 l    d  .rodata._ZTSN10__cxxabiv119__foreign_exceptionE	00000000 .rodata._ZTSN10__cxxabiv119__foreign_exceptionE
+00000000 l    d  .rodata._ZTIN10__cxxabiv119__foreign_exceptionE	00000000 .rodata._ZTIN10__cxxabiv119__foreign_exceptionE
+00000000 l    d  .rodata._ZTVSt9exception	00000000 .rodata._ZTVSt9exception
+00000000 l    d  .rodata._ZTVSt13bad_exception	00000000 .rodata._ZTVSt13bad_exception
+00000000 l    d  .rodata._ZTVN10__cxxabiv115__forced_unwindE	00000000 .rodata._ZTVN10__cxxabiv115__forced_unwindE
+00000000 l    d  .rodata._ZTVN10__cxxabiv119__foreign_exceptionE	00000000 .rodata._ZTVN10__cxxabiv119__foreign_exceptionE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZNSt9exceptionD2Ev	00000000 .literal._ZNSt9exceptionD2Ev
+00000000 l    d  .literal._ZNSt13bad_exceptionD2Ev	00000000 .literal._ZNSt13bad_exceptionD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv115__forced_unwindD2Ev	00000000 .literal._ZN10__cxxabiv115__forced_unwindD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv119__foreign_exceptionD2Ev	00000000 .literal._ZN10__cxxabiv119__foreign_exceptionD2Ev
+00000000 l    d  .literal._ZNKSt9exception4whatEv	00000000 .literal._ZNKSt9exception4whatEv
+00000000 l    d  .literal._ZNKSt13bad_exception4whatEv	00000000 .literal._ZNKSt13bad_exception4whatEv
+00000000 l    d  .literal._ZNSt9exceptionD0Ev	00000000 .literal._ZNSt9exceptionD0Ev
+00000000 l    d  .literal._ZNSt13bad_exceptionD0Ev	00000000 .literal._ZNSt13bad_exceptionD0Ev
+00000000 l    d  .literal._ZN10__cxxabiv115__forced_unwindD0Ev	00000000 .literal._ZN10__cxxabiv115__forced_unwindD0Ev
+00000000 l    d  .literal._ZN10__cxxabiv119__foreign_exceptionD0Ev	00000000 .literal._ZN10__cxxabiv119__foreign_exceptionD0Ev
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSSt9exception	00000000 .xt.prop._ZTSSt9exception
+00000000 l    d  .xt.prop._ZTISt9exception	00000000 .xt.prop._ZTISt9exception
+00000000 l    d  .xt.prop._ZTSSt13bad_exception	00000000 .xt.prop._ZTSSt13bad_exception
+00000000 l    d  .xt.prop._ZTISt13bad_exception	00000000 .xt.prop._ZTISt13bad_exception
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv115__forced_unwindE	00000000 .xt.prop._ZTSN10__cxxabiv115__forced_unwindE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv115__forced_unwindE	00000000 .xt.prop._ZTIN10__cxxabiv115__forced_unwindE
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv119__foreign_exceptionE	00000000 .xt.prop._ZTSN10__cxxabiv119__foreign_exceptionE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv119__foreign_exceptionE	00000000 .xt.prop._ZTIN10__cxxabiv119__foreign_exceptionE
+00000000 l    d  .xt.prop._ZTVSt9exception	00000000 .xt.prop._ZTVSt9exception
+00000000 l    d  .xt.prop._ZTVSt13bad_exception	00000000 .xt.prop._ZTVSt13bad_exception
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv115__forced_unwindE	00000000 .xt.prop._ZTVN10__cxxabiv115__forced_unwindE
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv119__foreign_exceptionE	00000000 .xt.prop._ZTVN10__cxxabiv119__foreign_exceptionE
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000  w    O .rodata._ZTVSt9exception	00000014 _ZTVSt9exception
+00000000 g     F .text._ZNSt9exceptionD2Ev	00000007 _ZNSt9exceptionD2Ev
+00000000 g     F .text._ZNSt9exceptionD2Ev	00000007 _ZNSt9exceptionD1Ev
+00000000 g     F .text._ZNSt13bad_exceptionD2Ev	00000007 _ZNSt13bad_exceptionD2Ev
+00000000 g     F .text._ZNSt13bad_exceptionD2Ev	00000007 _ZNSt13bad_exceptionD1Ev
+00000000  w    O .rodata._ZTVN10__cxxabiv115__forced_unwindE	00000014 _ZTVN10__cxxabiv115__forced_unwindE
+00000000 g     F .text._ZN10__cxxabiv115__forced_unwindD2Ev	00000007 _ZN10__cxxabiv115__forced_unwindD2Ev
+00000000 g     F .text._ZN10__cxxabiv115__forced_unwindD2Ev	00000007 _ZN10__cxxabiv115__forced_unwindD1Ev
+00000000  w    O .rodata._ZTVN10__cxxabiv119__foreign_exceptionE	00000014 _ZTVN10__cxxabiv119__foreign_exceptionE
+00000000 g     F .text._ZN10__cxxabiv119__foreign_exceptionD2Ev	00000007 _ZN10__cxxabiv119__foreign_exceptionD2Ev
+00000000 g     F .text._ZN10__cxxabiv119__foreign_exceptionD2Ev	00000007 _ZN10__cxxabiv119__foreign_exceptionD1Ev
+00000000 g     F .text._ZNKSt9exception4whatEv	00000005 _ZNKSt9exception4whatEv
+00000000 g     F .text._ZNKSt13bad_exception4whatEv	00000005 _ZNKSt13bad_exception4whatEv
+00000000 g     F .text._ZNSt9exceptionD0Ev	00000014 _ZNSt9exceptionD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000 g     F .text._ZNSt13bad_exceptionD0Ev	00000014 _ZNSt13bad_exceptionD0Ev
+00000000 g     F .text._ZN10__cxxabiv115__forced_unwindD0Ev	00000014 _ZN10__cxxabiv115__forced_unwindD0Ev
+00000000 g     F .text._ZN10__cxxabiv119__foreign_exceptionD0Ev	00000014 _ZN10__cxxabiv119__foreign_exceptionD0Ev
+00000000  w    O .rodata._ZTSSt9exception	0000000d _ZTSSt9exception
+00000000  w    O .rodata._ZTISt9exception	00000008 _ZTISt9exception
+00000000         *UND*	00000000 _ZTVN10__cxxabiv117__class_type_infoE
+00000000  w    O .rodata._ZTSSt13bad_exception	00000012 _ZTSSt13bad_exception
+00000000  w    O .rodata._ZTISt13bad_exception	0000000c _ZTISt13bad_exception
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000  w    O .rodata._ZTSN10__cxxabiv115__forced_unwindE	00000020 _ZTSN10__cxxabiv115__forced_unwindE
+00000000  w    O .rodata._ZTIN10__cxxabiv115__forced_unwindE	00000008 _ZTIN10__cxxabiv115__forced_unwindE
+00000000  w    O .rodata._ZTSN10__cxxabiv119__foreign_exceptionE	00000024 _ZTSN10__cxxabiv119__foreign_exceptionE
+00000000  w    O .rodata._ZTIN10__cxxabiv119__foreign_exceptionE	00000008 _ZTIN10__cxxabiv119__foreign_exceptionE
+00000000  w    O .rodata._ZTVSt13bad_exception	00000014 _ZTVSt13bad_exception
+00000000         *UND*	00000000 __cxa_pure_virtual
+
+
+
+eh_globals.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_globals.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text.__cxa_get_globals_fast	00000000 .text.__cxa_get_globals_fast
+00000000 l     O .bss._ZL10eh_globals	00000008 _ZL10eh_globals
+00000000 l    d  .text.__cxa_get_globals	00000000 .text.__cxa_get_globals
+00000000 l    d  .bss._ZL10eh_globals	00000000 .bss._ZL10eh_globals
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal.__cxa_get_globals_fast	00000000 .literal.__cxa_get_globals_fast
+00000000 l    d  .literal.__cxa_get_globals	00000000 .literal.__cxa_get_globals
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text.__cxa_get_globals_fast	00000005 __cxa_get_globals_fast
+00000000 g     F .text.__cxa_get_globals	00000005 __cxa_get_globals
+
+
+
+eh_personality.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_personality.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZL12read_sleb128PKhPl	00000000 .text._ZL12read_sleb128PKhPl
+00000000 l     F .text._ZL12read_sleb128PKhPl	00000036 _ZL12read_sleb128PKhPl
+00000000 l    d  .text._ZL16get_adjusted_ptrPKSt9type_infoS1_PPv	00000000 .text._ZL16get_adjusted_ptrPKSt9type_infoS1_PPv
+00000000 l     F .text._ZL16get_adjusted_ptrPKSt9type_infoS1_PPv	00000045 _ZL16get_adjusted_ptrPKSt9type_infoS1_PPv
+00000000 l    d  .text._ZL28read_encoded_value_with_basehjPKhPj	00000000 .text._ZL28read_encoded_value_with_basehjPKhPj
+00000000 l     F .text._ZL28read_encoded_value_with_basehjPKhPj	0000010b _ZL28read_encoded_value_with_basehjPKhPj
+00000000 l    d  .rodata._ZL28read_encoded_value_with_basehjPKhPj	00000000 .rodata._ZL28read_encoded_value_with_basehjPKhPj
+00000000 l    d  .text._ZL15get_ttype_entryP16lsda_header_infom	00000000 .text._ZL15get_ttype_entryP16lsda_header_infom
+00000000 l     F .text._ZL15get_ttype_entryP16lsda_header_infom	0000005d _ZL15get_ttype_entryP16lsda_header_infom
+00000000 l    d  .text._ZL20check_exception_specP16lsda_header_infoPKSt9type_infoPvl	00000000 .text._ZL20check_exception_specP16lsda_header_infoPKSt9type_infoPvl
+00000000 l     F .text._ZL20check_exception_specP16lsda_header_infoPKSt9type_infoPvl	0000005d _ZL20check_exception_specP16lsda_header_infoPKSt9type_infoPvl
+00000000 l    d  .text._ZL21base_of_encoded_valuehP15_Unwind_Context	00000000 .text._ZL21base_of_encoded_valuehP15_Unwind_Context
+00000000 l     F .text._ZL21base_of_encoded_valuehP15_Unwind_Context	00000055 _ZL21base_of_encoded_valuehP15_Unwind_Context
+00000000 l    d  .text._ZL17parse_lsda_headerP15_Unwind_ContextPKhP16lsda_header_info	00000000 .text._ZL17parse_lsda_headerP15_Unwind_ContextPKhP16lsda_header_info
+00000000 l     F .text._ZL17parse_lsda_headerP15_Unwind_ContextPKhP16lsda_header_info	000000ba _ZL17parse_lsda_headerP15_Unwind_ContextPKhP16lsda_header_info
+00000000 l    d  .text.__gxx_personality_v0	00000000 .text.__gxx_personality_v0
+00000000 l    d  .gcc_except_table.__gxx_personality_v0	00000000 .gcc_except_table.__gxx_personality_v0
+00000000 l    d  .text.__cxa_call_unexpected	00000000 .text.__cxa_call_unexpected
+00000000 l    d  .gcc_except_table.__cxa_call_unexpected	00000000 .gcc_except_table.__cxa_call_unexpected
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZL28read_encoded_value_with_basehjPKhPj	00000000 .literal._ZL28read_encoded_value_with_basehjPKhPj
+00000000 l    d  .literal.__gxx_personality_v0	00000000 .literal.__gxx_personality_v0
+00000000 l    d  .literal.__cxa_call_unexpected	00000000 .literal.__cxa_call_unexpected
+00000000 l    d  .literal._ZL15get_ttype_entryP16lsda_header_infom	00000000 .literal._ZL15get_ttype_entryP16lsda_header_infom
+00000000 l    d  .literal._ZL20check_exception_specP16lsda_header_infoPKSt9type_infoPvl	00000000 .literal._ZL20check_exception_specP16lsda_header_infoPKSt9type_infoPvl
+00000000 l    d  .literal._ZL21base_of_encoded_valuehP15_Unwind_Context	00000000 .literal._ZL21base_of_encoded_valuehP15_Unwind_Context
+00000000 l    d  .literal._ZL17parse_lsda_headerP15_Unwind_ContextPKhP16lsda_header_info	00000000 .literal._ZL17parse_lsda_headerP15_Unwind_ContextPKhP16lsda_header_info
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 abort
+00000000         *UND*	00000000 _Unwind_GetTextRelBase
+00000000         *UND*	00000000 _Unwind_GetDataRelBase
+00000000         *UND*	00000000 _Unwind_GetRegionStart
+00000000         *UND*	00000000 _ZTIN10__cxxabiv115__forced_unwindE
+00000000         *UND*	00000000 _ZTIN10__cxxabiv119__foreign_exceptionE
+00000000 g     F .text.__gxx_personality_v0	0000030c __gxx_personality_v0
+00000000         *UND*	00000000 _Unwind_GetLanguageSpecificData
+00000000         *UND*	00000000 _Unwind_GetIPInfo
+00000000         *UND*	00000000 _ZSt10unexpectedv
+00000000         *UND*	00000000 __cxa_call_terminate
+00000000         *UND*	00000000 _Unwind_SetGR
+00000000         *UND*	00000000 _Unwind_SetIP
+00000000         *UND*	00000000 __cxa_begin_catch
+00000000         *UND*	00000000 _ZSt9terminatev
+00000000         *UND*	00000000 _ZTISt13bad_exception
+00000000         *UND*	00000000 _ZTVSt13bad_exception
+00000000         *UND*	00000000 _ZNSt13bad_exceptionD1Ev
+00000000 g     F .text.__cxa_call_unexpected	00000092 __cxa_call_unexpected
+00000000         *UND*	00000000 _ZN10__cxxabiv112__unexpectedEPFvvE
+00000000         *UND*	00000000 __cxa_end_catch
+00000000         *UND*	00000000 _Unwind_Resume
+00000000         *UND*	00000000 __cxa_get_globals_fast
+00000000         *UND*	00000000 __cxa_rethrow
+00000000         *UND*	00000000 __cxa_allocate_exception
+00000000         *UND*	00000000 __cxa_throw
+00000000         *UND*	00000000 _ZN10__cxxabiv111__terminateEPFvvE
+
+
+
+eh_ptr.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_ptr.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+eh_term_handler.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_term_handler.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .data._ZN10__cxxabiv119__terminate_handlerE	00000000 .data._ZN10__cxxabiv119__terminate_handlerE
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     O .data._ZN10__cxxabiv119__terminate_handlerE	00000004 _ZN10__cxxabiv119__terminate_handlerE
+00000000         *UND*	00000000 _ZN9__gnu_cxx27__verbose_terminate_handlerEv
+
+
+
+eh_terminate.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_terminate.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZN10__cxxabiv111__terminateEPFvvE	00000000 .text._ZN10__cxxabiv111__terminateEPFvvE
+00000000 l    d  .gcc_except_table._ZN10__cxxabiv111__terminateEPFvvE	00000000 .gcc_except_table._ZN10__cxxabiv111__terminateEPFvvE
+00000000 l    d  .text._ZSt9terminatev	00000000 .text._ZSt9terminatev
+00000000 l    d  .text._ZN10__cxxabiv112__unexpectedEPFvvE	00000000 .text._ZN10__cxxabiv112__unexpectedEPFvvE
+00000000 l    d  .text._ZSt10unexpectedv	00000000 .text._ZSt10unexpectedv
+00000000 l    d  .text._ZSt13set_terminatePFvvE	00000000 .text._ZSt13set_terminatePFvvE
+00000000 l    d  .text._ZSt14set_unexpectedPFvvE	00000000 .text._ZSt14set_unexpectedPFvvE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZSt9terminatev	00000000 .literal._ZSt9terminatev
+00000000 l    d  .literal._ZSt10unexpectedv	00000000 .literal._ZSt10unexpectedv
+00000000 l    d  .literal._ZSt13set_terminatePFvvE	00000000 .literal._ZSt13set_terminatePFvvE
+00000000 l    d  .literal._ZSt14set_unexpectedPFvvE	00000000 .literal._ZSt14set_unexpectedPFvvE
+00000000 l    d  .literal._ZN10__cxxabiv111__terminateEPFvvE	00000000 .literal._ZN10__cxxabiv111__terminateEPFvvE
+00000000 l    d  .literal._ZN10__cxxabiv112__unexpectedEPFvvE	00000000 .literal._ZN10__cxxabiv112__unexpectedEPFvvE
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text._ZN10__cxxabiv111__terminateEPFvvE	0000002a _ZN10__cxxabiv111__terminateEPFvvE
+00000000         *UND*	00000000 abort
+00000000         *UND*	00000000 __cxa_end_catch
+00000000         *UND*	00000000 __cxa_begin_catch
+00000000         *UND*	00000000 _Unwind_Resume
+00000000         *UND*	00000000 __cxa_call_unexpected
+00000000         *UND*	00000000 __gxx_personality_v0
+00000000         *UND*	00000000 _ZN10__cxxabiv119__terminate_handlerE
+00000000 g     F .text._ZSt9terminatev	0000000d _ZSt9terminatev
+00000000 g     F .text._ZN10__cxxabiv112__unexpectedEPFvvE	0000000c _ZN10__cxxabiv112__unexpectedEPFvvE
+00000000         *UND*	00000000 _ZN10__cxxabiv120__unexpected_handlerE
+00000000 g     F .text._ZSt10unexpectedv	0000000d _ZSt10unexpectedv
+00000000 g     F .text._ZSt13set_terminatePFvvE	0000000b _ZSt13set_terminatePFvvE
+00000000 g     F .text._ZSt14set_unexpectedPFvvE	0000000b _ZSt14set_unexpectedPFvvE
+
+
+
+eh_tm.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_tm.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZL22free_any_cxa_exceptionP17_Unwind_Exception	00000000 .text._ZL22free_any_cxa_exceptionP17_Unwind_Exception
+00000000 l     F .text._ZL22free_any_cxa_exceptionP17_Unwind_Exception	0000002b _ZL22free_any_cxa_exceptionP17_Unwind_Exception
+00000000 l    d  .text.__cxa_tm_cleanup	00000000 .text.__cxa_tm_cleanup
+00000000 l    d  .gcc_except_table.__cxa_tm_cleanup	00000000 .gcc_except_table.__cxa_tm_cleanup
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal.__cxa_tm_cleanup	00000000 .literal.__cxa_tm_cleanup
+00000000 l    d  .literal._ZL22free_any_cxa_exceptionP17_Unwind_Exception	00000000 .literal._ZL22free_any_cxa_exceptionP17_Unwind_Exception
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __cxa_free_dependent_exception
+00000000         *UND*	00000000 __cxa_free_exception
+00000000 g     F .text.__cxa_tm_cleanup	000000b3 __cxa_tm_cleanup
+00000000         *UND*	00000000 __cxa_get_globals_fast
+00000000         *UND*	00000000 _Unwind_DeleteException
+00000000         *UND*	00000000 _Unwind_Resume
+00000000         *UND*	00000000 __cxa_call_unexpected
+00000000         *UND*	00000000 __gxx_personality_v0
+
+
+
+eh_throw.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_throw.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZL23__gxx_exception_cleanup19_Unwind_Reason_CodeP17_Unwind_Exception	00000000 .text._ZL23__gxx_exception_cleanup19_Unwind_Reason_CodeP17_Unwind_Exception
+00000000 l     F .text._ZL23__gxx_exception_cleanup19_Unwind_Reason_CodeP17_Unwind_Exception	00000032 _ZL23__gxx_exception_cleanup19_Unwind_Reason_CodeP17_Unwind_Exception
+00000000 l    d  .text.__cxa_throw	00000000 .text.__cxa_throw
+00000000 l    d  .text.__cxa_rethrow	00000000 .text.__cxa_rethrow
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal.__cxa_throw	00000000 .literal.__cxa_throw
+00000000 l    d  .literal.__cxa_rethrow	00000000 .literal.__cxa_rethrow
+00000000 l    d  .literal._ZL23__gxx_exception_cleanup19_Unwind_Reason_CodeP17_Unwind_Exception	00000000 .literal._ZL23__gxx_exception_cleanup19_Unwind_Reason_CodeP17_Unwind_Exception
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 _ZN10__cxxabiv111__terminateEPFvvE
+00000000         *UND*	00000000 __cxa_free_exception
+00000000         *UND*	00000000 _ZN10__cxxabiv120__unexpected_handlerE
+00000000         *UND*	00000000 _ZN10__cxxabiv119__terminate_handlerE
+00000000 g     F .text.__cxa_throw	00000044 __cxa_throw
+00000000         *UND*	00000000 _Unwind_RaiseException
+00000000         *UND*	00000000 __cxa_begin_catch
+00000000         *UND*	00000000 _ZSt9terminatev
+00000000 g     F .text.__cxa_rethrow	00000050 __cxa_rethrow
+00000000         *UND*	00000000 __cxa_get_globals
+00000000         *UND*	00000000 _Unwind_Resume_or_Rethrow
+
+
+
+eh_type.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_type.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text.__cxa_current_exception_type	00000000 .text.__cxa_current_exception_type
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal.__cxa_current_exception_type	00000000 .literal.__cxa_current_exception_type
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text.__cxa_current_exception_type	0000001f __cxa_current_exception_type
+00000000         *UND*	00000000 __cxa_get_globals
+
+
+
+eh_unex_handler.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 eh_unex_handler.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .data._ZN10__cxxabiv120__unexpected_handlerE	00000000 .data._ZN10__cxxabiv120__unexpected_handlerE
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     O .data._ZN10__cxxabiv120__unexpected_handlerE	00000004 _ZN10__cxxabiv120__unexpected_handlerE
+00000000         *UND*	00000000 _ZSt9terminatev
+
+
+
+enum_type_info.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 enum_type_info.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZN10__cxxabiv116__enum_type_infoD2Ev	00000000 .text._ZN10__cxxabiv116__enum_type_infoD2Ev
+00000000 l    d  .text._ZN10__cxxabiv116__enum_type_infoD0Ev	00000000 .text._ZN10__cxxabiv116__enum_type_infoD0Ev
+00000000 l    d  .rodata._ZTSN10__cxxabiv116__enum_type_infoE	00000000 .rodata._ZTSN10__cxxabiv116__enum_type_infoE
+00000000 l    d  .rodata._ZTIN10__cxxabiv116__enum_type_infoE	00000000 .rodata._ZTIN10__cxxabiv116__enum_type_infoE
+00000000 l    d  .rodata._ZTVN10__cxxabiv116__enum_type_infoE	00000000 .rodata._ZTVN10__cxxabiv116__enum_type_infoE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN10__cxxabiv116__enum_type_infoD2Ev	00000000 .literal._ZN10__cxxabiv116__enum_type_infoD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv116__enum_type_infoD0Ev	00000000 .literal._ZN10__cxxabiv116__enum_type_infoD0Ev
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv116__enum_type_infoE	00000000 .xt.prop._ZTSN10__cxxabiv116__enum_type_infoE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv116__enum_type_infoE	00000000 .xt.prop._ZTIN10__cxxabiv116__enum_type_infoE
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv116__enum_type_infoE	00000000 .xt.prop._ZTVN10__cxxabiv116__enum_type_infoE
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000  w    O .rodata._ZTVN10__cxxabiv116__enum_type_infoE	00000020 _ZTVN10__cxxabiv116__enum_type_infoE
+00000000 g     F .text._ZN10__cxxabiv116__enum_type_infoD2Ev	00000014 _ZN10__cxxabiv116__enum_type_infoD2Ev
+00000000         *UND*	00000000 _ZNSt9type_infoD2Ev
+00000000 g     F .text._ZN10__cxxabiv116__enum_type_infoD2Ev	00000014 _ZN10__cxxabiv116__enum_type_infoD1Ev
+00000000 g     F .text._ZN10__cxxabiv116__enum_type_infoD0Ev	00000022 _ZN10__cxxabiv116__enum_type_infoD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000  w    O .rodata._ZTSN10__cxxabiv116__enum_type_infoE	00000021 _ZTSN10__cxxabiv116__enum_type_infoE
+00000000  w    O .rodata._ZTIN10__cxxabiv116__enum_type_infoE	0000000c _ZTIN10__cxxabiv116__enum_type_infoE
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTISt9type_info
+00000000         *UND*	00000000 _ZNKSt9type_info14__is_pointer_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info15__is_function_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info10__do_catchEPKS_PPvj
+00000000         *UND*	00000000 _ZNKSt9type_info11__do_upcastEPKN10__cxxabiv117__class_type_infoEPPv
+
+
+
+function_type_info.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 function_type_info.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZNK10__cxxabiv120__function_type_info15__is_function_pEv	00000000 .text._ZNK10__cxxabiv120__function_type_info15__is_function_pEv
+00000000 l    d  .text._ZN10__cxxabiv120__function_type_infoD2Ev	00000000 .text._ZN10__cxxabiv120__function_type_infoD2Ev
+00000000 l    d  .text._ZN10__cxxabiv120__function_type_infoD0Ev	00000000 .text._ZN10__cxxabiv120__function_type_infoD0Ev
+00000000 l    d  .rodata._ZTSN10__cxxabiv120__function_type_infoE	00000000 .rodata._ZTSN10__cxxabiv120__function_type_infoE
+00000000 l    d  .rodata._ZTIN10__cxxabiv120__function_type_infoE	00000000 .rodata._ZTIN10__cxxabiv120__function_type_infoE
+00000000 l    d  .rodata._ZTVN10__cxxabiv120__function_type_infoE	00000000 .rodata._ZTVN10__cxxabiv120__function_type_infoE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN10__cxxabiv120__function_type_infoD2Ev	00000000 .literal._ZN10__cxxabiv120__function_type_infoD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv120__function_type_infoD0Ev	00000000 .literal._ZN10__cxxabiv120__function_type_infoD0Ev
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv120__function_type_infoE	00000000 .xt.prop._ZTSN10__cxxabiv120__function_type_infoE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv120__function_type_infoE	00000000 .xt.prop._ZTIN10__cxxabiv120__function_type_infoE
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv120__function_type_infoE	00000000 .xt.prop._ZTVN10__cxxabiv120__function_type_infoE
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 g     F .text._ZNK10__cxxabiv120__function_type_info15__is_function_pEv	00000004 _ZNK10__cxxabiv120__function_type_info15__is_function_pEv
+00000000  w    O .rodata._ZTVN10__cxxabiv120__function_type_infoE	00000020 _ZTVN10__cxxabiv120__function_type_infoE
+00000000 g     F .text._ZN10__cxxabiv120__function_type_infoD2Ev	00000014 _ZN10__cxxabiv120__function_type_infoD2Ev
+00000000         *UND*	00000000 _ZNSt9type_infoD2Ev
+00000000 g     F .text._ZN10__cxxabiv120__function_type_infoD2Ev	00000014 _ZN10__cxxabiv120__function_type_infoD1Ev
+00000000 g     F .text._ZN10__cxxabiv120__function_type_infoD0Ev	00000022 _ZN10__cxxabiv120__function_type_infoD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000  w    O .rodata._ZTSN10__cxxabiv120__function_type_infoE	00000025 _ZTSN10__cxxabiv120__function_type_infoE
+00000000  w    O .rodata._ZTIN10__cxxabiv120__function_type_infoE	0000000c _ZTIN10__cxxabiv120__function_type_infoE
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTISt9type_info
+00000000         *UND*	00000000 _ZNKSt9type_info14__is_pointer_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info10__do_catchEPKS_PPvj
+00000000         *UND*	00000000 _ZNKSt9type_info11__do_upcastEPKN10__cxxabiv117__class_type_infoEPPv
+
+
+
+fundamental_type_info.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 fundamental_type_info.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZN10__cxxabiv123__fundamental_type_infoD2Ev	00000000 .text._ZN10__cxxabiv123__fundamental_type_infoD2Ev
+00000000 l    d  .text._ZN10__cxxabiv123__fundamental_type_infoD0Ev	00000000 .text._ZN10__cxxabiv123__fundamental_type_infoD0Ev
+00000000 l    d  .rodata._ZTSN10__cxxabiv123__fundamental_type_infoE	00000000 .rodata._ZTSN10__cxxabiv123__fundamental_type_infoE
+00000000 l    d  .rodata._ZTIN10__cxxabiv123__fundamental_type_infoE	00000000 .rodata._ZTIN10__cxxabiv123__fundamental_type_infoE
+00000000 l    d  .rodata._ZTSv	00000000 .rodata._ZTSv
+00000000 l    d  .rodata._ZTSPv	00000000 .rodata._ZTSPv
+00000000 l    d  .rodata._ZTSPKv	00000000 .rodata._ZTSPKv
+00000000 l    d  .rodata._ZTSb	00000000 .rodata._ZTSb
+00000000 l    d  .rodata._ZTSPb	00000000 .rodata._ZTSPb
+00000000 l    d  .rodata._ZTSPKb	00000000 .rodata._ZTSPKb
+00000000 l    d  .rodata._ZTSw	00000000 .rodata._ZTSw
+00000000 l    d  .rodata._ZTSPw	00000000 .rodata._ZTSPw
+00000000 l    d  .rodata._ZTSPKw	00000000 .rodata._ZTSPKw
+00000000 l    d  .rodata._ZTSDs	00000000 .rodata._ZTSDs
+00000000 l    d  .rodata._ZTSPDs	00000000 .rodata._ZTSPDs
+00000000 l    d  .rodata._ZTSPKDs	00000000 .rodata._ZTSPKDs
+00000000 l    d  .rodata._ZTSDi	00000000 .rodata._ZTSDi
+00000000 l    d  .rodata._ZTSPDi	00000000 .rodata._ZTSPDi
+00000000 l    d  .rodata._ZTSPKDi	00000000 .rodata._ZTSPKDi
+00000000 l    d  .rodata._ZTSc	00000000 .rodata._ZTSc
+00000000 l    d  .rodata._ZTSPc	00000000 .rodata._ZTSPc
+00000000 l    d  .rodata._ZTSPKc	00000000 .rodata._ZTSPKc
+00000000 l    d  .rodata._ZTSa	00000000 .rodata._ZTSa
+00000000 l    d  .rodata._ZTSPa	00000000 .rodata._ZTSPa
+00000000 l    d  .rodata._ZTSPKa	00000000 .rodata._ZTSPKa
+00000000 l    d  .rodata._ZTSh	00000000 .rodata._ZTSh
+00000000 l    d  .rodata._ZTSPh	00000000 .rodata._ZTSPh
+00000000 l    d  .rodata._ZTSPKh	00000000 .rodata._ZTSPKh
+00000000 l    d  .rodata._ZTSs	00000000 .rodata._ZTSs
+00000000 l    d  .rodata._ZTSPs	00000000 .rodata._ZTSPs
+00000000 l    d  .rodata._ZTSPKs	00000000 .rodata._ZTSPKs
+00000000 l    d  .rodata._ZTSt	00000000 .rodata._ZTSt
+00000000 l    d  .rodata._ZTSPt	00000000 .rodata._ZTSPt
+00000000 l    d  .rodata._ZTSPKt	00000000 .rodata._ZTSPKt
+00000000 l    d  .rodata._ZTSi	00000000 .rodata._ZTSi
+00000000 l    d  .rodata._ZTSPi	00000000 .rodata._ZTSPi
+00000000 l    d  .rodata._ZTSPKi	00000000 .rodata._ZTSPKi
+00000000 l    d  .rodata._ZTSj	00000000 .rodata._ZTSj
+00000000 l    d  .rodata._ZTSPj	00000000 .rodata._ZTSPj
+00000000 l    d  .rodata._ZTSPKj	00000000 .rodata._ZTSPKj
+00000000 l    d  .rodata._ZTSl	00000000 .rodata._ZTSl
+00000000 l    d  .rodata._ZTSPl	00000000 .rodata._ZTSPl
+00000000 l    d  .rodata._ZTSPKl	00000000 .rodata._ZTSPKl
+00000000 l    d  .rodata._ZTSm	00000000 .rodata._ZTSm
+00000000 l    d  .rodata._ZTSPm	00000000 .rodata._ZTSPm
+00000000 l    d  .rodata._ZTSPKm	00000000 .rodata._ZTSPKm
+00000000 l    d  .rodata._ZTSx	00000000 .rodata._ZTSx
+00000000 l    d  .rodata._ZTSPx	00000000 .rodata._ZTSPx
+00000000 l    d  .rodata._ZTSPKx	00000000 .rodata._ZTSPKx
+00000000 l    d  .rodata._ZTSy	00000000 .rodata._ZTSy
+00000000 l    d  .rodata._ZTSPy	00000000 .rodata._ZTSPy
+00000000 l    d  .rodata._ZTSPKy	00000000 .rodata._ZTSPKy
+00000000 l    d  .rodata._ZTSf	00000000 .rodata._ZTSf
+00000000 l    d  .rodata._ZTSPf	00000000 .rodata._ZTSPf
+00000000 l    d  .rodata._ZTSPKf	00000000 .rodata._ZTSPKf
+00000000 l    d  .rodata._ZTSd	00000000 .rodata._ZTSd
+00000000 l    d  .rodata._ZTSPd	00000000 .rodata._ZTSPd
+00000000 l    d  .rodata._ZTSPKd	00000000 .rodata._ZTSPKd
+00000000 l    d  .rodata._ZTSe	00000000 .rodata._ZTSe
+00000000 l    d  .rodata._ZTSPe	00000000 .rodata._ZTSPe
+00000000 l    d  .rodata._ZTSPKe	00000000 .rodata._ZTSPKe
+00000000 l    d  .rodata._ZTSDf	00000000 .rodata._ZTSDf
+00000000 l    d  .rodata._ZTSPDf	00000000 .rodata._ZTSPDf
+00000000 l    d  .rodata._ZTSPKDf	00000000 .rodata._ZTSPKDf
+00000000 l    d  .rodata._ZTSDd	00000000 .rodata._ZTSDd
+00000000 l    d  .rodata._ZTSPDd	00000000 .rodata._ZTSPDd
+00000000 l    d  .rodata._ZTSPKDd	00000000 .rodata._ZTSPKDd
+00000000 l    d  .rodata._ZTSDe	00000000 .rodata._ZTSDe
+00000000 l    d  .rodata._ZTSPDe	00000000 .rodata._ZTSPDe
+00000000 l    d  .rodata._ZTSPKDe	00000000 .rodata._ZTSPKDe
+00000000 l    d  .rodata._ZTSDn	00000000 .rodata._ZTSDn
+00000000 l    d  .rodata._ZTSPDn	00000000 .rodata._ZTSPDn
+00000000 l    d  .rodata._ZTSPKDn	00000000 .rodata._ZTSPKDn
+00000000 l    d  .rodata._ZTVN10__cxxabiv123__fundamental_type_infoE	00000000 .rodata._ZTVN10__cxxabiv123__fundamental_type_infoE
+00000000 l    d  .rodata._ZTIPKDn	00000000 .rodata._ZTIPKDn
+00000000 l    d  .rodata._ZTIPDn	00000000 .rodata._ZTIPDn
+00000000 l    d  .rodata._ZTIDn	00000000 .rodata._ZTIDn
+00000000 l    d  .rodata._ZTIPKDe	00000000 .rodata._ZTIPKDe
+00000000 l    d  .rodata._ZTIPDe	00000000 .rodata._ZTIPDe
+00000000 l    d  .rodata._ZTIDe	00000000 .rodata._ZTIDe
+00000000 l    d  .rodata._ZTIPKDd	00000000 .rodata._ZTIPKDd
+00000000 l    d  .rodata._ZTIPDd	00000000 .rodata._ZTIPDd
+00000000 l    d  .rodata._ZTIDd	00000000 .rodata._ZTIDd
+00000000 l    d  .rodata._ZTIPKDf	00000000 .rodata._ZTIPKDf
+00000000 l    d  .rodata._ZTIPDf	00000000 .rodata._ZTIPDf
+00000000 l    d  .rodata._ZTIDf	00000000 .rodata._ZTIDf
+00000000 l    d  .rodata._ZTIPKe	00000000 .rodata._ZTIPKe
+00000000 l    d  .rodata._ZTIPe	00000000 .rodata._ZTIPe
+00000000 l    d  .rodata._ZTIe	00000000 .rodata._ZTIe
+00000000 l    d  .rodata._ZTIPKd	00000000 .rodata._ZTIPKd
+00000000 l    d  .rodata._ZTIPd	00000000 .rodata._ZTIPd
+00000000 l    d  .rodata._ZTId	00000000 .rodata._ZTId
+00000000 l    d  .rodata._ZTIPKf	00000000 .rodata._ZTIPKf
+00000000 l    d  .rodata._ZTIPf	00000000 .rodata._ZTIPf
+00000000 l    d  .rodata._ZTIf	00000000 .rodata._ZTIf
+00000000 l    d  .rodata._ZTIPKy	00000000 .rodata._ZTIPKy
+00000000 l    d  .rodata._ZTIPy	00000000 .rodata._ZTIPy
+00000000 l    d  .rodata._ZTIy	00000000 .rodata._ZTIy
+00000000 l    d  .rodata._ZTIPKx	00000000 .rodata._ZTIPKx
+00000000 l    d  .rodata._ZTIPx	00000000 .rodata._ZTIPx
+00000000 l    d  .rodata._ZTIx	00000000 .rodata._ZTIx
+00000000 l    d  .rodata._ZTIPKm	00000000 .rodata._ZTIPKm
+00000000 l    d  .rodata._ZTIPm	00000000 .rodata._ZTIPm
+00000000 l    d  .rodata._ZTIm	00000000 .rodata._ZTIm
+00000000 l    d  .rodata._ZTIPKl	00000000 .rodata._ZTIPKl
+00000000 l    d  .rodata._ZTIPl	00000000 .rodata._ZTIPl
+00000000 l    d  .rodata._ZTIl	00000000 .rodata._ZTIl
+00000000 l    d  .rodata._ZTIPKj	00000000 .rodata._ZTIPKj
+00000000 l    d  .rodata._ZTIPj	00000000 .rodata._ZTIPj
+00000000 l    d  .rodata._ZTIj	00000000 .rodata._ZTIj
+00000000 l    d  .rodata._ZTIPKi	00000000 .rodata._ZTIPKi
+00000000 l    d  .rodata._ZTIPi	00000000 .rodata._ZTIPi
+00000000 l    d  .rodata._ZTIi	00000000 .rodata._ZTIi
+00000000 l    d  .rodata._ZTIPKt	00000000 .rodata._ZTIPKt
+00000000 l    d  .rodata._ZTIPt	00000000 .rodata._ZTIPt
+00000000 l    d  .rodata._ZTIt	00000000 .rodata._ZTIt
+00000000 l    d  .rodata._ZTIPKs	00000000 .rodata._ZTIPKs
+00000000 l    d  .rodata._ZTIPs	00000000 .rodata._ZTIPs
+00000000 l    d  .rodata._ZTIs	00000000 .rodata._ZTIs
+00000000 l    d  .rodata._ZTIPKh	00000000 .rodata._ZTIPKh
+00000000 l    d  .rodata._ZTIPh	00000000 .rodata._ZTIPh
+00000000 l    d  .rodata._ZTIh	00000000 .rodata._ZTIh
+00000000 l    d  .rodata._ZTIPKa	00000000 .rodata._ZTIPKa
+00000000 l    d  .rodata._ZTIPa	00000000 .rodata._ZTIPa
+00000000 l    d  .rodata._ZTIa	00000000 .rodata._ZTIa
+00000000 l    d  .rodata._ZTIPKc	00000000 .rodata._ZTIPKc
+00000000 l    d  .rodata._ZTIPc	00000000 .rodata._ZTIPc
+00000000 l    d  .rodata._ZTIc	00000000 .rodata._ZTIc
+00000000 l    d  .rodata._ZTIPKDi	00000000 .rodata._ZTIPKDi
+00000000 l    d  .rodata._ZTIPDi	00000000 .rodata._ZTIPDi
+00000000 l    d  .rodata._ZTIDi	00000000 .rodata._ZTIDi
+00000000 l    d  .rodata._ZTIPKDs	00000000 .rodata._ZTIPKDs
+00000000 l    d  .rodata._ZTIPDs	00000000 .rodata._ZTIPDs
+00000000 l    d  .rodata._ZTIDs	00000000 .rodata._ZTIDs
+00000000 l    d  .rodata._ZTIPKw	00000000 .rodata._ZTIPKw
+00000000 l    d  .rodata._ZTIPw	00000000 .rodata._ZTIPw
+00000000 l    d  .rodata._ZTIw	00000000 .rodata._ZTIw
+00000000 l    d  .rodata._ZTIPKb	00000000 .rodata._ZTIPKb
+00000000 l    d  .rodata._ZTIPb	00000000 .rodata._ZTIPb
+00000000 l    d  .rodata._ZTIb	00000000 .rodata._ZTIb
+00000000 l    d  .rodata._ZTIPKv	00000000 .rodata._ZTIPKv
+00000000 l    d  .rodata._ZTIPv	00000000 .rodata._ZTIPv
+00000000 l    d  .rodata._ZTIv	00000000 .rodata._ZTIv
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN10__cxxabiv123__fundamental_type_infoD2Ev	00000000 .literal._ZN10__cxxabiv123__fundamental_type_infoD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv123__fundamental_type_infoD0Ev	00000000 .literal._ZN10__cxxabiv123__fundamental_type_infoD0Ev
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv123__fundamental_type_infoE	00000000 .xt.prop._ZTSN10__cxxabiv123__fundamental_type_infoE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv123__fundamental_type_infoE	00000000 .xt.prop._ZTIN10__cxxabiv123__fundamental_type_infoE
+00000000 l    d  .xt.prop._ZTSv	00000000 .xt.prop._ZTSv
+00000000 l    d  .xt.prop._ZTSPv	00000000 .xt.prop._ZTSPv
+00000000 l    d  .xt.prop._ZTSPKv	00000000 .xt.prop._ZTSPKv
+00000000 l    d  .xt.prop._ZTSb	00000000 .xt.prop._ZTSb
+00000000 l    d  .xt.prop._ZTSPb	00000000 .xt.prop._ZTSPb
+00000000 l    d  .xt.prop._ZTSPKb	00000000 .xt.prop._ZTSPKb
+00000000 l    d  .xt.prop._ZTSw	00000000 .xt.prop._ZTSw
+00000000 l    d  .xt.prop._ZTSPw	00000000 .xt.prop._ZTSPw
+00000000 l    d  .xt.prop._ZTSPKw	00000000 .xt.prop._ZTSPKw
+00000000 l    d  .xt.prop._ZTSDs	00000000 .xt.prop._ZTSDs
+00000000 l    d  .xt.prop._ZTSPDs	00000000 .xt.prop._ZTSPDs
+00000000 l    d  .xt.prop._ZTSPKDs	00000000 .xt.prop._ZTSPKDs
+00000000 l    d  .xt.prop._ZTSDi	00000000 .xt.prop._ZTSDi
+00000000 l    d  .xt.prop._ZTSPDi	00000000 .xt.prop._ZTSPDi
+00000000 l    d  .xt.prop._ZTSPKDi	00000000 .xt.prop._ZTSPKDi
+00000000 l    d  .xt.prop._ZTSc	00000000 .xt.prop._ZTSc
+00000000 l    d  .xt.prop._ZTSPc	00000000 .xt.prop._ZTSPc
+00000000 l    d  .xt.prop._ZTSPKc	00000000 .xt.prop._ZTSPKc
+00000000 l    d  .xt.prop._ZTSa	00000000 .xt.prop._ZTSa
+00000000 l    d  .xt.prop._ZTSPa	00000000 .xt.prop._ZTSPa
+00000000 l    d  .xt.prop._ZTSPKa	00000000 .xt.prop._ZTSPKa
+00000000 l    d  .xt.prop._ZTSh	00000000 .xt.prop._ZTSh
+00000000 l    d  .xt.prop._ZTSPh	00000000 .xt.prop._ZTSPh
+00000000 l    d  .xt.prop._ZTSPKh	00000000 .xt.prop._ZTSPKh
+00000000 l    d  .xt.prop._ZTSs	00000000 .xt.prop._ZTSs
+00000000 l    d  .xt.prop._ZTSPs	00000000 .xt.prop._ZTSPs
+00000000 l    d  .xt.prop._ZTSPKs	00000000 .xt.prop._ZTSPKs
+00000000 l    d  .xt.prop._ZTSt	00000000 .xt.prop._ZTSt
+00000000 l    d  .xt.prop._ZTSPt	00000000 .xt.prop._ZTSPt
+00000000 l    d  .xt.prop._ZTSPKt	00000000 .xt.prop._ZTSPKt
+00000000 l    d  .xt.prop._ZTSi	00000000 .xt.prop._ZTSi
+00000000 l    d  .xt.prop._ZTSPi	00000000 .xt.prop._ZTSPi
+00000000 l    d  .xt.prop._ZTSPKi	00000000 .xt.prop._ZTSPKi
+00000000 l    d  .xt.prop._ZTSj	00000000 .xt.prop._ZTSj
+00000000 l    d  .xt.prop._ZTSPj	00000000 .xt.prop._ZTSPj
+00000000 l    d  .xt.prop._ZTSPKj	00000000 .xt.prop._ZTSPKj
+00000000 l    d  .xt.prop._ZTSl	00000000 .xt.prop._ZTSl
+00000000 l    d  .xt.prop._ZTSPl	00000000 .xt.prop._ZTSPl
+00000000 l    d  .xt.prop._ZTSPKl	00000000 .xt.prop._ZTSPKl
+00000000 l    d  .xt.prop._ZTSm	00000000 .xt.prop._ZTSm
+00000000 l    d  .xt.prop._ZTSPm	00000000 .xt.prop._ZTSPm
+00000000 l    d  .xt.prop._ZTSPKm	00000000 .xt.prop._ZTSPKm
+00000000 l    d  .xt.prop._ZTSx	00000000 .xt.prop._ZTSx
+00000000 l    d  .xt.prop._ZTSPx	00000000 .xt.prop._ZTSPx
+00000000 l    d  .xt.prop._ZTSPKx	00000000 .xt.prop._ZTSPKx
+00000000 l    d  .xt.prop._ZTSy	00000000 .xt.prop._ZTSy
+00000000 l    d  .xt.prop._ZTSPy	00000000 .xt.prop._ZTSPy
+00000000 l    d  .xt.prop._ZTSPKy	00000000 .xt.prop._ZTSPKy
+00000000 l    d  .xt.prop._ZTSf	00000000 .xt.prop._ZTSf
+00000000 l    d  .xt.prop._ZTSPf	00000000 .xt.prop._ZTSPf
+00000000 l    d  .xt.prop._ZTSPKf	00000000 .xt.prop._ZTSPKf
+00000000 l    d  .xt.prop._ZTSd	00000000 .xt.prop._ZTSd
+00000000 l    d  .xt.prop._ZTSPd	00000000 .xt.prop._ZTSPd
+00000000 l    d  .xt.prop._ZTSPKd	00000000 .xt.prop._ZTSPKd
+00000000 l    d  .xt.prop._ZTSe	00000000 .xt.prop._ZTSe
+00000000 l    d  .xt.prop._ZTSPe	00000000 .xt.prop._ZTSPe
+00000000 l    d  .xt.prop._ZTSPKe	00000000 .xt.prop._ZTSPKe
+00000000 l    d  .xt.prop._ZTSDf	00000000 .xt.prop._ZTSDf
+00000000 l    d  .xt.prop._ZTSPDf	00000000 .xt.prop._ZTSPDf
+00000000 l    d  .xt.prop._ZTSPKDf	00000000 .xt.prop._ZTSPKDf
+00000000 l    d  .xt.prop._ZTSDd	00000000 .xt.prop._ZTSDd
+00000000 l    d  .xt.prop._ZTSPDd	00000000 .xt.prop._ZTSPDd
+00000000 l    d  .xt.prop._ZTSPKDd	00000000 .xt.prop._ZTSPKDd
+00000000 l    d  .xt.prop._ZTSDe	00000000 .xt.prop._ZTSDe
+00000000 l    d  .xt.prop._ZTSPDe	00000000 .xt.prop._ZTSPDe
+00000000 l    d  .xt.prop._ZTSPKDe	00000000 .xt.prop._ZTSPKDe
+00000000 l    d  .xt.prop._ZTSDn	00000000 .xt.prop._ZTSDn
+00000000 l    d  .xt.prop._ZTSPDn	00000000 .xt.prop._ZTSPDn
+00000000 l    d  .xt.prop._ZTSPKDn	00000000 .xt.prop._ZTSPKDn
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv123__fundamental_type_infoE	00000000 .xt.prop._ZTVN10__cxxabiv123__fundamental_type_infoE
+00000000 l    d  .xt.prop._ZTIPKDn	00000000 .xt.prop._ZTIPKDn
+00000000 l    d  .xt.prop._ZTIPDn	00000000 .xt.prop._ZTIPDn
+00000000 l    d  .xt.prop._ZTIDn	00000000 .xt.prop._ZTIDn
+00000000 l    d  .xt.prop._ZTIPKDe	00000000 .xt.prop._ZTIPKDe
+00000000 l    d  .xt.prop._ZTIPDe	00000000 .xt.prop._ZTIPDe
+00000000 l    d  .xt.prop._ZTIDe	00000000 .xt.prop._ZTIDe
+00000000 l    d  .xt.prop._ZTIPKDd	00000000 .xt.prop._ZTIPKDd
+00000000 l    d  .xt.prop._ZTIPDd	00000000 .xt.prop._ZTIPDd
+00000000 l    d  .xt.prop._ZTIDd	00000000 .xt.prop._ZTIDd
+00000000 l    d  .xt.prop._ZTIPKDf	00000000 .xt.prop._ZTIPKDf
+00000000 l    d  .xt.prop._ZTIPDf	00000000 .xt.prop._ZTIPDf
+00000000 l    d  .xt.prop._ZTIDf	00000000 .xt.prop._ZTIDf
+00000000 l    d  .xt.prop._ZTIPKe	00000000 .xt.prop._ZTIPKe
+00000000 l    d  .xt.prop._ZTIPe	00000000 .xt.prop._ZTIPe
+00000000 l    d  .xt.prop._ZTIe	00000000 .xt.prop._ZTIe
+00000000 l    d  .xt.prop._ZTIPKd	00000000 .xt.prop._ZTIPKd
+00000000 l    d  .xt.prop._ZTIPd	00000000 .xt.prop._ZTIPd
+00000000 l    d  .xt.prop._ZTId	00000000 .xt.prop._ZTId
+00000000 l    d  .xt.prop._ZTIPKf	00000000 .xt.prop._ZTIPKf
+00000000 l    d  .xt.prop._ZTIPf	00000000 .xt.prop._ZTIPf
+00000000 l    d  .xt.prop._ZTIf	00000000 .xt.prop._ZTIf
+00000000 l    d  .xt.prop._ZTIPKy	00000000 .xt.prop._ZTIPKy
+00000000 l    d  .xt.prop._ZTIPy	00000000 .xt.prop._ZTIPy
+00000000 l    d  .xt.prop._ZTIy	00000000 .xt.prop._ZTIy
+00000000 l    d  .xt.prop._ZTIPKx	00000000 .xt.prop._ZTIPKx
+00000000 l    d  .xt.prop._ZTIPx	00000000 .xt.prop._ZTIPx
+00000000 l    d  .xt.prop._ZTIx	00000000 .xt.prop._ZTIx
+00000000 l    d  .xt.prop._ZTIPKm	00000000 .xt.prop._ZTIPKm
+00000000 l    d  .xt.prop._ZTIPm	00000000 .xt.prop._ZTIPm
+00000000 l    d  .xt.prop._ZTIm	00000000 .xt.prop._ZTIm
+00000000 l    d  .xt.prop._ZTIPKl	00000000 .xt.prop._ZTIPKl
+00000000 l    d  .xt.prop._ZTIPl	00000000 .xt.prop._ZTIPl
+00000000 l    d  .xt.prop._ZTIl	00000000 .xt.prop._ZTIl
+00000000 l    d  .xt.prop._ZTIPKj	00000000 .xt.prop._ZTIPKj
+00000000 l    d  .xt.prop._ZTIPj	00000000 .xt.prop._ZTIPj
+00000000 l    d  .xt.prop._ZTIj	00000000 .xt.prop._ZTIj
+00000000 l    d  .xt.prop._ZTIPKi	00000000 .xt.prop._ZTIPKi
+00000000 l    d  .xt.prop._ZTIPi	00000000 .xt.prop._ZTIPi
+00000000 l    d  .xt.prop._ZTIi	00000000 .xt.prop._ZTIi
+00000000 l    d  .xt.prop._ZTIPKt	00000000 .xt.prop._ZTIPKt
+00000000 l    d  .xt.prop._ZTIPt	00000000 .xt.prop._ZTIPt
+00000000 l    d  .xt.prop._ZTIt	00000000 .xt.prop._ZTIt
+00000000 l    d  .xt.prop._ZTIPKs	00000000 .xt.prop._ZTIPKs
+00000000 l    d  .xt.prop._ZTIPs	00000000 .xt.prop._ZTIPs
+00000000 l    d  .xt.prop._ZTIs	00000000 .xt.prop._ZTIs
+00000000 l    d  .xt.prop._ZTIPKh	00000000 .xt.prop._ZTIPKh
+00000000 l    d  .xt.prop._ZTIPh	00000000 .xt.prop._ZTIPh
+00000000 l    d  .xt.prop._ZTIh	00000000 .xt.prop._ZTIh
+00000000 l    d  .xt.prop._ZTIPKa	00000000 .xt.prop._ZTIPKa
+00000000 l    d  .xt.prop._ZTIPa	00000000 .xt.prop._ZTIPa
+00000000 l    d  .xt.prop._ZTIa	00000000 .xt.prop._ZTIa
+00000000 l    d  .xt.prop._ZTIPKc	00000000 .xt.prop._ZTIPKc
+00000000 l    d  .xt.prop._ZTIPc	00000000 .xt.prop._ZTIPc
+00000000 l    d  .xt.prop._ZTIc	00000000 .xt.prop._ZTIc
+00000000 l    d  .xt.prop._ZTIPKDi	00000000 .xt.prop._ZTIPKDi
+00000000 l    d  .xt.prop._ZTIPDi	00000000 .xt.prop._ZTIPDi
+00000000 l    d  .xt.prop._ZTIDi	00000000 .xt.prop._ZTIDi
+00000000 l    d  .xt.prop._ZTIPKDs	00000000 .xt.prop._ZTIPKDs
+00000000 l    d  .xt.prop._ZTIPDs	00000000 .xt.prop._ZTIPDs
+00000000 l    d  .xt.prop._ZTIDs	00000000 .xt.prop._ZTIDs
+00000000 l    d  .xt.prop._ZTIPKw	00000000 .xt.prop._ZTIPKw
+00000000 l    d  .xt.prop._ZTIPw	00000000 .xt.prop._ZTIPw
+00000000 l    d  .xt.prop._ZTIw	00000000 .xt.prop._ZTIw
+00000000 l    d  .xt.prop._ZTIPKb	00000000 .xt.prop._ZTIPKb
+00000000 l    d  .xt.prop._ZTIPb	00000000 .xt.prop._ZTIPb
+00000000 l    d  .xt.prop._ZTIb	00000000 .xt.prop._ZTIb
+00000000 l    d  .xt.prop._ZTIPKv	00000000 .xt.prop._ZTIPKv
+00000000 l    d  .xt.prop._ZTIPv	00000000 .xt.prop._ZTIPv
+00000000 l    d  .xt.prop._ZTIv	00000000 .xt.prop._ZTIv
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000  w    O .rodata._ZTVN10__cxxabiv123__fundamental_type_infoE	00000020 _ZTVN10__cxxabiv123__fundamental_type_infoE
+00000000 g     F .text._ZN10__cxxabiv123__fundamental_type_infoD2Ev	00000014 _ZN10__cxxabiv123__fundamental_type_infoD2Ev
+00000000         *UND*	00000000 _ZNSt9type_infoD2Ev
+00000000 g     F .text._ZN10__cxxabiv123__fundamental_type_infoD2Ev	00000014 _ZN10__cxxabiv123__fundamental_type_infoD1Ev
+00000000 g     F .text._ZN10__cxxabiv123__fundamental_type_infoD0Ev	00000022 _ZN10__cxxabiv123__fundamental_type_infoD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000  w    O .rodata._ZTSN10__cxxabiv123__fundamental_type_infoE	00000028 _ZTSN10__cxxabiv123__fundamental_type_infoE
+00000000  w    O .rodata._ZTIN10__cxxabiv123__fundamental_type_infoE	0000000c _ZTIN10__cxxabiv123__fundamental_type_infoE
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTISt9type_info
+00000000  w    O .rodata._ZTSv	00000002 _ZTSv
+00000000  w    O .rodata._ZTSPv	00000003 _ZTSPv
+00000000  w    O .rodata._ZTSPKv	00000004 _ZTSPKv
+00000000  w    O .rodata._ZTSb	00000002 _ZTSb
+00000000  w    O .rodata._ZTSPb	00000003 _ZTSPb
+00000000  w    O .rodata._ZTSPKb	00000004 _ZTSPKb
+00000000  w    O .rodata._ZTSw	00000002 _ZTSw
+00000000  w    O .rodata._ZTSPw	00000003 _ZTSPw
+00000000  w    O .rodata._ZTSPKw	00000004 _ZTSPKw
+00000000  w    O .rodata._ZTSDs	00000003 _ZTSDs
+00000000  w    O .rodata._ZTSPDs	00000004 _ZTSPDs
+00000000  w    O .rodata._ZTSPKDs	00000005 _ZTSPKDs
+00000000  w    O .rodata._ZTSDi	00000003 _ZTSDi
+00000000  w    O .rodata._ZTSPDi	00000004 _ZTSPDi
+00000000  w    O .rodata._ZTSPKDi	00000005 _ZTSPKDi
+00000000  w    O .rodata._ZTSc	00000002 _ZTSc
+00000000  w    O .rodata._ZTSPc	00000003 _ZTSPc
+00000000  w    O .rodata._ZTSPKc	00000004 _ZTSPKc
+00000000  w    O .rodata._ZTSa	00000002 _ZTSa
+00000000  w    O .rodata._ZTSPa	00000003 _ZTSPa
+00000000  w    O .rodata._ZTSPKa	00000004 _ZTSPKa
+00000000  w    O .rodata._ZTSh	00000002 _ZTSh
+00000000  w    O .rodata._ZTSPh	00000003 _ZTSPh
+00000000  w    O .rodata._ZTSPKh	00000004 _ZTSPKh
+00000000  w    O .rodata._ZTSs	00000002 _ZTSs
+00000000  w    O .rodata._ZTSPs	00000003 _ZTSPs
+00000000  w    O .rodata._ZTSPKs	00000004 _ZTSPKs
+00000000  w    O .rodata._ZTSt	00000002 _ZTSt
+00000000  w    O .rodata._ZTSPt	00000003 _ZTSPt
+00000000  w    O .rodata._ZTSPKt	00000004 _ZTSPKt
+00000000  w    O .rodata._ZTSi	00000002 _ZTSi
+00000000  w    O .rodata._ZTSPi	00000003 _ZTSPi
+00000000  w    O .rodata._ZTSPKi	00000004 _ZTSPKi
+00000000  w    O .rodata._ZTSj	00000002 _ZTSj
+00000000  w    O .rodata._ZTSPj	00000003 _ZTSPj
+00000000  w    O .rodata._ZTSPKj	00000004 _ZTSPKj
+00000000  w    O .rodata._ZTSl	00000002 _ZTSl
+00000000  w    O .rodata._ZTSPl	00000003 _ZTSPl
+00000000  w    O .rodata._ZTSPKl	00000004 _ZTSPKl
+00000000  w    O .rodata._ZTSm	00000002 _ZTSm
+00000000  w    O .rodata._ZTSPm	00000003 _ZTSPm
+00000000  w    O .rodata._ZTSPKm	00000004 _ZTSPKm
+00000000  w    O .rodata._ZTSx	00000002 _ZTSx
+00000000  w    O .rodata._ZTSPx	00000003 _ZTSPx
+00000000  w    O .rodata._ZTSPKx	00000004 _ZTSPKx
+00000000  w    O .rodata._ZTSy	00000002 _ZTSy
+00000000  w    O .rodata._ZTSPy	00000003 _ZTSPy
+00000000  w    O .rodata._ZTSPKy	00000004 _ZTSPKy
+00000000  w    O .rodata._ZTSf	00000002 _ZTSf
+00000000  w    O .rodata._ZTSPf	00000003 _ZTSPf
+00000000  w    O .rodata._ZTSPKf	00000004 _ZTSPKf
+00000000  w    O .rodata._ZTSd	00000002 _ZTSd
+00000000  w    O .rodata._ZTSPd	00000003 _ZTSPd
+00000000  w    O .rodata._ZTSPKd	00000004 _ZTSPKd
+00000000  w    O .rodata._ZTSe	00000002 _ZTSe
+00000000  w    O .rodata._ZTSPe	00000003 _ZTSPe
+00000000  w    O .rodata._ZTSPKe	00000004 _ZTSPKe
+00000000  w    O .rodata._ZTSDf	00000003 _ZTSDf
+00000000  w    O .rodata._ZTSPDf	00000004 _ZTSPDf
+00000000  w    O .rodata._ZTSPKDf	00000005 _ZTSPKDf
+00000000  w    O .rodata._ZTSDd	00000003 _ZTSDd
+00000000  w    O .rodata._ZTSPDd	00000004 _ZTSPDd
+00000000  w    O .rodata._ZTSPKDd	00000005 _ZTSPKDd
+00000000  w    O .rodata._ZTSDe	00000003 _ZTSDe
+00000000  w    O .rodata._ZTSPDe	00000004 _ZTSPDe
+00000000  w    O .rodata._ZTSPKDe	00000005 _ZTSPKDe
+00000000  w    O .rodata._ZTSDn	00000003 _ZTSDn
+00000000  w    O .rodata._ZTSPDn	00000004 _ZTSPDn
+00000000  w    O .rodata._ZTSPKDn	00000005 _ZTSPKDn
+00000000         *UND*	00000000 _ZNKSt9type_info14__is_pointer_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info15__is_function_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info10__do_catchEPKS_PPvj
+00000000         *UND*	00000000 _ZNKSt9type_info11__do_upcastEPKN10__cxxabiv117__class_type_infoEPPv
+00000000  w    O .rodata._ZTIPKDn	00000010 _ZTIPKDn
+00000000         *UND*	00000000 _ZTVN10__cxxabiv119__pointer_type_infoE
+00000000  w    O .rodata._ZTIDn	00000008 _ZTIDn
+00000000  w    O .rodata._ZTIPDn	00000010 _ZTIPDn
+00000000  w    O .rodata._ZTIPKDe	00000010 _ZTIPKDe
+00000000  w    O .rodata._ZTIDe	00000008 _ZTIDe
+00000000  w    O .rodata._ZTIPDe	00000010 _ZTIPDe
+00000000  w    O .rodata._ZTIPKDd	00000010 _ZTIPKDd
+00000000  w    O .rodata._ZTIDd	00000008 _ZTIDd
+00000000  w    O .rodata._ZTIPDd	00000010 _ZTIPDd
+00000000  w    O .rodata._ZTIPKDf	00000010 _ZTIPKDf
+00000000  w    O .rodata._ZTIDf	00000008 _ZTIDf
+00000000  w    O .rodata._ZTIPDf	00000010 _ZTIPDf
+00000000  w    O .rodata._ZTIPKe	00000010 _ZTIPKe
+00000000  w    O .rodata._ZTIe	00000008 _ZTIe
+00000000  w    O .rodata._ZTIPe	00000010 _ZTIPe
+00000000  w    O .rodata._ZTIPKd	00000010 _ZTIPKd
+00000000  w    O .rodata._ZTId	00000008 _ZTId
+00000000  w    O .rodata._ZTIPd	00000010 _ZTIPd
+00000000  w    O .rodata._ZTIPKf	00000010 _ZTIPKf
+00000000  w    O .rodata._ZTIf	00000008 _ZTIf
+00000000  w    O .rodata._ZTIPf	00000010 _ZTIPf
+00000000  w    O .rodata._ZTIPKy	00000010 _ZTIPKy
+00000000  w    O .rodata._ZTIy	00000008 _ZTIy
+00000000  w    O .rodata._ZTIPy	00000010 _ZTIPy
+00000000  w    O .rodata._ZTIPKx	00000010 _ZTIPKx
+00000000  w    O .rodata._ZTIx	00000008 _ZTIx
+00000000  w    O .rodata._ZTIPx	00000010 _ZTIPx
+00000000  w    O .rodata._ZTIPKm	00000010 _ZTIPKm
+00000000  w    O .rodata._ZTIm	00000008 _ZTIm
+00000000  w    O .rodata._ZTIPm	00000010 _ZTIPm
+00000000  w    O .rodata._ZTIPKl	00000010 _ZTIPKl
+00000000  w    O .rodata._ZTIl	00000008 _ZTIl
+00000000  w    O .rodata._ZTIPl	00000010 _ZTIPl
+00000000  w    O .rodata._ZTIPKj	00000010 _ZTIPKj
+00000000  w    O .rodata._ZTIj	00000008 _ZTIj
+00000000  w    O .rodata._ZTIPj	00000010 _ZTIPj
+00000000  w    O .rodata._ZTIPKi	00000010 _ZTIPKi
+00000000  w    O .rodata._ZTIi	00000008 _ZTIi
+00000000  w    O .rodata._ZTIPi	00000010 _ZTIPi
+00000000  w    O .rodata._ZTIPKt	00000010 _ZTIPKt
+00000000  w    O .rodata._ZTIt	00000008 _ZTIt
+00000000  w    O .rodata._ZTIPt	00000010 _ZTIPt
+00000000  w    O .rodata._ZTIPKs	00000010 _ZTIPKs
+00000000  w    O .rodata._ZTIs	00000008 _ZTIs
+00000000  w    O .rodata._ZTIPs	00000010 _ZTIPs
+00000000  w    O .rodata._ZTIPKh	00000010 _ZTIPKh
+00000000  w    O .rodata._ZTIh	00000008 _ZTIh
+00000000  w    O .rodata._ZTIPh	00000010 _ZTIPh
+00000000  w    O .rodata._ZTIPKa	00000010 _ZTIPKa
+00000000  w    O .rodata._ZTIa	00000008 _ZTIa
+00000000  w    O .rodata._ZTIPa	00000010 _ZTIPa
+00000000  w    O .rodata._ZTIPKc	00000010 _ZTIPKc
+00000000  w    O .rodata._ZTIc	00000008 _ZTIc
+00000000  w    O .rodata._ZTIPc	00000010 _ZTIPc
+00000000  w    O .rodata._ZTIPKDi	00000010 _ZTIPKDi
+00000000  w    O .rodata._ZTIDi	00000008 _ZTIDi
+00000000  w    O .rodata._ZTIPDi	00000010 _ZTIPDi
+00000000  w    O .rodata._ZTIPKDs	00000010 _ZTIPKDs
+00000000  w    O .rodata._ZTIDs	00000008 _ZTIDs
+00000000  w    O .rodata._ZTIPDs	00000010 _ZTIPDs
+00000000  w    O .rodata._ZTIPKw	00000010 _ZTIPKw
+00000000  w    O .rodata._ZTIw	00000008 _ZTIw
+00000000  w    O .rodata._ZTIPw	00000010 _ZTIPw
+00000000  w    O .rodata._ZTIPKb	00000010 _ZTIPKb
+00000000  w    O .rodata._ZTIb	00000008 _ZTIb
+00000000  w    O .rodata._ZTIPb	00000010 _ZTIPb
+00000000  w    O .rodata._ZTIPKv	00000010 _ZTIPKv
+00000000  w    O .rodata._ZTIv	00000008 _ZTIv
+00000000  w    O .rodata._ZTIPv	00000010 _ZTIPv
+
+
+
+guard.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 guard.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text.__cxa_guard_acquire	00000000 .text.__cxa_guard_acquire
+00000000 l    d  .text.__cxa_guard_abort	00000000 .text.__cxa_guard_abort
+00000000 l    d  .text.__cxa_guard_release	00000000 .text.__cxa_guard_release
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal.__cxa_guard_acquire	00000000 .literal.__cxa_guard_acquire
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 _ZTVN9__gnu_cxx20recursive_init_errorE
+00000000         *UND*	00000000 _ZTIN9__gnu_cxx20recursive_init_errorE
+00000000         *UND*	00000000 _ZN9__gnu_cxx20recursive_init_errorD1Ev
+00000000 g     F .text.__cxa_guard_acquire	00000035 __cxa_guard_acquire
+00000000         *UND*	00000000 __cxa_allocate_exception
+00000000         *UND*	00000000 __cxa_throw
+00000000 g     F .text.__cxa_guard_abort	00000007 __cxa_guard_abort
+00000000 g     F .text.__cxa_guard_release	0000000c __cxa_guard_release
+
+
+
+guard_error.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 guard_error.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZN9__gnu_cxx20recursive_init_errorD2Ev	00000000 .text._ZN9__gnu_cxx20recursive_init_errorD2Ev
+00000000 l    d  .text._ZN9__gnu_cxx20recursive_init_errorD0Ev	00000000 .text._ZN9__gnu_cxx20recursive_init_errorD0Ev
+00000000 l    d  .rodata._ZTSN9__gnu_cxx20recursive_init_errorE	00000000 .rodata._ZTSN9__gnu_cxx20recursive_init_errorE
+00000000 l    d  .rodata._ZTIN9__gnu_cxx20recursive_init_errorE	00000000 .rodata._ZTIN9__gnu_cxx20recursive_init_errorE
+00000000 l    d  .rodata._ZTVN9__gnu_cxx20recursive_init_errorE	00000000 .rodata._ZTVN9__gnu_cxx20recursive_init_errorE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN9__gnu_cxx20recursive_init_errorD2Ev	00000000 .literal._ZN9__gnu_cxx20recursive_init_errorD2Ev
+00000000 l    d  .literal._ZN9__gnu_cxx20recursive_init_errorD0Ev	00000000 .literal._ZN9__gnu_cxx20recursive_init_errorD0Ev
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSN9__gnu_cxx20recursive_init_errorE	00000000 .xt.prop._ZTSN9__gnu_cxx20recursive_init_errorE
+00000000 l    d  .xt.prop._ZTIN9__gnu_cxx20recursive_init_errorE	00000000 .xt.prop._ZTIN9__gnu_cxx20recursive_init_errorE
+00000000 l    d  .xt.prop._ZTVN9__gnu_cxx20recursive_init_errorE	00000000 .xt.prop._ZTVN9__gnu_cxx20recursive_init_errorE
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000  w    O .rodata._ZTVN9__gnu_cxx20recursive_init_errorE	00000014 _ZTVN9__gnu_cxx20recursive_init_errorE
+00000000 g     F .text._ZN9__gnu_cxx20recursive_init_errorD2Ev	00000014 _ZN9__gnu_cxx20recursive_init_errorD2Ev
+00000000         *UND*	00000000 _ZNSt9exceptionD2Ev
+00000000 g     F .text._ZN9__gnu_cxx20recursive_init_errorD2Ev	00000014 _ZN9__gnu_cxx20recursive_init_errorD1Ev
+00000000 g     F .text._ZN9__gnu_cxx20recursive_init_errorD0Ev	00000022 _ZN9__gnu_cxx20recursive_init_errorD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000  w    O .rodata._ZTSN9__gnu_cxx20recursive_init_errorE	00000023 _ZTSN9__gnu_cxx20recursive_init_errorE
+00000000  w    O .rodata._ZTIN9__gnu_cxx20recursive_init_errorE	0000000c _ZTIN9__gnu_cxx20recursive_init_errorE
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTISt9exception
+00000000         *UND*	00000000 _ZNKSt9exception4whatEv
+
+
+
+hash_bytes.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 hash_bytes.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZSt11_Hash_bytesPKvjj	00000000 .text._ZSt11_Hash_bytesPKvjj
+00000000 l    d  .text._ZSt15_Fnv_hash_bytesPKvjj	00000000 .text._ZSt15_Fnv_hash_bytesPKvjj
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZSt11_Hash_bytesPKvjj	00000000 .literal._ZSt11_Hash_bytesPKvjj
+00000000 l    d  .literal._ZSt15_Fnv_hash_bytesPKvjj	00000000 .literal._ZSt15_Fnv_hash_bytesPKvjj
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text._ZSt11_Hash_bytesPKvjj	0000008f _ZSt11_Hash_bytesPKvjj
+00000000 g     F .text._ZSt15_Fnv_hash_bytesPKvjj	0000001c _ZSt15_Fnv_hash_bytesPKvjj
+
+
+
+nested_exception.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 nested_exception.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+new_handler.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 new_handler.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZSt15set_new_handlerPFvvE	00000000 .text._ZSt15set_new_handlerPFvvE
+00000000 l    d  .bss.__new_handler	00000000 .bss.__new_handler
+00000000 l    d  .rodata._ZSt7nothrow	00000000 .rodata._ZSt7nothrow
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZSt15set_new_handlerPFvvE	00000000 .literal._ZSt15set_new_handlerPFvvE
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     O .bss.__new_handler	00000004 __new_handler
+00000000 g     F .text._ZSt15set_new_handlerPFvvE	0000000b _ZSt15set_new_handlerPFvvE
+00000000 g     O .rodata._ZSt7nothrow	00000001 _ZSt7nothrow
+
+
+
+new_op.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 new_op.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._Znwj	00000000 .text._Znwj
+00000000 l    d  .gcc_except_table._Znwj	00000000 .gcc_except_table._Znwj
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._Znwj	00000000 .literal._Znwj
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __new_handler
+00000000         *UND*	00000000 _ZTVSt9bad_alloc
+00000000         *UND*	00000000 _ZTISt9bad_alloc
+00000000         *UND*	00000000 _ZNSt9bad_allocD1Ev
+00000000 g     F .text._Znwj	00000057 _Znwj
+00000000         *UND*	00000000 malloc
+00000000         *UND*	00000000 __cxa_allocate_exception
+00000000         *UND*	00000000 __cxa_throw
+00000000         *UND*	00000000 _Unwind_Resume
+00000000         *UND*	00000000 __cxa_call_unexpected
+00000000         *UND*	00000000 __gxx_personality_v0
+
+
+
+new_opnt.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 new_opnt.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZnwjRKSt9nothrow_t	00000000 .text._ZnwjRKSt9nothrow_t
+00000000 l    d  .gcc_except_table._ZnwjRKSt9nothrow_t	00000000 .gcc_except_table._ZnwjRKSt9nothrow_t
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZnwjRKSt9nothrow_t	00000000 .literal._ZnwjRKSt9nothrow_t
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __new_handler
+00000000 g     F .text._ZnwjRKSt9nothrow_t	00000052 _ZnwjRKSt9nothrow_t
+00000000         *UND*	00000000 malloc
+00000000         *UND*	00000000 __cxa_begin_catch
+00000000         *UND*	00000000 __cxa_end_catch
+00000000         *UND*	00000000 _Unwind_Resume
+00000000         *UND*	00000000 __cxa_call_unexpected
+00000000         *UND*	00000000 __gxx_personality_v0
+00000000         *UND*	00000000 _ZTISt9bad_alloc
+
+
+
+new_opv.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 new_opv.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._Znaj	00000000 .text._Znaj
+00000000 l    d  .gcc_except_table._Znaj	00000000 .gcc_except_table._Znaj
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._Znaj	00000000 .literal._Znaj
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text._Znaj	0000001b _Znaj
+00000000         *UND*	00000000 _Znwj
+00000000         *UND*	00000000 _Unwind_Resume
+00000000         *UND*	00000000 __cxa_call_unexpected
+00000000         *UND*	00000000 __gxx_personality_v0
+00000000         *UND*	00000000 _ZTISt9bad_alloc
+
+
+
+new_opvnt.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 new_opvnt.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZnajRKSt9nothrow_t	00000000 .text._ZnajRKSt9nothrow_t
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZnajRKSt9nothrow_t	00000000 .literal._ZnajRKSt9nothrow_t
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text._ZnajRKSt9nothrow_t	0000000f _ZnajRKSt9nothrow_t
+00000000         *UND*	00000000 _ZnwjRKSt9nothrow_t
+
+
+
+pbase_type_info.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 pbase_type_info.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZNK10__cxxabiv117__pbase_type_info15__pointer_catchEPKS0_PPvj	00000000 .text._ZNK10__cxxabiv117__pbase_type_info15__pointer_catchEPKS0_PPvj
+00000000 l    d  .text._ZN10__cxxabiv117__pbase_type_infoD2Ev	00000000 .text._ZN10__cxxabiv117__pbase_type_infoD2Ev
+00000000 l    d  .text._ZN10__cxxabiv117__pbase_type_infoD0Ev	00000000 .text._ZN10__cxxabiv117__pbase_type_infoD0Ev
+00000000 l    d  .text._ZNK10__cxxabiv117__pbase_type_info10__do_catchEPKSt9type_infoPPvj	00000000 .text._ZNK10__cxxabiv117__pbase_type_info10__do_catchEPKSt9type_infoPPvj
+00000000 l    d  .rodata._ZTSN10__cxxabiv117__pbase_type_infoE	00000000 .rodata._ZTSN10__cxxabiv117__pbase_type_infoE
+00000000 l    d  .rodata._ZTIN10__cxxabiv117__pbase_type_infoE	00000000 .rodata._ZTIN10__cxxabiv117__pbase_type_infoE
+00000000 l    d  .rodata._ZTVN10__cxxabiv117__pbase_type_infoE	00000000 .rodata._ZTVN10__cxxabiv117__pbase_type_infoE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN10__cxxabiv117__pbase_type_infoD2Ev	00000000 .literal._ZN10__cxxabiv117__pbase_type_infoD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv117__pbase_type_infoD0Ev	00000000 .literal._ZN10__cxxabiv117__pbase_type_infoD0Ev
+00000000 l    d  .literal._ZNK10__cxxabiv117__pbase_type_info10__do_catchEPKSt9type_infoPPvj	00000000 .literal._ZNK10__cxxabiv117__pbase_type_info10__do_catchEPKSt9type_infoPPvj
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZNK10__cxxabiv117__pbase_type_info15__pointer_catchEPKS0_PPvj	00000000 .xt.prop._ZNK10__cxxabiv117__pbase_type_info15__pointer_catchEPKS0_PPvj
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv117__pbase_type_infoE	00000000 .xt.prop._ZTSN10__cxxabiv117__pbase_type_infoE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv117__pbase_type_infoE	00000000 .xt.prop._ZTIN10__cxxabiv117__pbase_type_infoE
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv117__pbase_type_infoE	00000000 .xt.prop._ZTVN10__cxxabiv117__pbase_type_infoE
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000  w    F .text._ZNK10__cxxabiv117__pbase_type_info15__pointer_catchEPKS0_PPvj	00000019 _ZNK10__cxxabiv117__pbase_type_info15__pointer_catchEPKS0_PPvj
+00000000  w    O .rodata._ZTVN10__cxxabiv117__pbase_type_infoE	00000024 _ZTVN10__cxxabiv117__pbase_type_infoE
+00000000 g     F .text._ZN10__cxxabiv117__pbase_type_infoD2Ev	00000014 _ZN10__cxxabiv117__pbase_type_infoD2Ev
+00000000         *UND*	00000000 _ZNSt9type_infoD2Ev
+00000000 g     F .text._ZN10__cxxabiv117__pbase_type_infoD2Ev	00000014 _ZN10__cxxabiv117__pbase_type_infoD1Ev
+00000000 g     F .text._ZN10__cxxabiv117__pbase_type_infoD0Ev	00000022 _ZN10__cxxabiv117__pbase_type_infoD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000 g     F .text._ZNK10__cxxabiv117__pbase_type_info10__do_catchEPKSt9type_infoPPvj	0000009f _ZNK10__cxxabiv117__pbase_type_info10__do_catchEPKSt9type_infoPPvj
+00000000         *UND*	00000000 strcmp
+00000000  w    O .rodata._ZTSN10__cxxabiv117__pbase_type_infoE	00000022 _ZTSN10__cxxabiv117__pbase_type_infoE
+00000000  w    O .rodata._ZTIN10__cxxabiv117__pbase_type_infoE	0000000c _ZTIN10__cxxabiv117__pbase_type_infoE
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTISt9type_info
+00000000         *UND*	00000000 _ZNKSt9type_info14__is_pointer_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info15__is_function_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info11__do_upcastEPKN10__cxxabiv117__class_type_infoEPPv
+
+
+
+pmem_type_info.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 pmem_type_info.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZN10__cxxabiv129__pointer_to_member_type_infoD2Ev	00000000 .text._ZN10__cxxabiv129__pointer_to_member_type_infoD2Ev
+00000000 l    d  .text._ZN10__cxxabiv129__pointer_to_member_type_infoD0Ev	00000000 .text._ZN10__cxxabiv129__pointer_to_member_type_infoD0Ev
+00000000 l    d  .text._ZNK10__cxxabiv129__pointer_to_member_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj	00000000 .text._ZNK10__cxxabiv129__pointer_to_member_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj
+00000000 l    d  .rodata._ZTSN10__cxxabiv129__pointer_to_member_type_infoE	00000000 .rodata._ZTSN10__cxxabiv129__pointer_to_member_type_infoE
+00000000 l    d  .rodata._ZTIN10__cxxabiv129__pointer_to_member_type_infoE	00000000 .rodata._ZTIN10__cxxabiv129__pointer_to_member_type_infoE
+00000000 l    d  .rodata._ZTVN10__cxxabiv129__pointer_to_member_type_infoE	00000000 .rodata._ZTVN10__cxxabiv129__pointer_to_member_type_infoE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN10__cxxabiv129__pointer_to_member_type_infoD2Ev	00000000 .literal._ZN10__cxxabiv129__pointer_to_member_type_infoD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv129__pointer_to_member_type_infoD0Ev	00000000 .literal._ZN10__cxxabiv129__pointer_to_member_type_infoD0Ev
+00000000 l    d  .literal._ZNK10__cxxabiv129__pointer_to_member_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj	00000000 .literal._ZNK10__cxxabiv129__pointer_to_member_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv129__pointer_to_member_type_infoE	00000000 .xt.prop._ZTSN10__cxxabiv129__pointer_to_member_type_infoE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv129__pointer_to_member_type_infoE	00000000 .xt.prop._ZTIN10__cxxabiv129__pointer_to_member_type_infoE
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv129__pointer_to_member_type_infoE	00000000 .xt.prop._ZTVN10__cxxabiv129__pointer_to_member_type_infoE
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000  w    O .rodata._ZTVN10__cxxabiv129__pointer_to_member_type_infoE	00000024 _ZTVN10__cxxabiv129__pointer_to_member_type_infoE
+00000000 g     F .text._ZN10__cxxabiv129__pointer_to_member_type_infoD2Ev	00000014 _ZN10__cxxabiv129__pointer_to_member_type_infoD2Ev
+00000000         *UND*	00000000 _ZN10__cxxabiv117__pbase_type_infoD2Ev
+00000000 g     F .text._ZN10__cxxabiv129__pointer_to_member_type_infoD2Ev	00000014 _ZN10__cxxabiv129__pointer_to_member_type_infoD1Ev
+00000000 g     F .text._ZN10__cxxabiv129__pointer_to_member_type_infoD0Ev	00000022 _ZN10__cxxabiv129__pointer_to_member_type_infoD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000 g     F .text._ZNK10__cxxabiv129__pointer_to_member_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj	00000057 _ZNK10__cxxabiv129__pointer_to_member_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj
+00000000         *UND*	00000000 strcmp
+00000000  w    O .rodata._ZTSN10__cxxabiv129__pointer_to_member_type_infoE	0000002e _ZTSN10__cxxabiv129__pointer_to_member_type_infoE
+00000000  w    O .rodata._ZTIN10__cxxabiv129__pointer_to_member_type_infoE	0000000c _ZTIN10__cxxabiv129__pointer_to_member_type_infoE
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTIN10__cxxabiv117__pbase_type_infoE
+00000000         *UND*	00000000 _ZNKSt9type_info14__is_pointer_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info15__is_function_pEv
+00000000         *UND*	00000000 _ZNK10__cxxabiv117__pbase_type_info10__do_catchEPKSt9type_infoPPvj
+00000000         *UND*	00000000 _ZNKSt9type_info11__do_upcastEPKN10__cxxabiv117__class_type_infoEPPv
+
+
+
+pointer_type_info.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 pointer_type_info.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZNK10__cxxabiv119__pointer_type_info14__is_pointer_pEv	00000000 .text._ZNK10__cxxabiv119__pointer_type_info14__is_pointer_pEv
+00000000 l    d  .text._ZN10__cxxabiv119__pointer_type_infoD2Ev	00000000 .text._ZN10__cxxabiv119__pointer_type_infoD2Ev
+00000000 l    d  .text._ZN10__cxxabiv119__pointer_type_infoD0Ev	00000000 .text._ZN10__cxxabiv119__pointer_type_infoD0Ev
+00000000 l    d  .text._ZNK10__cxxabiv119__pointer_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj	00000000 .text._ZNK10__cxxabiv119__pointer_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj
+00000000 l    d  .rodata._ZTSN10__cxxabiv119__pointer_type_infoE	00000000 .rodata._ZTSN10__cxxabiv119__pointer_type_infoE
+00000000 l    d  .rodata._ZTIN10__cxxabiv119__pointer_type_infoE	00000000 .rodata._ZTIN10__cxxabiv119__pointer_type_infoE
+00000000 l    d  .rodata._ZTVN10__cxxabiv119__pointer_type_infoE	00000000 .rodata._ZTVN10__cxxabiv119__pointer_type_infoE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN10__cxxabiv119__pointer_type_infoD2Ev	00000000 .literal._ZN10__cxxabiv119__pointer_type_infoD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv119__pointer_type_infoD0Ev	00000000 .literal._ZN10__cxxabiv119__pointer_type_infoD0Ev
+00000000 l    d  .literal._ZNK10__cxxabiv119__pointer_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj	00000000 .literal._ZNK10__cxxabiv119__pointer_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv119__pointer_type_infoE	00000000 .xt.prop._ZTSN10__cxxabiv119__pointer_type_infoE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv119__pointer_type_infoE	00000000 .xt.prop._ZTIN10__cxxabiv119__pointer_type_infoE
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv119__pointer_type_infoE	00000000 .xt.prop._ZTVN10__cxxabiv119__pointer_type_infoE
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 g     F .text._ZNK10__cxxabiv119__pointer_type_info14__is_pointer_pEv	00000004 _ZNK10__cxxabiv119__pointer_type_info14__is_pointer_pEv
+00000000  w    O .rodata._ZTVN10__cxxabiv119__pointer_type_infoE	00000024 _ZTVN10__cxxabiv119__pointer_type_infoE
+00000000 g     F .text._ZN10__cxxabiv119__pointer_type_infoD2Ev	00000014 _ZN10__cxxabiv119__pointer_type_infoD2Ev
+00000000         *UND*	00000000 _ZN10__cxxabiv117__pbase_type_infoD2Ev
+00000000 g     F .text._ZN10__cxxabiv119__pointer_type_infoD2Ev	00000014 _ZN10__cxxabiv119__pointer_type_infoD1Ev
+00000000 g     F .text._ZN10__cxxabiv119__pointer_type_infoD0Ev	00000022 _ZN10__cxxabiv119__pointer_type_infoD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000         *UND*	00000000 _ZTIv
+00000000 g     F .text._ZNK10__cxxabiv119__pointer_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj	00000061 _ZNK10__cxxabiv119__pointer_type_info15__pointer_catchEPKNS_17__pbase_type_infoEPPvj
+00000000         *UND*	00000000 strcmp
+00000000  w    O .rodata._ZTSN10__cxxabiv119__pointer_type_infoE	00000024 _ZTSN10__cxxabiv119__pointer_type_infoE
+00000000  w    O .rodata._ZTIN10__cxxabiv119__pointer_type_infoE	0000000c _ZTIN10__cxxabiv119__pointer_type_infoE
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTIN10__cxxabiv117__pbase_type_infoE
+00000000         *UND*	00000000 _ZNKSt9type_info15__is_function_pEv
+00000000         *UND*	00000000 _ZNK10__cxxabiv117__pbase_type_info10__do_catchEPKSt9type_infoPPvj
+00000000         *UND*	00000000 _ZNKSt9type_info11__do_upcastEPKN10__cxxabiv117__class_type_infoEPPv
+
+
+
+pure.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 pure.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .rodata.str1.4	00000000 .rodata.str1.4
+00000000 l    d  .text.__cxa_pure_virtual	00000000 .text.__cxa_pure_virtual
+00000000 l    d  .text.__cxa_deleted_virtual	00000000 .text.__cxa_deleted_virtual
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal.__cxa_pure_virtual	00000000 .literal.__cxa_pure_virtual
+00000000 l    d  .literal.__cxa_deleted_virtual	00000000 .literal.__cxa_deleted_virtual
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text.__cxa_pure_virtual	00000014 __cxa_pure_virtual
+00000000         *UND*	00000000 write
+00000000         *UND*	00000000 _ZSt9terminatev
+00000000 g     F .text.__cxa_deleted_virtual	00000014 __cxa_deleted_virtual
+
+
+
+si_class_type_info.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 si_class_type_info.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZN10__cxxabiv120__si_class_type_infoD2Ev	00000000 .text._ZN10__cxxabiv120__si_class_type_infoD2Ev
+00000000 l    d  .text._ZN10__cxxabiv120__si_class_type_infoD0Ev	00000000 .text._ZN10__cxxabiv120__si_class_type_infoD0Ev
+00000000 l    d  .text._ZNK10__cxxabiv120__si_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE	00000000 .text._ZNK10__cxxabiv120__si_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE
+00000000 l    d  .text._ZNK10__cxxabiv120__si_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_	00000000 .text._ZNK10__cxxabiv120__si_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_
+00000000 l    d  .text._ZNK10__cxxabiv120__si_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE	00000000 .text._ZNK10__cxxabiv120__si_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE
+00000000 l    d  .rodata._ZTSN10__cxxabiv120__si_class_type_infoE	00000000 .rodata._ZTSN10__cxxabiv120__si_class_type_infoE
+00000000 l    d  .rodata._ZTIN10__cxxabiv120__si_class_type_infoE	00000000 .rodata._ZTIN10__cxxabiv120__si_class_type_infoE
+00000000 l    d  .rodata._ZTVN10__cxxabiv120__si_class_type_infoE	00000000 .rodata._ZTVN10__cxxabiv120__si_class_type_infoE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN10__cxxabiv120__si_class_type_infoD2Ev	00000000 .literal._ZN10__cxxabiv120__si_class_type_infoD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv120__si_class_type_infoD0Ev	00000000 .literal._ZN10__cxxabiv120__si_class_type_infoD0Ev
+00000000 l    d  .literal._ZNK10__cxxabiv120__si_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE	00000000 .literal._ZNK10__cxxabiv120__si_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE
+00000000 l    d  .literal._ZNK10__cxxabiv120__si_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_	00000000 .literal._ZNK10__cxxabiv120__si_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_
+00000000 l    d  .literal._ZNK10__cxxabiv120__si_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE	00000000 .literal._ZNK10__cxxabiv120__si_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv120__si_class_type_infoE	00000000 .xt.prop._ZTSN10__cxxabiv120__si_class_type_infoE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv120__si_class_type_infoE	00000000 .xt.prop._ZTIN10__cxxabiv120__si_class_type_infoE
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv120__si_class_type_infoE	00000000 .xt.prop._ZTVN10__cxxabiv120__si_class_type_infoE
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000  w    O .rodata._ZTVN10__cxxabiv120__si_class_type_infoE	0000002c _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000 g     F .text._ZN10__cxxabiv120__si_class_type_infoD2Ev	00000014 _ZN10__cxxabiv120__si_class_type_infoD2Ev
+00000000         *UND*	00000000 _ZN10__cxxabiv117__class_type_infoD2Ev
+00000000 g     F .text._ZN10__cxxabiv120__si_class_type_infoD2Ev	00000014 _ZN10__cxxabiv120__si_class_type_infoD1Ev
+00000000 g     F .text._ZN10__cxxabiv120__si_class_type_infoD0Ev	00000022 _ZN10__cxxabiv120__si_class_type_infoD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000 g     F .text._ZNK10__cxxabiv120__si_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE	000000d7 _ZNK10__cxxabiv120__si_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE
+00000000         *UND*	00000000 strcmp
+00000000 g     F .text._ZNK10__cxxabiv120__si_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_	0000004b _ZNK10__cxxabiv120__si_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_
+00000000 g     F .text._ZNK10__cxxabiv120__si_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE	00000038 _ZNK10__cxxabiv120__si_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE
+00000000         *UND*	00000000 _ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PKvRNS0_15__upcast_resultE
+00000000  w    O .rodata._ZTSN10__cxxabiv120__si_class_type_infoE	00000025 _ZTSN10__cxxabiv120__si_class_type_infoE
+00000000  w    O .rodata._ZTIN10__cxxabiv120__si_class_type_infoE	0000000c _ZTIN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTIN10__cxxabiv117__class_type_infoE
+00000000         *UND*	00000000 _ZNKSt9type_info14__is_pointer_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info15__is_function_pEv
+00000000         *UND*	00000000 _ZNK10__cxxabiv117__class_type_info10__do_catchEPKSt9type_infoPPvj
+00000000         *UND*	00000000 _ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PPv
+
+
+
+tinfo.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 tinfo.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZNSt9type_infoD2Ev	00000000 .text._ZNSt9type_infoD2Ev
+00000000 l    d  .text._ZNKSt9type_info14__is_pointer_pEv	00000000 .text._ZNKSt9type_info14__is_pointer_pEv
+00000000 l    d  .text._ZNKSt9type_info15__is_function_pEv	00000000 .text._ZNKSt9type_info15__is_function_pEv
+00000000 l    d  .text._ZNKSt9type_info11__do_upcastEPKN10__cxxabiv117__class_type_infoEPPv	00000000 .text._ZNKSt9type_info11__do_upcastEPKN10__cxxabiv117__class_type_infoEPPv
+00000000 l    d  .text._ZNSt9type_infoD0Ev	00000000 .text._ZNSt9type_infoD0Ev
+00000000 l    d  .text._ZNKSt9type_info10__do_catchEPKS_PPvj	00000000 .text._ZNKSt9type_info10__do_catchEPKS_PPvj
+00000000 l    d  .rodata._ZTSSt9type_info	00000000 .rodata._ZTSSt9type_info
+00000000 l    d  .rodata._ZTISt9type_info	00000000 .rodata._ZTISt9type_info
+00000000 l    d  .rodata._ZTVSt9type_info	00000000 .rodata._ZTVSt9type_info
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZNSt9type_infoD2Ev	00000000 .literal._ZNSt9type_infoD2Ev
+00000000 l    d  .literal._ZNSt9type_infoD0Ev	00000000 .literal._ZNSt9type_infoD0Ev
+00000000 l    d  .literal._ZNKSt9type_info10__do_catchEPKS_PPvj	00000000 .literal._ZNKSt9type_info10__do_catchEPKS_PPvj
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSSt9type_info	00000000 .xt.prop._ZTSSt9type_info
+00000000 l    d  .xt.prop._ZTISt9type_info	00000000 .xt.prop._ZTISt9type_info
+00000000 l    d  .xt.prop._ZTVSt9type_info	00000000 .xt.prop._ZTVSt9type_info
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000  w    O .rodata._ZTVSt9type_info	00000020 _ZTVSt9type_info
+00000000 g     F .text._ZNSt9type_infoD2Ev	00000007 _ZNSt9type_infoD2Ev
+00000000 g     F .text._ZNSt9type_infoD2Ev	00000007 _ZNSt9type_infoD1Ev
+00000000 g     F .text._ZNKSt9type_info14__is_pointer_pEv	00000004 _ZNKSt9type_info14__is_pointer_pEv
+00000000 g     F .text._ZNKSt9type_info15__is_function_pEv	00000004 _ZNKSt9type_info15__is_function_pEv
+00000000 g     F .text._ZNKSt9type_info11__do_upcastEPKN10__cxxabiv117__class_type_infoEPPv	00000004 _ZNKSt9type_info11__do_upcastEPKN10__cxxabiv117__class_type_infoEPPv
+00000000 g     F .text._ZNSt9type_infoD0Ev	00000014 _ZNSt9type_infoD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000 g     F .text._ZNKSt9type_info10__do_catchEPKS_PPvj	00000028 _ZNKSt9type_info10__do_catchEPKS_PPvj
+00000000         *UND*	00000000 strcmp
+00000000  w    O .rodata._ZTSSt9type_info	0000000d _ZTSSt9type_info
+00000000  w    O .rodata._ZTISt9type_info	00000008 _ZTISt9type_info
+00000000         *UND*	00000000 _ZTVN10__cxxabiv117__class_type_infoE
+
+
+
+tinfo2.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 tinfo2.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+
+
+
+vec.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 vec.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZN10__cxxabiv112_GLOBAL__N_117uncatch_exceptionC2Ev	00000000 .text._ZN10__cxxabiv112_GLOBAL__N_117uncatch_exceptionC2Ev
+00000000 l     F .text._ZN10__cxxabiv112_GLOBAL__N_117uncatch_exceptionC2Ev	00000029 _ZN10__cxxabiv112_GLOBAL__N_117uncatch_exceptionC2Ev
+00000000 l     F .text._ZN10__cxxabiv112_GLOBAL__N_117uncatch_exceptionC2Ev	00000029 _ZN10__cxxabiv112_GLOBAL__N_117uncatch_exceptionC1Ev
+00000000 l    d  .text._ZN10__cxxabiv112_GLOBAL__N_112compute_sizeEjjj	00000000 .text._ZN10__cxxabiv112_GLOBAL__N_112compute_sizeEjjj
+00000000 l     F .text._ZN10__cxxabiv112_GLOBAL__N_112compute_sizeEjjj	00000047 _ZN10__cxxabiv112_GLOBAL__N_112compute_sizeEjjj
+00000000 l    d  .text.__cxa_vec_cleanup	00000000 .text.__cxa_vec_cleanup
+00000000 l    d  .gcc_except_table.__cxa_vec_cleanup	00000000 .gcc_except_table.__cxa_vec_cleanup
+00000000 l    d  .text.__cxa_vec_ctor	00000000 .text.__cxa_vec_ctor
+00000000 l    d  .gcc_except_table.__cxa_vec_ctor	00000000 .gcc_except_table.__cxa_vec_ctor
+00000000 l    d  .text.__cxa_vec_new2	00000000 .text.__cxa_vec_new2
+00000000 l    d  .gcc_except_table.__cxa_vec_new2	00000000 .gcc_except_table.__cxa_vec_new2
+00000000 l    d  .text.__cxa_vec_new	00000000 .text.__cxa_vec_new
+00000000 l    d  .text.__cxa_vec_new3	00000000 .text.__cxa_vec_new3
+00000000 l    d  .gcc_except_table.__cxa_vec_new3	00000000 .gcc_except_table.__cxa_vec_new3
+00000000 l    d  .text.__cxa_vec_cctor	00000000 .text.__cxa_vec_cctor
+00000000 l    d  .gcc_except_table.__cxa_vec_cctor	00000000 .gcc_except_table.__cxa_vec_cctor
+00000000 l    d  .text.__cxa_vec_dtor	00000000 .text.__cxa_vec_dtor
+00000000 l    d  .gcc_except_table.__cxa_vec_dtor	00000000 .gcc_except_table.__cxa_vec_dtor
+00000000 l    d  .text.__cxa_vec_delete2	00000000 .text.__cxa_vec_delete2
+00000000 l    d  .gcc_except_table.__cxa_vec_delete2	00000000 .gcc_except_table.__cxa_vec_delete2
+00000000 l    d  .text.__cxa_vec_delete	00000000 .text.__cxa_vec_delete
+00000000 l    d  .text.__cxa_vec_delete3	00000000 .text.__cxa_vec_delete3
+00000000 l    d  .gcc_except_table.__cxa_vec_delete3	00000000 .gcc_except_table.__cxa_vec_delete3
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN10__cxxabiv112_GLOBAL__N_112compute_sizeEjjj	00000000 .literal._ZN10__cxxabiv112_GLOBAL__N_112compute_sizeEjjj
+00000000 l    d  .literal.__cxa_vec_new	00000000 .literal.__cxa_vec_new
+00000000 l    d  .literal.__cxa_vec_delete	00000000 .literal.__cxa_vec_delete
+00000000 l    d  .literal._ZN10__cxxabiv112_GLOBAL__N_117uncatch_exceptionC2Ev	00000000 .literal._ZN10__cxxabiv112_GLOBAL__N_117uncatch_exceptionC2Ev
+00000000 l    d  .literal.__cxa_vec_cleanup	00000000 .literal.__cxa_vec_cleanup
+00000000 l    d  .literal.__cxa_vec_ctor	00000000 .literal.__cxa_vec_ctor
+00000000 l    d  .literal.__cxa_vec_new2	00000000 .literal.__cxa_vec_new2
+00000000 l    d  .literal.__cxa_vec_new3	00000000 .literal.__cxa_vec_new3
+00000000 l    d  .literal.__cxa_vec_cctor	00000000 .literal.__cxa_vec_cctor
+00000000 l    d  .literal.__cxa_vec_dtor	00000000 .literal.__cxa_vec_dtor
+00000000 l    d  .literal.__cxa_vec_delete2	00000000 .literal.__cxa_vec_delete2
+00000000 l    d  .literal.__cxa_vec_delete3	00000000 .literal.__cxa_vec_delete3
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 __cxa_get_globals_fast
+00000000         *UND*	00000000 __udivsi3
+00000000         *UND*	00000000 _ZTVSt9bad_alloc
+00000000         *UND*	00000000 _ZTISt9bad_alloc
+00000000         *UND*	00000000 _ZNSt9bad_allocD1Ev
+00000000         *UND*	00000000 __cxa_allocate_exception
+00000000         *UND*	00000000 __cxa_throw
+00000000 g     F .text.__cxa_vec_cleanup	00000043 __cxa_vec_cleanup
+00000000         *UND*	00000000 __cxa_begin_catch
+00000000         *UND*	00000000 _ZSt9terminatev
+00000000         *UND*	00000000 __gxx_personality_v0
+00000000 g     F .text.__cxa_vec_ctor	0000006b __cxa_vec_ctor
+00000000         *UND*	00000000 __cxa_end_catch
+00000000         *UND*	00000000 _Unwind_Resume
+00000000         *UND*	00000000 __cxa_rethrow
+00000000 g     F .text.__cxa_vec_new2	00000090 __cxa_vec_new2
+00000000         *UND*	00000000 _Znaj
+00000000         *UND*	00000000 _ZdaPv
+00000000 g     F .text.__cxa_vec_new	00000017 __cxa_vec_new
+00000000 g     F .text.__cxa_vec_new3	0000009a __cxa_vec_new3
+00000000 g     F .text.__cxa_vec_cctor	0000007b __cxa_vec_cctor
+00000000 g     F .text.__cxa_vec_dtor	00000067 __cxa_vec_dtor
+00000000 g     F .text.__cxa_vec_delete2	00000070 __cxa_vec_delete2
+00000000 g     F .text.__cxa_vec_delete	00000013 __cxa_vec_delete
+00000000 g     F .text.__cxa_vec_delete3	00000081 __cxa_vec_delete3
+
+
+
+vmi_class_type_info.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 vmi_class_type_info.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .text._ZN10__cxxabiv121__vmi_class_type_infoD2Ev	00000000 .text._ZN10__cxxabiv121__vmi_class_type_infoD2Ev
+00000000 l    d  .text._ZN10__cxxabiv121__vmi_class_type_infoD0Ev	00000000 .text._ZN10__cxxabiv121__vmi_class_type_infoD0Ev
+00000000 l    d  .text._ZNK10__cxxabiv121__vmi_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_	00000000 .text._ZNK10__cxxabiv121__vmi_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_
+00000000 l    d  .text._ZNK10__cxxabiv121__vmi_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE	00000000 .text._ZNK10__cxxabiv121__vmi_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE
+00000000 l    d  .text._ZNK10__cxxabiv121__vmi_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE	00000000 .text._ZNK10__cxxabiv121__vmi_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE
+00000000 l    d  .rodata._ZTSN10__cxxabiv121__vmi_class_type_infoE	00000000 .rodata._ZTSN10__cxxabiv121__vmi_class_type_infoE
+00000000 l    d  .rodata._ZTIN10__cxxabiv121__vmi_class_type_infoE	00000000 .rodata._ZTIN10__cxxabiv121__vmi_class_type_infoE
+00000000 l    d  .rodata._ZTVN10__cxxabiv121__vmi_class_type_infoE	00000000 .rodata._ZTVN10__cxxabiv121__vmi_class_type_infoE
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN10__cxxabiv121__vmi_class_type_infoD2Ev	00000000 .literal._ZN10__cxxabiv121__vmi_class_type_infoD2Ev
+00000000 l    d  .literal._ZN10__cxxabiv121__vmi_class_type_infoD0Ev	00000000 .literal._ZN10__cxxabiv121__vmi_class_type_infoD0Ev
+00000000 l    d  .literal._ZNK10__cxxabiv121__vmi_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_	00000000 .literal._ZNK10__cxxabiv121__vmi_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_
+00000000 l    d  .literal._ZNK10__cxxabiv121__vmi_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE	00000000 .literal._ZNK10__cxxabiv121__vmi_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE
+00000000 l    d  .literal._ZNK10__cxxabiv121__vmi_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE	00000000 .literal._ZNK10__cxxabiv121__vmi_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 l    d  .xt.prop._ZTSN10__cxxabiv121__vmi_class_type_infoE	00000000 .xt.prop._ZTSN10__cxxabiv121__vmi_class_type_infoE
+00000000 l    d  .xt.prop._ZTIN10__cxxabiv121__vmi_class_type_infoE	00000000 .xt.prop._ZTIN10__cxxabiv121__vmi_class_type_infoE
+00000000 l    d  .xt.prop._ZTVN10__cxxabiv121__vmi_class_type_infoE	00000000 .xt.prop._ZTVN10__cxxabiv121__vmi_class_type_infoE
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000 l    d  .group	00000000 .group
+00000000  w    O .rodata._ZTVN10__cxxabiv121__vmi_class_type_infoE	0000002c _ZTVN10__cxxabiv121__vmi_class_type_infoE
+00000000 g     F .text._ZN10__cxxabiv121__vmi_class_type_infoD2Ev	00000014 _ZN10__cxxabiv121__vmi_class_type_infoD2Ev
+00000000         *UND*	00000000 _ZN10__cxxabiv117__class_type_infoD2Ev
+00000000 g     F .text._ZN10__cxxabiv121__vmi_class_type_infoD2Ev	00000014 _ZN10__cxxabiv121__vmi_class_type_infoD1Ev
+00000000 g     F .text._ZN10__cxxabiv121__vmi_class_type_infoD0Ev	00000022 _ZN10__cxxabiv121__vmi_class_type_infoD0Ev
+00000000         *UND*	00000000 _ZdlPv
+00000000 g     F .text._ZNK10__cxxabiv121__vmi_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_	000000c1 _ZNK10__cxxabiv121__vmi_class_type_info20__do_find_public_srcEiPKvPKNS_17__class_type_infoES2_
+00000000         *UND*	00000000 strcmp
+00000000 g     F .text._ZNK10__cxxabiv121__vmi_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE	000003ea _ZNK10__cxxabiv121__vmi_class_type_info12__do_dyncastEiNS_17__class_type_info10__sub_kindEPKS1_PKvS4_S6_RNS1_16__dyncast_resultE
+00000000 g     F .text._ZNK10__cxxabiv121__vmi_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE	00000163 _ZNK10__cxxabiv121__vmi_class_type_info11__do_upcastEPKNS_17__class_type_infoEPKvRNS1_15__upcast_resultE
+00000000         *UND*	00000000 _ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PKvRNS0_15__upcast_resultE
+00000000  w    O .rodata._ZTSN10__cxxabiv121__vmi_class_type_infoE	00000026 _ZTSN10__cxxabiv121__vmi_class_type_infoE
+00000000  w    O .rodata._ZTIN10__cxxabiv121__vmi_class_type_infoE	0000000c _ZTIN10__cxxabiv121__vmi_class_type_infoE
+00000000         *UND*	00000000 _ZTVN10__cxxabiv120__si_class_type_infoE
+00000000         *UND*	00000000 _ZTIN10__cxxabiv117__class_type_infoE
+00000000         *UND*	00000000 _ZNKSt9type_info14__is_pointer_pEv
+00000000         *UND*	00000000 _ZNKSt9type_info15__is_function_pEv
+00000000         *UND*	00000000 _ZNK10__cxxabiv117__class_type_info10__do_catchEPKSt9type_infoPPvj
+00000000         *UND*	00000000 _ZNK10__cxxabiv117__class_type_info11__do_upcastEPKS0_PPv
+
+
+
+vterminate.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 vterminate.cc
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .rodata.str1.4	00000000 .rodata.str1.4
+00000000 l    d  .text._ZN9__gnu_cxx27__verbose_terminate_handlerEv	00000000 .text._ZN9__gnu_cxx27__verbose_terminate_handlerEv
+00000000 l     O .bss._ZZN9__gnu_cxx27__verbose_terminate_handlerEvE11terminating	00000001 _ZZN9__gnu_cxx27__verbose_terminate_handlerEvE11terminating
+00000000 l    d  .gcc_except_table._ZN9__gnu_cxx27__verbose_terminate_handlerEv	00000000 .gcc_except_table._ZN9__gnu_cxx27__verbose_terminate_handlerEv
+00000000 l    d  .bss._ZZN9__gnu_cxx27__verbose_terminate_handlerEvE11terminating	00000000 .bss._ZZN9__gnu_cxx27__verbose_terminate_handlerEvE11terminating
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal._ZN9__gnu_cxx27__verbose_terminate_handlerEv	00000000 .literal._ZN9__gnu_cxx27__verbose_terminate_handlerEv
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 _impure_ptr
+00000000 g     F .text._ZN9__gnu_cxx27__verbose_terminate_handlerEv	00000106 _ZN9__gnu_cxx27__verbose_terminate_handlerEv
+00000000         *UND*	00000000 fwrite
+00000000         *UND*	00000000 abort
+00000000         *UND*	00000000 __cxa_current_exception_type
+00000000         *UND*	00000000 __cxa_demangle
+00000000         *UND*	00000000 fputs
+00000000         *UND*	00000000 free
+00000000         *UND*	00000000 __cxa_rethrow
+00000000         *UND*	00000000 __cxa_end_catch
+00000000         *UND*	00000000 _Unwind_Resume
+00000000         *UND*	00000000 __cxa_begin_catch
+00000000         *UND*	00000000 fputc
+00000000         *UND*	00000000 __gxx_personality_v0
+00000000         *UND*	00000000 _ZTISt9exception
+
+
+
+cp-demangle.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 cp-demangle.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l     F .text	00000060 d_make_comp
+00000000 l    d  .rodata	00000000 .rodata
+00000060 l     F .text	00000034 d_make_name
+00000094 l     F .text	000000f7 d_cv_qualifiers
+0000018c l     F .text	0000004d d_ref_qualifier
+000001dc l     F .text	000000bb d_clone_suffix
+000008e8 l     O .rodata	000000c4 standard_subs
+00000298 l     F .text	00000144 d_substitution
+000003dc l     F .text	00000055 d_append_char
+00000434 l     F .text	00000050 d_number$isra$0
+00000484 l     F .text	0000003c d_number_component
+000004c0 l     F .text	00000044 d_compact_number
+00000504 l     F .text	00000056 d_template_param
+0000055c l     F .text	0000002b d_discriminator
+00000000 l    d  .rodata.str1.4	00000000 .rodata.str1.4
+00000588 l     F .text	000000ab d_source_name
+00000634 l     F .text	0000006d d_call_offset
+000006a4 l     F .text	00000048 d_lookup_template_argument$isra$6
+000006ec l     F .text	00000059 d_find_pack
+00000748 l     F .text	00000089 d_growable_string_callback_adapter
+000007d4 l     F .text	000000f7 d_expr_primary
+000013c0 l     F .text	00000433 d_encoding
+00000cbc l     F .text	000005e1 d_type
+000008cc l     F .text	000000df d_template_args
+00001bcc l     F .text	00000451 d_expression
+000009ac l     F .text	0000030d d_name
+000018f4 l     F .text	000002d5 d_unqualified_name
+00000d8c l     O .rodata	00000294 cplus_demangle_builtin_types
+00001370 l     F .text	0000004f d_bare_function_type
+000012a0 l     F .text	000000cf d_parmlist
+000009ac l     O .rodata	000003e0 cplus_demangle_operators
+000017f4 l     F .text	000000ff d_operator_name
+00002020 l     F .text	00000070 d_exprlist
+00002090 l     F .text	00000079 d_append_string
+00000058 l       .rodata.str1.4	00000000 .LC47
+00000060 l       .rodata.str1.4	00000000 .LC49
+00000064 l       .rodata.str1.4	00000000 .LC51
+00000078 l       .rodata.str1.4	00000000 .LC55
+00000088 l       .rodata.str1.4	00000000 .LC61
+00000094 l       .rodata.str1.4	00000000 .LC63
+000000a0 l       .rodata.str1.4	00000000 .LC65
+000000bc l       .rodata.str1.4	00000000 .LC67
+000000c4 l       .rodata.str1.4	00000000 .LC69
+000000d4 l       .rodata.str1.4	00000000 .LC71
+000000e8 l       .rodata.str1.4	00000000 .LC73
+000000fc l       .rodata.str1.4	00000000 .LC75
+00000114 l       .rodata.str1.4	00000000 .LC77
+00000128 l       .rodata.str1.4	00000000 .LC79
+00000144 l       .rodata.str1.4	00000000 .LC81
+00000154 l       .rodata.str1.4	00000000 .LC83
+00000168 l       .rodata.str1.4	00000000 .LC85
+00000180 l       .rodata.str1.4	00000000 .LC87
+0000019c l       .rodata.str1.4	00000000 .LC89
+000001b4 l       .rodata.str1.4	00000000 .LC91
+000001bc l       .rodata.str1.4	00000000 .LC93
+000001d0 l       .rodata.str1.4	00000000 .LC95
+000001e8 l       .rodata.str1.4	00000000 .LC97
+00000204 l       .rodata.str1.4	00000000 .LC100
+0000020c l       .rodata.str1.4	00000000 .LC102
+00000214 l       .rodata.str1.4	00000000 .LC104
+0000021c l       .rodata.str1.4	00000000 .LC106
+00000220 l       .rodata.str1.4	00000000 .LC108
+0000022c l       .rodata.str1.4	00000000 .LC110
+0000026c l       .rodata.str1.4	00000000 .LC136
+0000027c l       .rodata.str1.4	00000000 .LC138
+0000028c l       .rodata.str1.4	00000000 .LC142
+00000294 l       .rodata.str1.4	00000000 .LC144
+0000029c l       .rodata.str1.4	00000000 .LC146
+000002bc l       .rodata.str1.4	00000000 .LC148
+000002dc l       .rodata.str1.4	00000000 .LC150
+000002e8 l       .rodata.str1.4	00000000 .LC152
+000002ec l       .rodata.str1.4	00000000 .LC154
+000002fc l       .rodata.str1.4	00000000 .LC156
+0000210c l     F .text	00002b2e d_print_comp$part$10
+00004c3c l     F .text	0000001f d_print_comp
+00004c5c l     F .text	00000515 d_print_mod
+000055f0 l     F .text	000001ff d_print_function_type$isra$11
+00005424 l     F .text	000001c9 d_print_array_type$isra$9
+000057f0 l     F .text	00000195 d_print_cast$isra$12
+00005988 l     F .text	00000091 d_print_expr_op
+00005a1c l     F .text	000000df d_print_subexpr
+0000030c l       .rodata.str1.4	00000000 .LC162
+00000318 l       .rodata.str1.4	00000000 .LC164
+00000324 l       .rodata.str1.4	00000000 .LC166
+0000032c l       .rodata.str1.4	00000000 .LC168
+00000330 l       .rodata.str1.4	00000000 .LC170
+0000033c l       .rodata.str1.4	00000000 .LC172
+00000348 l       .rodata.str1.4	00000000 .LC174
+0000034c l       .rodata.str1.4	00000000 .LC176
+00005174 l     F .text	000002ad d_print_mod_list
+00000358 l       .rodata.str1.4	00000000 .LC182
+00005afc l     F .text	00000252 d_demangle_callback$constprop$16
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000         *UND*	00000000 memcmp
+00000000         *UND*	00000000 realloc
+00000000         *UND*	00000000 free
+00000000         *UND*	00000000 memcpy
+00000000         *UND*	00000000 strcmp
+00000000         *UND*	00000000 strlen
+00000000         *UND*	00000000 sprintf
+00000000         *UND*	00000000 strncmp
+00005d50 g     F .text	000000ba __cxa_demangle
+00005e0c g     F .text	00000032 __gcclibcxx_demangle_callback
+
+

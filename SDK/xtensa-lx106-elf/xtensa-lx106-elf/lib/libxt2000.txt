@@ -1,0 +1,268 @@
+In archive libxt2000.a:
+
+gloss.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 gloss.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	0000001f board_init
+00000000         *UND*	00000000 xtbsp_board_init
+00000000         *UND*	00000000 uart_init
+00000020 g     F .text	00000018 outbyte
+00000000         *UND*	00000000 uart_out
+00000038 g     F .text	00000015 inbyte
+00000000         *UND*	00000000 uart_in
+
+
+
+xt2000-leds.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 xt2000-leds.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l     O .data	00000004 first_led_30
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000019 xt2000_led_display_char
+0000005c g     F .text	0000002f xt2000_led_display_string
+0000001c g     F .text	0000001a xt2000_led_blank
+00000038 g     F .text	00000021 xt2000_led_display_ok
+0000008c g     F .text	00000046 xt2000_led_pause
+00000000         *UND*	00000000 xthal_get_ccount
+
+
+
+uart.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 uart.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000053 uart_init
+00000000         *UND*	00000000 __divsi3
+00000054 g     F .text	0000001b uart_out
+00000070 g     F .text	0000001a uart_in
+0000008c g     F .text	00000011 uart_enable_rcvr_int
+000000a0 g     F .text	00000011 uart_disable_rcvr_int
+000000b4 g     F .text	00000044 uart_puts
+
+
+
+xtfreq.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 xtfreq.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	000000dd xtboard_measure_sys_clk
+00000000         *UND*	00000000 xthal_get_ccount
+00000000         *UND*	00000000 __udivsi3
+
+
+
+xtboard.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 xtboard.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .rodata	00000000 .rodata
+00000000 l     O .rodata	00000020 crc16_ltab_27
+00000020 l     O .rodata	00000020 crc16_utab_28
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000052 xtboard_get_rtc_time
+00000000         *UND*	00000000 xtboard_i2c_read
+00000054 g     F .text	00000037 xtboard_set_rtc_time
+00000000         *UND*	00000000 xtboard_i2c_write
+0000008c g     F .text	0000008e xtboard_nvram_read
+0000011c g     F .text	000000a1 xtboard_nvram_write
+00000000         *UND*	00000000 xtboard_i2c_wait_nvram_ack
+000001c0 g     F .text	00000037 xtboard_nvram_binfo_read
+00000000         *UND*	00000000 memset
+000001f8 g     F .text	00000087 xtboard_nvram_binfo_write
+00000280 g     F .text	0000006b xtboard_nvram_binfo_valid
+000002ec g     F .text	00000083 xtboard_ethermac_get
+00000370 g     F .text	00000047 xtboard_ethermac_set
+
+
+
+xt2000-i2cdev.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 xt2000-i2cdev.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l     O .bss	00000001 i2c_scl_27
+00000001 l     O .bss	00000001 i2c_sda_28
+00000004 l     O .bss	00000004 xtboard_nsdelay_func_30
+00000000 l     F .text	00000097 i2c_start
+00000098 l     F .text	00000095 i2c_stop
+00000130 l     F .text	0000009a i2c_databit
+000001cc l     F .text	00000119 i2c_send_byte
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+000002e8 g     F .text	0000000b xtboard_set_nsdelay_func
+000002f4 g     F .text	0000016f xtboard_i2c_read
+00000464 g     F .text	000000bf xtboard_i2c_write
+00000524 g     F .text	00000081 xtboard_i2c_wait_nvram_ack
+
+
+
+xt2000-board.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 xt2000-board.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l     O .bss	00000004 clock_freq_hz_28
+00000004 l     O .bss	00000004 clock_period_ps_29
+00000008 l     O .bss	00000004 delay_scale_factor_30
+00000000 l    d  .rodata.str1.4	00000000 .rodata.str1.4
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	0000004b xtbsp_board_init
+00000000         *UND*	00000000 xtboard_measure_sys_clk
+00000000         *UND*	00000000 __udivsi3
+00000000         *UND*	00000000 xtbsp_display_init
+0000004c g     F .text	00000005 xtbsp_board_name
+00000054 g     F .text	0000000e xtbsp_board_reset
+00000064 g     F .text	00000007 xtbsp_clock_freq_hz
+0000006c g     F .text	00000007 xtbsp_clock_period_ps
+00000074 g     F .text	00000039 xtbsp_delay_cycles
+00000000         *UND*	00000000 xthal_get_ccount
+000000b0 g     F .text	0000001b xtbsp_delay_ns
+
+
+
+xt2000-display.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 xt2000-display.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l     O .data	00000004 ledp_29
+00000000 l    d  .rodata.str1.4	00000000 .rodata.str1.4
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000004 xtbsp_display_exists
+00000004 g     F .text	00000002 xtbsp_display_init
+00000008 g     F .text	00000012 xtbsp_display_char
+0000001c g     F .text	00000052 xtbsp_display_string
+00000070 g     F .text	00000013 xtbsp_display_blank
+
+
+
+xt2000-uart.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 xt2000-uart.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l     O .data	00000004 uart_29
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000004 xtbsp_uart_exists
+00000004 g     F .text	0000002d xtbsp_uart_init
+00000000         *UND*	00000000 uart_init
+00000034 g     F .text	00000017 xtbsp_uart_getchar
+00000000         *UND*	00000000 uart_in
+0000004c g     F .text	00000019 xtbsp_uart_putchar
+00000000         *UND*	00000000 uart_out
+00000068 g     F .text	0000000f xtbsp_uart_get_isready
+00000078 g     F .text	00000016 xtbsp_uart_put_isready
+00000090 g     F .text	0000001c xtbsp_uart_int_enable_status
+000000ac g     F .text	00000024 xtbsp_uart_int_enable
+000000d0 g     F .text	0000002d xtbsp_uart_int_disable
+00000100 g     F .text	0000000c xtbsp_uart_int_number
+
+
