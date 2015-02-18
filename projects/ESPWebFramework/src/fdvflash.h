@@ -43,9 +43,11 @@ extern "C"
 // Flash from 0x40000 to 0x7C000 mapped to 0x40240000, len = 0x3C000 (240KBytes)  - ".irom0.text"
 //
 // We use flash from 0x14000 for a maximum size of 180KBytes (usable in blocks of 4K)
-static uint32_t const FLASHDATABASE   = 0x14000;
+static uint32_t const FLASHFILESYSTEMSTART   = 0x14000;
+static uint32_t const FLASHFILESYSTEMLENGTH  = 0x2C000;
 
-
+static uint16_t const FLASHFILESYSTEMSTART_SECTOR  = FLASHFILESYSTEMSTART / SPI_FLASH_SEC_SIZE;
+static uint16_t const FLASHFILESYSTEMLENGTH_SECTOR =  FLASHFILESYSTEMLENGTH / SPI_FLASH_SEC_SIZE;
 
 
 
@@ -74,105 +76,148 @@ namespace fdv
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
-	// FlashAllocator
-	// Used internally by FlashValue
-	
-	struct FlashAllocator
-	{
-		template <typename T>
-		static uint32_t allocate(uint32_t itemsCount)
-		{
-			uint32_t ret = s_pos;
-			s_pos += getSectorsCount<T>(itemsCount) * SPI_FLASH_SEC_SIZE;
-			return ret;
-		}
-		
-		template <typename T>
-		static uint16_t getSectorsCount(uint32_t itemsCount)
-		{
-			return (sizeof(T) * itemsCount + SPI_FLASH_SEC_SIZE - 1) / SPI_FLASH_SEC_SIZE;
-		}
-
-	private:
-		static uint32_t s_pos;
-	};
-
-	
-	///////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////
-	// FlashValue
+	// FlashFileSystem
+	//
+	// filename: only first four characters are stored
+	// note: cannot free an already allocated file
+	// max 44 files of 4096 bytes can be stored. No check is done on available space. 
 	//
 	// Example:
 	//
-	// struct MyStore
-	// {
-	//   char nome[16];
-	//   char cognome[16];
-	//   uint32_t seq;
-	// };
+	//   struct MyStore
+	//  {
+	//    char name[16];
+	//    char surname[16];
+	//  };
 	//
-	//
-	// fdv::FlashValue<MyStore> mystore;
-	//
-	// -> write
-	//	 MyStore t = mystore;
-	//	 strcpy(t.nome, "Fabrizio");
-	// 	 strcpy(t.cognome, "Di Vittorio");
-	//   t.seq++;
-	//   mystore = t;
-	//
-	// -> recall
-	//   MyStore t = mystore;
-	//   printf(t.nome);
-	//   printf(t.cognome);
+	//  Save data:
+	//    MyStore t;
+	//    strcpy(t.name, "Fabrizio");
+	//    strcpy(t.surname, "Di Vittorio");
+	//    fdv::FlashFileSystem::save("USR0", &t, sizeof(MyStore));
+	// 
+	//  Load data:
+	//    MyStore t;
+	//    fdv::FlashFileSysten::load("USR0", &t);
+	//    printf("%s %s", t.name, t.surname);
 	
-	template <typename T>
-	struct FlashValue
+	
+	struct FlashFileSystem
 	{
-		FlashValue()
-		{
-			m_data = FlashAllocator::allocate<T>(1);
-		}
-
-		explicit FlashValue(T const& value)
-		{
-			m_data = FlashAllocator::allocate<T>(1);
-			set(value);
-		}
-
-		operator const T() const
-		{
-			return get();
-		}
-
-		void operator = (T const& value)
-		{
-			set(value);
-		}
-
-	private:
-
-		void set(T const& value)
+		
+		// format the entire available space
+		// This is required only if you want to remove previous files
+		static void ICACHE_FLASH_ATTR format()
 		{
 			DisableInterrupts();
-			for (uint16_t i = 0; i != FlashAllocator::getSectorsCount<T>(1); ++i)
-				spi_flash_erase_sector(m_data / SPI_FLASH_SEC_SIZE + i);			
-			spi_flash_write((uint32_t)m_data, (uint32*)&value, sizeof(T));
+			for (uint16_t s = 0; s != FLASHFILESYSTEMLENGTH_SECTOR; ++s)
+				spi_flash_erase_sector(FLASHFILESYSTEMSTART_SECTOR + s);
+			EnableInterrupts();					
+		}
+				
+		// ret false if file doesn't exist
+		static bool ICACHE_FLASH_ATTR load(char const* filename, void* buffer)
+		{
+			SectorHeader header;
+			uint16_t sector = find(filename, &header);
+			if (sector > 0)
+			{
+				// found
+				DisableInterrupts();
+				spi_flash_read((uint32_t)(sector * SPI_FLASH_SEC_SIZE + sizeof(SectorHeader)), (uint32*)buffer, header.length);
+				EnableInterrupts();					
+				return true;
+			}
+			return false;	// not found			
+		}
+		
+		// length cannot exceed initial allocated sectors
+		// buffer can be NULL: in this case the specified space is allocated and erased
+		static void ICACHE_FLASH_ATTR save(char const* filename, void* buffer, uint16_t length)
+		{
+			SectorHeader header;
+			uint16_t sector = find(filename, &header);
+			if (sector == 0)				
+				sector = findFreeSector(filename, length, &header); // initial file allocation, prepare header
+			else				
+				header.length = length; // already allocated, update header
+			DisableInterrupts();
+			for (uint16_t s = 0; s != header.sectors; ++s)
+				spi_flash_erase_sector(sector + s);
+			spi_flash_write((uint32_t)(sector * SPI_FLASH_SEC_SIZE), (uint32*)&header, sizeof(SectorHeader));
+			if (buffer)
+				// todo: can spi_flash_write write more than one sector?
+				spi_flash_write((uint32_t)(sector * SPI_FLASH_SEC_SIZE + sizeof(SectorHeader)), (uint32*)buffer, length);
 			EnableInterrupts();
 		}
-
-		T const get() const
+		
+		// ret -1 if doesn't exist
+		static int32_t ICACHE_FLASH_ATTR getLength(char const* filename)
 		{
-			T value;
-			DisableInterrupts();
-			spi_flash_read((uint32_t)m_data, (uint32*)&value, sizeof(T));
-			EnableInterrupts();		
-			return value;
+			SectorHeader header;
+			if (find(filename, &header))
+				return header.length;
+			return -1;
 		}
-
+		
+		
 	private:
 
-		uint32_t m_data;
+		static uint32_t const MAGIC = 0x46445631;
+		
+		struct SectorHeader
+		{
+			uint32_t magic;		// MAGIC if allocated
+			uint32_t filename;	// 4 bytes filename
+			uint16_t sectors;	// used sectors
+			uint16_t length;    // used bytes (not including size of SectorHeader)
+		};
+		
+		// header is filled with valid values
+		static uint16_t ICACHE_FLASH_ATTR findFreeSector(char const* filename, uint16_t length, SectorHeader* header)
+		{
+			// find free position
+			for (uint16_t s = 0; s != FLASHFILESYSTEMLENGTH_SECTOR; s += header->sectors)
+			{
+				readSectorHeader(FLASHFILESYSTEMSTART_SECTOR + s, header);
+				if (header->magic != MAGIC)
+				{
+					// write header
+					header->magic    = MAGIC;
+					header->filename = *((uint32_t const*)filename);
+					header->sectors  = calcRequiredSectors(length);
+					header->length   = length;
+					return FLASHFILESYSTEMSTART_SECTOR + s;
+				}
+			}
+			return 0;
+		}		
+	
+		static uint16_t ICACHE_FLASH_ATTR calcRequiredSectors(uint16_t length)
+		{
+			return (sizeof(SectorHeader) + length + SPI_FLASH_SEC_SIZE - 1) / SPI_FLASH_SEC_SIZE;
+		}
+		
+		static void ICACHE_FLASH_ATTR readSectorHeader(uint16_t sector, SectorHeader* header)
+		{
+			DisableInterrupts();
+			spi_flash_read((uint32_t)(sector * SPI_FLASH_SEC_SIZE), (uint32*)header, sizeof(SectorHeader));
+			EnableInterrupts();					
+		}
+		
+		// ret 0 if not found
+		static uint16_t ICACHE_FLASH_ATTR find(char const* filename, SectorHeader* header)
+		{
+			for (uint16_t s = 0; s != FLASHFILESYSTEMLENGTH_SECTOR; s += header->sectors)
+			{
+				readSectorHeader(FLASHFILESYSTEMSTART_SECTOR + s, header);
+				if (header->magic != MAGIC)
+					break;
+				if (header->filename == *((uint32_t const*)filename))
+					return FLASHFILESYSTEMSTART_SECTOR + s;	// found
+			}
+			return 0;	// not found			
+		}
 	};
 
 	

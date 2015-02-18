@@ -164,6 +164,11 @@ namespace fdv
 	// SoftTimeOut class
 	// ex. SoftTimeOut(200)  <- after 200ms SoftTimeOut() returns true
 	// note: not use inside ISR!!
+	//
+	// Example:
+	// SoftTimeOut timeOut(200);
+	// while (!timeOut)
+	//   dosomething();
 
 	class SoftTimeOut
 	{
@@ -194,6 +199,14 @@ namespace fdv
 	/////////////////////////////////////////////////////////////////////
 	// Queue class
 	// A wrapper over FreeRTOS queue
+	//
+	// Example:
+	//
+	// Queue<uint8_t> byteQueue;
+	//
+	// byteQueue.send(100);
+	// ...
+	// byteQueue.receive(&data);
 	
 	template <typename T>
 	class Queue
@@ -211,7 +224,7 @@ namespace fdv
 				vQueueDelete(m_handle);
 			}
 			
-			bool send(T& item, uint32_t msTimeOut)
+			bool send(T& item, uint32_t msTimeOut = portMAX_DELAY)
 			{
 				return xQueueSend(m_handle, &item, msTimeOut / portTICK_RATE_MS);
 			}
@@ -222,12 +235,12 @@ namespace fdv
 				return xQueueSendFromISR(m_handle, &item, &xHigherPriorityTaskWoken);
 			}
 			
-			bool receive(T* item, uint32_t msTimeOut)
+			bool receive(T* item, uint32_t msTimeOut = portMAX_DELAY)
 			{
 				return xQueueReceive(m_handle, item, msTimeOut / portTICK_RATE_MS);
 			}
 			
-			bool peek(T* item, uint32_t msTimeOut)
+			bool peek(T* item, uint32_t msTimeOut = portMAX_DELAY)
 			{
 				return xQueuePeek(m_handle, item, msTimeOut / portTICK_RATE_MS);
 			}			

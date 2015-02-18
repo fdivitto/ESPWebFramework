@@ -35,14 +35,6 @@ extern "C"
 #include "fdvsync.h"
 
 
-/*
-extern "C"
-{
-int vsnprintf(char *buffer, size_t sizeOfBuffer, const char *format, va_list argptr);
-int vsprintf(char *str, const char *format, va_list argptr);
-}
-*/
-
 
 namespace fdv
 {

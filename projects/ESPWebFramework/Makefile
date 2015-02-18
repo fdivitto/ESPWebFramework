@@ -1,3 +1,6 @@
+ESPPORT     = COM7
+
+
 # get SDK path from environment variable ESP8266SDK
 SDKBASE = $(subst \,/,$(ESP8266SDK))
 
@@ -37,9 +40,8 @@ LIBS        = -lgcc -lcirom -lhal -lphy -lpp -lnet80211 -lwpa -lmain -lfreertos 
 
 
 
-
 ESPTOOL     = python $(SDKBASE)esptool.py
-ESPPORT     = COM3
+
 
 
 .PHONY: all flash clean iromlibs
@@ -71,10 +73,10 @@ OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o
 
 SRCDIR = ./src/
 
-%.o: $(SRCDIR)%.c $(wildcard *.h)
+%.o: $(SRCDIR)%.c $(wildcard $(SRCDIR)*.h)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-%.o: $(SRCDIR)%.cpp $(wildcard *.h)
+%.o: $(SRCDIR)%.cpp $(wildcard $(SRCDIR)*.h)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 	
 

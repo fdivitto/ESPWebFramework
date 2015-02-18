@@ -40,6 +40,21 @@ namespace fdv
 	/////////////////////////////////////////////////////////////
 	// Task
 	// An abstract wrapper for FreeRTOS task
+	//
+	// Example:
+	//
+	// struct MainTask : fdv::Task
+	// {
+	//   void ICACHE_FLASH_ATTR run()
+	//   {
+	//     fdv::DisableStdOut();
+	//     fdv::DisableWatchDog();		
+	//     fdv::HardwareSerial serial(115200, 128);		
+	//     Task1 anotherTask;  // creates another task		
+	//     suspend();
+	//   }
+	// };
+
 	
 	class Task
 	{
