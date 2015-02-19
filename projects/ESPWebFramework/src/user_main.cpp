@@ -50,7 +50,7 @@ struct Task1 : fdv::Task
 	fdv::Serial* m_serial;
 	
 	
-	void ICACHE_FLASH_ATTR run()
+	void ICACHE_FLASH_ATTR exec()
 	{
 		
 		
@@ -69,6 +69,7 @@ struct Task1 : fdv::Task
 						m_serial->writeln("1    = start AccessPoint mode");
 						m_serial->writeln("2    = start Client mode static IP");
 						m_serial->writeln("3    = start Client mode dynamic IP");
+						m_serial->writeln("4    = open TCP server port 80");
 						break;
 					case 'r':
 						system_restart();
@@ -99,6 +100,12 @@ struct Task1 : fdv::Task
 						fdv::IP::configureDHCP(fdv::IP::ClientNetwork);
 						m_serial->writeln("Ok");
 						break;
+					case '4':
+					{
+						new fdv::TCPServer<fdv::TCPConnectionHandler>(80);
+						m_serial->writeln("Ok");
+						break;
+					}
 				}
 			}
 		}		
@@ -110,7 +117,7 @@ struct Task1 : fdv::Task
 
 struct MainTask : fdv::Task
 {
-	void ICACHE_FLASH_ATTR run()
+	void ICACHE_FLASH_ATTR exec()
 	{
 		//fdv::DisableStdOut(); 
 		fdv::DisableWatchDog();

@@ -70,7 +70,7 @@ namespace fdv
 				vSemaphoreCreateBinary(m_handle);
 			}
 			
-			~Mutex()
+			virtual ~Mutex()
 			{
 				vSemaphoreDelete(m_handle);
 			}
@@ -116,7 +116,7 @@ namespace fdv
 				m_acquired = m_mutex->lock(msTimeOut);
 			}
 
-			~MutexLock()
+			virtual ~MutexLock()
 			{
 				if (m_acquired)
 					m_mutex->unlock();
@@ -142,7 +142,7 @@ namespace fdv
 				m_acquired = m_mutex->lockFromISR();
 			}
 
-			~MutexLockFromISR()
+			virtual ~MutexLockFromISR()
 			{
 				if (m_acquired)
 					m_mutex->unlockFromISR();
@@ -157,6 +157,109 @@ namespace fdv
 			Mutex* m_mutex;
 			bool   m_acquired;
 	};
+
+	
+	/////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	// SafeValue
+	// A task safe value
+	// Don't use inside ISR
+	
+	template <typename T>
+	struct SafeValue
+	{
+		SafeValue(T const& value)
+			: m_value(value)
+		{
+		}
+		
+		operator const T() const
+		{
+			MutexLock lock(&m_mutex);
+			return m_value;
+		}
+		
+		void operator =(T const& value)
+		{
+			MutexLock lock(&m_mutex);
+			m_value = value;
+		}
+		
+		const T operator++()
+		{
+			MutexLock lock(&m_mutex);
+			return ++m_value;
+		}
+		
+		const T operator++(int)
+		{
+			MutexLock lock(&m_mutex);
+			return m_value++;
+		}
+			
+		const T operator--()
+		{
+			MutexLock lock(&m_mutex);
+			return --m_value;
+		}
+		
+		const T operator--(int)
+		{
+			MutexLock lock(&m_mutex);
+			return m_value--;
+		}
+		
+	private:
+		T     m_value;
+		Mutex m_mutex;
+	};
+	
+	
+	/////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	// ResourceCounter
+	// Note: cannot be implemented using RTOS CountingSemaphpore because not linked into ESP8266 sdk. Implemented using two semaphores.
+	// Count starts from resourceCount. get() decreases available resources.
+	// Do not use inside ISR
+	
+	struct ResourceCounter
+	{
+		ResourceCounter(uint32_t resourcesCount)
+			: m_resources(resourcesCount)
+		{
+		}
+		
+		// decrements counter. Wait if no resource are available.
+		bool get(uint32_t msTimeOut = portMAX_DELAY)
+		{
+			if (m_gate.lock(msTimeOut))
+			{
+				m_mutex.lock();
+				--m_resources;
+				if (m_resources > 0)
+					m_gate.unlock();
+				m_mutex.unlock();
+				return true;
+			}
+			return false;
+		}
+		
+		// increments counter
+		void release()
+		{
+			m_mutex.lock();
+			++m_resources;
+			if (m_resources == 1)
+				m_gate.unlock();
+			m_mutex.unlock();
+		}
+		
+	private:
+		Mutex    m_mutex;
+		Mutex    m_gate;
+		uint32_t m_resources;
+	};
+
 
 	
 	/////////////////////////////////////////////////////////////////////
@@ -219,7 +322,7 @@ namespace fdv
 				m_handle = xQueueCreate(queueLength, sizeof(T));
 			}
 						
-			~Queue()
+			virtual ~Queue()
 			{
 				vQueueDelete(m_handle);
 			}

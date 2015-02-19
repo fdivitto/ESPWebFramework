@@ -35,7 +35,9 @@ extern "C"
 	#include "lwip/sockets.h"
 	#include "lwip/dns.h"
 	#include "lwip/netdb.h"
-	#include "udhcp/dhcpd.h"
+	#include "lwip/api.h"
+	#include "lwip/netbuf.h"
+	#include "udhcp/dhcpd.h"	
 }
 
 
@@ -106,6 +108,7 @@ namespace fdv
 			pconfig->channel = channel;
 			pconfig->authmode = securityProtocol;
 			pconfig->ssid_hidden = (uint8)hiddenSSID;
+			//printf("-----> %d\n\r", pconfig->max_connection);
 			DisableInterrupts();
 			wifi_softap_set_config(pconfig);
 			EnableInterrupts();
@@ -196,7 +199,143 @@ namespace fdv
 			udhcpd_start();
 		}
     };
-    
+
+
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// TCPServer
+	
+	template <typename ConnectionHandler>
+	struct TCPServer
+	{
+		
+		static uint32_t const ACCEPTWAITTIMEOUTMS = 35000;
+		
+		
+		TCPServer(uint16_t port, uint16_t maxThreads = 1, uint16_t threadsStackDepth = 512)
+			: m_threadsStackDepth(threadsStackDepth), m_threadResourcesCounter(maxThreads)
+		{
+			m_netconn = netconn_new(NETCONN_TCP);
+			netconn_bind(m_netconn, IP_ADDR_ANY, port);	// todo: allow other choices other than IP_ADDR_ANY
+			netconn_listen(m_netconn);
+			m_listenerTask = new MethodTask<TCPServer, &TCPServer::listenerTask>(*this, 512);
+		}
+		
+		virtual ~TCPServer()
+		{
+			delete m_listenerTask;
+			netconn_delete(m_netconn);
+		}
+		
+		void listenerTask()
+		{
+			// todo: causes crash if there is another incoming connection (already accepted or not accepted) which sends data!!
+			while (true)
+			{
+				if (m_threadResourcesCounter.get())
+				{
+					printf("Wait for accept\n\r");
+					netconn* conn;
+					if (netconn_accept(m_netconn, &conn) == ERR_OK)
+					{
+						printf("Connected\n\r");
+						ConnectionHandler* connectionHandler = new ConnectionHandler;
+						connectionHandler->start(m_threadsStackDepth, conn, m_threadResourcesCounter);
+					}
+					else
+						m_threadResourcesCounter.release();
+				}
+			}
+			/*
+			while (true)
+			{
+				netconn* conn;
+				if (netconn_accept(m_netconn, &conn) == ERR_OK)
+				{
+					printf("Connected, waiting for free thread\n\r");
+					if (m_threadResourcesCounter.get(ACCEPTWAITTIMEOUTMS))
+					{
+						ConnectionHandler* connectionHandler = new ConnectionHandler;
+						connectionHandler->start(m_threadsStackDepth, conn, m_threadResourcesCounter);
+					}
+					else
+					{
+						printf("Timeout! No thread is available\n\r");
+						netconn_shutdown(conn, 1, 1);
+						netconn_close(conn);
+						netconn_delete(conn);
+						printf("Connection deleted\n\r");
+					}
+				}
+			}
+			*/
+		}
+		
+	private:
+	
+		uint16_t            m_threadsStackDepth;
+		netconn*            m_netconn;
+		Task*               m_listenerTask;
+		uint16_t            m_maxThreads;
+		ResourceCounter     m_threadResourcesCounter;
+	};
+	
+	
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// TCPConnectionHandler
+	
+	struct TCPConnectionHandler : public Task
+	{
+		
+		TCPConnectionHandler()
+			: Task(256, 2, true)	// create task as suspended
+		{
+		}
+		
+		void start(uint16_t stackDepth, netconn* conn, ResourceCounter& threadsResourcesCounter)
+		{
+			m_conn = conn;
+			m_threadResourcesCounter = &threadsResourcesCounter;
+			setStackDepth(stackDepth);
+			resume();
+		}
+		
+		void exec()
+		{
+			while (true)
+			{
+				printf("Waiting for data\n\r");
+				netbuf* buf;
+				if (netconn_recv(m_conn, &buf) == ERR_OK)
+				{
+					char const* data;
+					uint16_t len;
+					do
+					{
+						netbuf_data(buf, (void**)&data, &len);
+						printf("%d -> ", len);
+						while (len--)
+							printf("%c", *data++);
+					} while (netbuf_next(buf) >= 0);
+					printf("\n\r");
+					netbuf_delete(buf);
+				}				
+				else
+					break;
+			}
+			printf("disconnected\n\r");
+			netconn_shutdown(m_conn, 1, 1);
+			netconn_close(m_conn);
+			netconn_delete(m_conn);
+			m_threadResourcesCounter->release();
+			delete this;	// this will free heap for the object and remove the RTOS vTaskDelete
+		}
+		
+	private:
+		netconn*         m_conn;
+		ResourceCounter* m_threadResourcesCounter;
+	};
     
 	
 	

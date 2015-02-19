@@ -45,7 +45,7 @@ namespace fdv
 	//
 	// struct MainTask : fdv::Task
 	// {
-	//   void ICACHE_FLASH_ATTR run()
+	//   void ICACHE_FLASH_ATTR exec()
 	//   {
 	//     fdv::DisableStdOut();
 	//     fdv::DisableWatchDog();		
@@ -60,15 +60,23 @@ namespace fdv
 	{
 	public:
 		
-		Task(uint16_t stackDepth = 256, uint32_t priority = 2)
+		Task(uint16_t stackDepth = 256, uint32_t priority = 2, bool suspended = false)
+			: m_stackDepth(stackDepth), m_priority(priority), m_handle(NULL)
 		{
-			xTaskCreate(entry, (const signed char*)"", stackDepth, this, priority, &m_handle);
+			if (!suspended)
+				resume();			
 		}
 		
-		~Task()
+		virtual ~Task()
 		{
 			vTaskDelete(m_handle);
-		}		
+		}
+		
+		// call only when "suspended" in constructor is true and before resume()
+		void setStackDepth(uint16_t stackDepth)
+		{
+			m_stackDepth = stackDepth;
+		}
 		
 		void suspend()
 		{
@@ -77,7 +85,10 @@ namespace fdv
 		
 		void resume()
 		{
-			vTaskResume(m_handle);
+			if (m_handle)
+				vTaskResume(m_handle);
+			else
+				xTaskCreate(entry, (const signed char*)"", m_stackDepth, this, m_priority, &m_handle);			
 		}
 		
 		void delay(uint32_t ms)
@@ -87,19 +98,65 @@ namespace fdv
 		
 	public:
 	
-		virtual void run() = 0;
+		virtual void exec() = 0;
 		
 
 	private:
 	
 		static void ICACHE_FLASH_ATTR entry(void* params)
 		{
-			static_cast<Task*>(params)->run();
+			static_cast<Task*>(params)->exec();
 		}
 		
 	private:
+		uint16_t    m_stackDepth;
+		uint32_t    m_priority;
 		xTaskHandle m_handle;
 		
+	};
+
+
+	/////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////
+	// MethodTask
+	// A way to execute different tasks in different methods of the same class
+	//
+	// Example:
+	// struct MyClass
+	// {
+	//   MyClass()
+	//   {		
+	//      m_task1 = new MethodTask<MyClass, &MyClass::task1>(*this);
+	//      m_task2 = new MethodTask<MyClass, &MyClass::task2>(*this);
+	//   }
+	//   void task1()
+	//   {
+	//      ...
+	//   }
+	//   void task2()
+	//   {
+	//      ...
+	//   }
+	//   Task* m_task1;
+	//   Task* m_task2;
+	// };
+	
+	
+	template <typename T, void (T::*Method)()>
+	class MethodTask : public Task
+	{
+	public:
+		MethodTask(T& object, uint16_t stackDepth = 256, uint32_t priority = 2)
+			: Task(stackDepth, priority), m_object(object)
+		{
+		}
+		
+		void exec()
+		{
+			(m_object.*Method)();
+		}
+	private:
+		T& m_object;
 	};
 	
 	
