@@ -25,6 +25,11 @@
 #define _FDVWIFI_H_
 
 
+// disable macros like "read"
+#ifndef LWIP_POSIX_SOCKETS_IO_NAMES
+#define LWIP_POSIX_SOCKETS_IO_NAMES 0
+#endif
+
 
 extern "C"
 {
@@ -52,6 +57,7 @@ extern "C"
 bool wifi_station_dhcpc_start(void);
 bool wifi_station_dhcpc_stop(void);
 bool dhcp_set_info(dhcp_info *if_dhcp);
+sint8 ICACHE_FLASH_ATTR udhcpd_stop(void);
 }	
 
 	
@@ -185,6 +191,7 @@ namespace fdv
 		// warn: each IP in the range requires memory!
 		static void ICACHE_FLASH_ATTR configure(char const* startIP, char const* endIP, uint32_t maxLeases)
 		{		
+			//udhcpd_stop();
 			dhcp_info* pinfo = (dhcp_info*)zalloc(sizeof(dhcp_info));	// avoid to use stack
 			pinfo->start_ip      = ipaddr_addr(startIP);
 			pinfo->end_ip        = ipaddr_addr(endIP);
@@ -209,72 +216,61 @@ namespace fdv
 	struct TCPServer
 	{
 		
-		static uint32_t const ACCEPTWAITTIMEOUTMS = 35000;
+		static uint32_t const ACCEPTWAITTIMEOUTMS = 20000;
 		
 		
-		TCPServer(uint16_t port, uint16_t maxThreads = 1, uint16_t threadsStackDepth = 512)
+		TCPServer(uint16_t port, uint16_t maxThreads = 2, uint16_t threadsStackDepth = 256)
 			: m_threadsStackDepth(threadsStackDepth), m_threadResourcesCounter(maxThreads)
 		{
-			m_netconn = netconn_new(NETCONN_TCP);
-			netconn_bind(m_netconn, IP_ADDR_ANY, port);	// todo: allow other choices other than IP_ADDR_ANY
-			netconn_listen(m_netconn);
-			m_listenerTask = new MethodTask<TCPServer, &TCPServer::listenerTask>(*this, 512);
+			m_socket = lwip_socket(PF_INET, SOCK_STREAM, 0);
+			sockaddr_in sLocalAddr = {0};
+			sLocalAddr.sin_family = AF_INET;
+			sLocalAddr.sin_len = sizeof(sockaddr_in);
+			sLocalAddr.sin_addr.s_addr = htonl(INADDR_ANY);	// todo: allow other choices other than IP_ADDR_ANY
+			sLocalAddr.sin_port = htons(port);
+			lwip_bind(m_socket, (sockaddr*)&sLocalAddr, sizeof(sockaddr_in));			
+			lwip_listen(m_socket, maxThreads);
+			
+			m_listenerTask = new MethodTask<TCPServer, &TCPServer::listenerTask>(*this, 256);
 		}
 		
 		virtual ~TCPServer()
 		{
 			delete m_listenerTask;
-			netconn_delete(m_netconn);
+			lwip_close(m_socket);
 		}
 		
 		void listenerTask()
 		{
-			// todo: causes crash if there is another incoming connection (already accepted or not accepted) which sends data!!
 			while (true)
 			{
-				if (m_threadResourcesCounter.get())
+				printf("B.StackWaterMark=%d\n\r", uxTaskGetStackHighWaterMark(NULL));
+				printf("Wait for accept\n\r");
+				sockaddr_in clientAddr;
+				socklen_t addrLen = sizeof(sockaddr_in);
+				int clientSocket = lwip_accept(m_socket, (sockaddr*)&clientAddr, &addrLen);
+				if (clientSocket > 0)
 				{
-					printf("Wait for accept\n\r");
-					netconn* conn;
-					if (netconn_accept(m_netconn, &conn) == ERR_OK)
-					{
-						printf("Connected\n\r");
-						ConnectionHandler* connectionHandler = new ConnectionHandler;
-						connectionHandler->start(m_threadsStackDepth, conn, m_threadResourcesCounter);
-					}
-					else
-						m_threadResourcesCounter.release();
-				}
-			}
-			/*
-			while (true)
-			{
-				netconn* conn;
-				if (netconn_accept(m_netconn, &conn) == ERR_OK)
-				{
-					printf("Connected, waiting for free thread\n\r");
+					printf("Connected, wait for a free thread\n\r");
 					if (m_threadResourcesCounter.get(ACCEPTWAITTIMEOUTMS))
 					{
+						printf("Start receiving data\n\r");
 						ConnectionHandler* connectionHandler = new ConnectionHandler;
-						connectionHandler->start(m_threadsStackDepth, conn, m_threadResourcesCounter);
+						connectionHandler->start(m_threadsStackDepth, clientSocket, m_threadResourcesCounter);						
 					}
 					else
 					{
-						printf("Timeout! No thread is available\n\r");
-						netconn_shutdown(conn, 1, 1);
-						netconn_close(conn);
-						netconn_delete(conn);
-						printf("Connection deleted\n\r");
+						printf("Timout, no thread available, disconnecting\n\r");
+						lwip_close(clientSocket);
 					}
 				}
 			}
-			*/
 		}
 		
 	private:
 	
 		uint16_t            m_threadsStackDepth;
-		netconn*            m_netconn;
+		int                 m_socket;
 		Task*               m_listenerTask;
 		uint16_t            m_maxThreads;
 		ResourceCounter     m_threadResourcesCounter;
@@ -293,9 +289,9 @@ namespace fdv
 		{
 		}
 		
-		void start(uint16_t stackDepth, netconn* conn, ResourceCounter& threadsResourcesCounter)
+		void start(uint16_t stackDepth, int socket, ResourceCounter& threadsResourcesCounter)
 		{
-			m_conn = conn;
+			m_socket = socket;
 			m_threadResourcesCounter = &threadsResourcesCounter;
 			setStackDepth(stackDepth);
 			resume();
@@ -305,35 +301,26 @@ namespace fdv
 		{
 			while (true)
 			{
+				printf("C.StackWaterMark=%d\n\r", uxTaskGetStackHighWaterMark(NULL));
 				printf("Waiting for data\n\r");
-				netbuf* buf;
-				if (netconn_recv(m_conn, &buf) == ERR_OK)
-				{
-					char const* data;
-					uint16_t len;
-					do
-					{
-						netbuf_data(buf, (void**)&data, &len);
-						printf("%d -> ", len);
-						while (len--)
-							printf("%c", *data++);
-					} while (netbuf_next(buf) >= 0);
-					printf("\n\r");
-					netbuf_delete(buf);
-				}				
-				else
+				char buffer[64];
+				int len = lwip_recv(m_socket, buffer, sizeof(buffer), 0);
+				if (len == 0)
 					break;
+				printf("%d -> ", len);
+				char const* data = buffer;
+				while (len--)
+					printf("%c", *data++);
+				printf("\n\r");					
 			}
 			printf("disconnected\n\r");
-			netconn_shutdown(m_conn, 1, 1);
-			netconn_close(m_conn);
-			netconn_delete(m_conn);
+			lwip_close(m_socket);
 			m_threadResourcesCounter->release();
 			delete this;	// this will free heap for the object and remove the RTOS vTaskDelete
 		}
 		
 	private:
-		netconn*         m_conn;
+		int              m_socket;
 		ResourceCounter* m_threadResourcesCounter;
 	};
     

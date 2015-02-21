@@ -21,7 +21,9 @@
 */
 
 // disable macros like "read"
+#ifndef LWIP_POSIX_SOCKETS_IO_NAMES
 #define LWIP_POSIX_SOCKETS_IO_NAMES 0
+#endif
 
 extern "C"
 {
@@ -43,7 +45,7 @@ struct Task1 : fdv::Task
 {
 
 	Task1(fdv::Serial* serial)
-		: fdv::Task(1024), m_serial(serial)
+		: fdv::Task(700), m_serial(serial)
 	{		
 	}
 
@@ -62,14 +64,16 @@ struct Task1 : fdv::Task
 				switch (c)
 				{
 					case 'h':
+						printf("A.StackWaterMark=%d\n\r", uxTaskGetStackHighWaterMark(NULL));
 						m_serial->writeln("Tests:\r\n");
 						m_serial->writeln("h    = help");
 						m_serial->writeln("r    = reset");	
 						m_serial->writeln("0    = format flash filesystem");
 						m_serial->writeln("1    = start AccessPoint mode");
-						m_serial->writeln("2    = start Client mode static IP");
-						m_serial->writeln("3    = start Client mode dynamic IP");
-						m_serial->writeln("4    = open TCP server port 80");
+						m_serial->writeln("2    = start DHCP server");
+						m_serial->writeln("3    = start Client mode static IP");
+						m_serial->writeln("4    = start Client mode dynamic IP");
+						m_serial->writeln("5    = open TCP server port 80");
 						break;
 					case 'r':
 						system_restart();
@@ -79,28 +83,34 @@ struct Task1 : fdv::Task
 						m_serial->writeln("Ok");
 						break;
 					case '1':
-						// Access point with DHCP server enabled
+						// Access point
 						fdv::WiFi::setMode(fdv::WiFi::AccessPoint);
-						fdv::WiFi::configureAccessPoint("MyESP", "myesp111", 6);
-						fdv::IP::configureStatic(fdv::IP::AccessPointNetwork, "192.168.5.1", "255.255.255.0", "192.168.5.1");
-						fdv::DHCPServer::configure("192.168.5.100", "192.168.5.110", 10);
+						fdv::WiFi::configureAccessPoint("MyESP", "myesp111", 9);
+						fdv::IP::configureStatic(fdv::IP::AccessPointNetwork, "192.168.5.1", "255.255.255.0", "192.168.5.1");						
+						m_serial->writeln("Reboot and enable DHCP server (2)");
 						m_serial->writeln("Ok");
 						break;
 					case '2':
+						// Enable DHCP server
+						fdv::IP::configureStatic(fdv::IP::AccessPointNetwork, "192.168.5.1", "255.255.255.0", "192.168.5.1");						
+						fdv::DHCPServer::configure("192.168.5.100", "192.168.5.110", 10);
+						m_serial->writeln("Ok");
+						break;
+					case '3':
 						// Client mode with static IP
 						fdv::WiFi::setMode(fdv::WiFi::Client);
 						fdv::WiFi::configureClient("OSPITI", "31415926");
 						fdv::IP::configureStatic(fdv::IP::ClientNetwork, "192.168.1.199", "255.255.255.0", "192.168.1.1");						
 						m_serial->writeln("Ok");
 						break;
-					case '3':
+					case '4':
 						// Client mode with dynamic IP
 						fdv::WiFi::setMode(fdv::WiFi::Client);
 						fdv::WiFi::configureClient("OSPITI", "31415926");
 						fdv::IP::configureDHCP(fdv::IP::ClientNetwork);
 						m_serial->writeln("Ok");
 						break;
-					case '4':
+					case '5':
 					{
 						new fdv::TCPServer<fdv::TCPConnectionHandler>(80);
 						m_serial->writeln("Ok");
