@@ -40,12 +40,39 @@ extern "C"
 #include "fdvnetwork.h"
 
 
+struct MyTCPConnectionHandler : public fdv::TCPConnectionHandler
+{
+	void connectionHandler()
+	{
+		while (isConnected())
+		{
+			printf("C.StackWaterMark=%d\n\r", uxTaskGetStackHighWaterMark(NULL));
+			printf("Waiting for data\n\r");
+			char buffer[64];
+			int32_t len = read(buffer, sizeof(buffer));
+			if (len > 0)
+			{
+				printf("%d -> ", len);
+				char const* data = buffer;
+				while (len--)
+					printf("%c", *data++);
+				printf("\n\r");
+				write("ok\n\r", 4);
+			}
+		}
+		printf("disconnected\n\r");
+	}
+};
+
+
+
+
 
 struct Task1 : fdv::Task
 {
 
 	Task1(fdv::Serial* serial)
-		: fdv::Task(700), m_serial(serial)
+		: fdv::Task(400), m_serial(serial)
 	{		
 	}
 
@@ -112,7 +139,7 @@ struct Task1 : fdv::Task
 						break;
 					case '5':
 					{
-						new fdv::TCPServer<fdv::TCPConnectionHandler>(80);
+						new fdv::TCPServer<MyTCPConnectionHandler>(80);
 						m_serial->writeln("Ok");
 						break;
 					}

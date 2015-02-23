@@ -21,7 +21,8 @@ INCLUDES += -I $(SDKBASE)esp_iot_rtos_sdk-master/include/lwip/ipv4
 INCLUDES += -I $(SDKBASE)esp_iot_rtos_sdk-master/include/lwip/ipv6
 INCLUDES += -I $(SDKBASE)xtensa-lx106-elf/xtensa-lx106-elf/include
 
-CFLAGS    = -g -save-temps -Os -O2 -Wpointer-arith -Wundef -Werror -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals
+# don't change -Os (or add other -O options) otherwise FLASHMEM and FSTR data will be duplicated in RAM
+CFLAGS    = -g -save-temps -Os -Wpointer-arith -Wundef -Werror -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals
 CFLAGS   += -D__ets__ 
 CFLAGS   += -DICACHE_FLASH
 CFLAGS   += -fno-exceptions -fno-rtti
@@ -86,7 +87,7 @@ libuser.a: $(OBJ)
 
 $(TARGET_OUT): libuser.a
 	$(LD) $(SDK_LIBDIR) -T$(SDK_LDDIR)/$(LD_SCRIPT) -Wl,-M >out.map $(LDFLAGS) -Wl,--start-group $(LIBS) libuser.a -Wl,--end-group -o $@
-	$(OD) -h $@
+	$(OD) -h -j .data -j .rodata -j .bss -j .text -j .irom0.text $@
 	$(ESPTOOL) elf2image $@
 
 

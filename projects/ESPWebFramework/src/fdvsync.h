@@ -44,9 +44,17 @@ namespace fdv
 	uint32_t millisDiff(uint32_t time1, uint32_t time2);
 	void DisableWatchDog();
 	void EnableWatchDog();
-	void EnableInterrupts();
-	void DisableInterrupts();
+
+
+	inline void enterCritical()
+	{
+		taskENTER_CRITICAL();
+	}
 	
+	inline void exitCritical()
+	{
+		taskEXIT_CRITICAL();
+	}
 
 	/////////////////////////////////////////////////////////////////////+
 	/////////////////////////////////////////////////////////////////////+
@@ -364,6 +372,24 @@ namespace fdv
 		
 	};
 
+	
+	/////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	// Critical
+	// Embends FreeRTOS taskENTER_CRITICAL and taskEXIT_CRITICAL
+	
+	struct Critical
+	{
+		Critical()
+		{
+			enterCritical();
+		}
+		
+		~Critical()
+		{
+			exitCritical();
+		}
+	};
 	
 }
 

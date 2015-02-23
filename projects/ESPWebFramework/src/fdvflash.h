@@ -35,8 +35,8 @@ extern "C"
 #include "fdvserial.h"
 
 
-#define ICACHE_RODATA_ATTR __attribute__((section(".irom.text")))
-#define ICACHE_STORE_ATTR __attribute__((aligned(4)))
+#define FLASHMEM __attribute__((aligned(4))) __attribute__((section(".irom.text")))
+#define FSTR(s) (__extension__({static const char __c[] FLASHMEM = (s); &__c[0];}))
 
 
 // Flash from 0x0 to 0x8000      mapped to 0x40100000, len = 0x8000 (32KBytes)    - ".text"
@@ -56,22 +56,92 @@ namespace fdv
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
-	// FlashReadonlyDataRead
+	// FStrUtils
+	// String utilities to work with both Flash stored strings and RAM stored strings
+	//
 	// Example:
-	//
-	// char const ICACHE_STORE_ATTR ICACHE_RODATA_ATTR STR2[] = "Stored in flash!\r\n";
-	//
-	// To read use:
-	//
-	// char str[sizeof(STR2)];
-	// FlashReadonlyDataRead(STR2, str, sizeof(STR2));
-	// serial.write(buf);
-	inline void FlashReadonlyDataRead(void const* source, void* dest, uint32_t size)
+	//   static char const STR1[] FLASHMEM = "1234567890";
+	//   
+	//   if (FlashUtils::strcmp(STR1, otherstring) == 0)
+	//     dosomething();
+	// 
+	// Example:
+	//   if (FlashUtils::strcmp(FSTR("1234567890"), otherstring) == 0)
+	//     dosomething();
+
+	
+	struct FStrUtils
 	{
-		DisableInterrupts();
-		spi_flash_read((uint32_t)source - 0x40240000 + 0x40000, (uint32*)dest, size);
-		EnableInterrupts();		
-	}
+		
+		static bool ICACHE_FLASH_ATTR isStoredInFlash(void const* ptr)
+		{
+			return (uint32_t)ptr >= 0x40200000 && (uint32_t)ptr < 0x40300000;
+		}
+		
+		// flash mapped "text" is readable as 4 byte aligned blocks
+		static char ICACHE_FLASH_ATTR getChar(char const* flashString, uint32_t index)
+		{
+			uint32_t u32 = ((uint32_t const*)flashString)[index >> 2];
+			return ((char const*)&u32)[index & 0x3];
+		}
+		
+		static uint32_t ICACHE_FLASH_ATTR strlen(char const* str)
+		{
+			if (isStoredInFlash(str))
+			{
+				uint32_t len = 0;
+				for (; getChar(str, len) != 0; ++len)
+					;
+				return len;
+			}
+			else
+				return ::strlen(str);
+		}
+		
+		static char* ICACHE_FLASH_ATTR strdup(char const* str)
+		{
+			return FStrUtils::strcpy((char*)malloc(FStrUtils::strlen(str)), str);
+		}
+		
+		static char* ICACHE_FLASH_ATTR strcpy(char* destination, char const* source)
+		{
+			if (isStoredInFlash(source))
+			{
+				char* destptr = destination;
+				uint32_t idx = 0;
+				while (true)
+				{
+					*destptr = getChar(source, idx++);
+					if (*destptr++ == 0)
+						return destination;
+				}
+			}
+			else
+				return ::strcpy(destination, source);
+		}
+		
+		// note: only "s1" can be stored in flash!
+		static int32_t ICACHE_FLASH_ATTR strcmp(char const* s1, char const* s2)
+		{
+			if (isStoredInFlash(s1))
+			{
+				char c;
+				uint32_t idx = 0;
+				while (true)
+				{
+					c = getChar(s1, idx);
+					if (c == 0 || c != *s2)
+						break;
+					++idx;
+					++s2;
+				}
+				return (uint8_t)c - *(uint8_t const*)s2;
+			}
+			else
+				return ::strcmp(s1, s2);
+		}
+		
+	};
 	
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -109,10 +179,9 @@ namespace fdv
 		// This is required only if you want to remove previous files
 		static void ICACHE_FLASH_ATTR format()
 		{
-			DisableInterrupts();
+			Critical critical;
 			for (uint16_t s = 0; s != FLASHFILESYSTEMLENGTH_SECTOR; ++s)
 				spi_flash_erase_sector(FLASHFILESYSTEMSTART_SECTOR + s);
-			EnableInterrupts();					
 		}
 				
 		// ret false if file doesn't exist
@@ -123,9 +192,8 @@ namespace fdv
 			if (sector > 0)
 			{
 				// found
-				DisableInterrupts();
+				Critical critical;
 				spi_flash_read((uint32_t)(sector * SPI_FLASH_SEC_SIZE + sizeof(SectorHeader)), (uint32*)buffer, header.length);
-				EnableInterrupts();					
 				return true;
 			}
 			return false;	// not found			
@@ -141,14 +209,13 @@ namespace fdv
 				sector = findFreeSector(filename, length, &header); // initial file allocation, prepare header
 			else				
 				header.length = length; // already allocated, update header
-			DisableInterrupts();
+			Critical critical;
 			for (uint16_t s = 0; s != header.sectors; ++s)
 				spi_flash_erase_sector(sector + s);
 			spi_flash_write((uint32_t)(sector * SPI_FLASH_SEC_SIZE), (uint32*)&header, sizeof(SectorHeader));
 			if (buffer)
 				// todo: can spi_flash_write write more than one sector?
 				spi_flash_write((uint32_t)(sector * SPI_FLASH_SEC_SIZE + sizeof(SectorHeader)), (uint32*)buffer, length);
-			EnableInterrupts();
 		}
 		
 		// ret -1 if doesn't exist
@@ -200,9 +267,8 @@ namespace fdv
 		
 		static void ICACHE_FLASH_ATTR readSectorHeader(uint16_t sector, SectorHeader* header)
 		{
-			DisableInterrupts();
+			Critical critical;
 			spi_flash_read((uint32_t)(sector * SPI_FLASH_SEC_SIZE), (uint32*)header, sizeof(SectorHeader));
-			EnableInterrupts();					
 		}
 		
 		// ret 0 if not found

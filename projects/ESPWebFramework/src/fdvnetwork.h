@@ -90,9 +90,8 @@ namespace fdv
 
 		static Mode ICACHE_FLASH_ATTR setMode(Mode mode)
 		{
-			DisableInterrupts();
+			Critical critical;
 			wifi_set_opmode(mode);
-			EnableInterrupts();
 		}
 		
 		static Mode ICACHE_FLASH_ATTR getMode()
@@ -105,34 +104,29 @@ namespace fdv
 		// note: make sure there is enough stack space free otherwise mail cause reset (fatal exception)!
 		// channel: 1..13
 		static void ICACHE_FLASH_ATTR configureAccessPoint(char const* SSID, char const* securityKey, uint8_t channel, SecurityProtocol securityProtocol = WPA2_PSK, bool hiddenSSID = false)
-		{									
-			softap_config* pconfig = (softap_config*)zalloc(sizeof(softap_config));	// avoid to use stack
-			wifi_softap_get_config(pconfig);
-			strcpy((char *)pconfig->ssid, SSID);
-			pconfig->ssid_len = strlen(SSID);
-			strcpy((char *)pconfig->password, securityKey);
-			pconfig->channel = channel;
-			pconfig->authmode = securityProtocol;
-			pconfig->ssid_hidden = (uint8)hiddenSSID;
-			//printf("-----> %d\n\r", pconfig->max_connection);
-			DisableInterrupts();
-			wifi_softap_set_config(pconfig);
-			EnableInterrupts();
-			free(pconfig);
+		{						
+			softap_config config = {0};
+			wifi_softap_get_config(&config);
+			strcpy((char *)config.ssid, SSID);
+			config.ssid_len = strlen(SSID);
+			strcpy((char *)config.password, securityKey);
+			config.channel = channel;
+			config.authmode = securityProtocol;
+			config.ssid_hidden = (uint8)hiddenSSID;
+			Critical critical;
+			wifi_softap_set_config(&config);
 		}
 		
 		// setMode must be called with Client or ClientAndAccessPoint
 		static void ICACHE_FLASH_ATTR configureClient(char const* SSID, char const* securityKey)
 		{
-			station_config* pconfig = (station_config*)zalloc(sizeof(station_config));	// avoid to use stack
-			strcpy((char *)pconfig->ssid, SSID);
-			strcpy((char *)pconfig->password, securityKey);
-			DisableInterrupts();
+			station_config config = {0};
+			strcpy((char *)config.ssid, SSID);
+			strcpy((char *)config.password, securityKey);
+			Critical critical;
 			wifi_station_disconnect();
-			wifi_station_set_config(pconfig);
+			wifi_station_set_config(&config);
 			wifi_station_connect();
-			EnableInterrupts();
-			free(pconfig);
 		}
 
 		
@@ -160,11 +154,10 @@ namespace fdv
 			info.ip.addr      = ipaddr_addr(IP);
 			info.netmask.addr = ipaddr_addr(netmask);
 			info.gw.addr      = ipaddr_addr(gateway);
-			DisableInterrupts();
+			Critical critical;
 			if (network == ClientNetwork)
 				wifi_station_dhcpc_stop();
 			wifi_set_ip_info(network, &info);
-			EnableInterrupts();
 		}
 		
 		// applied only to ClientNetwork
@@ -172,9 +165,8 @@ namespace fdv
 		{
 			if (network == ClientNetwork)
 			{
-				DisableInterrupts();
+				Critical critical;
 				wifi_station_dhcpc_start();
-				EnableInterrupts();
 			}
 		}
 		
@@ -192,18 +184,17 @@ namespace fdv
 		static void ICACHE_FLASH_ATTR configure(char const* startIP, char const* endIP, uint32_t maxLeases)
 		{		
 			//udhcpd_stop();
-			dhcp_info* pinfo = (dhcp_info*)zalloc(sizeof(dhcp_info));	// avoid to use stack
-			pinfo->start_ip      = ipaddr_addr(startIP);
-			pinfo->end_ip        = ipaddr_addr(endIP);
-			pinfo->max_leases    = maxLeases;
-			pinfo->auto_time     = 60;
-			pinfo->decline_time  = 60;
-			pinfo->conflict_time = 60;
-			pinfo->offer_time    = 60;
-			pinfo->min_lease_sec = 60;
-			dhcp_set_info(pinfo);
-			free(pinfo);
-			udhcpd_start();
+			dhcp_info info = {0};
+			info.start_ip      = ipaddr_addr(startIP);
+			info.end_ip        = ipaddr_addr(endIP);
+			info.max_leases    = maxLeases;
+			info.auto_time     = 60;
+			info.decline_time  = 60;
+			info.conflict_time = 60;
+			info.offer_time    = 60;
+			info.min_lease_sec = 60;
+			dhcp_set_info(&info);
+			udhcpd_start();			
 		}
     };
 
@@ -231,7 +222,7 @@ namespace fdv
 			lwip_bind(m_socket, (sockaddr*)&sLocalAddr, sizeof(sockaddr_in));			
 			lwip_listen(m_socket, maxThreads);
 			
-			m_listenerTask = new MethodTask<TCPServer, &TCPServer::listenerTask>(*this, 256);
+			m_listenerTask = new MethodTask<TCPServer, &TCPServer::listenerTask>(*this, 160);
 		}
 		
 		virtual ~TCPServer()
@@ -285,7 +276,7 @@ namespace fdv
 	{
 		
 		TCPConnectionHandler()
-			: Task(256, 2, true)	// create task as suspended
+			: Task(256, 2, true), m_connected(false)	// create task as suspended
 		{
 		}
 		
@@ -297,31 +288,69 @@ namespace fdv
 			resume();
 		}
 		
+		// ret -1 = error, ret 0 = disconnected
+		int32_t read(void* buffer, uint32_t maxLength)
+		{
+			int32_t bytesRecv = lwip_recv(m_socket, buffer, maxLength, 0);
+			if (maxLength > 0)
+				m_connected = (bytesRecv > 0);
+			return bytesRecv;
+		}
+		
+		// ret -1 = error, ret 0 = disconnected
+		int32_t peek(void* buffer, uint32_t maxLength)
+		{
+			int32_t bytesRecv = lwip_recv(m_socket, buffer, maxLength, MSG_PEEK);
+			if (maxLength > 0)
+				m_connected = (bytesRecv > 0);
+			return bytesRecv;
+		}
+		
+		// ret -1 = error, ret 0 = disconnected
+		int32_t write(void const* buffer, uint32_t length)
+		{
+			int32_t bytesSent = lwip_send(m_socket, buffer, length, 0);
+			if (bytesSent > 0)
+				m_connected = (bytesSent > 0);
+			return bytesSent;
+		}
+		
+		// ret -1 = error, ret 0 = disconnected
+		int32_t write(char const* str)
+		{
+			return write(str, strlen(str));
+		}
+		
+		void close()
+		{
+			if (m_socket > 0)
+			{
+				lwip_close(m_socket);
+				m_socket = 0;
+			}
+		}
+		
+		bool isConnected()
+		{
+			return m_connected;
+		}
+		
 		void exec()
 		{
-			while (true)
-			{
-				printf("C.StackWaterMark=%d\n\r", uxTaskGetStackHighWaterMark(NULL));
-				printf("Waiting for data\n\r");
-				char buffer[64];
-				int len = lwip_recv(m_socket, buffer, sizeof(buffer), 0);
-				if (len == 0)
-					break;
-				printf("%d -> ", len);
-				char const* data = buffer;
-				while (len--)
-					printf("%c", *data++);
-				printf("\n\r");					
-			}
-			printf("disconnected\n\r");
-			lwip_close(m_socket);
+			m_connected = true;
+			connectionHandler();
+			close();
 			m_threadResourcesCounter->release();
 			delete this;	// this will free heap for the object and remove the RTOS vTaskDelete
 		}
 		
+		// applications override this
+		virtual void connectionHandler() = 0;
+		
 	private:
 		int              m_socket;
 		ResourceCounter* m_threadResourcesCounter;
+		bool             m_connected;
 	};
     
 	

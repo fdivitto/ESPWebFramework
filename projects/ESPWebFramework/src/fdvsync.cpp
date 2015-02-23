@@ -54,18 +54,6 @@ namespace fdv
 	}
 	
 	
-	void ICACHE_FLASH_ATTR EnableInterrupts()
-	{
-		ets_intr_unlock();
-	}
-	
-	
-	void ICACHE_FLASH_ATTR DisableInterrupts()
-	{
-		ets_intr_lock();
-	}
-	
-	
 	uint32_t ICACHE_FLASH_ATTR millisISR()
 	{
 		return xTaskGetTickCountFromISR() * portTICK_RATE_MS;
