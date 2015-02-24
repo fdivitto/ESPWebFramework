@@ -231,11 +231,11 @@ namespace fdv
 			lwip_close(m_socket);
 		}
 		
-		void listenerTask()
+		void ICACHE_FLASH_ATTR listenerTask()
 		{
 			while (true)
 			{
-				printf("B.StackWaterMark=%d\n\r", uxTaskGetStackHighWaterMark(NULL));
+				printf("B.FreeStack=%d bytes\n\r", Task::getFreeStack());
 				printf("Wait for accept\n\r");
 				sockaddr_in clientAddr;
 				socklen_t addrLen = sizeof(sockaddr_in);

@@ -32,7 +32,7 @@ extern "C"
 
 
 #include "fdvsync.h"
-#include "fdvserial.h"
+
 
 
 #define FLASHMEM __attribute__((aligned(4))) __attribute__((section(".irom.text")))
@@ -100,7 +100,7 @@ namespace fdv
 		
 		static char* ICACHE_FLASH_ATTR strdup(char const* str)
 		{
-			return FStrUtils::strcpy((char*)malloc(FStrUtils::strlen(str)), str);
+			return FStrUtils::strcpy((char*)malloc(FStrUtils::strlen(str) + 1), str);
 		}
 		
 		static char* ICACHE_FLASH_ATTR strcpy(char* destination, char const* source)

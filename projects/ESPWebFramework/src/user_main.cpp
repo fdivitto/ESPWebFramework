@@ -30,7 +30,6 @@ extern "C"
     #include "esp_common.h"    
     #include "freertos/FreeRTOS.h"
     #include "freertos/task.h"
-	#include "stdarg.h"
 }
 
 #include "fdvserial.h"
@@ -42,11 +41,11 @@ extern "C"
 
 struct MyTCPConnectionHandler : public fdv::TCPConnectionHandler
 {
-	void connectionHandler()
+	void ICACHE_FLASH_ATTR connectionHandler()
 	{
 		while (isConnected())
 		{
-			printf("C.StackWaterMark=%d\n\r", uxTaskGetStackHighWaterMark(NULL));
+			printf("C.free stack=%d bytes\n\r", fdv::Task::getFreeStack());
 			printf("Waiting for data\n\r");
 			char buffer[64];
 			int32_t len = read(buffer, sizeof(buffer));
@@ -91,16 +90,17 @@ struct Task1 : fdv::Task
 				switch (c)
 				{
 					case 'h':
-						printf("A.StackWaterMark=%d\n\r", uxTaskGetStackHighWaterMark(NULL));
-						m_serial->writeln("Tests:\r\n");
-						m_serial->writeln("h    = help");
-						m_serial->writeln("r    = reset");	
-						m_serial->writeln("0    = format flash filesystem");
-						m_serial->writeln("1    = start AccessPoint mode");
-						m_serial->writeln("2    = start DHCP server");
-						m_serial->writeln("3    = start Client mode static IP");
-						m_serial->writeln("4    = start Client mode dynamic IP");
-						m_serial->writeln("5    = open TCP server port 80");
+						m_serial->printf(FSTR("A.Free stack = %d bytes\n\r"), getFreeStack());
+						m_serial->printf(FSTR("A.Free heap  = %d bytes\n\r"), getFreeHeap());
+						m_serial->printf(FSTR("Tests:\n\r"));
+						m_serial->printf(FSTR("h    = help\n\r"));
+						m_serial->printf(FSTR("r    = reset\n\r"));	
+						m_serial->printf(FSTR("0    = format flash filesystem\n\r"));
+						m_serial->printf(FSTR("1    = start AccessPoint mode\n\r"));
+						m_serial->printf(FSTR("2    = start DHCP server\n\r"));
+						m_serial->printf(FSTR("3    = start Client mode static IP\n\r"));
+						m_serial->printf(FSTR("4    = start Client mode dynamic IP\n\r"));
+						m_serial->printf(FSTR("5    = open TCP server port 80\n\r"));
 						break;
 					case 'r':
 						system_restart();
@@ -114,33 +114,33 @@ struct Task1 : fdv::Task
 						fdv::WiFi::setMode(fdv::WiFi::AccessPoint);
 						fdv::WiFi::configureAccessPoint("MyESP", "myesp111", 9);
 						fdv::IP::configureStatic(fdv::IP::AccessPointNetwork, "192.168.5.1", "255.255.255.0", "192.168.5.1");						
-						m_serial->writeln("Reboot and enable DHCP server (2)");
-						m_serial->writeln("Ok");
+						m_serial->printf(FSTR("Reboot and enable DHCP server (2)\n\r"));
+						m_serial->printf(FSTR("Ok\n\r"));
 						break;
 					case '2':
 						// Enable DHCP server
 						fdv::IP::configureStatic(fdv::IP::AccessPointNetwork, "192.168.5.1", "255.255.255.0", "192.168.5.1");						
 						fdv::DHCPServer::configure("192.168.5.100", "192.168.5.110", 10);
-						m_serial->writeln("Ok");
+						m_serial->printf(FSTR("Ok\n\r"));
 						break;
 					case '3':
 						// Client mode with static IP
 						fdv::WiFi::setMode(fdv::WiFi::Client);
 						fdv::WiFi::configureClient("OSPITI", "31415926");
 						fdv::IP::configureStatic(fdv::IP::ClientNetwork, "192.168.1.199", "255.255.255.0", "192.168.1.1");						
-						m_serial->writeln("Ok");
+						m_serial->printf(FSTR("Ok\n\r"));
 						break;
 					case '4':
 						// Client mode with dynamic IP
 						fdv::WiFi::setMode(fdv::WiFi::Client);
 						fdv::WiFi::configureClient("OSPITI", "31415926");
 						fdv::IP::configureDHCP(fdv::IP::ClientNetwork);
-						m_serial->writeln("Ok");
+						m_serial->printf(FSTR("Ok\n\r"));
 						break;
 					case '5':
 					{
 						new fdv::TCPServer<MyTCPConnectionHandler>(80);
-						m_serial->writeln("Ok");
+						m_serial->printf(FSTR("Ok\n\r"));
 						break;
 					}
 				}

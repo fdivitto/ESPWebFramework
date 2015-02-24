@@ -70,7 +70,7 @@ iromlibs:
 # $?: the names of all prerequisites that are newer than the target, separated by spaces.
 
 
-OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o
+OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o fdvprintf.o
 
 SRCDIR = ./src/
 

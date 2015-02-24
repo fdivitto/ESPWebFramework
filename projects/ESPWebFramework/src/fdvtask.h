@@ -73,17 +73,17 @@ namespace fdv
 		}
 		
 		// call only when "suspended" in constructor is true and before resume()
-		void setStackDepth(uint16_t stackDepth)
+		void ICACHE_FLASH_ATTR setStackDepth(uint16_t stackDepth)
 		{
 			m_stackDepth = stackDepth;
 		}
 		
-		void suspend()
+		void ICACHE_FLASH_ATTR suspend()
 		{
 			vTaskSuspend(m_handle);
 		}
 		
-		void resume()
+		void ICACHE_FLASH_ATTR resume()
 		{
 			if (m_handle)
 				vTaskResume(m_handle);
@@ -91,9 +91,21 @@ namespace fdv
 				xTaskCreate(entry, (const signed char*)"", m_stackDepth, this, m_priority, &m_handle);			
 		}
 		
-		void delay(uint32_t ms)
+		void ICACHE_FLASH_ATTR delay(uint32_t ms)
 		{
 			vTaskDelay(ms / portTICK_RATE_MS);
+		}
+		
+		// task free stack (in bytes)
+		static uint32_t ICACHE_FLASH_ATTR getFreeStack()
+		{
+			return uxTaskGetStackHighWaterMark(NULL) * 4;
+		}
+		
+		// global free heap (in bytes)
+		static uint32_t ICACHE_FLASH_ATTR getFreeHeap()
+		{
+			return system_get_free_heap_size();
 		}
 		
 	public:

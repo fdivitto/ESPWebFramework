@@ -28,11 +28,13 @@ extern "C"
     #include "esp_common.h"    
     #include "freertos/FreeRTOS.h"
     #include "freertos/task.h"
-	
+	#include <stdarg.h>
 }
 
 
 #include "fdvsync.h"
+#include "fdvprintf.h"
+#include "fdvflash.h"
 
 
 
@@ -61,7 +63,7 @@ namespace fdv
 			virtual bool waitForData(uint32_t timeOutMs = portMAX_DELAY) = 0;
 					
 			
-			uint16_t read(uint8_t* buffer, uint16_t bufferLen)
+			uint16_t ICACHE_FLASH_ATTR read(uint8_t* buffer, uint16_t bufferLen)
 			{
 				uint16_t ret = 0;
 				for (int16_t c; bufferLen > 0 && (c = read()) > -1; --bufferLen, ++ret)
@@ -72,50 +74,59 @@ namespace fdv
 			}			
 						
 			
-			void writeNewLine()
+			void ICACHE_FLASH_ATTR writeNewLine()
 			{
 				write(0x0D);
 				write(0x0A);	
 			}
 			
 			
-			void write(uint8_t const* buffer, uint16_t bufferLen)
+			void ICACHE_FLASH_ATTR write(uint8_t const* buffer, uint16_t bufferLen)
 			{
 				for (;bufferLen > 0; --bufferLen)
 					write(*buffer++);
 			}
 
 
-			void write(char const* str)
+			void ICACHE_FLASH_ATTR write(char const* str)
 			{
 				while (*str)
 					write(*str++);
 			}
 			
-			void writeln(char const* str)
+			void ICACHE_FLASH_ATTR writeln(char const* str)
 			{
 				write(str);
 				writeNewLine();
 			}
 
-			void writeUInt32(uint32_t value)
+			// fmt can be in RAM or in Flash
+			uint16_t ICACHE_FLASH_ATTR printf(char const *fmt, ...)
 			{
-				bool printZero = false;
-				for (int8_t i = 9; i >= 0; --i)
-				{
-					uint32_t d = 1;
-					for (int8_t j = 0; j != i; ++j)
-						d *= 10;
-					uint32_t v = value / d;
-					if (v != 0 || printZero || i == 0)
-					{
-						uint8_t c = '0' + v;
-						write(c);
-						printZero = true;
-					}
-					value = value - v * d;
-				}
-			}		
+				va_list args;
+				
+				char const* ramFmt = fmt;
+				if (FStrUtils::isStoredInFlash(fmt))
+					ramFmt = FStrUtils::strdup(fmt);
+
+				va_start(args, fmt);
+				uint16_t len = vsprintf(NULL, ramFmt, args);
+				va_end(args);
+
+				char buf[len + 1];
+				
+				va_start(args, fmt);
+				vsprintf(buf, ramFmt, args);
+				va_end(args);
+				
+				write(buf);
+
+				if (ramFmt != fmt)
+					free((void*)ramFmt);
+
+				return len;
+			}
+			
 			
 			
 	};
