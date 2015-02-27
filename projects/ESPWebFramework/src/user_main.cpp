@@ -20,48 +20,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 */
 
-// disable macros like "read"
-#ifndef LWIP_POSIX_SOCKETS_IO_NAMES
-#define LWIP_POSIX_SOCKETS_IO_NAMES 0
-#endif
+#include "fdv.h"
 
-extern "C"
-{
-    #include "esp_common.h"    
-    #include "freertos/FreeRTOS.h"
-    #include "freertos/task.h"
-}
-
-#include "fdvserial.h"
-#include "fdvsync.h"
-#include "fdvflash.h"
-#include "fdvtask.h"
-#include "fdvnetwork.h"
-
-
-struct MyTCPConnectionHandler : public fdv::TCPConnectionHandler
-{
-	void ICACHE_FLASH_ATTR connectionHandler()
-	{
-		while (isConnected())
-		{
-			printf("C.free stack=%d bytes\n\r", fdv::Task::getFreeStack());
-			printf("Waiting for data\n\r");
-			char buffer[64];
-			int32_t len = read(buffer, sizeof(buffer));
-			if (len > 0)
-			{
-				printf("%d -> ", len);
-				char const* data = buffer;
-				while (len--)
-					printf("%c", *data++);
-				printf("\n\r");
-				write("ok\n\r", 4);
-			}
-		}
-		printf("disconnected\n\r");
-	}
-};
 
 
 
@@ -71,14 +31,14 @@ struct Task1 : fdv::Task
 {
 
 	Task1(fdv::Serial* serial)
-		: fdv::Task(400), m_serial(serial)
+		: fdv::Task(false, 400), m_serial(serial)
 	{		
 	}
 
 	fdv::Serial* m_serial;
 	
 	
-	void ICACHE_FLASH_ATTR exec()
+	void MTD_FLASHMEM exec()
 	{
 		
 		
@@ -126,20 +86,20 @@ struct Task1 : fdv::Task
 					case '3':
 						// Client mode with static IP
 						fdv::WiFi::setMode(fdv::WiFi::Client);
-						fdv::WiFi::configureClient("OSPITI", "31415926");
+						fdv::WiFi::configureClient("OSPITI", "P31415926");
 						fdv::IP::configureStatic(fdv::IP::ClientNetwork, "192.168.1.199", "255.255.255.0", "192.168.1.1");						
 						m_serial->printf(FSTR("Ok\n\r"));
 						break;
 					case '4':
 						// Client mode with dynamic IP
 						fdv::WiFi::setMode(fdv::WiFi::Client);
-						fdv::WiFi::configureClient("OSPITI", "31415926");
+						fdv::WiFi::configureClient("OSPITI", "P31415926");
 						fdv::IP::configureDHCP(fdv::IP::ClientNetwork);
 						m_serial->printf(FSTR("Ok\n\r"));
 						break;
 					case '5':
 					{
-						new fdv::TCPServer<MyTCPConnectionHandler>(80);
+						new fdv::TCPServer<fdv::HTTPHandler, 2, 512>(80);
 						m_serial->printf(FSTR("Ok\n\r"));
 						break;
 					}
@@ -154,7 +114,7 @@ struct Task1 : fdv::Task
 
 struct MainTask : fdv::Task
 {
-	void ICACHE_FLASH_ATTR exec()
+	void MTD_FLASHMEM exec()
 	{
 		//fdv::DisableStdOut(); 
 		fdv::DisableWatchDog();
@@ -168,8 +128,8 @@ struct MainTask : fdv::Task
 };
 
 
-extern "C" void /*ICACHE_FLASH_ATTR*/ user_init(void) 
+extern "C" void FUNC_FLASHMEM user_init(void) 
 {
-	new MainTask;	// never destroy!
+	(new MainTask)->resume();	// never destroy!
 }
 

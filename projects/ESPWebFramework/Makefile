@@ -35,9 +35,9 @@ LD_SCRIPT   = eagle.app.v6.ld
 SDK_LIBDIR  = -L$(SDKBASE)esp_iot_rtos_sdk-master/lib
 SDK_LDDIR   = $(SDKBASE)esp_iot_rtos_sdk-master/ld
 
-#LIBS        = -lcirom -lgccirom -lhal -lphy -lpp -lnet80211 -lwpa -lmain -lfreertos -llwip -ludhcp
 # linking libgccirom.a instead of libgcc.a causes reset when working with flash memory (ie spi_flash_erase_sector)
-LIBS        = -lgcc -lcirom -lhal -lphy -lpp -lnet80211 -lwpa -lmain -lfreertos -llwip -ludhcp
+# linking libcirom.a causes conflicts with come std c routines (like strstr, strchr...)
+LIBS        = -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lmain -lfreertos -llwip -ludhcp
 
 
 
@@ -70,7 +70,7 @@ iromlibs:
 # $?: the names of all prerequisites that are newer than the target, separated by spaces.
 
 
-OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o fdvprintf.o
+OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o fdvprintf.o fdvdebug.o
 
 SRCDIR = ./src/
 
