@@ -37,8 +37,8 @@ void FUNC_FLASHMEM debug(char const *fmt, ...)
 	va_list args;
 	
 	char const* ramFmt = fmt;
-	if (fdv::FStrUtils::isStoredInFlash(fmt))
-		ramFmt = fdv::FStrUtils::strdup(fmt);
+	if (fdv::isStoredInFlash(fmt))
+		ramFmt = fdv::f_strdup(fmt);
 
 	va_start(args, fmt);
 	uint16_t len = fdv::vsprintf(NULL, ramFmt, args);
@@ -55,7 +55,7 @@ void FUNC_FLASHMEM debug(char const *fmt, ...)
 	fdv::exitCritical();
 
 	if (ramFmt != fmt)
-		fdv::Memory::free((void*)ramFmt);
+		delete[] ramFmt;
 }
 
 void FUNC_FLASHMEM debugstrn(char const* str, uint32_t len)

@@ -377,32 +377,123 @@ namespace fdv
 	//////////////////////////////////////////////////////////////////////
 	// HTTPHandler
 	
-	struct HTTPHandler : public TCPConnectionHandler
+	class HTTPHandler : public TCPConnectionHandler
 	{
 	
-		typedef ChunkedBuffer<char, 32> Chunks;
+		static uint32_t const CHUNK_CAPACITY = 32;
 	
+		typedef ChunkedBuffer<char> Chunks;
+	
+		// implements TCPConnectionHandler
 		void MTD_FLASHMEM connectionHandler()
 		{
 			while (isConnected())
 			{
-				Chunks::Chunk* chunk = m_chunks.addChunk();
-				chunk->items = read(chunk->data, Chunks::CHUNKITEMS);
+				Chunks::Chunk* chunk = m_chunks.addChunk(CHUNK_CAPACITY);
+				chunk->items = read(chunk->data, CHUNK_CAPACITY);
 				if (processRequest())
 					break;
 			}
-			debug(FSTR("disconnected\n\r"));
 			m_chunks.clear();
+			m_request.query.clear();
+			m_request.headers.clear();
 		}
 		
 		bool MTD_FLASHMEM processRequest()
 		{
 			// look for 0x0D 0x0A 0x0D 0x0A
-			int32_t headerEnd = m_chunks.find("\x0D\x0A\x0D\x0A", 4);
-			if (headerEnd >= 0)
+			Chunks::Iterator headerEnd = t_strstr(m_chunks.begin(), m_chunks.end(), CharIterator(FSTR("\x0D\x0A\x0D\x0A")));
+			if (headerEnd != Chunks::Iterator())
 			{
-				debug(FSTR("pattern found\n\r"));
-				write("ok\n\r");
+				// move header end after CRLFCRLF
+				headerEnd += 4;
+				
+				Chunks::Iterator curc = m_chunks.begin();
+				
+				// extract method (GET, POST, etc..)				
+				m_request.method = curc;
+				while (*curc != ' ' && curc != headerEnd)
+					++curc;
+				*curc++ = 0;	// ends method				
+				
+				// extract requested page and query parameters
+				m_request.requestedPage = curc;
+				Chunks::Iterator key;
+				Chunks::Iterator value;
+				while (curc != headerEnd)
+				{
+					if (*curc == '?')
+					{
+						*curc = 0;	// ends requestedPage
+						key = curc;
+						++key;	// bypass '?'
+					}
+					else if (*curc == '=')
+					{
+						*curc = 0;	// ends key
+						value = curc;
+						++value;	// bypass '='
+					}
+					else if (*curc == '&' || *curc == ' ')
+					{
+						if (key && value)
+						{
+							m_request.query.add(key, value);	// store parameter
+							key = value = Chunks::Iterator();	// reset
+						}
+						if (*curc == ' ')
+						{
+							*curc++ = 0; // ends value or requested page
+							break;
+						}
+						*curc = 0;	// ends value or requested page
+						key = curc;	// bypass '&'
+						++key;
+					}
+					++curc;
+				}
+				
+				// bypass HTTP version
+				while (curc != headerEnd && *curc != 0x0D)
+					++curc;
+								
+				// extract headers
+				while (curc != headerEnd)
+				{
+					if (*curc == 0x0D && key && value)  // CR?
+					{
+						*curc = 0;	// ends key
+						// store header
+						m_request.headers.add(key, value);
+						key = value = Chunks::Iterator(); // reset
+					}					
+					else if (!isspace(*curc) && !key)
+					{
+						// bookmark "key"
+						key = curc;
+					}
+					else if (*curc == ':')
+					{
+						*curc++ = 0;	// ends value
+						// bypass spaces
+						while (curc != headerEnd && isspace(*curc))
+							++curc;
+						// bookmark value
+						value = curc;
+					}
+					++curc;					
+				}
+				
+				// look for data (maybe POST data)
+				Chunks::Iterator contentLengthStr = m_request.headers[FSTR("Content-Length")];
+				if (contentLengthStr)
+				{
+					int32_t contentLength = t_strtol(contentLengthStr, 10);
+					// todo
+				}
+				
+				dispatch();
+				
 				return true;
 			}
 			else
@@ -412,10 +503,65 @@ namespace fdv
 			}
 		}
 		
+		virtual void MTD_FLASHMEM dispatch()
+		{
+			for (uint32_t i = 0; i != m_routesCount; ++i)
+			{
+				if (f_strcmp(FSTR("*"), m_routes[i].page) == 0 || t_strcmp(m_request.requestedPage, CharIterator(m_routes[i].page)) == 0)
+				{
+					(this->*m_routes[i].pageHandler)();
+					return;
+				}
+			}
+			// not found
+			processNotFound();
+		}
+		
+		
+		virtual void MTD_FLASHMEM processNotFound()
+		{
+			debug(FSTR("processNotFound()\r\n"));
+			//reply(request, STR_HTTP404, NULL, 0, NULL, 0, SendStringItem(NULL, PSTR("Not found"), 0, StringItem::Flash));
+		}
+		
+
+	public:
+		
+		struct Request
+		{
+			Chunks::Iterator                             method;	    // ex: GET, POST, etc...
+			Chunks::Iterator                             requestedPage;	// ex: "/", "/data"...						
+			IterDict<Chunks::Iterator, Chunks::Iterator> query;         // parsed query as key->value dictionary
+			IterDict<Chunks::Iterator, Chunks::Iterator> headers;		// parsed headers as key->value dictionary
+		};
+				
+		typedef void (HTTPHandler::*PageHandler)();
+				
+		struct Route
+		{
+			char const* page;
+			PageHandler pageHandler;
+		};
+		
+		void MTD_FLASHMEM setRoutes(Route const* routes, uint32_t routesCount)
+		{
+			m_routes      = routes;
+			m_routesCount = routesCount;
+		}
+		
+		// valid only inside processRequest()
+		Request& MTD_FLASHMEM getRequest()
+		{
+			return m_request;
+		}
+		
 		
 	private:
 	
-		Chunks m_chunks;
+		Chunks       m_chunks;
+		Route const* m_routes;
+		uint32_t     m_routesCount;
+		Request      m_request;		// valid only inside processRequest()
 	};
 	
 }

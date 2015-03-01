@@ -26,6 +26,7 @@ CFLAGS    = -g -save-temps -Os -Wpointer-arith -Wundef -Werror -Wl,-EL -fno-inli
 CFLAGS   += -D__ets__ 
 CFLAGS   += -DICACHE_FLASH
 CFLAGS   += -fno-exceptions -fno-rtti
+CFLAGS   += -fno-threadsafe-statics
 
 LDFLAGS     = -nostdlib -Wl,--no-check-sections -u call_user_start -Wl,-static
 LDFLAGS    += -Wl,--gc-sections

@@ -23,7 +23,49 @@
 #include "fdv.h"
 
 
+struct MyHTTPHandler : public fdv::HTTPHandler
+{
+	MyHTTPHandler()
+	{
+		static const Route routes[] =
+		{
+			{FSTR("/"),	     (PageHandler)&MyHTTPHandler::get_home},
+			{FSTR("/test1"), (PageHandler)&MyHTTPHandler::get_test1},
+			{FSTR("*"),      (PageHandler)&MyHTTPHandler::get_all},
+		};
+		setRoutes(routes, sizeof(routes) / sizeof(Route));
+	}
+	
+	void MTD_FLASHMEM get_home()
+	{
+		debug(FSTR("\n\rget_home()\r\n"));
+		debug(FSTR("Query params count = %d\n\r"), getRequest().query.getItemsCount());
+		getRequest().query.dump();
+		debug(FSTR("\n\rHeaders count = %d\n\r"), getRequest().headers.getItemsCount());
+		getRequest().headers.dump();
 
+		/*
+		PGM_P templ = PSTR("val1 = ^ val2 = ^ val3 = ^");	// testare anche ^ all'inizio, e sequenza di ^^^^
+		StringItem val1(NULL, "1", 0, StringItem::RAM);
+		StringItem val2(&val1, "due", 0, StringItem::RAM);
+		StringItem val3(&val2, "3", 0, StringItem::RAM);
+		
+		WebResponseTemplateHTML(request, templ, val1);
+		*/
+	}
+
+	void MTD_FLASHMEM get_test1()
+	{
+		debug("get_test1()\r\n");
+		//WebResponseHTML(request, SendStringItem(NULL, PSTR("This is the TEST1"), 0, StringItem::Flash));
+	}
+
+	void MTD_FLASHMEM get_all()
+	{
+		debug("get_all()\r\n");
+		//WebResponseRedirect(request, PSTR("http://192.168.1.10:8085"));
+	}			
+};
 
 
 
@@ -99,7 +141,7 @@ struct Task1 : fdv::Task
 						break;
 					case '5':
 					{
-						new fdv::TCPServer<fdv::HTTPHandler, 2, 512>(80);
+						new fdv::TCPServer<MyHTTPHandler, 2, 512>(80);
 						m_serial->printf(FSTR("Ok\n\r"));
 						break;
 					}

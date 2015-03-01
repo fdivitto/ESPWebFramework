@@ -46,93 +46,101 @@ namespace fdv
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
-	// FStrUtils
-	// String utilities to work with both Flash stored strings and RAM stored strings
-	//
-	// Example:
-	//   static char const STR1[] FLASHMEM = "1234567890";
-	//   
-	//   if (FlashUtils::strcmp(STR1, otherstring) == 0)
-	//     dosomething();
-	// 
-	// Example:
-	//   if (FlashUtils::strcmp(FSTR("1234567890"), otherstring) == 0)
-	//     dosomething();
-
-	
-	struct FStrUtils
+	// isStoredInFlash
+	static inline bool FUNC_FLASHMEM isStoredInFlash(void const* ptr)
 	{
-		
-		static bool MTD_FLASHMEM isStoredInFlash(void const* ptr)
+		return (uint32_t)ptr >= 0x40200000 && (uint32_t)ptr < 0x40300000;
+	}
+	
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+	// getChar
+	// flash mapped "text" is readable as 4 byte aligned blocks
+	// works with both RAM and Flash stored data
+	// str must be 32 bit aligned
+	static inline char FUNC_FLASHMEM getChar(char const* str, uint32_t index)
+	{
+		if (isStoredInFlash(str))
 		{
-			return (uint32_t)ptr >= 0x40200000 && (uint32_t)ptr < 0x40300000;
-		}
-		
-		// flash mapped "text" is readable as 4 byte aligned blocks
-		static char MTD_FLASHMEM getChar(char const* flashString, uint32_t index)
-		{
-			uint32_t u32 = ((uint32_t const*)flashString)[index >> 2];
+			uint32_t u32 = ((uint32_t const*)str)[index >> 2];
 			return ((char const*)&u32)[index & 0x3];
 		}
-		
-		static uint32_t MTD_FLASHMEM strlen(char const* str)
-		{
-			if (isStoredInFlash(str))
-			{
-				uint32_t len = 0;
-				for (; getChar(str, len) != 0; ++len)
-					;
-				return len;
-			}
-			else
-				return ::strlen(str);
-		}
+		else
+			return str[index];
+	}
 
-		static char* MTD_FLASHMEM strcpy(char* destination, char const* source)
-		{
-			if (isStoredInFlash(source))
-			{
-				char* destptr = destination;
-				uint32_t idx = 0;
-				while (true)
-				{
-					*destptr = getChar(source, idx++);
-					if (*destptr++ == 0)
-						return destination;
-				}
-			}
-			else
-				return ::strcpy(destination, source);
-		}
 
-		// use Memory::free() instead of free()
-		static char* MTD_FLASHMEM strdup(char const* str)
+	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+	// getChar
+	// flash mapped "text" is readable as 4 byte aligned blocks
+	// works with both RAM and Flash stored data
+	// Returns first char of str
+	// str may Not be 32 bit aligned
+	static inline char FUNC_FLASHMEM getChar(char const* str)
+	{
+		if (isStoredInFlash(str))
 		{
-			return FStrUtils::strcpy((char*)Memory::malloc(FStrUtils::strlen(str) + 1), str);
+			uint32_t index = (uint32_t)str & 0x3;
+			str = (char const*)((uint32_t)str & 0xFFFFFFFC);  // align str
+			uint32_t u32 = *((uint32_t const*)str);
+			return ((char const*)&u32)[index];
 		}
-				
-		// note: only "s1" can be stored in flash!
-		static int32_t MTD_FLASHMEM strcmp(char const* s1, char const* s2)
+		else
+			return *str;
+	}		
+	
+	
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// CharIterator
+	// Can iterate both RAM and Flash strings
+
+	struct CharIterator
+	{
+		CharIterator(char const* str = NULL)
+			: m_str(str)
 		{
-			if (isStoredInFlash(s1))
-			{
-				char c;
-				uint32_t idx = 0;
-				while (true)
-				{
-					c = getChar(s1, idx);
-					if (c == 0 || c != *s2)
-						break;
-					++idx;
-					++s2;
-				}
-				return (uint8_t)c - *(uint8_t const*)s2;
-			}
-			else
-				return ::strcmp(s1, s2);
 		}
 		
+		char const* MTD_FLASHMEM get()
+		{
+			return m_str;
+		}
+		
+		char MTD_FLASHMEM operator*()
+		{
+			return getChar(m_str);
+		}
+		
+		CharIterator MTD_FLASHMEM operator++(int)
+		{
+			CharIterator p = *this;
+			++m_str;
+			return p;
+		}
+		
+		CharIterator MTD_FLASHMEM operator++()
+		{
+			++m_str;
+			return *this;
+		}
+		
+		bool MTD_FLASHMEM operator==(char const* rhs)
+		{
+			return getChar(m_str) == *rhs;
+		}
+		
+		bool MTD_FLASHMEM operator!=(char const* rhs)
+		{
+			return getChar(m_str) != *rhs;
+		}
+		
+	private:
+		char const* m_str;
 	};
+
 	
 
 	///////////////////////////////////////////////////////////////////////////////////////

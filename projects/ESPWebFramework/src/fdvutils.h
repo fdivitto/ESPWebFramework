@@ -28,6 +28,7 @@
 #include "fdv.h"
 
 
+
 namespace fdv
 {
 
@@ -43,85 +44,105 @@ struct Memory
 };
 
 
-
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
-// ChunkedBuffer
+// Ptr
+// A very simple smart pointer (without copy or ref counting functionalities)
+// For arrays (new[]) use APtr
 
-template <typename T, uint32_t CHUNKITEMS_V>
-struct ChunkedBuffer
-{
-
-	static uint32_t const CHUNKITEMS = CHUNKITEMS_V;
-
-	struct Chunk
-	{
-		Chunk*   next;
-		uint32_t items;
-		T        data[CHUNKITEMS];
-		
-		Chunk()
-			: next(NULL), items(0)
-		{
-		}		
-	};
-
-	ChunkedBuffer()
-		: m_chunks(NULL), m_current(NULL)
-	{
-	}
-	
-	~ChunkedBuffer()
-	{
-		clear();
-	}
-	
-	void MTD_FLASHMEM clear()
-	{
-		Chunk* chunk = m_chunks;
-		while (chunk)
-		{
-			Chunk* next = chunk->next;
-			delete chunk;
-			chunk = next;
-		}
-		m_chunks = m_current = NULL;
-	}
-	
-	Chunk* MTD_FLASHMEM addChunk()
-	{
-		if (m_chunks == NULL)
-			m_chunks = m_current = new Chunk;
-		else
-			m_current = m_current->next = new Chunk;		
-		return m_current;
-	}
-	
-	int32_t MTD_FLASHMEM find(T const* pattern, uint32_t patternLength)
-	{
-		int32_t pos = 0;
-		uint32_t matches = 0;
-		Chunk* chunk = m_chunks;
-		while (chunk)
-		{
-			for (uint32_t i = 0; i != chunk->items; ++i, ++pos)
-				if (chunk->data[i] == pattern[matches])
-				{
-					++matches;
-					if (matches == patternLength)
-						return pos;
-				}
-				else
-					matches = 0;
-			chunk = chunk->next;
-		}
-		return -1;
-	}
-
+template <typename T>
+class Ptr
+{	
 private:
-	Chunk* m_chunks;
-	Chunk* m_current;
+	Ptr(Ptr const& c);	// no copy constructor
+	
+public:
+	explicit Ptr(T* ptr)
+		: m_ptr(ptr)
+	{
+	}
+	
+	~Ptr()
+	{
+		delete m_ptr;
+	}
+	
+	T& operator*()
+	{
+		return *m_ptr;
+	}
+	
+	T* operator->()
+	{
+		return m_ptr;
+	}
+	
+	T* get()
+	{
+		return m_ptr;
+	}
+	
+	void reset(T* ptr)
+	{
+		delete m_ptr;
+		m_ptr = ptr;
+	}
+	
+private:
+	T* m_ptr;
 };
+
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// APtr
+// A very simple smart pointer (without copy or ref counting functionalities)
+// For single objects (new) use Ptr
+
+template <typename T>
+class APtr
+{	
+private:
+	APtr(APtr const& c);	// no copy constructor
+	
+public:
+	explicit APtr(T* ptr)
+		: m_ptr(ptr)
+	{
+	}
+	
+	~APtr()
+	{
+		delete[] m_ptr;
+	}
+	
+	T& operator*()
+	{
+		return *m_ptr;
+	}
+	
+	T* operator->()
+	{
+		return m_ptr;
+	}
+	
+	T* get()
+	{
+		return m_ptr;
+	}
+
+	void reset(T* ptr)
+	{
+		delete[] m_ptr;
+		m_ptr = ptr;
+	}
+	
+private:
+	T* m_ptr;
+};
+
+
+
 
 
 

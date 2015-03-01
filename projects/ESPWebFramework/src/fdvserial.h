@@ -101,8 +101,8 @@ namespace fdv
 				va_list args;
 				
 				char const* ramFmt = fmt;
-				if (FStrUtils::isStoredInFlash(fmt))
-					ramFmt = FStrUtils::strdup(fmt);
+				if (isStoredInFlash(fmt))
+					ramFmt = f_strdup(fmt);
 
 				va_start(args, fmt);
 				uint16_t len = vsprintf(NULL, ramFmt, args);
@@ -117,7 +117,7 @@ namespace fdv
 				write(buf);
 
 				if (ramFmt != fmt)
-					Memory::free((void*)ramFmt);
+					delete[] ramFmt;
 
 				return len;
 			}
