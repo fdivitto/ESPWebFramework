@@ -46,14 +46,20 @@ struct ChunkedBuffer
 		Chunk*   next;
 		uint32_t items;
 		T*       data;
+		bool     freeOnDestroy;	// free "data" on destroy
 		
 		Chunk(uint32_t capacity)
-			: next(NULL), items(0), data(new T[capacity])
+			: next(NULL), items(0), data(new T[capacity]), freeOnDestroy(true)
+		{
+		}
+		Chunk(T* data_, uint32_t items_, bool freeOnDestroy_)
+			: next(NULL), items(items_), data(data_), freeOnDestroy(freeOnDestroy_)
 		{
 		}
 		~Chunk()
 		{
-			delete[] data;
+			if (freeOnDestroy)
+				delete[] data;
 		}
 	};
 	
@@ -154,10 +160,22 @@ struct ChunkedBuffer
 	
 	Chunk* MTD_FLASHMEM addChunk(uint32_t capacity)
 	{
+		Chunk* newChunk = new Chunk(capacity);
 		if (m_chunks == NULL)
-			m_chunks = m_current = new Chunk(capacity);
+			m_current = m_chunks = newChunk;
 		else
-			m_current = m_current->next = new Chunk(capacity);		
+			m_current = m_current->next = newChunk;
+		return newChunk;
+	}
+	
+	
+	Chunk* MTD_FLASHMEM addChunk(T* data, uint32_t items, bool freeOnDestroy)
+	{
+		Chunk* newChunk = new Chunk(data, items, freeOnDestroy);
+		if (m_chunks == NULL)
+			m_current = m_chunks = newChunk;
+		else
+			m_current = m_current->next = newChunk;
 		return m_current;
 	}
 	
@@ -167,6 +185,12 @@ struct ChunkedBuffer
 		Chunk* chunk = addChunk(sizeof(T));
 		chunk->data[0] = value;
 		chunk->items = 1;
+	}
+	
+	
+	Chunk* MTD_FLASHMEM getFirstChunk()
+	{
+		return m_chunks;
 	}
 	
 
@@ -294,7 +318,7 @@ public:
 		{
 			APtr<char> key(getItem(i).key.dup());
 			APtr<char> value(getItem(i).value.dup());
-			debug("%s = %s\n\r", key.get(), value.get());
+			debug("%s = %s\r\n", key.get(), value.get());
 		}
 	}		
 	
