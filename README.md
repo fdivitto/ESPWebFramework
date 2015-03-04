@@ -1,7 +1,7 @@
 # ESPWebFramework
 A C++ Web Framework for ESP8266
 
-Requires:
+To compile requires:
 - Windows 64 bit
 - Python 2.7.x ( https://www.python.org/downloads/ )
 - MinGW ( http://sourceforge.net/projects/mingw/files/latest/download?source=files )
