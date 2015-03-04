@@ -90,6 +90,16 @@ namespace fdv
 		else
 			return *str;
 	}		
+
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+	// getByte
+	// like getChar but for uint8_t
+	static inline uint8_t FUNC_FLASHMEM getByte(uint8_t const* buffer)
+	{
+		return (uint8_t)getChar((char const*)buffer);
+	}
 	
 	
 	//////////////////////////////////////////////////////////////////////
@@ -141,6 +151,56 @@ namespace fdv
 		char const* m_str;
 	};
 
+	
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// ByteIterator
+	// Can iterate both RAM and Flash buffers
+
+	struct ByteIterator
+	{
+		ByteIterator(uint8_t const* buf = NULL)
+			: m_buf(buf)
+		{
+		}
+		
+		uint8_t const* MTD_FLASHMEM get()
+		{
+			return m_buf;
+		}
+		
+		uint8_t MTD_FLASHMEM operator*()
+		{
+			return getByte(m_buf);
+		}
+		
+		ByteIterator MTD_FLASHMEM operator++(int)
+		{
+			ByteIterator p = *this;
+			++m_buf;
+			return p;
+		}
+		
+		ByteIterator MTD_FLASHMEM operator++()
+		{
+			++m_buf;
+			return *this;
+		}
+		
+		bool MTD_FLASHMEM operator==(uint8_t const* rhs)
+		{
+			return getByte(m_buf) == *rhs;
+		}
+		
+		bool MTD_FLASHMEM operator!=(uint8_t const* rhs)
+		{
+			return getByte(m_buf) != *rhs;
+		}
+		
+	private:
+		uint8_t const* m_buf;
+	};
+	
 	
 
 	///////////////////////////////////////////////////////////////////////////////////////
