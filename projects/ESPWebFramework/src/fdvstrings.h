@@ -117,6 +117,24 @@ static int32 FUNC_FLASHMEM t_strcmp(IteratorS1 s1, IteratorS2 s2)
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
+// t_memcmp
+// If s1 or s2 is in RAM or Flash use CharIterator
+// If s1 or s2 is in Chunk use ChunkBuffer<...>::Iterator
+template <typename IteratorS1, typename IteratorS2>
+static int32 FUNC_FLASHMEM t_memcmp(IteratorS1 s1, IteratorS2 s2, uint32_t length)
+{
+	while(length--)
+	{
+		if (*s1 != *s2)
+			return (uint8_t)*s1 - (uint8_t)*s2;
+		++s1, ++s2;
+	}
+	return 0;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 // t_strcpy
 // If source is in RAM or Flash use CharIterator
 // If source is in Chunk use ChunkBuffer<...>::Iterator
@@ -286,6 +304,26 @@ static inline void* FUNC_FLASHMEM f_memdup(void const* buffer, uint32_t length)
 static inline int32_t FUNC_FLASHMEM f_strcmp(char const* s1, char const* s2)
 {
 	return t_strcmp(CharIterator(s1), CharIterator(s2));
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+// f_memcmp
+// both s1 and s2 can be stored in Flash or/and in RAM
+static inline int32_t FUNC_FLASHMEM f_memcmp(void const* s1, void const* s2, uint32_t length)
+{
+	return t_memcmp(ByteIterator((uint8_t const*)s1), ByteIterator((uint8_t const*)s2), length);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+// f_memcpy
+// source can be stored in Flash or/and in RAM
+static void* FUNC_FLASHMEM f_memcpy(void* destination, void const* source, uint32_t length)
+{
+	return t_memcpy(destination, ByteIterator((uint8_t const*)source), length);
 }
 
 
