@@ -67,6 +67,7 @@ struct Task1 : fdv::Task
 
 	fdv::Serial* m_serial;
 	
+
 	
 	void MTD_FLASHMEM exec()
 	{
@@ -94,7 +95,7 @@ struct Task1 : fdv::Task
 						system_restart();
 						break;
 					case '0':
-						fdv::FlashFileSystem::format();
+						fdv::FlashDictionary::eraseContent();
 						m_serial->writeln("Ok");
 						break;
 					case '1':
@@ -131,6 +132,7 @@ struct Task1 : fdv::Task
 						m_serial->printf(FSTR("Ok\r\n"));
 						break;
 					}
+					
 				}
 			}
 		}		
