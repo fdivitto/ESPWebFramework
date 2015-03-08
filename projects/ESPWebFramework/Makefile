@@ -12,6 +12,8 @@ NM      = xt-nm
 OBJCOPY = xtensa-lx106-elf-objcopy
 OD      = xtensa-lx106-elf-objdump
 
+ESPTOOL     = python $(SDKBASE)esptool.py
+
 INCLUDES =  -I $(SDKBASE)esp_iot_rtos_sdk-master/include
 INCLUDES += -I $(SDKBASE)esp_iot_rtos_sdk-master/include/espressif
 INCLUDES += -I $(SDKBASE)esp_iot_rtos_sdk-master/extra_include
@@ -41,49 +43,20 @@ SDK_LDDIR   = $(SDKBASE)esp_iot_rtos_sdk-master/ld
 LIBS        = -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lmain -lfreertos -llwip -ludhcp
 
 
-
-ESPTOOL     = python $(SDKBASE)esptool.py
-
+OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o fdvprintf.o fdvdebug.o
 
 
-.PHONY: all flash clean iromlibs
-
+SRCDIR = ./src/
+WEBDIR = ./webcontent/
+MAXWEBCONTENT = 176128
 
 TARGET_OUT = app.out
 
 
+.PHONY: all flash clean flashweb
+
+
 all: $(TARGET_OUT)
-
-
-# create libgccirom.a from libgcc.a
-# create libcirom.a from libc.a
-iromlibs:
-	@echo "Creating irom version of libgcc and libc..."
-	$(OBJCOPY) --rename-section .text=.irom0.text --rename-section .literal=.irom0.literal $(SDKBASE)xtensa-lx106-elf/lib/gcc/xtensa-lx106-elf/4.8.2/libgcc.a $(SDKBASE)xtensa-lx106-elf/lib/gcc/xtensa-lx106-elf/4.8.2/libgccirom.a
-	$(OBJCOPY) --rename-section .text=.irom0.text --rename-section .literal=.irom0.literal $(SDKBASE)xtensa-lx106-elf/xtensa-lx106-elf/lib/libc.a $(SDKBASE)xtensa-lx106-elf/xtensa-lx106-elf/lib/libcirom.a
-
-
-# $@: the target filename.
-# $*: the target filename without the file extension.
-# $<: the first prerequisite filename.
-# $^: the filenames of all the prerequisites, separated by spaces, discard duplicates.
-# $+: similar to $^, but includes duplicates.
-# $?: the names of all prerequisites that are newer than the target, separated by spaces.
-
-
-OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o fdvprintf.o fdvdebug.o
-
-SRCDIR = ./src/
-
-%.o: $(SRCDIR)%.c $(wildcard $(SRCDIR)*.h)
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-
-%.o: $(SRCDIR)%.cpp $(wildcard $(SRCDIR)*.h)
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-	
-
-libuser.a: $(OBJ)
-	$(AR) cru $@ $^
 
 
 $(TARGET_OUT): libuser.a
@@ -92,8 +65,25 @@ $(TARGET_OUT): libuser.a
 	$(ESPTOOL) elf2image $@
 
 
-flash:  $(TARGET_OUT)-0x00000.bin $(TARGET_OUT)-0x40000.bin
+libuser.a: $(OBJ)
+	$(AR) cru $@ $^
+	
+
+%.o: $(SRCDIR)%.c $(wildcard $(SRCDIR)*.h)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+
+%.o: $(SRCDIR)%.cpp $(wildcard $(SRCDIR)*.h)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+
+flash:  $(TARGET_OUT)-0x00000.bin $(TARGET_OUT)-0x40000.bin flashweb
 	-$(ESPTOOL) --port $(ESPPORT) write_flash 0x00000 $(TARGET_OUT)-0x00000.bin 0x40000 $(TARGET_OUT)-0x40000.bin
+
+
+flashweb:
+	python binarydir.py $(WEBDIR) webcontent.bin $(MAXWEBCONTENT)
+	-$(ESPTOOL) --port $(ESPPORT) write_flash 0x15000 webcontent.bin
 
 
 clean:
