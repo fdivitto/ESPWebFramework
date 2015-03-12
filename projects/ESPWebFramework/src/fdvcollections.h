@@ -427,19 +427,20 @@ struct ObjectDict
 	{
 		Item*         next;
 		char const*   key;
+		char const*   keyEnd;
 		T             value;
 		
-		Item(char const* key_, T value_)
-			: next(NULL), key(key_), value(value_)
+		Item(char const* key_, char const* keyEnd_, T value_)
+			: next(NULL), key(key_), keyEnd(keyEnd_), value(value_)
 		{
 		}
 		Item()
-			: next(NULL), key(NULL), value(T())
+			: next(NULL), key(NULL), keyEnd(NULL), value(T())
 		{
 		}
 		bool operator==(Item const& rhs)
 		{
-			return next == rhs.next && key == rhs.key && value == rhs.value;
+			return next == rhs.next && key == rhs.key && keyEnd == rhs.keyEnd && value == rhs.value;
 		}
 		bool operator!=(Item const& rhs)
 		{
@@ -470,18 +471,24 @@ struct ObjectDict
 		m_itemsCount = 0;
 	}
 	
-	void MTD_FLASHMEM add(char const* key, T value)
+	void MTD_FLASHMEM add(char const* key, char const* keyEnd, T value)
 	{
 		if (m_items)
 		{
-			m_current = m_current->next = new Item(key, value);
+			m_current = m_current->next = new Item(key, keyEnd, value);
 			++m_itemsCount;
 		}
 		else
 		{
-			m_current = m_items = new Item(key, value);
+			m_current = m_items = new Item(key, keyEnd, value);
 			++m_itemsCount;
 		}
+	}
+	
+	// add zero terminated string
+	void MTD_FLASHMEM add(char const* key, T value)
+	{
+		add(key, key + f_strlen(key), value);
 	}
 	
 	uint32_t MTD_FLASHMEM getItemsCount()
@@ -504,7 +511,7 @@ struct ObjectDict
 		Item* item = m_items;
 		while (item)
 		{
-			if (t_compare(CharIterator(item->key), CharIterator(key), CharIterator(keyEnd)))
+			if (t_compare(CharIterator(item->key), CharIterator(item->keyEnd), CharIterator(key), CharIterator(keyEnd)))
 				return item;	// found
 			item = item->next;
 		}
@@ -514,14 +521,7 @@ struct ObjectDict
 	// key stay in RAM or Flash
 	Item* MTD_FLASHMEM getItem(char const* key)
 	{
-		Item* item = m_items;
-		while (item)
-		{
-			if (f_strcmp(item->key, key) == 0)
-				return item;	// found
-			item = item->next;
-		}
-		return NULL;	// not found
+		return getItem(key, key + f_strlen(key));
 	}
 	
 	// warn: this doesn't check "index" range!

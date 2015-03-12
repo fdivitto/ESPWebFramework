@@ -812,6 +812,61 @@ namespace fdv
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
+	// ParameterReplacer
+	
+	struct ParameterReplacer
+	{
+		typedef ObjectDict<LinkedCharChunks> Params;
+		
+		static void MTD_FLASHMEM replace(Params* params, char const* strStart, char const* strEnd, LinkedCharChunks* outStr)
+		{
+			char const* start = strStart;
+			while (strStart != strEnd)
+			{
+				if (getChar(strStart) == '{')
+				{
+					if (getChar(strStart + 1) == '{')
+					{
+						// flush previous content (from strstart to strStart no included) 
+						outStr->addChunk(start, strStart - start, false);
+						// found "{{", process parameter tag
+						start = strStart = processParameterTag(params, strStart, strEnd, outStr);
+						continue;
+					}
+				}
+				++strStart;
+			}
+			outStr->addChunk(start, strEnd - start, false);
+		}
+		
+	private:
+		
+		static char const* MTD_FLASHMEM processParameterTag(Params* params, char const* dataptr, char const* dataend, LinkedCharChunks* outStr)
+		{
+			char const* tagEnd;
+			char const* tagStart = extractTagStr(dataptr, dataend, &tagEnd);
+			Params::Item* item = params->getItem(tagStart, tagEnd);
+			if (item)
+			{
+				// flush parameter content
+				outStr->addChunks(&item->value);				
+			}
+			return tagEnd + 2;	// bypass "}}"
+		}
+		
+		static char const* extractTagStr(char const* dataptr, char const* dataend, char const** tagEnd)
+		{
+			char const* tagStart = dataptr + 2; // by pass "{{"
+			*tagEnd = tagStart;
+			while (*tagEnd < dataend && getChar(*tagEnd) != '}')
+				++*tagEnd;
+			return tagStart;
+		}
+	};
+	
+
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
 	// HTTPParameterResponse
 	//
 	// Parameters are tagged with: 
@@ -828,7 +883,7 @@ namespace fdv
 		typedef ObjectDict<LinkedCharChunks> Params;
 
 		HTTPParameterResponse(HTTPHandler* httpHandler, char const* filename)
-			: HTTPResponse(httpHandler, NULL), m_filename(f_strdup(filename))
+			: HTTPResponse(httpHandler, NULL), m_filename(filename)
 		{			
 		}
 		
@@ -857,12 +912,15 @@ namespace fdv
 			char const* mimetype;
 			void const* data;
 			uint16_t dataLength;
-			if (FlashFileSystem::find(m_filename.get(), &mimetype, &data, &dataLength))
+			if (FlashFileSystem::find(m_filename, &mimetype, &data, &dataLength))
 			{
 				// found
 				setStatus(FSTR("200 OK"));
 				addHeader(FSTR("Content-Type"), FSTR("text/html"));
-				processFileContent(data, dataLength);
+
+				LinkedCharChunks dataOut;
+				ParameterReplacer::replace(&m_params, (char const*)data, (char const*)data + dataLength, &dataOut);
+				addContent(&dataOut);
 			}
 			else
 			{
@@ -871,55 +929,9 @@ namespace fdv
 			}
 		}
 		
-		void MTD_FLASHMEM processFileContent(void const* data, uint16_t dataLength)
-		{
-			char const* dataptr = (char const*)data;
-			char const* dataend = dataptr + dataLength;
-			char const* strstart = dataptr;
-			while (dataptr != dataend)
-			{
-				if (getChar(dataptr) == '{')
-				{
-					if (getChar(dataptr + 1) == '{')
-					{
-						// flush previous content (from strstart to dataptr no included) 
-						addContent(strstart, dataptr - strstart);
-						// found "{{", process parameter tag
-						strstart = dataptr = processParameterTag(dataptr, dataend);
-						continue;
-					}
-				}
-				++dataptr;
-			}
-			addContent(strstart, dataend - strstart);
-		}
-		
-		char const* MTD_FLASHMEM processParameterTag(char const* dataptr, char const* dataend)
-		{
-			char const* tagEnd;
-			char const* tagStart = extractTagStr(dataptr, dataend, &tagEnd);
-			Params::Item* item = m_params.getItem(tagStart, tagEnd);
-			if (item)
-			{
-				// flush parameter content
-				addContent(&item->value);				
-			}
-			return tagEnd + 2;	// bypass "}}"
-		}
-		
-		char const* extractTagStr(char const* dataptr, char const* dataend, char const** tagEnd)
-		{
-			char const* tagStart = dataptr + 2; // by pass "{{"
-			*tagEnd = tagStart;
-			while (*tagEnd < dataend && getChar(*tagEnd) != '}')
-				++*tagEnd;
-			return tagStart;
-		}
-		
 	private:
-		Ptr<char>        m_filename;
+		char const*      m_filename;
 		Params           m_params;
-		LinkedCharChunks m_paramValueChunks;
 		
 	};
 
@@ -936,20 +948,36 @@ namespace fdv
 	//   <body> {{the_body}} </body>
 	//   </html>
 	//
-	// Specialized file can replace template blocks using {%template_filename%} and {%block_name%}. Example:
+	// Specialized file can replace template blocks using {%block_name%}. Example:
 	// Content of file "home.html":
-	//   {%base.tpl%}                  <- template file to use, must be the first tag of specialized file
 	//   {%the_head%}                  <- start of "the_head" block
 	//   <title>Home Page</title>
 	//   {%the_body%}                  <- start of "the_body" block
 	//   <h1>Hello {{name}}</h1>       <- here the parameter "name" will be replaced with its actual value
 	//
-	// Specialized file may or not may contain {%%} tags (template file), and may not nor may contain {{}} tags (parameters).
+	// Specialized file must contain at least one {%%} tag, and may not nor may contain {{}} tags (parameters).
+	// Parameter tags and block tags must have different names.
 	//
 	// No further spaces are allowed inside {{}} and {%%} tags
 	// No syntax error checkings are done, so be careful!
 	
-	// todo
+	struct HTTPTemplateResponse : public HTTPParameterResponse
+	{
+		HTTPTemplateResponse(HTTPHandler* httpHandler, char const* templateFilename, char const* specializedFilename)
+			: m_specializedFilename(specializedFilename), HTTPParameterResponse(httpHandler, templateFilename)
+		{
+		}
+
+		virtual void MTD_FLASHMEM flush()
+		{
+			// todo
+			HTTPResponse::flush();
+		}
+
+	private:
+		char const* m_specializedFilename;
+	
+	};
 	
 
 	//////////////////////////////////////////////////////////////////////
