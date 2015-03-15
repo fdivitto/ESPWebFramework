@@ -98,9 +98,9 @@ namespace fdv
 		{						
 			softap_config config = {0};
 			wifi_softap_get_config(&config);
-			strcpy((char *)config.ssid, SSID);
+			f_strcpy((char *)config.ssid, SSID);
 			config.ssid_len = strlen(SSID);
-			strcpy((char *)config.password, securityKey);
+			f_strcpy((char *)config.password, securityKey);
 			config.channel = channel;
 			config.authmode = securityProtocol;
 			config.ssid_hidden = (uint8)hiddenSSID;
@@ -112,16 +112,14 @@ namespace fdv
 		static void MTD_FLASHMEM configureClient(char const* SSID, char const* securityKey)
 		{
 			station_config config = {0};
-			strcpy((char *)config.ssid, SSID);
-			strcpy((char *)config.password, securityKey);
+			f_strcpy((char *)config.ssid, SSID);
+			f_strcpy((char *)config.password, securityKey);
 			Critical critical;
 			wifi_station_disconnect();
 			wifi_station_set_config(&config);
 			wifi_station_connect();
 		}
 
-		
-				
 	};
 	
 
@@ -138,20 +136,19 @@ namespace fdv
 			AccessPointNetwork = 1
 		};
 	
-		// don't need to call configureDHCP
 		static void MTD_FLASHMEM configureStatic(Network network, char const* IP, char const* netmask, char const* gateway)
 		{
 			ip_info info;
-			info.ip.addr      = ipaddr_addr(IP);
-			info.netmask.addr = ipaddr_addr(netmask);
-			info.gw.addr      = ipaddr_addr(gateway);
+			info.ip.addr      = ipaddr_addr(Ptr<char>(f_strdup(IP)).get());
+			info.netmask.addr = ipaddr_addr(Ptr<char>(f_strdup(netmask)).get());
+			info.gw.addr      = ipaddr_addr(Ptr<char>(f_strdup(gateway)).get());
 			Critical critical;
 			if (network == ClientNetwork)
 				wifi_station_dhcpc_stop();
 			wifi_set_ip_info(network, &info);
 		}
 		
-		// applied only to ClientNetwork
+		// applies only to ClientNetwork
 		static void MTD_FLASHMEM configureDHCP(Network network)
 		{
 			if (network == ClientNetwork)
@@ -176,8 +173,8 @@ namespace fdv
 		{		
 			//udhcpd_stop();
 			dhcp_info info = {0};
-			info.start_ip      = ipaddr_addr(startIP);
-			info.end_ip        = ipaddr_addr(endIP);
+			info.start_ip      = ipaddr_addr(Ptr<char>(f_strdup(startIP)).get());
+			info.end_ip        = ipaddr_addr(Ptr<char>(f_strdup(endIP)).get());
 			info.max_leases    = maxLeases;
 			info.auto_time     = 60;
 			info.decline_time  = 60;
@@ -187,8 +184,8 @@ namespace fdv
 			dhcp_set_info(&info);
 			udhcpd_start();			
 		}
-    };
-
+    };	
+	
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1052,42 +1049,6 @@ namespace fdv
 	};
 
 
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	// Configuration helper web pages
-		
-	struct HTTPWifiConfigurationResponse : public HTTPTemplateResponse
-	{
-		HTTPWifiConfigurationResponse(HTTPHandler* httpHandler, char const* filename)
-			: HTTPTemplateResponse(httpHandler, filename)
-		{
-		}
-		
-		virtual void MTD_FLASHMEM flush()
-		{
-			if (getRequest().method == HTTPHandler::Post)
-			{
-				HTTPHandler::Fields::Item* clientmode = getRequest().form["clientmode"];
-				HTTPHandler::Fields::Item* apmode = getRequest().form["apmode"];
-				if (clientmode && apmode)
-					debug("enable clientmode and acess point mode\r\n");
-				else if (clientmode)
-					debug("enable clientmode\r\n");
-				else if (apmode)
-					debug("enable access point mode\r\n");
-			}
-			
-			WiFi::Mode mode = WiFi::getMode();
-			
-			if (mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint)
-				addParam(FSTR("clientmode"), FSTR("checked"));
-			
-			if (mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint)
-				addParam(FSTR("apmode"), FSTR("checked"));
-			
-			HTTPTemplateResponse::flush();
-		}
-	};
 
 
 
