@@ -113,15 +113,15 @@ struct CharChunksIterator
 	{
 		return m_chunk != rhs.m_chunk || m_pos != rhs.m_pos;
 	}
-	uint32_t getPosition()
+	uint32_t MTD_FLASHMEM getPosition()
 	{
 		return m_absPos;
 	}
-	bool isLast()
+	bool MTD_FLASHMEM isLast()
 	{
 		return m_chunk->next == NULL && m_pos + 1 >= m_chunk->items;
 	}
-	bool isValid()
+	bool MTD_FLASHMEM isValid()
 	{
 		return m_chunk != NULL;
 	}
@@ -317,7 +317,7 @@ public:
 	};
 
 	IterDict()
-		: m_items(NULL), m_current(NULL), m_itemsCount(0)
+		: m_items(NULL), m_current(NULL), m_itemsCount(0), m_urlDecode(false)
 	{
 	}
 	
@@ -402,16 +402,26 @@ public:
 		
 	// key can stay in RAM or Flash and must terminate with zero
 	// creates a RAM stored temporary (with the same lifetime of IterDict class) zero terminated string with the value content
+	// if m_urlDecode is true then the temporary in RAM string is url decoded
 	char const* MTD_FLASHMEM operator[](char const* key)
 	{
 		Item* item = getItem(key, key + f_strlen(key));
 		if (item)
 		{
 			if (item->valueStr.get() == NULL)
+			{
 				item->valueStr.reset(t_strdup(item->value, item->valueEnd));
+				if (m_urlDecode)
+					inplaceURLDecode(item->valueStr.get());
+			}
 			return item->valueStr.get();
 		}
 		return NULL;
+	}
+	
+	void MTD_FLASHMEM setUrlDecode(bool value)
+	{
+		m_urlDecode = value;
 	}
 	
 	// debug
@@ -434,6 +444,7 @@ private:
 	Item*    m_items;
 	Item*    m_current;
 	uint32_t m_itemsCount;
+	bool     m_urlDecode;
 };
 
 
@@ -611,7 +622,7 @@ private:
 struct FlashDictionary
 {
 
-	static uint32_t const FLASH_DICTIONARY_POS = 0x14000;
+	static uint32_t const FLASH_DICTIONARY_POS = 0x16000;
 	static uint32_t const MAGIC                = 0x46445631;
 	
 	// clear the entire available space and write MAGIC at the beginning of the dictionary
@@ -770,14 +781,14 @@ struct FlashDictionary
 // It is just a files extractor from the flash.
 // You can write files into the flash using "binarydir.py" (to prepare) and "esptool.py" (to flash) tools.
 // For example, having some files in webcontent subdirectory you can do:
-//   python binarydir.py webcontent webcontent.bin 176128
-//   python ../esptool.py --port COM7 write_flash 0x15000 webcontent.bin
+//   python binarydir.py webcontent webcontent.bin 167936
+//   python ../esptool.py --port COM7 write_flash 0x17000 webcontent.bin
 // Then you can use FlashFileSystem static methods to get actual files content
-// Maximum content size is 176128 bytes and starts from 0x15000 of the flash memory
+// Maximum content size is 167936 bytes and starts from 0x17000 of the flash memory
 
 struct FlashFileSystem
 {
-	static uint32_t const FLASHFILESYSTEM_POS = 0x15000;
+	static uint32_t const FLASHFILESYSTEM_POS = 0x17000;
 	static uint32_t const MAGIC               = 0x93841A03;
 	
 	// filename can stay in Ram or Flash
@@ -804,12 +815,14 @@ struct FlashFileSystem
 			//debug("  filenamelen=%d mimetypelen=%d filecontentlen=%d\r\n", filenamelen, mimetypelen, filecontentlen);
 			if (filenamelen == 0)
 			{
+				//debug(FSTR("  not found\r\n"));
 				return false;	// not found
 			}
 			// check filename
 			if (f_strcmp(filename, curc) == 0)
 			{
 				// found
+				//debug(FSTR("  found\r\n"));
 				*mimetype   = curc + filenamelen;
 				*data       = (void*)(*mimetype + mimetypelen);
 				*dataLength = filecontentlen;

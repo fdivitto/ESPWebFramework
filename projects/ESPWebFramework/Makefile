@@ -29,6 +29,7 @@ CFLAGS   += -D__ets__
 CFLAGS   += -DICACHE_FLASH
 CFLAGS   += -fno-exceptions -fno-rtti
 CFLAGS   += -fno-threadsafe-statics
+CFLAGS   += -fno-use-cxa-atexit
 
 LDFLAGS     = -nostdlib -Wl,--no-check-sections -u call_user_start -Wl,-static
 LDFLAGS    += -Wl,--gc-sections
@@ -43,12 +44,13 @@ SDK_LDDIR   = $(SDKBASE)esp_iot_rtos_sdk-master/ld
 LIBS        = -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lmain -lfreertos -llwip -ludhcp
 
 
-OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o fdvprintf.o fdvdebug.o
+OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o fdvprintf.o fdvdebug.o fdvstrings.o fdvnetwork.o
 
 
 SRCDIR = ./src/
 WEBDIR = ./webcontent/
-MAXWEBCONTENT = 176128
+WEBCONTENTADDRS = 0x17000
+MAXWEBCONTENT = 167936
 
 TARGET_OUT = app.out
 
@@ -61,8 +63,10 @@ all: $(TARGET_OUT)
 
 $(TARGET_OUT): libuser.a
 	$(LD) $(SDK_LIBDIR) -T$(SDK_LDDIR)/$(LD_SCRIPT) -Wl,-M >out.map $(LDFLAGS) -Wl,--start-group $(LIBS) libuser.a -Wl,--end-group -o $@
-	$(OD) -h -j .data -j .rodata -j .bss -j .text -j .irom0.text $@
-	$(ESPTOOL) elf2image $@
+	@$(OD) -h -j .data -j .rodata -j .bss -j .text -j .irom0.text $@
+	@$(OD) -t -j .text $@ >_text_content.map
+	@$(OD) -t -j .irom0.text $@ >_irom0_text_content.map
+	@$(ESPTOOL) elf2image $@
 
 
 libuser.a: $(OBJ)
@@ -78,22 +82,22 @@ libuser.a: $(OBJ)
 
 
 flash:  $(TARGET_OUT)-0x00000.bin $(TARGET_OUT)-0x40000.bin flashweb
-	-$(ESPTOOL) --port $(ESPPORT) write_flash 0x00000 $(TARGET_OUT)-0x00000.bin 0x40000 $(TARGET_OUT)-0x40000.bin
+	@-$(ESPTOOL) --port $(ESPPORT) write_flash 0x00000 $(TARGET_OUT)-0x00000.bin 0x40000 $(TARGET_OUT)-0x40000.bin
 
 
 flashweb:
-	python binarydir.py $(WEBDIR) webcontent.bin $(MAXWEBCONTENT)
-	-$(ESPTOOL) --port $(ESPPORT) write_flash 0x15000 webcontent.bin
+	@python binarydir.py $(WEBDIR) webcontent.bin $(MAXWEBCONTENT)
+	@-$(ESPTOOL) --port $(ESPPORT) write_flash $(WEBCONTENTADDRS) webcontent.bin
 
 
 clean:
-	rm -f *.a
-	rm -f *.o
-	rm -f *.out
-	rm -f *.bin
-	rm -f *.ii
-	rm -f *.s
-	rm -f *.expand
-	rm -f *.map
+	@rm -f *.a
+	@rm -f *.o
+	@rm -f *.out
+	@rm -f *.bin
+	@rm -f *.ii
+	@rm -f *.s
+	@rm -f *.expand
+	@rm -f *.map
 	
 
