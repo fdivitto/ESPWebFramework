@@ -149,13 +149,13 @@ struct MainTask : fdv::Task
 						// Access point
 						fdv::WiFi::setMode(fdv::WiFi::AccessPoint);
 						fdv::WiFi::configureAccessPoint("MyESP", "myesp111", 9);
-						fdv::IP::configureStatic(fdv::IP::AccessPointNetwork, "192.168.5.1", "255.255.255.0", "192.168.5.1");						
+						fdv::IP::configureStatic(fdv::IP::AccessPointNetwork, "192.168.4.1", "255.255.255.0", "192.168.4.1");						
 						m_serial->printf(FSTR("Reboot and enable DHCP server (2)\r\n"));
 						m_serial->printf(FSTR("Ok\r\n"));
 						break;
 					case '2':
 						// Enable DHCP server
-						fdv::IP::configureStatic(fdv::IP::AccessPointNetwork, "192.168.5.1", "255.255.255.0", "192.168.5.1");						
+						fdv::IP::configureStatic(fdv::IP::AccessPointNetwork, "192.168.4.1", "255.255.255.0", "192.168.4.1");						
 						fdv::DHCPServer::configure("192.168.5.100", "192.168.5.110", 10);
 						m_serial->printf(FSTR("Ok\r\n"));
 						break;
@@ -172,14 +172,7 @@ struct MainTask : fdv::Task
 						fdv::WiFi::configureClient("OSPITI", "P31415926");
 						fdv::IP::configureDHCP(fdv::IP::ClientNetwork);
 						m_serial->printf(FSTR("Ok\r\n"));
-						break;
-					case '5':
-					{
-						new fdv::TCPServer<MyHTTPHandler, 2, 512>(80);
-						m_serial->printf(FSTR("Ok\r\n"));
-						break;
-					}
-					
+						break;					
 				}
 			}
 		}		

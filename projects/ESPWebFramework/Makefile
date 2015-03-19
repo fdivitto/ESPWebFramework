@@ -44,7 +44,7 @@ SDK_LDDIR   = $(SDKBASE)esp_iot_rtos_sdk-master/ld
 LIBS        = -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lmain -lfreertos -llwip -ludhcp
 
 
-OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o fdvprintf.o fdvdebug.o fdvstrings.o fdvnetwork.o
+OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o fdvprintf.o fdvdebug.o fdvstrings.o fdvnetwork.o fdvcollections.o
 
 
 SRCDIR = ./src/
