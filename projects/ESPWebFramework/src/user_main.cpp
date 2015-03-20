@@ -32,7 +32,7 @@ struct MyHTTPHandler : public fdv::HTTPHandler
 			{FSTR("/"),	         (PageHandler)&MyHTTPHandler::get_home},
 			{FSTR("/confwifi"),  (PageHandler)&MyHTTPHandler::get_confwifi},
 			{FSTR("/confnet"),   (PageHandler)&MyHTTPHandler::get_confnet},
-			{FSTR("/confuart"),  (PageHandler)&MyHTTPHandler::get_confuart},
+			{FSTR("/confserv"),  (PageHandler)&MyHTTPHandler::get_confserv},
 			{FSTR("/reboot"),    (PageHandler)&MyHTTPHandler::get_reboot},
 			{FSTR("/restore"),   (PageHandler)&MyHTTPHandler::get_restore},
 			{FSTR("*"),          (PageHandler)&MyHTTPHandler::get_all},
@@ -44,8 +44,8 @@ struct MyHTTPHandler : public fdv::HTTPHandler
 	{
 		//debug("get_home()\r\n");
 		fdv::HTTPTemplateResponse response(this, FSTR("base.html"));
-		response.addParam(FSTR("title"), FSTR("ESP8266 WebFramework"));
-		response.addParam(FSTR("content"), FSTR("Please select a menu item on the left"));
+		response.addParamStr(FSTR("title"), FSTR("ESP8266 WebFramework"));
+		response.addParamStr(FSTR("content"), FSTR("Please select a menu item on the left"));
 		response.flush();
 	}
 
@@ -61,9 +61,9 @@ struct MyHTTPHandler : public fdv::HTTPHandler
 		response.flush();
 	}
 
-	void MTD_FLASHMEM get_confuart()
+	void MTD_FLASHMEM get_confserv()
 	{
-		fdv::HTTPUARTConfigurationResponse response(this, FSTR("configuart.html"));
+		fdv::HTTPServicesConfigurationResponse response(this, FSTR("confserv.html"));
 		response.flush();
 	}
 	
@@ -96,6 +96,8 @@ struct MyHTTPHandler : public fdv::HTTPHandler
 	}			
 };
 
+typedef fdv::TCPServer<MyHTTPHandler, 2, 512> HTTPCustomServer;
+
 
 
 struct MainTask : fdv::Task
@@ -109,13 +111,10 @@ struct MainTask : fdv::Task
 	
 	void MTD_FLASHMEM exec()
 	{
-		//fdv::DisableStdOut(); 
 		fdv::DisableWatchDog();		
 		fdv::Serial* m_serial = fdv::HardwareSerial::getSerial(0);
-
-		fdv::ConfigurationManager::apply();
-
-		new fdv::TCPServer<MyHTTPHandler, 2, 512>(80);
+		
+		fdv::ConfigurationManager::apply<HTTPCustomServer>();
 
 		// just as serial emergency console!
 		while (1)

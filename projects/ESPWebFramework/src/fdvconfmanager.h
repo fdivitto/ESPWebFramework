@@ -60,6 +60,9 @@ namespace fdv
 	static char const STR_DHCPDIP1[] FLASHMEM = "DHCPDIP1";
 	static char const STR_DHCPDIP2[] FLASHMEM = "DHCPDIP2";
 	static char const STR_DHCPDMXL[] FLASHMEM = "DHCPDMXL";
+	static char const STR_WEBPORT[] FLASHMEM  = "WEBPORT";
+	static char const STR_BAUD[] FLASHMEM     = "BAUD";
+	static char const STR_SYSOUT[] FLASHMEM   = "SYSOUT";
 	
 	
 	class ConfigurationManager
@@ -67,6 +70,7 @@ namespace fdv
 		
 	public:
 		
+		template <typename HTTPCustomServer_T>
 		static void MTD_FLASHMEM apply()
 		{
 			// WiFi Mode
@@ -111,6 +115,19 @@ namespace fdv
 				if (enabled)
 					DHCPServer::configure(startIP, endIP, maxLeases);
 			}
+			
+			// Web Server
+			uint16_t webPort;
+			getWebServerParams(&webPort);
+			new HTTPCustomServer_T(webPort);
+			
+			// UART 0 baud rate
+			uint32_t baudRate;
+			bool enableSystemOutput;
+			getUARTParams(&baudRate, &enableSystemOutput);
+			HardwareSerial::getSerial(0)->reconfig(baudRate);
+			if (!enableSystemOutput)
+				DisableStdOut(); 
 		}
 				
 		static void MTD_FLASHMEM restore()
@@ -224,6 +241,33 @@ namespace fdv
 			*maxLeases = FlashDictionary::getInt(STR_DHCPDMXL, 10);
 		}
 		
+		
+		//// Web Server parameters
+		
+		static void MTD_FLASHMEM setWebServerParams(uint16_t port)
+		{
+			FlashDictionary::setInt(STR_WEBPORT, port);
+		}
+		
+		static void MTD_FLASHMEM getWebServerParams(uint16_t* port)
+		{
+			*port = FlashDictionary::getInt(STR_WEBPORT, 80);
+		}
+		
+		
+		//// UART parameters
+		
+		static void MTD_FLASHMEM setUARTParams(uint32_t baudRate, bool enableSystemOutput)
+		{
+			FlashDictionary::setInt(STR_BAUD, baudRate);
+			FlashDictionary::setBool(STR_SYSOUT, enableSystemOutput);
+		}
+		
+		static void MTD_FLASHMEM getUARTParams(uint32_t* baudRate, bool* enableSystemOutput)
+		{
+			*baudRate           = FlashDictionary::getInt(STR_BAUD, 115200);
+			*enableSystemOutput = FlashDictionary::getBool(STR_SYSOUT, false);
+		}
 	};
 
 
@@ -274,30 +318,30 @@ namespace fdv
 			// get WiFi mode
 			WiFi::Mode mode = ConfigurationManager::getWiFiMode();			
 			if (mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint)
-				addParam(FSTR("clientmode"), FSTR("checked"));			
+				addParamStr(FSTR("clientmode"), FSTR("checked"));			
 			if (mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint)
-				addParam(FSTR("apmode"), FSTR("checked"));
+				addParamStr(FSTR("apmode"), FSTR("checked"));
 			
 			// get client mode parameters
 			char const* SSID;
 			char const* securityKey;
 			ConfigurationManager::getClientParams(&SSID, &securityKey);
-			addParam(FSTR("CLSSID"), SSID);
-			addParam(FSTR("CLPSW"), securityKey);
+			addParamStr(FSTR("CLSSID"), SSID);
+			addParamStr(FSTR("CLPSW"), securityKey);
 			
 			// get access point parameters
 			uint8_t channel;
 			WiFi::SecurityProtocol securityProtocol;
 			bool hiddenSSID;
 			ConfigurationManager::getAccessPointParams(&SSID, &securityKey, &channel, &securityProtocol, &hiddenSSID);
+			addParamStr(FSTR("APSSID"), SSID);
+			addParamStr(FSTR("APPSW"), securityKey);
 			APtr<char> APCHStr(f_printf(FSTR("APCH%d"), channel));
+			addParamStr(APCHStr.get(), FSTR("selected"));
 			APtr<char> APSECStr(f_printf(FSTR("APSEC%d"), (int32_t)securityProtocol));
-			addParam(FSTR("APSSID"), SSID);
-			addParam(FSTR("APPSW"), securityKey);
-			addParam(APCHStr.get(), FSTR("selected"));
-			addParam(APSECStr.get(), FSTR("selected"));
+			addParamStr(APSECStr.get(), FSTR("selected"));
 			if (hiddenSSID)
-				addParam(FSTR("APHSSID"), FSTR("checked"));
+				addParamStr(FSTR("APHSSID"), FSTR("checked"));
 			
 			HTTPTemplateResponse::flush();
 		}
@@ -345,19 +389,19 @@ namespace fdv
 			char const* netmask;
 			char const* gateway;
 			ConfigurationManager::getClientIPParams(&staticIP, &IP, &netmask, &gateway);
-			addParam(FSTR("DISP_CLIPCONF"), mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint? FSTR("block") : FSTR("none"));
+			addParamStr(FSTR("DISP_CLIPCONF"), mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint? FSTR("block") : FSTR("none"));
 			if (staticIP)
-				addParam(FSTR("staticIP"), FSTR("checked"));
-			addParam(FSTR("CLIP"), IP);
-			addParam(FSTR("CLMSK"), netmask);
-			addParam(FSTR("CLGTW"), gateway);
+				addParamStr(FSTR("staticIP"), FSTR("checked"));
+			addParamStr(FSTR("CLIP"), IP);
+			addParamStr(FSTR("CLMSK"), netmask);
+			addParamStr(FSTR("CLGTW"), gateway);
 			
 			// get access point IP configuration
 			ConfigurationManager::getAccessPointIPParams(&IP, &netmask, &gateway);
-			addParam(FSTR("DISP_APIPCONF"), mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? FSTR("block") : FSTR("none"));
-			addParam(FSTR("APIP"), IP);
-			addParam(FSTR("APMSK"), netmask);
-			addParam(FSTR("APGTW"), gateway);
+			addParamStr(FSTR("DISP_APIPCONF"), mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? FSTR("block") : FSTR("none"));
+			addParamStr(FSTR("APIP"), IP);
+			addParamStr(FSTR("APMSK"), netmask);
+			addParamStr(FSTR("APGTW"), gateway);
 			
 			// get DHCP server configuration
 			bool DHCPDEnabled;
@@ -366,11 +410,10 @@ namespace fdv
 			uint32_t maxLeases;
 			ConfigurationManager::getDHCPServerParams(&DHCPDEnabled, &startIP, &endIP, &maxLeases);
 			if (DHCPDEnabled)
-				addParam(FSTR("DHCPD"), FSTR("checked"));
-			addParam(FSTR("startIP"), startIP);
-			addParam(FSTR("endIP"), endIP);
-			APtr<char> maxLeasesStr(f_printf(FSTR("%d"), maxLeases));
-			addParam(FSTR("maxLeases"), maxLeasesStr.get());
+				addParamStr(FSTR("DHCPD"), FSTR("checked"));
+			addParamStr(FSTR("startIP"), startIP);
+			addParamStr(FSTR("endIP"), endIP);
+			addParamInt(FSTR("maxLeases"), maxLeases);
 			
 			HTTPTemplateResponse::flush();
 		}
@@ -380,11 +423,11 @@ namespace fdv
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-	// HTTPUARTConfigurationResponse
+	// HTTPServicesConfigurationResponse
 
-	struct HTTPUARTConfigurationResponse : public HTTPTemplateResponse
+	struct HTTPServicesConfigurationResponse : public HTTPTemplateResponse
 	{
-		HTTPUARTConfigurationResponse(HTTPHandler* httpHandler, char const* filename)
+		HTTPServicesConfigurationResponse(HTTPHandler* httpHandler, char const* filename)
 			: HTTPTemplateResponse(httpHandler, filename)
 		{
 		}
@@ -393,7 +436,26 @@ namespace fdv
 		{
 			if (getRequest().method == HTTPHandler::Post)
 			{
+				// set Web server configuration
+				ConfigurationManager::setWebServerParams(strtol(getRequest().form["httpport"], NULL, 10));
+				
+				// set UART configuration
+				ConfigurationManager::setUARTParams(strtol(getRequest().form["baud"], NULL, 10),
+													getRequest().form["debugout"] != NULL);
 			}
+			
+			// get Web server configuration
+			uint16_t webPort;
+			ConfigurationManager::getWebServerParams(&webPort);
+			addParamInt(FSTR("httpport"), webPort);
+			
+			// get UART configuration
+			uint32_t baudRate;
+			bool enableSystemOutput;
+			ConfigurationManager::getUARTParams(&baudRate, &enableSystemOutput);
+			addParamInt(FSTR("baud"), baudRate);
+			if (enableSystemOutput)
+				addParamStr(FSTR("debugout"), FSTR("checked"));
 						
 			HTTPTemplateResponse::flush();
 		}

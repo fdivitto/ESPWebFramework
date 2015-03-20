@@ -904,14 +904,36 @@ namespace fdv
 			m_filename = filename;
 		}
 		
-		void MTD_FLASHMEM addParam(char const* key, char const* value)
+		void MTD_FLASHMEM addParamStr(char const* key, char const* value)
 		{
 			LinkedCharChunks linkedCharChunks;
 			linkedCharChunks.addChunk(value, f_strlen(value), false);
 			m_params.add(key, linkedCharChunks);
 		}
 		
-		void MTD_FLASHMEM addParam(char const* key, LinkedCharChunks* value)
+		void MTD_FLASHMEM addParamInt(char const* key, int32_t value)
+		{
+			char* valueStr = f_printf(FSTR("%d"), value);
+			LinkedCharChunks* linkedCharChunks = m_params.add(key);
+			linkedCharChunks->addChunk(valueStr, f_strlen(valueStr), true);	// true = need to free
+		}
+		
+		void MTD_FLASHMEM addParamFmt(char const* key, char const *fmt, ...)
+		{
+			va_list args;			
+			va_start(args, fmt);
+			uint16_t len = vsprintf(NULL, fmt, args);
+			va_end(args);
+			char buf[len + 1];			
+			va_start(args, fmt);
+			vsprintf(buf, fmt, args);
+			va_end(args);
+			
+			LinkedCharChunks* linkedCharChunks = m_params.add(key);
+			linkedCharChunks->addChunk(buf, len, true);	// true = need to free
+		}
+		
+		void MTD_FLASHMEM addParamCharChunks(char const* key, LinkedCharChunks* value)
 		{
 			m_params.add(key, *value);
 		}
