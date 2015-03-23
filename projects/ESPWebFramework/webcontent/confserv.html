@@ -16,18 +16,19 @@ Services
   <p><h3>UART Configuration</h3></p>
   <div id="subcontent">			
     Baud Rate: <input type='text' name='baud' value='{{baud}}'> <br>
-	<input type='checkbox' name='debugout' value='1' {{debugout}}> <span title="Use only with None or Emergency Consolo services.">Enable system output (printf)</span> <br>
+	<input type='checkbox' name='debugout' value='1' {{debugout}}> <span title="Use only with None or Console services.">Enable system output (printf)</span> <br>
   </div>
 
   <p><h3>UART Services</h3></p>
   <div id="subcontent">			
 	<fieldset>
-	  <input type='radio' name='serv' value='none' {{serv_none}}> None <br>
-	  <input type='radio' name='serv' value='emcons' {{serv_emcons}}> Emergency Console <br>
-	  <input type='radio' name='serv' value='binard' {{serv_binard}}> Binary bidirectional communication with Arduino Sketch<br>
+	  <input type='radio' name='serv' value='0' {{serv0}}> None <br>
+	  <input type='radio' name='serv' value='1' {{serv1}}> Console <br>
+	  <input type='radio' name='serv' value='2' {{serv2}}> Binary bidirectional communication with Arduino Sketch<br>
 	</fieldset>
   </div>
-
   
   <input type='submit' value='Save'>
+  
+  <br><br><p>System needs to be rebooted for the changes to take effect</p>
 </form>

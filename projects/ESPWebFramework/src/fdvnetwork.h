@@ -63,6 +63,12 @@ namespace fdv
 	struct WiFi
 	{
 			
+		enum Network
+		{
+			ClientNetwork      = 0,
+			AccessPointNetwork = 1
+		};
+
 		enum Mode
 		{
 			Client               = STATION_MODE,
@@ -78,6 +84,17 @@ namespace fdv
 			WPA2_PSK      = AUTH_WPA2_PSK,
 			WPA_WPA2_PSK  = AUTH_WPA_WPA2_PSK
 		};
+		
+		enum ClientConnectionStatus
+		{
+			ClientConnectionStatus_Idle          = STATION_IDLE, 
+			ClientConnectionStatus_Connecting    = STATION_CONNECTING, 
+			ClientConnectionStatus_WrongPassword = STATION_WRONG_PASSWORD, 
+			ClientConnectionStatus_NoAPFound     = STATION_NO_AP_FOUND, 
+			ClientConnectionStatus_Fail          = STATION_CONNECT_FAIL, 
+			ClientConnectionStatus_GotIP         = STATION_GOT_IP
+		};
+		
 
 		static Mode MTD_FLASHMEM setMode(Mode mode)
 		{
@@ -99,7 +116,7 @@ namespace fdv
 			softap_config config = {0};
 			wifi_softap_get_config(&config);
 			f_strcpy((char *)config.ssid, SSID);
-			config.ssid_len = strlen(SSID);
+			config.ssid_len = f_strlen(SSID);
 			f_strcpy((char *)config.password, securityKey);
 			config.channel = channel;
 			config.authmode = securityProtocol;
@@ -119,6 +136,18 @@ namespace fdv
 			wifi_station_set_config(&config);
 			wifi_station_connect();
 		}
+		
+		// fills MAC with MAC address of the specified network
+		// MAC must be a pointer to 6 bytes buffer
+		static void MTD_FLASHMEM getMACAddress(WiFi::Network network, uint8_t* MAC)
+		{
+			wifi_get_macaddr((uint8_t)network, MAC);
+		}
+		
+		static ClientConnectionStatus MTD_FLASHMEM getClientConnectionStatus()
+		{
+			return (ClientConnectionStatus)wifi_station_get_connect_status();
+		}
 
 	};
 	
@@ -129,32 +158,40 @@ namespace fdv
 	
 	struct IP
 	{
-
-		enum Network
-		{
-			ClientNetwork      = 0,
-			AccessPointNetwork = 1
-		};
 	
-		static void MTD_FLASHMEM configureStatic(Network network, char const* IP, char const* netmask, char const* gateway)
+		static void MTD_FLASHMEM configureStatic(WiFi::Network network, char const* IP, char const* netmask, char const* gateway)
 		{
 			ip_info info;
 			info.ip.addr      = ipaddr_addr(APtr<char>(f_strdup(IP)).get());
 			info.netmask.addr = ipaddr_addr(APtr<char>(f_strdup(netmask)).get());
 			info.gw.addr      = ipaddr_addr(APtr<char>(f_strdup(gateway)).get());
 			Critical critical;
-			if (network == ClientNetwork)
+			if (network == WiFi::ClientNetwork)
 				wifi_station_dhcpc_stop();
 			wifi_set_ip_info(network, &info);
 		}
 		
 		// applies only to ClientNetwork
-		static void MTD_FLASHMEM configureDHCP(Network network)
+		static void MTD_FLASHMEM configureDHCP(WiFi::Network network)
 		{
-			if (network == ClientNetwork)
+			if (network == WiFi::ClientNetwork)
 			{
 				Critical critical;
 				wifi_station_dhcpc_start();
+			}
+		}
+		
+		// fills IP with IP address of the specified network
+		// IP, netmask, gateway must be a pointer to 4 bytes buffer
+		static void MTD_FLASHMEM getIPInfo(WiFi::Network network, uint8_t* IP, uint8_t* netmask, uint8_t* gateway)
+		{
+			ip_info info;
+			wifi_get_ip_info(network, &info);
+			for (uint32_t i = 0; i != 4; ++i)
+			{
+				IP[i]      = ((uint8_t*)&info.ip.addr)[i];
+				netmask[i] = ((uint8_t*)&info.netmask.addr)[i];
+				gateway[i] = ((uint8_t*)&info.gw.addr)[i];
 			}
 		}
 		

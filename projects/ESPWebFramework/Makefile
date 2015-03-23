@@ -55,7 +55,7 @@ MAXWEBCONTENT = 167936
 TARGET_OUT = app.out
 
 
-.PHONY: all flash clean flashweb
+.PHONY: all flash clean flashweb flashdump flasherase
 
 
 all: $(TARGET_OUT)
@@ -82,13 +82,20 @@ libuser.a: $(OBJ)
 
 
 flash:  $(TARGET_OUT)-0x00000.bin $(TARGET_OUT)-0x40000.bin flashweb
-	@-$(ESPTOOL) --port $(ESPPORT) write_flash 0x00000 $(TARGET_OUT)-0x00000.bin 0x40000 $(TARGET_OUT)-0x40000.bin
+	@-$(ESPTOOL) --port $(ESPPORT) write_flash 0x40000 $(TARGET_OUT)-0x40000.bin 0x00000 $(TARGET_OUT)-0x00000.bin
 
 
 flashweb:
 	@python binarydir.py $(WEBDIR) webcontent.bin $(MAXWEBCONTENT)
 	@-$(ESPTOOL) --port $(ESPPORT) write_flash $(WEBCONTENTADDRS) webcontent.bin
 
+flashdump:
+	@-$(ESPTOOL) --port $(ESPPORT) read_flash 0x0000 0x80000 flash.dump
+	@xxd flash.dump > flash.hex
+
+flasherase:
+	@-$(ESPTOOL) --port $(ESPPORT) erase_flash
+	
 
 clean:
 	@rm -f *.a
@@ -99,5 +106,7 @@ clean:
 	@rm -f *.s
 	@rm -f *.expand
 	@rm -f *.map
+	@rm -f *.dump
+	@rm -f *.hex
 	
 

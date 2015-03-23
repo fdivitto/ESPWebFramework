@@ -47,7 +47,7 @@ window.onload = showDivs;
     <p><h3>Access Point Mode WiFi Configuration</h3></p>
     <div id="subcontent">			
   	  SSID: <input type='text' name='APSSID' value='{{APSSID}}'> <br>
-	  Password: <input type='text' name='APPSW' value='{{APPSW}}'> <br>
+	  Password: <input type='text' name='APPSW' value='{{APPSW}}'> (minimum length 8 characters)<br>
 	  Channel: 
 		<select name="APCH">
 		  <option value="1" {{APCH1}}>1</option>
@@ -79,4 +79,6 @@ window.onload = showDivs;
   </div>
   
   <input type='submit' value='Save'>
+  
+  <br><br><p>System needs to be rebooted for the changes to take effect</p>
 </form>

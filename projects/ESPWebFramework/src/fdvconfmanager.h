@@ -63,46 +63,39 @@ namespace fdv
 	static char const STR_WEBPORT[] FLASHMEM  = "WEBPORT";
 	static char const STR_BAUD[] FLASHMEM     = "BAUD";
 	static char const STR_SYSOUT[] FLASHMEM   = "SYSOUT";
+	static char const STR_UARTSRV[] FLASHMEM  = "UARTSRV";
 	
+
 	
 	class ConfigurationManager
-	{
-		
-	public:
+	{		
 		
 		template <typename HTTPCustomServer_T>
-		static void MTD_FLASHMEM apply()
+		static void MTD_FLASHMEM applyDelayed()
 		{
-			// WiFi Mode
-			WiFi::setMode(getWiFiMode());
+			if (getWiFiMode() == WiFi::AccessPoint || getWiFiMode() == WiFi::ClientAndAccessPoint)
+			{
+				// Access Point IP
+				char const* IP;
+				char const* netmask;
+				char const* gateway;
+				getAccessPointIPParams(&IP, &netmask, &gateway);
+				IP::configureStatic(WiFi::AccessPointNetwork, IP, netmask, gateway);
+			}
 			
-			// Access point parameters
-			char const* SSID;
-			char const* securityKey;
-			uint8_t channel;
-			WiFi::SecurityProtocol securityProtocol;
-			bool hiddenSSID;
-			getAccessPointParams(&SSID, &securityKey, &channel, &securityProtocol, &hiddenSSID);
-			WiFi::configureAccessPoint(SSID, securityKey, channel, securityProtocol, hiddenSSID);
-			
-			// Client parameters
-			getClientParams(&SSID, &securityKey);
-			WiFi::configureClient(SSID, securityKey);
-			
-			// Client IP
-			bool staticIP;
-			char const* IP;
-			char const* netmask;
-			char const* gateway;
-			getClientIPParams(&staticIP, &IP, &netmask, &gateway);
-			if (staticIP)
-				IP::configureStatic(IP::ClientNetwork, IP, netmask, gateway);
-			else
-				IP::configureDHCP(IP::ClientNetwork);
-			
-			// Access Point IP
-			getAccessPointIPParams(&IP, &netmask, &gateway);
-			IP::configureStatic(IP::AccessPointNetwork, IP, netmask, gateway);
+			if (getWiFiMode() == WiFi::Client || getWiFiMode() == WiFi::ClientAndAccessPoint)
+			{			
+				// Client IP
+				bool staticIP;
+				char const* IP;
+				char const* netmask;
+				char const* gateway;
+				getClientIPParams(&staticIP, &IP, &netmask, &gateway);
+				if (staticIP)
+					IP::configureStatic(WiFi::ClientNetwork, IP, netmask, gateway);
+				else
+					IP::configureDHCP(WiFi::ClientNetwork);
+			}
 			
 			// DCHP Server
 			if (getWiFiMode() == WiFi::AccessPoint || getWiFiMode() == WiFi::ClientAndAccessPoint)
@@ -120,19 +113,63 @@ namespace fdv
 			uint16_t webPort;
 			getWebServerParams(&webPort);
 			new HTTPCustomServer_T(webPort);
-			
-			// UART 0 baud rate
+		}
+	
+	public:
+		
+		template <typename HTTPCustomServer_T>
+		static void MTD_FLASHMEM apply()
+		{
+			// UART and serial services
 			uint32_t baudRate;
 			bool enableSystemOutput;
-			getUARTParams(&baudRate, &enableSystemOutput);
+			SerialService serialService;
+			getUARTParams(&baudRate, &enableSystemOutput, &serialService);
 			HardwareSerial::getSerial(0)->reconfig(baudRate);
 			if (!enableSystemOutput)
-				DisableStdOut(); 
+				DisableStdOut();
+		    switch (serialService)
+			{
+				case SerialService_Console:
+					new SerialConsole;
+					break;
+				case SerialService_BinaryProtocol:
+					// todo
+					break;
+			}
+
+			// WiFi Mode
+			WiFi::setMode(getWiFiMode());
+										
+			if (getWiFiMode() == WiFi::AccessPoint || getWiFiMode() == WiFi::ClientAndAccessPoint)
+			{
+				// Access point parameters
+				char const* SSID;
+				char const* securityKey;
+				uint8_t channel;
+				WiFi::SecurityProtocol securityProtocol;
+				bool hiddenSSID;
+				getAccessPointParams(&SSID, &securityKey, &channel, &securityProtocol, &hiddenSSID);
+				WiFi::configureAccessPoint(SSID, securityKey, channel, securityProtocol, hiddenSSID);
+			}
+			
+			if (getWiFiMode() == WiFi::Client || getWiFiMode() == WiFi::ClientAndAccessPoint)
+			{			
+				// Client parameters
+				char const* SSID;
+				char const* securityKey;
+				getClientParams(&SSID, &securityKey);
+				WiFi::configureClient(SSID, securityKey);
+			}
+
+			asyncExec< applyDelayed<HTTPCustomServer_T> >(512);
 		}
-				
+
+	
 		static void MTD_FLASHMEM restore()
 		{
 			FlashDictionary::eraseContent();
+			system_restore();
 		}
 		
 		
@@ -162,10 +199,14 @@ namespace fdv
 		
 		static void MTD_FLASHMEM getAccessPointParams(char const** SSID, char const** securityKey, uint8_t* channel, WiFi::SecurityProtocol* securityProtocol, bool* hiddenSSID)
 		{
-			*SSID             = FlashDictionary::getString(STR_APSSID, FSTR("MyESP"));
-			*securityKey      = FlashDictionary::getString(STR_APSECKEY, FSTR("myesp111"));
+			static char defaultSSID[10];
+			uint8_t mac[16];
+			WiFi::getMACAddress(WiFi::AccessPointNetwork, mac);			
+			sprintf(defaultSSID, FSTR("ESP%02X%02X%02X%02X%02X%02X"), mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+			*SSID             = FlashDictionary::getString(STR_APSSID, defaultSSID);
+			*securityKey      = FlashDictionary::getString(STR_APSECKEY, FSTR(""));
 			*channel          = FlashDictionary::getInt(STR_APCH, 9);
-			*securityProtocol = (WiFi::SecurityProtocol)FlashDictionary::getInt(STR_APSP, (int32_t)WiFi::WPA2_PSK);
+			*securityProtocol = (WiFi::SecurityProtocol)FlashDictionary::getInt(STR_APSP, (int32_t)WiFi::Open);
 			*hiddenSSID       = FlashDictionary::getBool(STR_APHSSID, false);
 		}
 		
@@ -257,16 +298,18 @@ namespace fdv
 		
 		//// UART parameters
 		
-		static void MTD_FLASHMEM setUARTParams(uint32_t baudRate, bool enableSystemOutput)
+		static void MTD_FLASHMEM setUARTParams(uint32_t baudRate, bool enableSystemOutput, SerialService serialService)
 		{
 			FlashDictionary::setInt(STR_BAUD, baudRate);
 			FlashDictionary::setBool(STR_SYSOUT, enableSystemOutput);
+			FlashDictionary::setInt(STR_UARTSRV, (int32_t)serialService);
 		}
 		
-		static void MTD_FLASHMEM getUARTParams(uint32_t* baudRate, bool* enableSystemOutput)
+		static void MTD_FLASHMEM getUARTParams(uint32_t* baudRate, bool* enableSystemOutput, SerialService* serialService)
 		{
 			*baudRate           = FlashDictionary::getInt(STR_BAUD, 115200);
 			*enableSystemOutput = FlashDictionary::getBool(STR_SYSOUT, false);
+			*serialService      = (SerialService)FlashDictionary::getInt(STR_UARTSRV, (int32_t)SerialService_Console);
 		}
 	};
 
@@ -441,7 +484,8 @@ namespace fdv
 				
 				// set UART configuration
 				ConfigurationManager::setUARTParams(strtol(getRequest().form["baud"], NULL, 10),
-													getRequest().form["debugout"] != NULL);
+													getRequest().form["debugout"] != NULL,
+													(SerialService)strtol(getRequest().form["serv"], NULL, 10));
 			}
 			
 			// get Web server configuration
@@ -452,11 +496,14 @@ namespace fdv
 			// get UART configuration
 			uint32_t baudRate;
 			bool enableSystemOutput;
-			ConfigurationManager::getUARTParams(&baudRate, &enableSystemOutput);
+			SerialService serialService;
+			ConfigurationManager::getUARTParams(&baudRate, &enableSystemOutput, &serialService);
 			addParamInt(FSTR("baud"), baudRate);
 			if (enableSystemOutput)
 				addParamStr(FSTR("debugout"), FSTR("checked"));
-						
+			APtr<char> serialServiceStr(f_printf(FSTR("serv%d"), (int32_t)serialService));
+			addParamStr(serialServiceStr.get(), FSTR("checked"));						
+			
 			HTTPTemplateResponse::flush();
 		}
 		
