@@ -396,6 +396,14 @@ struct ObjectDict
 		}
 	}
 	
+	// add an empty item, returning pointer to the created object value
+	T* add(char const* key)
+	{
+		T value;
+		add(key, value);
+		return &(getItem(key)->value);
+	}
+	
 	uint32_t getItemsCount()
 	{
 		return m_itemsCount;
