@@ -131,6 +131,8 @@ namespace fdv
 				{FSTR("restore"),	 &SerialConsole::cmd_restore},
 				{FSTR("free"),       &SerialConsole::cmd_free},
 				{FSTR("ifconfig"),   &SerialConsole::cmd_ifconfig},
+				{FSTR("iwlist"),     &SerialConsole::cmd_iwlist},
+				{FSTR("test"),       &SerialConsole::cmd_test},
 			};
 			static uint32_t const cmdCount = sizeof(cmds) / sizeof(Cmd);
 			
@@ -157,6 +159,7 @@ namespace fdv
 			m_serial->writeln(FSTR("restore       : Erase Flash stored settings"));
 			m_serial->writeln(FSTR("free          : Display amount of free and used memory"));
 			m_serial->writeln(FSTR("ifconfig      : Display network info"));
+			m_serial->writeln(FSTR("iwlist [scan] : Display or scan for available wireless networks"));
 		}
 
 		
@@ -243,6 +246,47 @@ namespace fdv
 				}
 
 			}
+		}
+		
+		
+		void MTD_FLASHMEM cmd_iwlist()
+		{
+			m_serial->printf(FSTR("\r\nCells found:\r\n"));
+			uint32_t count = 0;
+			bool scan = (m_paramsCount == 2 && t_strcmp(m_params[1], CharIterator(FSTR("scan"))) == 0);
+			WiFi::APInfo* infos = WiFi::getAPList(&count, scan);
+			for (uint32_t i = 0; i != count; ++i)
+			{
+				char const* authMode = FSTR("");
+				switch (infos[i].AuthMode)
+				{
+					case WiFi::Open:
+						authMode = FSTR("Open");
+						break;
+					case WiFi::WEP:
+						authMode = FSTR("WEP");
+						break;
+					case WiFi::WPA_PSK:
+						authMode = FSTR("WPA-PSK");
+						break;
+					case WiFi::WPA2_PSK:
+						authMode = FSTR("WPA2-PSK");
+						break;
+					case WiFi::WPA_WPA2_PSK:
+						authMode = FSTR("WPA-WPA2-PSK");
+						break;
+				}
+				m_serial->printf(FSTR("  %2d - Address: %02X:%02X:%02X:%02X:%02X:%02X\r\n"), i, infos[i].BSSID[0], infos[i].BSSID[1], infos[i].BSSID[2], infos[i].BSSID[3], infos[i].BSSID[4], infos[i].BSSID[5]);
+				m_serial->printf(FSTR("       SSID: %s\r\n"), infos[i].SSID);
+				m_serial->printf(FSTR("       Channel: %d\r\n"), infos[i].Channel);
+				m_serial->printf(FSTR("       RSSI: %d\r\n"), infos[i].RSSI);
+				m_serial->printf(FSTR("       Mode: %s\r\n"), authMode);								 
+			}
+		}
+		
+		
+		void MTD_FLASHMEM cmd_test()
+		{
 		}
 		
 		
