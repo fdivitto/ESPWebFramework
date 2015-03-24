@@ -95,6 +95,16 @@ namespace fdv
 			ClientConnectionStatus_GotIP         = STATION_GOT_IP
 		};
 		
+		struct APInfo
+		{
+			uint8_t          BSSID[6];
+			char             SSID[33];	// includes ending zero
+			uint8_t          Channel;
+			uint8_t          RSSI;
+			SecurityProtocol AuthMode;
+			bool             isHidden;
+		};
+		
 
 		static Mode MTD_FLASHMEM setMode(Mode mode)
 		{
@@ -148,6 +158,77 @@ namespace fdv
 		{
 			return (ClientConnectionStatus)wifi_station_get_connect_status();
 		}
+		
+		// returns access point list
+		static APInfo* MTD_FLASHMEM getAPList(uint32_t* count, bool rescan)
+		{
+			if (rescan)
+			{
+				wifi_station_scan(NULL, scanDoneCB);
+				getAPInfo()->receive();	// wait for completion
+			}
+			APInfo* infos;
+			getAPInfo(&infos, count);
+			return infos;
+		}
+		
+	private:
+	
+		static void MTD_FLASHMEM scanDoneCB(void* arg, STATUS status)
+		{
+			if (status == OK)
+			{
+				// count items
+				uint32_t count = 0;
+				for (bss_info* bss_link = ((bss_info*)arg)->next.stqe_next; bss_link; bss_link = bss_link->next.stqe_next)
+					++count;
+				// fill items
+				APInfo* infos;
+				getAPInfo(&infos, &count, count);
+				for (bss_info* bss_link = ((bss_info*)arg)->next.stqe_next; bss_link; bss_link = bss_link->next.stqe_next, ++infos)
+				{
+					memcpy(infos->BSSID, bss_link->bssid, 6);
+					memset(infos->SSID, 0, 33);
+					memcpy(infos->SSID, bss_link->ssid, 32);
+					infos->Channel  = bss_link->channel;
+					infos->RSSI     = bss_link->rssi;
+					infos->AuthMode = (SecurityProtocol)bss_link->authmode;
+					infos->isHidden = (bool)bss_link->is_hidden;
+				}
+				getAPInfo()->send();
+			}
+		}
+		
+		// allocateCount >= 0 -> allocate (or reallocate or free) AP info
+		// allocateCount < 0  -> get infos
+		static Queue<bool>* MTD_FLASHMEM getAPInfo(APInfo** infos = NULL, uint32_t* count = NULL, int32_t allocateCount = -1)
+		{
+			static APInfo*  s_infos = NULL;
+			static uint32_t s_count = 0;
+			static Queue<bool>* s_queue = new Queue<bool>(1);	// never deleted
+			if (allocateCount >= 0)
+			{
+				if (s_infos != NULL)
+					delete[] s_infos;
+				s_infos = NULL;
+				s_count = 0;
+				if (allocateCount > 0)
+				{
+					s_infos = new APInfo[allocateCount];
+					s_count = allocateCount;
+				}
+			}
+			if (infos && count)
+			{
+				*infos = s_infos;
+				*count = s_count;
+			}
+			return s_queue;
+		}
+		
+		
+		
+		
 
 	};
 	
