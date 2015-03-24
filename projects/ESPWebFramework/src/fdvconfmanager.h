@@ -266,12 +266,15 @@ namespace fdv
 		
 		//// DHCP server parameters
 		
-		static void MTD_FLASHMEM setDHCPServerParams(bool enabled, char const* startIP, char const* endIP, uint32_t maxLeases)
+		static void MTD_FLASHMEM setDHCPServerParams(bool enabled, char const* startIP = NULL, char const* endIP = NULL, uint32_t maxLeases = 0)
 		{
 			FlashDictionary::setBool(STR_DHCPDEN, enabled);
-			FlashDictionary::setString(STR_DHCPDIP1, startIP);
-			FlashDictionary::setString(STR_DHCPDIP2, endIP);
-			FlashDictionary::setInt(STR_DHCPDMXL, maxLeases);
+			if (startIP && endIP && maxLeases)
+			{
+				FlashDictionary::setString(STR_DHCPDIP1, startIP);
+				FlashDictionary::setString(STR_DHCPDIP2, endIP);
+				FlashDictionary::setInt(STR_DHCPDMXL, maxLeases);
+			}
 		}
 		
 		static void MTD_FLASHMEM getDHCPServerParams(bool* enabled, char const** startIP, char const** endIP, uint32_t* maxLeases)
@@ -338,8 +341,8 @@ namespace fdv
 			if (getRequest().method == HTTPHandler::Post)
 			{
 				// set WiFi mode
-				char const* clientmode = getRequest().form["clientmode"];
-				char const* apmode     = getRequest().form["apmode"];
+				char const* clientmode = getRequest().form[FSTR("clientmode")];
+				char const* apmode     = getRequest().form[FSTR("apmode")];
 				if (clientmode && apmode)
 					ConfigurationManager::setWiFiMode(WiFi::ClientAndAccessPoint);
 				else if (clientmode)
@@ -348,14 +351,18 @@ namespace fdv
 					ConfigurationManager::setWiFiMode(WiFi::AccessPoint);
 				
 				// set client mode parameters
-				ConfigurationManager::setClientParams(getRequest().form["CLSSID"], getRequest().form["CLPSW"]);				
+				ConfigurationManager::setClientParams(getRequest().form[FSTR("CLSSID")],
+				                                      getRequest().form[FSTR("CLPSW")]);
 				
 				// set access point parameters
-				ConfigurationManager::setAccessPointParams(getRequest().form["APSSID"],
-												           getRequest().form["APPSW"],
-														   strtol(getRequest().form["APCH"], NULL, 10),
-														   (WiFi::SecurityProtocol)strtol(getRequest().form["APSEC"], NULL, 10),
-														   getRequest().form["APHSSID"] != NULL);
+				char const* APCH    = getRequest().form[FSTR("APCH")];
+				char const* APSEC   = getRequest().form[FSTR("APSEC")];
+				if (APCH && APSEC)
+					ConfigurationManager::setAccessPointParams(getRequest().form[FSTR("APSSID")], 
+															   getRequest().form[FSTR("APPSW")], 
+															   strtol(APCH, NULL, 10),
+															   (WiFi::SecurityProtocol)strtol(APSEC, NULL, 10),
+															   getRequest().form[FSTR("APHSSID")] != NULL);
 			}
 			
 			// get WiFi mode
@@ -407,21 +414,24 @@ namespace fdv
 			if (getRequest().method == HTTPHandler::Post)
 			{
 				// set client mode IP configuration
-				ConfigurationManager::setClientIPParams(getRequest().form["staticIP"] != NULL,
-													    getRequest().form["CLIP"],
-														getRequest().form["CLMSK"],
-														getRequest().form["CLGTW"]);
+				ConfigurationManager::setClientIPParams(getRequest().form[FSTR("staticIP")] != NULL,
+													    getRequest().form[FSTR("CLIP")],
+														getRequest().form[FSTR("CLMSK")],
+														getRequest().form[FSTR("CLGTW")]);
 														
 				// set access point IP configuration
-				ConfigurationManager::setAccessPointIPParams(getRequest().form["APIP"],
-														     getRequest().form["APMSK"],
-														     getRequest().form["APGTW"]);
+				ConfigurationManager::setAccessPointIPParams(getRequest().form[FSTR("APIP")],
+														     getRequest().form[FSTR("APMSK")],
+														     getRequest().form[FSTR("APGTW")]);
 
 				// set DHCP server configuration
-				ConfigurationManager::setDHCPServerParams(getRequest().form["DHCPD"] != NULL,
-														  getRequest().form["startIP"],
-														  getRequest().form["endIP"],
-														  strtol(getRequest().form["maxLeases"], NULL, 10));
+				if (getRequest().form[FSTR("DHCPD")] != NULL)
+					ConfigurationManager::setDHCPServerParams(true,
+															  getRequest().form[FSTR("startIP")],
+															  getRequest().form[FSTR("endIP")],
+															  strtol(getRequest().form[FSTR("maxLeases")], NULL, 10));
+				else
+					ConfigurationManager::setDHCPServerParams(false);
 			}
 			
 			WiFi::Mode mode = ConfigurationManager::getWiFiMode();
@@ -432,7 +442,7 @@ namespace fdv
 			char const* netmask;
 			char const* gateway;
 			ConfigurationManager::getClientIPParams(&staticIP, &IP, &netmask, &gateway);
-			addParamStr(FSTR("DISP_CLIPCONF"), mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint? FSTR("block") : FSTR("none"));
+			addParamStr(FSTR("DISP_CLIPCONF"), mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint? FSTR("") : FSTR("disabled"));
 			if (staticIP)
 				addParamStr(FSTR("staticIP"), FSTR("checked"));
 			addParamStr(FSTR("CLIP"), IP);
@@ -441,7 +451,7 @@ namespace fdv
 			
 			// get access point IP configuration
 			ConfigurationManager::getAccessPointIPParams(&IP, &netmask, &gateway);
-			addParamStr(FSTR("DISP_APIPCONF"), mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? FSTR("block") : FSTR("none"));
+			addParamStr(FSTR("DISP_APIPCONF"), mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? FSTR("") : FSTR("disabled"));
 			addParamStr(FSTR("APIP"), IP);
 			addParamStr(FSTR("APMSK"), netmask);
 			addParamStr(FSTR("APGTW"), gateway);
@@ -480,12 +490,17 @@ namespace fdv
 			if (getRequest().method == HTTPHandler::Post)
 			{
 				// set Web server configuration
-				ConfigurationManager::setWebServerParams(strtol(getRequest().form["httpport"], NULL, 10));
+				char const* httpport = getRequest().form[FSTR("httpport")];
+				if (httpport)
+					ConfigurationManager::setWebServerParams(strtol(httpport, NULL, 10));
 				
 				// set UART configuration
-				ConfigurationManager::setUARTParams(strtol(getRequest().form["baud"], NULL, 10),
-													getRequest().form["debugout"] != NULL,
-													(SerialService)strtol(getRequest().form["serv"], NULL, 10));
+				char const* baud = getRequest().form[FSTR("baud")];
+				char const* serv = getRequest().form[FSTR("serv")];
+				if (baud && serv)
+					ConfigurationManager::setUARTParams(strtol(baud, NULL, 10),
+														getRequest().form[FSTR("debugout")] != NULL,
+														(SerialService)strtol(serv, NULL, 10));
 			}
 			
 			// get Web server configuration
