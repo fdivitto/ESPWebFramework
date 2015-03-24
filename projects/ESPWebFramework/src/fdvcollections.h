@@ -510,6 +510,9 @@ struct FlashDictionary
 	// requires 4K free heap to execute!
 	static void MTD_FLASHMEM setValue(char const* key, void const* value, uint32_t valueLength)
 	{
+		if (!value)
+			return;
+		
 		// find key or a free space
 		uint8_t const* keyPosPtr = (uint8_t const*)findKey(key);
 
@@ -579,7 +582,8 @@ struct FlashDictionary
 		
 	static void MTD_FLASHMEM setString(char const* key, char const* value)
 	{
-		setValue(key, value, f_strlen(value) + 1);
+		if (value)
+			setValue(key, value, f_strlen(value) + 1);
 	}
 	
 	// always returns a Flash stored string (if not found return what contained in defaultValue)
