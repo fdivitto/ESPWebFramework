@@ -1,24 +1,60 @@
 # ESPWebFramework
-A C++ Web Framework for ESP8266
+A Web Framework for ESP8266
 
-To compile requires:
+To flash compiled binaries (just need Python and pyserial):
+- download following files:
+
+   [app.out-0x00000.bin](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/app.out-0x00000.bin)
+
+   [app.out-0x40000.bin](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/app.out-0x40000.bin)
+
+   [webcontent.bin](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/webcontent.bin)
+
+   [esptool.py](https://github.com/fdivitto/ESPWebFramework/raw/master/SDK/esptool.py)
+
+- now run (change COM7 if necessary):
+```
+   python esptool.py --port COM7 write_flash 0x40000 app.out-0x40000.bin 0x00000 app.out-0x00000.bin 0x17000 webcontent.bin
+```
+
+
+
+Build prerequisites:
 - Windows 64 bit
 - Python 2.7.9 ( https://www.python.org/downloads/ )
 - MinGW ( http://sourceforge.net/projects/mingw/files/latest/download?source=files )
 
 Install Python pyserial and slimmer (to reduce webcontent folder size):
-
-- easy_install pyserial
-- easy_install slimmer
+```
+easy_install pyserial
+easy_install slimmer
+```
 
 Move to ESPWebFramework\projects\ESPWebFramework directory and double click on:
-
-- console.cmd
+```
+console.cmd
+```
 
 Now run:
-
-- make
+```
+make
+```  
   
-Swith ESP8266 to programming mode. Make sure you set right COM port into Makefile (default is COM3), then run:
+Switch ESP8266 to programming mode. Make sure you set right COM port into Makefile (default is COM7), then run:
+```
+make flash
+```
 
-- make flash
+Here is some screenshots:
+
+WiFi configuration:
+![ss1](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/ss1.jpg)
+
+WiFi configuration - access points scan:
+![ss2](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/ss2.jpg)
+
+Network configuration:
+![ss3](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/ss3.jpg)
+
+Web server, UART and services configuration:
+![ss4](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/ss4.jpg)
