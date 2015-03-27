@@ -46,6 +46,17 @@ namespace fdv
 	// GPIO
 	//
 	// ON/OFF frequency up to 5.7 MHz.
+	// Applications should NOT use following GPIOs:
+	//
+	//   GPIO1:   Used for UART 0 - TX
+	//   GPIO3:	  Used for UART 0 - RX
+	//   GPIO6:   Used for Flash
+	//   GPIO7:	  Used for Flash 
+	//   GPIO8:	  Used for Flash 
+	//   GPIO9:	  Used for Flash 
+	//   GPIO10:  Used for Flash 
+	//   GPIO11:  Used for Flash 
+	//
 	//
 	// Examples:
 	//
@@ -79,8 +90,8 @@ namespace fdv
 								   PERIPHS_IO_MUX_GPIO4_U, PERIPHS_IO_MUX_GPIO5_U, PERIPHS_IO_MUX_SD_CLK_U, PERIPHS_IO_MUX_SD_DATA0_U, 
 								   PERIPHS_IO_MUX_SD_DATA1_U, PERIPHS_IO_MUX_SD_DATA2_U, PERIPHS_IO_MUX_SD_DATA3_U, PERIPHS_IO_MUX_SD_CMD_U, 
 								   PERIPHS_IO_MUX_MTDI_U, PERIPHS_IO_MUX_MTCK_U, PERIPHS_IO_MUX_MTMS_U, PERIPHS_IO_MUX_MTDO_U};
-			uint8_t pinFunc[16] =  {FUNC_GPIO0, FUNC_GPIO1, FUNC_GPIO2, FUNC_GPIO3, FUNC_GPIO4, FUNC_GPIO5, FUNC_GPIO6, FUNC_GPIO7, FUNC_GPIO8,
-									FUNC_GPIO9, FUNC_GPIO10, FUNC_GPIO11, FUNC_GPIO12, FUNC_GPIO13, FUNC_GPIO14, FUNC_GPIO15};
+			uint8_t pinFunc[16] = {FUNC_GPIO0, FUNC_GPIO1, FUNC_GPIO2, FUNC_GPIO3, FUNC_GPIO4, FUNC_GPIO5, FUNC_GPIO6, FUNC_GPIO7, FUNC_GPIO8,
+								   FUNC_GPIO9, FUNC_GPIO10, FUNC_GPIO11, FUNC_GPIO12, FUNC_GPIO13, FUNC_GPIO14, FUNC_GPIO15};
 			m_pinReg  = pinReg[gpioNum];
 			m_pinFunc = pinFunc[gpioNum];
 		}
@@ -111,14 +122,6 @@ namespace fdv
 				PIN_PULLUP_DIS(m_pinReg);
 		}
 		
-		void MTD_FLASHMEM enablePullDown(bool value)
-		{
-			if (value)
-				SET_PERI_REG_MASK(m_pinReg, PERIPHS_IO_MUX_PULLDWN);
-			else
-				CLEAR_PERI_REG_MASK(m_pinReg, PERIPHS_IO_MUX_PULLDWN);
-		}
-		
 		void MTD_FLASHMEM write(bool value)
 		{
 			if (value)
@@ -147,7 +150,6 @@ namespace fdv
 		{
 			PIN_FUNC_SELECT(m_pinReg, m_pinFunc);
 			enablePullUp(false);
-			enablePullDown(false);
 		}
 		
 	private:

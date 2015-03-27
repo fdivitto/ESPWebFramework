@@ -73,52 +73,27 @@ namespace fdv
 		template <typename HTTPCustomServer_T>
 		static void MTD_FLASHMEM applyDelayed()
 		{
-			if (getWiFiMode() == WiFi::AccessPoint || getWiFiMode() == WiFi::ClientAndAccessPoint)
-			{
-				// Access Point IP
-				char const* IP;
-				char const* netmask;
-				char const* gateway;
-				getAccessPointIPParams(&IP, &netmask, &gateway);
-				IP::configureStatic(WiFi::AccessPointNetwork, IP, netmask, gateway);
-			}
-			
-			if (getWiFiMode() == WiFi::Client || getWiFiMode() == WiFi::ClientAndAccessPoint)
-			{			
-				// Client IP
-				bool staticIP;
-				char const* IP;
-				char const* netmask;
-				char const* gateway;
-				getClientIPParams(&staticIP, &IP, &netmask, &gateway);
-				if (staticIP)
-					IP::configureStatic(WiFi::ClientNetwork, IP, netmask, gateway);
-				else
-					IP::configureDHCP(WiFi::ClientNetwork);
-			}
-			
-			// DCHP Server
-			if (getWiFiMode() == WiFi::AccessPoint || getWiFiMode() == WiFi::ClientAndAccessPoint)
-			{
-				bool enabled;
-				char const* startIP;
-				char const* endIP;
-				uint32_t maxLeases;
-				getDHCPServerParams(&enabled, &startIP, &endIP, &maxLeases);
-				if (enabled)
-					DHCPServer::configure(startIP, endIP, maxLeases);
-			}
-			
-			// Web Server
-			uint16_t webPort;
-			getWebServerParams(&webPort);
-			new HTTPCustomServer_T(webPort);
+			applyAccessPointIP();
+			applyClientIP();
+			applyDHCPServer();
+			applyWebServer<HTTPCustomServer_T>();
+			applyGPIO();
 		}
+		
 	
 	public:
 		
 		template <typename HTTPCustomServer_T>
-		static void MTD_FLASHMEM apply()
+		static void MTD_FLASHMEM applyAll()
+		{
+			applyUARTServices();
+			applyWiFi();
+			asyncExec< applyDelayed<HTTPCustomServer_T> >(512);
+		}
+		
+		
+		// cannot be re-applied
+		static void MTD_FLASHMEM applyUARTServices()
 		{
 			// UART and serial services
 			uint32_t baudRate;
@@ -137,7 +112,12 @@ namespace fdv
 					// todo
 					break;
 			}
-
+		}
+		
+		
+		// can be re-applied
+		static void MTD_FLASHMEM applyWiFi()
+		{
 			// WiFi Mode
 			WiFi::setMode(getWiFiMode());
 										
@@ -161,11 +141,96 @@ namespace fdv
 				getClientParams(&SSID, &securityKey);
 				WiFi::configureClient(SSID, securityKey);
 			}
-
-			asyncExec< applyDelayed<HTTPCustomServer_T> >(512);
 		}
 
-	
+
+		// can be re-applied
+		// doesn't support GPIO16
+		static void MTD_FLASHMEM applyGPIO()
+		{
+			// GPIO
+			for (uint32_t i = 0; i < 17; ++i)
+			{
+				bool configured, isOutput, pullUp, value;
+				getGPIOParams(i, &configured, &isOutput, &pullUp, &value);
+				if (configured)
+				{
+					// GPIO0..15
+					GPIO gpio(i);
+					if (isOutput)
+						gpio.modeOutput();
+					else
+						gpio.modeInput();
+					gpio.enablePullUp(pullUp);
+					if (isOutput)
+						gpio.write(value);
+				}
+			}
+		}		
+		
+		
+		// can be re-applied
+		static void MTD_FLASHMEM applyAccessPointIP()
+		{
+			if (getWiFiMode() == WiFi::AccessPoint || getWiFiMode() == WiFi::ClientAndAccessPoint)
+			{
+				// Access Point IP
+				char const* IP;
+				char const* netmask;
+				char const* gateway;
+				getAccessPointIPParams(&IP, &netmask, &gateway);
+				IP::configureStatic(WiFi::AccessPointNetwork, IP, netmask, gateway);
+			}
+		}			
+		
+		
+		// can be re-applied
+		static void MTD_FLASHMEM applyClientIP()
+		{
+			if (getWiFiMode() == WiFi::Client || getWiFiMode() == WiFi::ClientAndAccessPoint)
+			{			
+				// Client IP
+				bool staticIP;
+				char const* IP;
+				char const* netmask;
+				char const* gateway;
+				getClientIPParams(&staticIP, &IP, &netmask, &gateway);
+				if (staticIP)
+					IP::configureStatic(WiFi::ClientNetwork, IP, netmask, gateway);
+				else
+					IP::configureDHCP(WiFi::ClientNetwork);
+			}
+		}			
+
+		
+		// can be re-applied
+		static void MTD_FLASHMEM applyDHCPServer()
+		{
+			// DCHP Server
+			if (getWiFiMode() == WiFi::AccessPoint || getWiFiMode() == WiFi::ClientAndAccessPoint)
+			{
+				bool enabled;
+				char const* startIP;
+				char const* endIP;
+				uint32_t maxLeases;
+				getDHCPServerParams(&enabled, &startIP, &endIP, &maxLeases);
+				if (enabled)
+					DHCPServer::configure(startIP, endIP, maxLeases);
+			}
+		}			
+		
+
+		// cannot be re-applied
+		template <typename HTTPCustomServer_T>
+		static void MTD_FLASHMEM applyWebServer()
+		{
+			// Web Server
+			uint16_t webPort;
+			getWebServerParams(&webPort);
+			new HTTPCustomServer_T(webPort);
+		}			
+
+		
 		static void MTD_FLASHMEM restore()
 		{
 			FlashDictionary::eraseContent();
@@ -313,6 +378,44 @@ namespace fdv
 			*baudRate           = FlashDictionary::getInt(STR_BAUD, 115200);
 			*enableSystemOutput = FlashDictionary::getBool(STR_SYSOUT, false);
 			*serialService      = (SerialService)FlashDictionary::getInt(STR_UARTSRV, (int32_t)SerialService_Console);
+		}
+		
+		
+		//// GPIO parameters
+		
+		struct GPIOInfo
+		{
+			uint32_t configured: 1, isOutput: 1, pullUp: 1, value: 1;
+		};
+
+		static void MTD_FLASHMEM setGPIOParams(uint32_t gpioNum, bool configured, bool isOutput, bool pullUp, bool value)
+		{
+			APtr<char> key(f_printf(FSTR("GPIO%d"), gpioNum));
+			GPIOInfo info = {configured, isOutput, pullUp, value};
+			FlashDictionary::setValue(key.get(), &info, sizeof(GPIOInfo));
+		}
+		
+		static void MTD_FLASHMEM getGPIOParams(uint32_t gpioNum, bool* configured, bool* isOutput, bool* pullUp, bool* value)
+		{
+			APtr<char> key(f_printf(FSTR("GPIO%d"), gpioNum));
+			uint8_t const* infoPtr = FlashDictionary::getValue(key.get());			
+			if (infoPtr)
+			{
+				uint32_t infoInt = getDWord(infoPtr);
+				GPIOInfo* info = (GPIOInfo*)&infoInt;
+				*configured = info->configured;
+				*isOutput   = info->isOutput;
+				*pullUp     = info->pullUp;
+				*value      = info->value;
+			}
+			else
+			{
+				// defaults
+				*configured = false;
+				*isOutput   = false;
+				*pullUp     = false;
+				*value      = false;
+			}
 		}
 	};
 
@@ -545,26 +648,111 @@ namespace fdv
 			uint32_t count = 0;
 			WiFi::APInfo* infos = WiFi::getAPList(&count, true);
 
-			char paramKey[count][8];
-			APtr<char> paramValue[count];
+			LinkedCharChunks linkedChunks;
 			for (uint32_t i = 0; i != count; ++i)
 			{
-				sprintf(paramKey[i], FSTR("%dAPS"), i);
-				paramValue[i].reset(f_printf(FSTR("<tr> <td><a href='confwifi?AP=%s'>%s</a></td> <td>%02X:%02X:%02X:%02X:%02X:%02X</td> <td>%d</td> <td>%d</td> <td>%s</td> </tr>"), 
-				                             infos[i].SSID,
-											 infos[i].SSID,
-											 infos[i].BSSID[0], infos[i].BSSID[1], infos[i].BSSID[2], infos[i].BSSID[3], infos[i].BSSID[4], infos[i].BSSID[5],
-											 infos[i].Channel,
-											 infos[i].RSSI,
-											 WiFi::convSecurityProtocolToString(infos[i].AuthMode)));											 
-				addParamStr(paramKey[i], paramValue[i].get());
+				linkedChunks.addChunk(f_printf(FSTR("<tr> <td><a href='confwifi?AP=%s'>%s</a></td> <td>%02X:%02X:%02X:%02X:%02X:%02X</td> <td>%d</td> <td>%d</td> <td>%s</td> </tr>"), 
+				                               infos[i].SSID,
+											   infos[i].SSID,
+											   infos[i].BSSID[0], infos[i].BSSID[1], infos[i].BSSID[2], infos[i].BSSID[3], infos[i].BSSID[4], infos[i].BSSID[5],
+											   infos[i].Channel,
+											   infos[i].RSSI,
+											   WiFi::convSecurityProtocolToString(infos[i].AuthMode)),
+									  true);
 			}
+			addParamCharChunks(FSTR("APS"), &linkedChunks);
+			
 
 			HTTPTemplateResponse::flush();
 		}
 		
 	};
 
+	
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// HTTPGPIOConfigurationResponse
+
+	struct HTTPGPIOConfigurationResponse : public HTTPTemplateResponse
+	{
+		HTTPGPIOConfigurationResponse(HTTPHandler* httpHandler, char const* filename)
+			: HTTPTemplateResponse(httpHandler, filename)
+		{
+		}
+		
+		virtual void MTD_FLASHMEM flush()
+		{
+			if (getRequest().method == HTTPHandler::Post)
+			{
+				char const* gpio = getRequest().form[FSTR("GPIO")];
+				if (getRequest().form[FSTR("configured")])
+				{					
+					char const* mode     = getRequest().form[FSTR("mode")];
+					char const* pullUp   = getRequest().form[FSTR("pullup")];
+					ConfigurationManager::setGPIOParams(strtol(gpio, NULL, 10), true, f_strcmp(mode, FSTR("out")) == 0, pullUp != NULL, false);
+					ConfigurationManager::applyGPIO();
+				}
+				else if (gpio)
+				{
+					ConfigurationManager::setGPIOParams(strtol(gpio, NULL, 10), false, false, false, false);
+				}
+			}
+			
+			bool configured, isOutput, pullUp, value;
+			
+			char const* gpio = getRequest().query[FSTR("gpio")];
+			char const* val  = getRequest().query[FSTR("val")];
+			if (gpio && val)
+			{
+				uint8_t gpion = strtol(gpio, NULL, 10);
+				ConfigurationManager::getGPIOParams(gpion, &configured, &isOutput, &pullUp, &value);
+				value = *val - '0';
+				ConfigurationManager::setGPIOParams(gpion, configured, isOutput, pullUp, value);
+				GPIO(gpion).write(value);
+			}
+				
+			LinkedCharChunks linkedChunks;
+			for (uint32_t i = 0; i != 16; ++i)
+			{
+				if (i != 1 && i != 3 && (i < 6 || i > 11))
+				{
+					bool configured, isOutput, pullUp, value;
+					ConfigurationManager::getGPIOParams(i, &configured, &isOutput, &pullUp, &value);
+					
+					linkedChunks.addChunk(f_printf(FSTR("<tr> <td>%d</td> <td><form method='POST'>"), i), true);
+					linkedChunks.addChunk(f_printf(FSTR("Enabled <input type='checkbox' name='configured' value='1' onclick=\"document.getElementById('GPIO%d').disabled=!this.checked\" %s>"), i, configured? FSTR("checked"):FSTR("")), true);
+					linkedChunks.addChunk(f_printf(FSTR("<fieldset class='inline' id='GPIO%d' %s>"), i, configured? FSTR(""):FSTR("disabled")), true);
+					linkedChunks.addChunk(f_printf(FSTR("<select name='mode'><option value='in' %s>IN</option><option value='out' %s>OUT</option></select>"), 
+					                               isOutput? FSTR(""):FSTR("selected"), 
+												   isOutput? FSTR("selected"):FSTR("")), 
+										  true);
+					linkedChunks.addChunk(f_printf(FSTR("     PullUp <input type='checkbox' name='pullup' value='1' %s> </fieldset>"), pullUp? FSTR("checked") : FSTR("")), true);
+					linkedChunks.addChunk(f_printf(FSTR("<input type='hidden' name='GPIO' value='%d'>"), i), true);
+					linkedChunks.addChunk(FSTR("<input type='submit' value='Save'></form></td>"));
+					if (configured)
+					{
+						if (isOutput)
+						{
+							linkedChunks.addChunk(f_printf(FSTR("<td><a href='confgpio?gpio=%d&val=%d' class='link_button2'>%s</a></td> </tr>"), i, !value, value? FSTR("HI"):FSTR("LO")), true);
+						}
+						else
+						{
+							linkedChunks.addChunk(f_printf(FSTR("<td>%s</td> </tr>"), GPIO(i).read()? FSTR("HI"):FSTR("LO")), true);
+						}
+					}
+					else
+					{
+						linkedChunks.addChunk(FSTR("<td></td></tr>"));
+					}
+				}
+			}
+			addParamCharChunks(FSTR("GPIOS"), &linkedChunks);
+				
+			HTTPTemplateResponse::flush();
+		}
+		
+	};
+	
 	
 }
 
