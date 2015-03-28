@@ -38,34 +38,6 @@ namespace fdv
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	// ConfigurationManager
-
-	
-	// ConfigurationManager flash parameters
-	static char const STR_WiFiMode[] FLASHMEM = "WiFiMode";
-	static char const STR_APSSID[] FLASHMEM   = "APSSID";
-	static char const STR_APSECKEY[] FLASHMEM = "APSECKEY";
-	static char const STR_APCH[] FLASHMEM     = "APCH";
-	static char const STR_APSP[] FLASHMEM     = "APSP";
-	static char const STR_APHSSID[] FLASHMEM  = "APHSSID";
-	static char const STR_CLSSID[] FLASHMEM   = "CLSSID";
-	static char const STR_CLSECKEY[] FLASHMEM = "CLSECKEY";
-	static char const STR_CLSTATIC[] FLASHMEM = "CLSTATIC";
-	static char const STR_CLIP[] FLASHMEM     = "CLIP";
-	static char const STR_CLNETMSK[] FLASHMEM = "CLNETMSK";
-	static char const STR_CLGTW[] FLASHMEM    = "CLGTW";
-	static char const STR_APIP[] FLASHMEM     = "APIP";
-	static char const STR_APNETMSK[] FLASHMEM = "APNETMSK";
-	static char const STR_APGTW[] FLASHMEM    = "APGTW";
-	static char const STR_DHCPDEN[] FLASHMEM  = "DHCPDEN";
-	static char const STR_DHCPDIP1[] FLASHMEM = "DHCPDIP1";
-	static char const STR_DHCPDIP2[] FLASHMEM = "DHCPDIP2";
-	static char const STR_DHCPDMXL[] FLASHMEM = "DHCPDMXL";
-	static char const STR_WEBPORT[] FLASHMEM  = "WEBPORT";
-	static char const STR_BAUD[] FLASHMEM     = "BAUD";
-	static char const STR_SYSOUT[] FLASHMEM   = "SYSOUT";
-	static char const STR_UARTSRV[] FLASHMEM  = "UARTSRV";
-	
-
 	
 	class ConfigurationManager
 	{		
@@ -269,7 +241,7 @@ namespace fdv
 			WiFi::getMACAddress(WiFi::AccessPointNetwork, mac);			
 			sprintf(defaultSSID, FSTR("ESP%02X%02X%02X%02X%02X%02X"), mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 			*SSID             = FlashDictionary::getString(STR_APSSID, defaultSSID);
-			*securityKey      = FlashDictionary::getString(STR_APSECKEY, FSTR(""));
+			*securityKey      = FlashDictionary::getString(STR_APSECKEY, STR_);
 			*channel          = FlashDictionary::getInt(STR_APCH, 9);
 			*securityProtocol = (WiFi::SecurityProtocol)FlashDictionary::getInt(STR_APSP, (int32_t)WiFi::Open);
 			*hiddenSSID       = FlashDictionary::getBool(STR_APHSSID, false);
@@ -286,8 +258,8 @@ namespace fdv
 		
 		static void MTD_FLASHMEM getClientParams(char const** SSID, char const** securityKey)
 		{
-			*SSID        = FlashDictionary::getString(STR_CLSSID, FSTR(""));
-			*securityKey = FlashDictionary::getString(STR_CLSECKEY, FSTR(""));
+			*SSID        = FlashDictionary::getString(STR_CLSSID, STR_);
+			*securityKey = FlashDictionary::getString(STR_CLSECKEY, STR_);
 		}
 		
 		
@@ -306,9 +278,9 @@ namespace fdv
 		static void MTD_FLASHMEM getClientIPParams(bool* staticIP, char const** IP, char const** netmask, char const** gateway)
 		{
 			*staticIP = FlashDictionary::getBool(STR_CLSTATIC, false);
-			*IP       = FlashDictionary::getString(STR_CLIP, FSTR(""));
-			*netmask  = FlashDictionary::getString(STR_CLNETMSK, FSTR(""));
-			*gateway  = FlashDictionary::getString(STR_CLGTW, FSTR(""));
+			*IP       = FlashDictionary::getString(STR_CLIP, STR_);
+			*netmask  = FlashDictionary::getString(STR_CLNETMSK, STR_);
+			*gateway  = FlashDictionary::getString(STR_CLGTW, STR_);
 		}
 		
 		
@@ -325,7 +297,7 @@ namespace fdv
 		{
 			*IP       = FlashDictionary::getString(STR_APIP, FSTR("192.168.4.1"));
 			*netmask  = FlashDictionary::getString(STR_APNETMSK, FSTR("255.255.255.0"));
-			*gateway  = FlashDictionary::getString(STR_APGTW, FSTR(""));
+			*gateway  = FlashDictionary::getString(STR_APGTW, STR_);
 		}
 		
 		
@@ -444,8 +416,8 @@ namespace fdv
 			if (getRequest().method == HTTPHandler::Post)
 			{
 				// set WiFi mode
-				char const* clientmode = getRequest().form[FSTR("clientmode")];
-				char const* apmode     = getRequest().form[FSTR("apmode")];
+				char const* clientmode = getRequest().form[STR_clientmode];
+				char const* apmode     = getRequest().form[STR_apmode];
 				if (clientmode && apmode)
 					ConfigurationManager::setWiFiMode(WiFi::ClientAndAccessPoint);
 				else if (clientmode)
@@ -471,9 +443,9 @@ namespace fdv
 			// get WiFi mode
 			WiFi::Mode mode = ConfigurationManager::getWiFiMode();			
 			if (mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint)
-				addParamStr(FSTR("clientmode"), FSTR("checked"));			
+				addParamStr(STR_clientmode, STR_checked);
 			if (mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint)
-				addParamStr(FSTR("apmode"), FSTR("checked"));
+				addParamStr(STR_apmode, STR_checked);
 			
 			// get client mode parameters
 			char const* SSID = getRequest().query[FSTR("AP")]; // get SSID from last scan?
@@ -494,11 +466,11 @@ namespace fdv
 			addParamStr(FSTR("APSSID"), SSID);
 			addParamStr(FSTR("APPSW"), securityKey);
 			APtr<char> APCHStr(f_printf(FSTR("APCH%d"), channel));
-			addParamStr(APCHStr.get(), FSTR("selected"));
+			addParamStr(APCHStr.get(), STR_selected);
 			APtr<char> APSECStr(f_printf(FSTR("APSEC%d"), (int32_t)securityProtocol));
-			addParamStr(APSECStr.get(), FSTR("selected"));
+			addParamStr(APSECStr.get(), STR_selected);
 			if (hiddenSSID)
-				addParamStr(FSTR("APHSSID"), FSTR("checked"));
+				addParamStr(FSTR("APHSSID"), STR_checked);
 			
 			HTTPTemplateResponse::flush();
 		}
@@ -536,7 +508,7 @@ namespace fdv
 					ConfigurationManager::setDHCPServerParams(true,
 															  getRequest().form[FSTR("startIP")],
 															  getRequest().form[FSTR("endIP")],
-															  strtol(getRequest().form[FSTR("maxLeases")], NULL, 10));
+															  strtol(getRequest().form[STR_maxLeases], NULL, 10));
 				else
 					ConfigurationManager::setDHCPServerParams(false);
 			}
@@ -549,16 +521,16 @@ namespace fdv
 			char const* netmask;
 			char const* gateway;
 			ConfigurationManager::getClientIPParams(&staticIP, &IP, &netmask, &gateway);
-			addParamStr(FSTR("DISP_CLIPCONF"), mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint? FSTR("") : FSTR("disabled"));
+			addParamStr(FSTR("DISP_CLIPCONF"), mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint? STR_ : STR_disabled);
 			if (staticIP)
-				addParamStr(FSTR("staticIP"), FSTR("checked"));
+				addParamStr(FSTR("staticIP"), STR_checked);
 			addParamStr(FSTR("CLIP"), IP);
 			addParamStr(FSTR("CLMSK"), netmask);
 			addParamStr(FSTR("CLGTW"), gateway);
 			
 			// get access point IP configuration
 			ConfigurationManager::getAccessPointIPParams(&IP, &netmask, &gateway);
-			addParamStr(FSTR("DISP_APIPCONF"), mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? FSTR("") : FSTR("disabled"));
+			addParamStr(FSTR("DISP_APIPCONF"), mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? STR_ : STR_disabled);
 			addParamStr(FSTR("APIP"), IP);
 			addParamStr(FSTR("APMSK"), netmask);
 			addParamStr(FSTR("APGTW"), gateway);
@@ -570,10 +542,10 @@ namespace fdv
 			uint32_t maxLeases;
 			ConfigurationManager::getDHCPServerParams(&DHCPDEnabled, &startIP, &endIP, &maxLeases);
 			if (DHCPDEnabled)
-				addParamStr(FSTR("DHCPD"), FSTR("checked"));
+				addParamStr(FSTR("DHCPD"), STR_checked);
 			addParamStr(FSTR("startIP"), startIP);
 			addParamStr(FSTR("endIP"), endIP);
-			addParamInt(FSTR("maxLeases"), maxLeases);
+			addParamInt(STR_maxLeases, maxLeases);
 			
 			HTTPTemplateResponse::flush();
 		}
@@ -597,34 +569,34 @@ namespace fdv
 			if (getRequest().method == HTTPHandler::Post)
 			{
 				// set Web server configuration
-				char const* httpport = getRequest().form[FSTR("httpport")];
+				char const* httpport = getRequest().form[STR_httpport];
 				if (httpport)
 					ConfigurationManager::setWebServerParams(strtol(httpport, NULL, 10));
 				
 				// set UART configuration
-				char const* baud = getRequest().form[FSTR("baud")];
+				char const* baud = getRequest().form[STR_baud];
 				char const* serv = getRequest().form[FSTR("serv")];
 				if (baud && serv)
 					ConfigurationManager::setUARTParams(strtol(baud, NULL, 10),
-														getRequest().form[FSTR("debugout")] != NULL,
+														getRequest().form[STR_debugout] != NULL,
 														(SerialService)strtol(serv, NULL, 10));
 			}
 			
 			// get Web server configuration
 			uint16_t webPort;
 			ConfigurationManager::getWebServerParams(&webPort);
-			addParamInt(FSTR("httpport"), webPort);
+			addParamInt(STR_httpport, webPort);
 			
 			// get UART configuration
 			uint32_t baudRate;
 			bool enableSystemOutput;
 			SerialService serialService;
 			ConfigurationManager::getUARTParams(&baudRate, &enableSystemOutput, &serialService);
-			addParamInt(FSTR("baud"), baudRate);
+			addParamInt(STR_baud, baudRate);
 			if (enableSystemOutput)
-				addParamStr(FSTR("debugout"), FSTR("checked"));
+				addParamStr(STR_debugout, STR_checked);
 			APtr<char> serialServiceStr(f_printf(FSTR("serv%d"), (int32_t)serialService));
-			addParamStr(serialServiceStr.get(), FSTR("checked"));						
+			addParamStr(serialServiceStr.get(), STR_checked);						
 			
 			HTTPTemplateResponse::flush();
 		}
@@ -720,24 +692,24 @@ namespace fdv
 					ConfigurationManager::getGPIOParams(i, &configured, &isOutput, &pullUp, &value);
 					
 					linkedChunks.addChunk(f_printf(FSTR("<tr> <td>%d</td> <td><form method='POST'>"), i), true);
-					linkedChunks.addChunk(f_printf(FSTR("Enabled <input type='checkbox' name='configured' value='1' onclick=\"document.getElementById('GPIO%d').disabled=!this.checked\" %s>"), i, configured? FSTR("checked"):FSTR("")), true);
-					linkedChunks.addChunk(f_printf(FSTR("<fieldset class='inline' id='GPIO%d' %s>"), i, configured? FSTR(""):FSTR("disabled")), true);
+					linkedChunks.addChunk(f_printf(FSTR("Enabled <input type='checkbox' name='configured' value='1' onclick=\"document.getElementById('GPIO%d').disabled=!this.checked\" %s>"), i, configured? STR_checked:STR_), true);
+					linkedChunks.addChunk(f_printf(FSTR("<fieldset class='inline' id='GPIO%d' %s>"), i, configured? STR_:STR_disabled), true);
 					linkedChunks.addChunk(f_printf(FSTR("<select name='mode'><option value='in' %s>IN</option><option value='out' %s>OUT</option></select>"), 
-					                               isOutput? FSTR(""):FSTR("selected"), 
-												   isOutput? FSTR("selected"):FSTR("")), 
+					                               isOutput? STR_:STR_selected, 
+												   isOutput? STR_selected:STR_), 
 										  true);
-					linkedChunks.addChunk(f_printf(FSTR("     PullUp <input type='checkbox' name='pullup' value='1' %s> </fieldset>"), pullUp? FSTR("checked") : FSTR("")), true);
+					linkedChunks.addChunk(f_printf(FSTR("     PullUp <input type='checkbox' name='pullup' value='1' %s> </fieldset>"), pullUp? STR_checked:STR_), true);
 					linkedChunks.addChunk(f_printf(FSTR("<input type='hidden' name='GPIO' value='%d'>"), i), true);
 					linkedChunks.addChunk(FSTR("<input type='submit' value='Save'></form></td>"));
 					if (configured)
 					{
 						if (isOutput)
 						{
-							linkedChunks.addChunk(f_printf(FSTR("<td><a href='confgpio?gpio=%d&val=%d' class='link_button2'>%s</a></td> </tr>"), i, !value, value? FSTR("HI"):FSTR("LO")), true);
+							linkedChunks.addChunk(f_printf(FSTR("<td><a href='confgpio?gpio=%d&val=%d' class='link_button2'>%s</a></td> </tr>"), i, !value, value? STR_HI:STR_LO), true);
 						}
 						else
 						{
-							linkedChunks.addChunk(f_printf(FSTR("<td>%s</td> </tr>"), GPIO(i).read()? FSTR("HI"):FSTR("LO")), true);
+							linkedChunks.addChunk(f_printf(FSTR("<td>%s</td> </tr>"), GPIO(i).read()? STR_HI:STR_LO), true);
 						}
 					}
 					else

@@ -46,9 +46,7 @@ struct MyHTTPHandler : public HTTPHandler
 	
 	void MTD_FLASHMEM get_home()
 	{
-		HTTPTemplateResponse response(this, FSTR("base.html"));
-		response.addParamStr(FSTR("title"), FSTR("ESP8266 WebFramework"));
-		response.addParamStr(FSTR("content"), FSTR("Please select a menu item on the left"));
+		HTTPTemplateResponse response(this, FSTR("home.html"));
 		response.flush();
 	}
 
