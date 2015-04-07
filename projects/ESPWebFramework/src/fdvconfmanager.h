@@ -81,7 +81,7 @@ namespace fdv
 					new SerialConsole;
 					break;
 				case SerialService_BinaryProtocol:
-					// todo
+					new SerialBinary;
 					break;
 			}
 		}
