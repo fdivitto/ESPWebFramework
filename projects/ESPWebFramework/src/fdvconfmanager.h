@@ -546,6 +546,7 @@ namespace fdv
 			addParamStr(FSTR("startIP"), startIP);
 			addParamStr(FSTR("endIP"), endIP);
 			addParamInt(STR_maxLeases, maxLeases);
+			addParamStr(FSTR("DISP_DHCPD"), mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? STR_ : STR_disabled);
 			
 			HTTPTemplateResponse::flush();
 		}
