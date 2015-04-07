@@ -55,6 +55,11 @@ namespace fdv
 		{		
 		}
 
+		// destructor must be called outside This task
+		~SerialConsole()
+		{
+			terminate();
+		}
 		
 		void MTD_FLASHMEM exec()
 		{
@@ -714,7 +719,13 @@ namespace fdv
 			  m_isReady(false),
 			  m_platform(PLATFORM_BASELINE)
 		{
-			send_CMD_READY();
+		}
+		
+		
+		~SerialBinary()
+		{
+			m_receiveTask.terminate();
+			// todo: free pending messages
 		}
 		
 		
