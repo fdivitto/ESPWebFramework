@@ -189,8 +189,13 @@ namespace fdv
 		{
 			if (rescan)
 			{
+				Mode prevMode = getMode();
+				if (prevMode == AccessPoint)
+					setMode(ClientAndAccessPoint);
 				wifi_station_scan(NULL, scanDoneCB);
 				getAPInfo()->receive();	// wait for completion
+				if (prevMode != getMode())
+					setMode(prevMode);
 			}
 			APInfo* infos;
 			getAPInfo(&infos, count);
