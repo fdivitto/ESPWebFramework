@@ -20,6 +20,9 @@ Now run (change COM7 if necessary):
    python esptool.py --port COM7 write_flash 0x40000 app.out-0x40000.bin 0x00000 app.out-0x00000.bin 0x17000 webcontent.bin
 ```
 
+####First configuration
+Default configuration creates an Open (without password and not encrypted) WiFi network named "ESPXXXXXXXXXXXX", where XXXXXXXXXXXX is the ESP MAC address. You should connect to this network, having the DHCP of your PC enabled.
+Now open the page "http://192.168.4.1" and configure your device.
 
 
 ####To build from scratch
