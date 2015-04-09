@@ -45,7 +45,7 @@ public:
 	static uint8_t const PLATFORM_THIS         = PLATFORM_ATMEGA328;
 
 	// pin configuration flags
-	static uint8_t const PIN_CONF_DIR          = 0b00000001;	// 0 = input / 1 = output
+	static uint8_t const PIN_CONF_OUTPUT       = 0b00000001;	// 0 = input / 1 = output
 	static uint8_t const PIN_CONF_PULLUP       = 0b00000010;	// 0 = disabled / 1 = enabled (if supported)		
 
 	// pin identifiers - ESP8266
@@ -85,6 +85,7 @@ public:
 	WebESP8266();
 	void begin(Stream& stream);
 	bool isReady();
+	bool checkReady();
 	uint8_t getPlatform();
 	void yield();
 	
@@ -106,7 +107,6 @@ private:
 	uint8_t getNextID();
 	void send(WebESP8266priv::Message* msg);
 	WebESP8266priv::Message waitACK(uint8_t ackID);
-	void checkReady();
 	void sendNoParamsACK(uint8_t ackID);
 	bool waitNoParamsACK(uint8_t ackID);
 	void handle_CMD_IOCONF(WebESP8266priv::Message* msg);

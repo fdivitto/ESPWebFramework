@@ -51,8 +51,15 @@ void WebESP8266::begin(Stream& stream)
 
 bool WebESP8266::isReady()
 {
-	checkReady();
 	return _isReady;
+}
+
+
+bool WebESP8266::checkReady()
+{
+	if (!isReady())
+		send_CMD_READY();
+	return isReady();
 }
 
 
@@ -60,13 +67,6 @@ uint8_t WebESP8266::getPlatform()
 {
 	checkReady();
 	return _platform;
-}
-
-
-void WebESP8266::checkReady()
-{
-	if (!_isReady)
-		send_CMD_READY();
 }
 
 
@@ -270,7 +270,7 @@ void WebESP8266::handle_CMD_IOCONF(Message* msg)
 {
 	// process message
 	Message_CMD_IOCONF msgIOCONF(msg);
-	if (msgIOCONF.flags & PIN_CONF_DIR)
+	if (msgIOCONF.flags & PIN_CONF_OUTPUT)
 		pinMode(msgIOCONF.pin, OUTPUT);
 	else
 		pinMode(msgIOCONF.pin, (msgIOCONF.flags & PIN_CONF_PULLUP)? INPUT_PULLUP : INPUT);
@@ -359,7 +359,7 @@ bool WebESP8266::send_CMD_READY()
 
 bool WebESP8266::send_CMD_IOCONF(uint8_t pin, uint8_t flags)
 {
-	if (isReady())
+	if (checkReady())
 	{
 		for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
 		{
@@ -371,8 +371,10 @@ bool WebESP8266::send_CMD_IOCONF(uint8_t pin, uint8_t flags)
 			msgContainer.freeData();
 			
 			// wait for ACK
-			return waitNoParamsACK(msgID);
+			if (waitNoParamsACK(msgID))
+				return true;
 		}
+		_isReady = false;	// no more ready
 	}
 	return false;
 }
@@ -380,7 +382,7 @@ bool WebESP8266::send_CMD_IOCONF(uint8_t pin, uint8_t flags)
 
 bool WebESP8266::send_CMD_IOSET(uint8_t pin, uint8_t state)
 {
-	if (isReady())
+	if (checkReady())
 	{
 		for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
 		{
@@ -392,8 +394,10 @@ bool WebESP8266::send_CMD_IOSET(uint8_t pin, uint8_t state)
 			msgContainer.freeData();
 			
 			// wait for ACK
-			return waitNoParamsACK(msgID);
+			if (waitNoParamsACK(msgID))
+				return true;
 		}
+		_isReady = false;	// no more ready
 	}
 	return false;
 }
@@ -401,7 +405,7 @@ bool WebESP8266::send_CMD_IOSET(uint8_t pin, uint8_t state)
 
 bool WebESP8266::send_CMD_IOGET(uint8_t pin, uint8_t* state)
 {
-	if (isReady())
+	if (checkReady())
 	{
 		for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
 		{
@@ -422,6 +426,7 @@ bool WebESP8266::send_CMD_IOGET(uint8_t pin, uint8_t* state)
 				return true;
 			}
 		}
+		_isReady = false;	// no more ready
 	}
 	return false;
 }
@@ -429,7 +434,7 @@ bool WebESP8266::send_CMD_IOGET(uint8_t pin, uint8_t* state)
 
 bool WebESP8266::send_CMD_IOASET(uint8_t pin, uint16_t state)
 {
-	if (isReady())
+	if (checkReady())
 	{
 		for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
 		{
@@ -441,8 +446,10 @@ bool WebESP8266::send_CMD_IOASET(uint8_t pin, uint16_t state)
 			msgContainer.freeData();
 			
 			// wait for ACK
-			return waitNoParamsACK(msgID);
+			if (waitNoParamsACK(msgID))
+				return true;
 		}
+		_isReady = false;	// no more ready
 	}
 	return false;
 }
@@ -450,7 +457,7 @@ bool WebESP8266::send_CMD_IOASET(uint8_t pin, uint16_t state)
 
 bool WebESP8266::send_CMD_IOAGET(uint8_t pin, uint16_t* state)
 {
-	if (isReady())
+	if (checkReady())
 	{
 		for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
 		{
@@ -471,6 +478,7 @@ bool WebESP8266::send_CMD_IOAGET(uint8_t pin, uint16_t* state)
 				return true;
 			}
 		}
+		_isReady = false;	// no more ready
 	}
 	return false;
 }
