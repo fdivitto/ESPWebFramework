@@ -43,6 +43,7 @@ namespace fdv
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// SerialConsole
 	
+#if (FDV_INCLUDE_SERIALCONSOLE == 1)
 	
 	struct SerialConsole : public Task
 	{
@@ -288,7 +289,10 @@ namespace fdv
 		CharChunksIterator      m_params[MAX_PARAMETERS];
 	};
 	
+#endif	// FDV_INCLUDE_SERIALCONSOLE
 
+
+#if (FDV_INCLUDE_SERIALBINARY == 1)
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -1185,7 +1189,8 @@ namespace fdv
 		bool                                                 m_isReady;
 		uint8_t                                              m_platform;
 	};
-	
+
+#endif // FDV_INCLUDE_SERIALBINARY
 	
 }
 
