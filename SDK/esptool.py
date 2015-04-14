@@ -341,7 +341,10 @@ class ELFFile:
             sys.exit(1)
         for l in proc.stdout:
             fields = l.strip().split()
-            self.symbols[fields[2]] = int(fields[0], 16)
+            if len(fields) > 2:
+                self.symbols[fields[2]] = int(fields[0], 16)
+            else:
+                self.symbols[fields[1]] = 0 # fix for unknown address fields
 
     def get_symbol_addr(self, sym):
         self._fetch_symbols()
