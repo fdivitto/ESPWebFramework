@@ -1,4 +1,4 @@
-ESPPORT     = COM7
+PORT     = COM7
 
 
 # get SDK path from environment variable ESP8266SDK
@@ -82,19 +82,19 @@ libuser.a: $(OBJ)
 
 
 flash:  $(TARGET_OUT)-0x00000.bin $(TARGET_OUT)-0x40000.bin flashweb
-	@-$(ESPTOOL) --port $(ESPPORT) write_flash 0x40000 $(TARGET_OUT)-0x40000.bin 0x00000 $(TARGET_OUT)-0x00000.bin
+	@-$(ESPTOOL) --port $(PORT) write_flash 0x40000 $(TARGET_OUT)-0x40000.bin 0x00000 $(TARGET_OUT)-0x00000.bin
 
 
 flashweb:
 	@python binarydir.py $(WEBDIR) webcontent.bin $(MAXWEBCONTENT)
-	@-$(ESPTOOL) --port $(ESPPORT) write_flash $(WEBCONTENTADDRS) webcontent.bin
+	@-$(ESPTOOL) --port $(PORT) write_flash $(WEBCONTENTADDRS) webcontent.bin
 
 flashdump:
-	@-$(ESPTOOL) --port $(ESPPORT) read_flash 0x0000 0x80000 flash.dump
+	@-$(ESPTOOL) --port $(PORT) read_flash 0x0000 0x80000 flash.dump
 	@xxd flash.dump > flash.hex
 
 flasherase:
-	@-$(ESPTOOL) --port $(ESPPORT) erase_flash
+	@-$(ESPTOOL) --port $(PORT) erase_flash
 	
 
 clean:

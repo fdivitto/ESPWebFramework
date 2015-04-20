@@ -47,9 +47,9 @@ Now run:
 make
 ```  
   
-Switch ESP8266 to programming mode. Make sure you set right COM port into Makefile (default is COM7), then run:
+Switch ESP8266 to programming mode, then run ((change COM7 if necessary):
 ```
-make flash
+make flash PORT=COM7
 ```
 
 ####Here is some screenshots:
