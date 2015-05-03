@@ -344,17 +344,17 @@ namespace fdv
     {
     public:
         Socket()
-            : m_socket(0), m_connected(false)
+            : m_socket(0), m_connected(false), m_remoteAddress()
         {
         }
     
         Socket(int socket)
-            : m_socket(socket), m_connected(socket != 0)
+            : m_socket(socket), m_connected(socket != 0), m_remoteAddress()
         {
         }
         
         Socket(Socket const& c)
-            : m_socket(c.m_socket), m_connected(c.m_connected)
+            : m_socket(c.m_socket), m_connected(c.m_connected), m_remoteAddress()
         {
         }
         
@@ -410,8 +410,9 @@ namespace fdv
 				while (bytesSent < length)
 				{
 					uint32_t bytesToSend = min(CHUNKSIZE, length - bytesSent);
-					f_memcpy(rambuf.get(), src, bytesToSend);			
-					uint32_t chunkBytesSent = lwip_send(m_socket, rambuf.get(), bytesToSend, 0);
+					f_memcpy(rambuf.get(), src, bytesToSend);
+                    uint32_t chunkBytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, rambuf.get(), bytesToSend, 0) :
+                                                                            lwip_sendto(m_socket, rambuf.get(), bytesToSend, 0, (sockaddr*)&m_remoteAddress, sizeof(m_remoteAddress));
 					if (chunkBytesSent == 0)
 					{
 						// error
@@ -425,7 +426,8 @@ namespace fdv
 			else
 			{
 				// just send as is
-				bytesSent = lwip_send(m_socket, buffer, length, 0);
+				bytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, buffer, length, 0) :
+                                                          lwip_sendto(m_socket, buffer, length, 0, (sockaddr*)&m_remoteAddress, sizeof(m_remoteAddress));
 			}
 			if (length > 0)
 				m_connected = (bytesSent > 0);
@@ -481,13 +483,76 @@ namespace fdv
 			int32_t one = (int32_t)value;
 			lwip_setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
 		}
+        
+        int MTD_FLASHMEM getSocket()
+        {
+            return m_socket;
+        }
+        
+        // from now Socket will use "sendto" instead of "send"
+        void MTD_FLASHMEM setRemoteAddress(char const* remoteAddress, uint16_t remotePort)
+        {
+            memset(&m_remoteAddress, 0, sizeof(sockaddr_in));
+            m_remoteAddress.sin_family      = AF_INET;
+            m_remoteAddress.sin_len         = sizeof(sockaddr_in);
+            m_remoteAddress.sin_addr.s_addr = ipaddr_addr(APtr<char>(f_strdup(remoteAddress)).get());
+            m_remoteAddress.sin_port        = htons(remotePort);
+        }
+        
 
     private:
-        int  m_socket;
-        bool m_connected;
+        int         m_socket;
+        bool        m_connected;
+        sockaddr_in m_remoteAddress;    // used by sendTo
     };
 	
 
+    
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// UDPClient
+    
+    class UDPClient
+    {
+    public:
+        UDPClient(char const* remoteAddress, uint16_t remotePort)
+        {
+            m_socket = lwip_socket(PF_INET, SOCK_DGRAM, 0);
+            
+			sockaddr_in localAddress     = {0};
+			localAddress.sin_family      = AF_INET;
+			localAddress.sin_len         = sizeof(sockaddr_in);
+			localAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+			localAddress.sin_port        = htons(getUDPPort());
+			lwip_bind(m_socket.getSocket(), (sockaddr*)&localAddress, sizeof(sockaddr_in));			
+            
+            m_socket.setRemoteAddress(remoteAddress, remotePort);
+        }
+        
+        ~UDPClient()
+        {
+            m_socket.close();
+        }
+        
+        Socket* getSocket()
+        {
+            return &m_socket;
+        }        
+        
+    private:
+        static uint16_t MTD_FLASHMEM getUDPPort()
+        {
+            static uint16_t s_port = 59999;
+            s_port = (++s_port == 0? 60000 : s_port);
+            return s_port;
+        }
+        
+    private:
+        Socket      m_socket;        
+    };
+    
+    
+    
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	// TCPServer
