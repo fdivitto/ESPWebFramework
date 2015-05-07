@@ -378,7 +378,7 @@ namespace fdv
 		*/
 		
 		// ret -1 = error, ret 0 = disconnected
-		int32_t read(void* buffer, uint32_t maxLength)
+		int32_t MTD_FLASHMEM read(void* buffer, uint32_t maxLength)
 		{
 			int32_t bytesRecv = lwip_recv(m_socket, buffer, maxLength, 0);
 			if (maxLength > 0)
@@ -387,7 +387,7 @@ namespace fdv
 		}
 		
 		// ret -1 = error, ret 0 = disconnected
-		int32_t peek(void* buffer, uint32_t maxLength)
+		int32_t MTD_FLASHMEM peek(void* buffer, uint32_t maxLength)
 		{
 			int32_t bytesRecv = lwip_recv(m_socket, buffer, maxLength, MSG_PEEK);
 			if (maxLength > 0)
@@ -397,7 +397,7 @@ namespace fdv
 		
 		// buffer can stay in RAM of Flash
 		// ret -1 = error, ret 0 = disconnected
-		int32_t write(void const* buffer, uint32_t length)
+		int32_t MTD_FLASHMEM write(void const* buffer, uint32_t length)
 		{
 			static uint32_t const CHUNKSIZE = 256;
 			
@@ -436,7 +436,7 @@ namespace fdv
 		
 		// str can stay in RAM of Flash
 		// ret -1 = error, ret 0 = disconnected
-		int32_t write(char const* str)
+		int32_t MTD_FLASHMEM write(char const* str)
 		{
 			return write((uint8_t const*)str, f_strlen(str));
 		}
@@ -499,6 +499,12 @@ namespace fdv
             m_remoteAddress.sin_port        = htons(remotePort);
         }
         
+        // timeOut in ms (0 = no timeout)
+        void MTD_FLASHMEM setTimeOut(uint32_t timeOut)
+        {
+            lwip_setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, (void *)&timeOut, sizeof(timeOut));
+        }
+        
 
     private:
         int         m_socket;
@@ -517,6 +523,22 @@ namespace fdv
     public:
         UDPClient(char const* remoteAddress, uint16_t remotePort)
         {
+            init(remoteAddress, remotePort);
+        }
+        
+        ~UDPClient()
+        {
+            m_socket.close();
+        }
+        
+        Socket* MTD_FLASHMEM getSocket()
+        {
+            return &m_socket;
+        }        
+        
+    private:
+        void MTD_FLASHMEM init(char const* remoteAddress, uint16_t remotePort)
+        {
             m_socket = lwip_socket(PF_INET, SOCK_DGRAM, 0);
             
 			sockaddr_in localAddress     = {0};
@@ -528,18 +550,7 @@ namespace fdv
             
             m_socket.setRemoteAddress(remoteAddress, remotePort);
         }
-        
-        ~UDPClient()
-        {
-            m_socket.close();
-        }
-        
-        Socket* getSocket()
-        {
-            return &m_socket;
-        }        
-        
-    private:
+    
         static uint16_t MTD_FLASHMEM getUDPPort()
         {
             static uint16_t s_port = 59999;
@@ -548,7 +559,7 @@ namespace fdv
         }
         
     private:
-        Socket      m_socket;        
+        Socket m_socket;        
     };
     
     
@@ -564,11 +575,9 @@ namespace fdv
 		static uint32_t const ACCEPTWAITTIMEOUTMS = 20000;
 		static uint32_t const SOCKETQUEUESIZE     = 1;	// can queue only one socket (nothing to do with working threads)
 		
-	public:
-		
-		TCPServer(uint16_t port)
-			: m_socketQueue(SOCKETQUEUESIZE)
-		{
+        
+        void MTD_FLASHMEM init(uint16_t port)
+        {
 			m_socket = lwip_socket(PF_INET, SOCK_STREAM, 0);
 			sockaddr_in sLocalAddr = {0};
 			sLocalAddr.sin_family = AF_INET;
@@ -590,6 +599,14 @@ namespace fdv
 				m_threads[i].setSocketQueue(&m_socketQueue);
 				m_threads[i].resume();
 			}
+        }
+        
+	public:
+		
+		TCPServer(uint16_t port)
+			: m_socketQueue(SOCKETQUEUESIZE)
+		{
+            init(port);
 		}
 		
 		virtual ~TCPServer()
@@ -640,7 +657,7 @@ namespace fdv
 			m_socketQueue = socketQueue;
 		}
         
-        Socket* getSocket()
+        Socket* MTD_FLASHMEM getSocket()
         {
             return &m_socket;
         }
@@ -811,7 +828,7 @@ namespace fdv
 		}
 
 		
-		CharChunksIterator extractURLEncodedFields(CharChunksIterator begin, CharChunksIterator end, Fields* fields)
+		CharChunksIterator MTD_FLASHMEM extractURLEncodedFields(CharChunksIterator begin, CharChunksIterator end, Fields* fields)
 		{
 			fields->setUrlDecode(true);
 			CharChunksIterator curc = begin;
@@ -845,7 +862,7 @@ namespace fdv
 		}
 		
 
-		CharChunksIterator extractHeaders(CharChunksIterator begin, CharChunksIterator end, Fields* fields)
+		CharChunksIterator MTD_FLASHMEM extractHeaders(CharChunksIterator begin, CharChunksIterator end, Fields* fields)
 		{		
 			CharChunksIterator curc = begin;
 			CharChunksIterator key;
@@ -1147,7 +1164,7 @@ namespace fdv
 		{			
 		}
 		
-		void setFilename(char const* filename)
+		void MTD_FLASHMEM setFilename(char const* filename)
 		{
 			m_filename = filename;
 		}
@@ -1251,6 +1268,58 @@ namespace fdv
 
 
 
+    ////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // SNTPClient
+    // Gets current date/time from a NTP (SNTP) server (default is ntp1.inrim.it).
+
+    class SNTPClient
+    {
+
+    public:
+
+        // serverIP = NULL then IP is 193.204.114.232 (ntp1.inrim.it)
+        explicit SNTPClient(char const* serverIP = NULL, uint16_t port = 123)
+            : m_server(serverIP), m_port(port)
+        {
+            if (!m_server)
+                m_server = FSTR("193.204.114.232");
+        }
+
+        bool MTD_FLASHMEM query(uint64_t* outValue) const
+        {
+          // send req (mode 3), unicast, version 4
+          uint8_t const MODE_CLIENT   = 3;
+          uint8_t const VERSION       = 4;
+          uint8_t const BUFLEN        = 48;
+          uint32_t const REPLYTIMEOUT = 3000;
+          uint8_t buf[BUFLEN];
+          memset(&buf[0], 0, BUFLEN);
+          buf[0] = MODE_CLIENT | (VERSION << 3);
+          
+          UDPClient UDP(m_server, m_port);
+          Socket* socket = UDP.getSocket();
+          socket->setTimeOut(REPLYTIMEOUT);
+          
+          if (socket->write(&buf[0], BUFLEN))
+          {
+            // get reply
+            if (socket->read(&buf[0], BUFLEN) == BUFLEN)
+            {
+              memcpy(outValue, &buf[40], sizeof(uint64_t));
+              return true;  // ok
+            }
+          }
+
+          return false;  // error
+        }
+
+
+    private:
+
+        char const* m_server;
+        uint16_t    m_port;
+      };
 
 
 	

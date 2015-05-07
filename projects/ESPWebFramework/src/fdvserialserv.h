@@ -279,6 +279,20 @@ namespace fdv
 		
 		void MTD_FLASHMEM cmd_test()
 		{
+            SNTPClient sntp1(FSTR("192.168.1.32"));
+            uint64_t v = 0;
+            if (sntp1.query(&v))
+                m_serial->printf(FSTR("%d %d\r\n"), v & 0xFFFFFFFF, (v >> 32) & 0xFFFFFFFF);
+            else
+                m_serial->printf(FSTR("fail\r\n"));
+
+            Task::delay(1000);
+            SNTPClient sntp2;
+            v = 0;
+            if (sntp2.query(&v))
+                m_serial->printf(FSTR("%d %d\r\n"), v & 0xFFFFFFFF, (v >> 32) & 0xFFFFFFFF);
+            else
+                m_serial->printf(FSTR("fail\r\n"));
 		}
 		
 		
@@ -483,7 +497,7 @@ namespace fdv
 				: valid(true), ID(ID_), command(command_), dataSize(dataSize_), data(dataSize_? new uint8_t[dataSize_] : NULL)
 			{
 			}
-			void freeData()
+			void MTD_FLASHMEM freeData()
 			{
 				if (data != NULL)
 				{
