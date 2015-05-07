@@ -537,26 +537,8 @@ namespace fdv
         }        
         
     private:
-        void MTD_FLASHMEM init(char const* remoteAddress, uint16_t remotePort)
-        {
-            m_socket = lwip_socket(PF_INET, SOCK_DGRAM, 0);
-            
-			sockaddr_in localAddress     = {0};
-			localAddress.sin_family      = AF_INET;
-			localAddress.sin_len         = sizeof(sockaddr_in);
-			localAddress.sin_addr.s_addr = htonl(INADDR_ANY);
-			localAddress.sin_port        = htons(getUDPPort());
-			lwip_bind(m_socket.getSocket(), (sockaddr*)&localAddress, sizeof(sockaddr_in));			
-            
-            m_socket.setRemoteAddress(remoteAddress, remotePort);
-        }
-    
-        static uint16_t MTD_FLASHMEM getUDPPort()
-        {
-            static uint16_t s_port = 59999;
-            s_port = (++s_port == 0? 60000 : s_port);
-            return s_port;
-        }
+        void MTD_FLASHMEM init(char const* remoteAddress, uint16_t remotePort);        
+        static uint16_t MTD_FLASHMEM getUDPPort();
         
     private:
         Socket m_socket;        
@@ -1279,40 +1261,9 @@ namespace fdv
     public:
 
         // serverIP = NULL then IP is 193.204.114.232 (ntp1.inrim.it)
-        explicit SNTPClient(char const* serverIP = NULL, uint16_t port = 123)
-            : m_server(serverIP), m_port(port)
-        {
-            if (!m_server)
-                m_server = FSTR("193.204.114.232");
-        }
+        explicit SNTPClient(char const* serverIP = NULL, uint16_t port = 123);
 
-        bool MTD_FLASHMEM query(uint64_t* outValue) const
-        {
-          // send req (mode 3), unicast, version 4
-          uint8_t const MODE_CLIENT   = 3;
-          uint8_t const VERSION       = 4;
-          uint8_t const BUFLEN        = 48;
-          uint32_t const REPLYTIMEOUT = 3000;
-          uint8_t buf[BUFLEN];
-          memset(&buf[0], 0, BUFLEN);
-          buf[0] = MODE_CLIENT | (VERSION << 3);
-          
-          UDPClient UDP(m_server, m_port);
-          Socket* socket = UDP.getSocket();
-          socket->setTimeOut(REPLYTIMEOUT);
-          
-          if (socket->write(&buf[0], BUFLEN))
-          {
-            // get reply
-            if (socket->read(&buf[0], BUFLEN) == BUFLEN)
-            {
-              memcpy(outValue, &buf[40], sizeof(uint64_t));
-              return true;  // ok
-            }
-          }
-
-          return false;  // error
-        }
+        bool MTD_FLASHMEM query(uint64_t* outValue) const;
 
 
     private:

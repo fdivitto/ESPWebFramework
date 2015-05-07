@@ -32,30 +32,17 @@ namespace fdv
 {
 
 
-    // returns month as Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
-    char const* MTD_FLASHMEM DateTime::monthStr() const
-    {
-        static char const* MONTHS[] = {FSTR("Jan"), 
-                                       FSTR("Feb"), 
-                                       FSTR("Mar"), 
-                                       FSTR("Apr"), 
-                                       FSTR("May"), 
-                                       FSTR("Jun"), 
-                                       FSTR("Jul"), 
-                                       FSTR("Aug"), 
-                                       FSTR("Sep"), 
-                                       FSTR("Oct"), 
-                                       FSTR("Nov"), 
-                                       FSTR("Dec")};
-        return MONTHS[month];
-    }
-
-    
     // 0=sunday...6=saturday
     uint8_t MTD_FLASHMEM DateTime::dayOfWeek() const
     {
         return (date2days(year, month, day) + 6) % 7;
     }    
+    
+    
+    uint16_t MTD_FLASHMEM DateTime::dayOfYear() const
+    {
+        return date2days(year, month, day) - date2days(year, 1, 1) + 1;
+    }
 
 
     DateTime& MTD_FLASHMEM DateTime::setUnixDateTime(uint32_t unixTime)
@@ -96,17 +83,30 @@ namespace fdv
     }
 
 
-    DateTime& MTD_FLASHMEM DateTime::setNTPDateTime(uint8_t const* datetimeField, uint8_t timeZone)
+    DateTime& MTD_FLASHMEM DateTime::setNTPDateTime(uint8_t const* datetimeField)
     {
         uint32_t t = 0;
         for (uint8_t i = 0; i < 4; ++i)
             t = t << 8 | datetimeField[i];
         float f = ((long)datetimeField[4] * 256 + datetimeField[5]) / 65535.0; 
         t -= 2208988800UL; 
-        t += (timeZone * 3600L);
+        t += (timezoneHours * 3600L) + (timezoneMinutes * 60L);
         if (f > 0.4) 
             ++t;
         return setUnixDateTime(t);
+    }
+    
+    
+    bool MTD_FLASHMEM DateTime::getFromNTPServer(char const* serverIP)
+    {
+        SNTPClient sntp(serverIP);
+        uint64_t v = 0;
+        if (sntp.query(&v))
+        {
+            setNTPDateTime((uint8_t*)&v);
+            return true;
+        }
+        return false;
     }
 
 
@@ -125,64 +125,109 @@ namespace fdv
         lastMillis()   = millis();
         lastDateTime() = currentDateTime;
     }
-
-
+    
+    
     // Format:
-    //    'd' : Day of the month, 2 digits with leading zeros (01..31)
-    //    'j' : Day of the month without leading zeros (1..31)
-    //    'w' : Numeric representation of the day of the week (0=sunday, 6=saturday)
-    //    'm' : Numeric representation of a month, with leading zeros (01..12)
-    //    'n' : Numeric representation of a month, without leading zeros (1..12)
-    //    'Y' : A full numeric representation of a year, 4 digits (1999, 2000...)
-    //    'y' : Two digits year (99, 00...)
-    //    'H' : 24-hour format of an hour with leading zeros (00..23)
-    //    'i' : Minutes with leading zeros (00..59)
-    //    's' : Seconds, with leading zeros (00..59)
+    //    '%a' : Weekday abbreviated name (Sun, Mon, ..., Sat)
+    //    '%A' : Weekday full name (Sunday, Monday, ..., Saturday)
+    //    '%w' : Numeric representation of the day of the week (0 = Sunday, 6 = Saturday)
+    //    '%d' : Day of the month, 2 digits with leading zeros (01..31)
+    //    '%D' : Day of the month without leading zeros (1..31)
+    //    '%b' : Month abbreviated name (Jan, Feb, ..., Dec)
+    //    '%B' : Month full name (January, February, ..., December)
+    //    '%m' : Numeric representation of a month, with leading zeros (01..12)
+    //    '%y' : Two digits year (99, 00...)
+    //    '%Y' : A full numeric representation of a year, 4 digits (1999, 2000...)
+    //    '%H' : 24-hour format of an hour with leading zeros (00..23)
+    //    '%I' : Hour (12-hour clock) as a zero-padded decimal number (01, 02, ..., 12)
+    //    '%p' : AM or PM
+    //    '%M' : Minutes with leading zeros (00..59)
+    //    '%S' : Seconds, with leading zeros (00..59)
+    //    '%z' : UTC offset in the form +HHMM or -HHMM (+0000, -0400, +1030, ...)
+    //    '%j' : Day of the year as a zero-padded decimal number (001, 002, ..., 366)    
+    //    '%c' : Date and time representation (Tue Aug 16 2015 21:30:00 +0000)
+    // Returns resulting string length without trailing zero.
     // Example:
     //   char str[50];
-    //   datetime.format(str, "d/m/Y H:i:s");
-    void MTD_FLASHMEM DateTime::format(char* outbuf, char const* format)
+    //   datetime.format(str, "%a %b %d %Y %H:%M:%S %z");  // equivalent to "%c"
+    uint16_t MTD_FLASHMEM DateTime::format(char* outbuf, char const* formatstr)
     {
-        for (; *format; ++format)
+        static char const* DAYS[]   = {FSTR("Sunday"), FSTR("Monday"), FSTR("Tuesday"), FSTR("Wednesday"), FSTR("Thursday"), FSTR("Friday"), FSTR("Saturday")};
+        static char const* MONTHS[] = {FSTR("January"), FSTR("February"), FSTR("March"), FSTR("April"), FSTR("May"), FSTR("June"), FSTR("July"), FSTR("August"), FSTR("September"), FSTR("October"), FSTR("November"), FSTR("December")};
+        
+        char* outbuf_start = outbuf;
+        
+        for (; getChar(formatstr); ++formatstr)
         {
-            switch (*format)
+            if (getChar(formatstr) == '%')
             {
-                case 'd':
-                    outbuf += sprintf(outbuf, "%02d", day);
-                    break;
-                case 'j':
-                    outbuf += sprintf(outbuf, "%d", day);
-                    break;
-                case 'w':
-                    outbuf += sprintf(outbuf, "%d", dayOfWeek());
-                    break;
-                case 'm':
-                    outbuf += sprintf(outbuf, "%02d", month);
-                    break;
-                case 'n':
-                    outbuf += sprintf(outbuf, "%d", month);
-                    break;
-                case 'Y':
-                    outbuf += sprintf(outbuf, "%d", year);
-                    break;
-                case 'y':
-                    outbuf += sprintf(outbuf, "%02d", year % 100);
-                    break;
-                case 'H':
-                    outbuf += sprintf(outbuf, "%02d", hours);
-                    break;
-                case 'i':
-                    outbuf += sprintf(outbuf, "%02d", minutes);
-                    break;
-                case 's':
-                    outbuf += sprintf(outbuf, "%02d", seconds);
-                    break;
-                default:
-                    *outbuf++ = *format;
-                    break;
+                ++formatstr;
+                switch (getChar(formatstr))
+                {
+                    case '%':
+                        *outbuf++ = '%';
+                        break;
+                    case 'a':
+                        outbuf += sprintf(outbuf, FSTR("%.3s"), DAYS[dayOfWeek()]);
+                        break;
+                    case 'A':
+                        outbuf += sprintf(outbuf, FSTR("%s"), DAYS[dayOfWeek()]);
+                        break;
+                    case 'w':
+                        outbuf += sprintf(outbuf, FSTR("%d"), dayOfWeek());
+                        break;
+                    case 'd':
+                        outbuf += sprintf(outbuf, FSTR("%02d"), day);
+                        break;
+                    case 'D':
+                        outbuf += sprintf(outbuf, FSTR("%d"), day);
+                        break;
+                    case 'b':
+                        outbuf += sprintf(outbuf, FSTR("%.3s"), MONTHS[month - 1]);
+                        break;
+                    case 'B':
+                        outbuf += sprintf(outbuf, FSTR("%s"), MONTHS[month - 1]);
+                        break;
+                    case 'm':
+                        outbuf += sprintf(outbuf, FSTR("%02d"), month);
+                        break;
+                    case 'y':
+                        outbuf += sprintf(outbuf, FSTR("%02d"), year % 100);
+                        break;
+                    case 'Y':
+                        outbuf += sprintf(outbuf, FSTR("%d"), year);
+                        break;
+                    case 'H':
+                        outbuf += sprintf(outbuf, FSTR("%02d"), hours);
+                        break;
+                    case 'I':
+                        outbuf += sprintf(outbuf, FSTR("%02d"), (hours == 0 || hours == 12)? 12 : (hours % 12));
+                        break;
+                    case 'p':
+                        outbuf += sprintf(outbuf, FSTR("%s"), hours > 11? FSTR("PM") : FSTR("AM"));
+                        break;
+                    case 'M':
+                        outbuf += sprintf(outbuf, FSTR("%02d"), minutes);
+                        break;
+                    case 'S':
+                        outbuf += sprintf(outbuf, FSTR("%02d"), seconds);
+                        break;
+                    case 'z':
+                        outbuf += sprintf(outbuf, FSTR("%+03d%02d"), timezoneHours, timezoneMinutes);
+                        break;
+                    case 'j':
+                        outbuf += sprintf(outbuf, FSTR("%03d"), dayOfYear());
+                        break;
+                    case 'c':
+                        outbuf += format(outbuf, FSTR("%a %b %d %Y %H:%M:%S %z"));
+                        break;
+                }
             }
+            else
+                *outbuf++ = getChar(formatstr);
         }
         *outbuf = 0;
+        return outbuf - outbuf_start;
     }
 
 

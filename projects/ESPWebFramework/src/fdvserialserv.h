@@ -142,6 +142,7 @@ namespace fdv
 				{FSTR("free"),       &SerialConsole::cmd_free},
 				{FSTR("ifconfig"),   &SerialConsole::cmd_ifconfig},
 				{FSTR("iwlist"),     &SerialConsole::cmd_iwlist},
+                {FSTR("ntpdate"),    &SerialConsole::cmd_ntpdate},
 				{FSTR("test"),       &SerialConsole::cmd_test},
 			};
 			static uint32_t const cmdCount = sizeof(cmds) / sizeof(Cmd);
@@ -170,6 +171,7 @@ namespace fdv
 			m_serial->writeln(FSTR("free          : Display amount of free and used memory"));
 			m_serial->writeln(FSTR("ifconfig      : Display network info"));
 			m_serial->writeln(FSTR("iwlist [scan] : Display or scan for available wireless networks"));
+            m_serial->writeln(FSTR("ntpdate       : Display date from NTP server"));
 		}
 
 		
@@ -275,24 +277,24 @@ namespace fdv
 				m_serial->printf(FSTR("       Security: %s\r\n"), WiFi::convSecurityProtocolToString(infos[i].AuthMode));
 			}
 		}
-		
-		
+        
+        
+        void MTD_FLASHMEM cmd_ntpdate()
+        {
+            char buf[30];
+            DateTime dt;
+            if (dt.getFromNTPServer())
+            {                
+                dt.format(buf, FSTR("%c"));
+                m_serial->writeln(buf);
+            }
+            else
+                m_serial->printf(FSTR("fail\r\n"));
+        }
+        
+        
 		void MTD_FLASHMEM cmd_test()
 		{
-            SNTPClient sntp1(FSTR("192.168.1.32"));
-            uint64_t v = 0;
-            if (sntp1.query(&v))
-                m_serial->printf(FSTR("%d %d\r\n"), v & 0xFFFFFFFF, (v >> 32) & 0xFFFFFFFF);
-            else
-                m_serial->printf(FSTR("fail\r\n"));
-
-            Task::delay(1000);
-            SNTPClient sntp2;
-            v = 0;
-            if (sntp2.query(&v))
-                m_serial->printf(FSTR("%d %d\r\n"), v & 0xFFFFFFFF, (v >> 32) & 0xFFFFFFFF);
-            else
-                m_serial->printf(FSTR("fail\r\n"));
 		}
 		
 		
