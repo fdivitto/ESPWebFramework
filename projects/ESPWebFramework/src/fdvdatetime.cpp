@@ -31,6 +31,22 @@
 namespace fdv
 {
 
+    // static members
+    int8_t      DateTime::s_defaultTimezoneHours    = 0;
+    uint8_t     DateTime::s_defaultTimezoneMinutes  = 0;
+    char const* DateTime::s_defaultNTPServer        = NULL;
+
+    
+    // a local copy of defaultNTPServer string is perfomed
+    void DateTime::setDefaults(int8_t timezoneHours, uint8_t timezoneMinutes, char const* defaultNTPServer)
+    {
+        if (s_defaultNTPServer)
+            delete[] s_defaultNTPServer;
+        s_defaultNTPServer       = f_strdup(defaultNTPServer);
+        s_defaultTimezoneHours   = timezoneHours;
+        s_defaultTimezoneMinutes = s_defaultTimezoneMinutes;
+    }
+
 
     // 0=sunday...6=saturday
     uint8_t MTD_FLASHMEM DateTime::dayOfWeek() const
@@ -97,9 +113,9 @@ namespace fdv
     }
     
     
-    bool MTD_FLASHMEM DateTime::getFromNTPServer(char const* serverIP)
+    bool MTD_FLASHMEM DateTime::getFromNTPServer()
     {
-        SNTPClient sntp(serverIP);
+        SNTPClient sntp(s_defaultNTPServer);
         uint64_t v = 0;
         if (sntp.query(&v))
         {

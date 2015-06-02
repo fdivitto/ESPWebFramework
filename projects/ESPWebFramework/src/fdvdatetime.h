@@ -45,14 +45,14 @@ namespace fdv
         uint8_t  month;
         uint8_t  day;
         
-        // timezone is used only as informative and in setNTPDateTime. Values in "seconds, minutes, etc.." aren not UTC
+        // timezone is used only as informative and in setNTPDateTime. Values in "seconds, minutes, etc.." are not UTC
         int8_t  timezoneHours;         // only timezoneHours can be signed
         uint8_t timezoneMinutes;
 
 
         DateTime()
-            : seconds(0), minutes(0), hours(0), year(2000), month(1), day(1), timezoneHours(0), timezoneMinutes(0)
-        {      
+            : seconds(0), minutes(0), hours(0), year(2000), month(1), day(1), timezoneHours(s_defaultTimezoneHours), timezoneMinutes(s_defaultTimezoneMinutes)
+        {            
         }
 
 
@@ -62,23 +62,31 @@ namespace fdv
         }
 
 
+        static void setDefaults(int8_t timezoneHours, uint8_t timezoneMinutes, char const* defaultNTPServer);
+        
         uint8_t dayOfWeek() const;
         uint16_t dayOfYear() const;
         
         DateTime& setUnixDateTime(uint32_t unixTime);
         uint32_t getUnixDateTime() const;
         
-        bool getFromNTPServer(char const* serverIP = NULL);
+        bool getFromNTPServer();
                 
         uint16_t format(char* outbuf, char const* formatstr);
 
         static DateTime now();
+                
          
     private:
 
         DateTime& setNTPDateTime(uint8_t const* datetimeField);
     
         static uint32_t const SECONDS_FROM_1970_TO_2000 = 946684800;
+        
+        static int8_t      s_defaultTimezoneHours;
+        static uint8_t     s_defaultTimezoneMinutes;
+        static char const* s_defaultNTPServer;
+        
         static uint8_t daysInMonth(uint8_t month);
         static long time2long(uint16_t days, uint8_t h, uint8_t m, uint8_t s);
         static uint16_t date2days(uint16_t y, uint8_t m, uint8_t d);

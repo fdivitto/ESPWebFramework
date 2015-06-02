@@ -50,6 +50,7 @@ namespace fdv
 			applyDHCPServer();
 			applyWebServer<HTTPCustomServer_T>();
 			applyGPIO();
+            applyDateTime();
 		}
 		
 	
@@ -218,7 +219,18 @@ namespace fdv
 			uint16_t webPort;
 			getWebServerParams(&webPort);
 			new HTTPCustomServer_T(webPort);
-		}			
+		}
+
+
+        // can be re-applied
+        static void MTD_FLASHMEM applyDateTime()
+        {
+            int8_t timezoneHours;
+            uint8_t timezoneMinutes;
+            char const* defaultNTPServer;
+            getDateTimeParams(&timezoneHours, &timezoneMinutes, &defaultNTPServer);
+            DateTime::setDefaults(timezoneHours, timezoneMinutes, defaultNTPServer);
+        }
 
 		
 		static void MTD_FLASHMEM restore()
@@ -421,6 +433,25 @@ namespace fdv
 				*value      = false;
 			}
 		}
+        
+        
+        
+        //// Date-time parameters
+        
+        static void MTD_FLASHMEM setDateTimeParams(int8_t timezoneHours, uint8_t timezoneMinutes, char const* defaultNTPServer)
+        {
+            FlashDictionary::setInt(STR_TZHH, timezoneHours);
+            FlashDictionary::setInt(STR_TZMM, timezoneMinutes);
+            FlashDictionary::setString(STR_DEFNTPSRV, defaultNTPServer);
+        }
+        
+        static void MTD_FLASHMEM getDateTimeParams(int8_t* timezoneHours, uint8_t* timezoneMinutes, char const** defaultNTPServer)
+        {
+            *timezoneHours    = FlashDictionary::getInt(STR_TZHH, 0);
+            *timezoneMinutes  = FlashDictionary::getInt(STR_TZMM, 0);
+            *defaultNTPServer = FlashDictionary::getString(STR_DEFNTPSRV, FSTR("193.204.114.232")); // 193.204.114.232 = ntp1.inrim.it
+        }
+        
 		
 		
 	private:
