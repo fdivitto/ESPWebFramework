@@ -73,8 +73,7 @@ namespace fdv
         uint16_t format(char* outbuf, char const* formatstr);
 
         static DateTime now();
-        static void adjustNow(DateTime const& currentDateTime);
-        
+         
     private:
 
         DateTime& setNTPDateTime(uint8_t const* datetimeField);

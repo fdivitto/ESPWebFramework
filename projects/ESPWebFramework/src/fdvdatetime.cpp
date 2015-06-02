@@ -110,20 +110,37 @@ namespace fdv
     }
 
 
-    // must be updated before 50 days using adjustNow()
+    // if this is the first time calling now() or after 6 hours an NTP update is perfomed
+    // warn: now() should be called within 50 days from the last call
+    // warn: loses about 3 seconds every 10 hours
     DateTime MTD_FLASHMEM DateTime::now()
     {
         uint32_t currentMillis = millis();
         uint32_t locLastMillis = lastMillis();
         uint32_t diff = (currentMillis < locLastMillis) ? (0xFFFFFFFF - locLastMillis + currentMillis) : (currentMillis - locLastMillis);
+        if (locLastMillis == 0 || diff > 6 * 3600 * 1000)
+        {
+            if (lastDateTime().getFromNTPServer())
+            {
+                lastMillis() = currentMillis;
+                return lastDateTime();
+            }
+        }
         return DateTime().setUnixDateTime( lastDateTime().getUnixDateTime() + (diff / 1000) );
     }
 
 
-    void MTD_FLASHMEM DateTime::adjustNow(DateTime const& currentDateTime)
+    DateTime& MTD_FLASHMEM DateTime::lastDateTime()
     {
-        lastMillis()   = millis();
-        lastDateTime() = currentDateTime;
+        static DateTime s_lastDateTime;
+        return s_lastDateTime;
+    }
+
+
+    uint32_t& MTD_FLASHMEM DateTime::lastMillis()
+    {
+        static uint32_t s_lastMillis = 0;
+        return s_lastMillis;
     }
     
     
@@ -254,20 +271,6 @@ namespace fdv
         if (m > 2 && y % 4 == 0)
             ++days;
         return days + 365 * y + (y + 3) / 4 - 1;
-    }
-
-
-    DateTime& MTD_FLASHMEM DateTime::lastDateTime()
-    {
-        static DateTime s_lastDateTime;
-        return s_lastDateTime;
-    }
-
-
-    uint32_t& MTD_FLASHMEM DateTime::lastMillis()
-    {
-        static uint32_t s_lastMillis = millis();
-        return s_lastMillis;
     }
 
 

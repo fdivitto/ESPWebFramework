@@ -52,7 +52,7 @@ namespace fdv
 		
 	
 		SerialConsole()
-			: Task(false, 256)
+			: Task(false, 300)
 		{		
 		}
 
@@ -142,6 +142,7 @@ namespace fdv
 				{FSTR("free"),       &SerialConsole::cmd_free},
 				{FSTR("ifconfig"),   &SerialConsole::cmd_ifconfig},
 				{FSTR("iwlist"),     &SerialConsole::cmd_iwlist},
+                {FSTR("date"),       &SerialConsole::cmd_date},
                 {FSTR("ntpdate"),    &SerialConsole::cmd_ntpdate},
 				{FSTR("test"),       &SerialConsole::cmd_test},
 			};
@@ -171,7 +172,8 @@ namespace fdv
 			m_serial->writeln(FSTR("free          : Display amount of free and used memory"));
 			m_serial->writeln(FSTR("ifconfig      : Display network info"));
 			m_serial->writeln(FSTR("iwlist [scan] : Display or scan for available wireless networks"));
-            m_serial->writeln(FSTR("ntpdate       : Display date from NTP server"));
+            m_serial->writeln(FSTR("date          : Display current date/time"));
+            m_serial->writeln(FSTR("ntpdate       : Display date/time from NTP server"));
 		}
 
 		
@@ -277,6 +279,14 @@ namespace fdv
 				m_serial->printf(FSTR("       Security: %s\r\n"), WiFi::convSecurityProtocolToString(infos[i].AuthMode));
 			}
 		}
+
+
+        void MTD_FLASHMEM cmd_date()
+        {
+            char buf[30];
+            DateTime::now().format(buf, FSTR("%c"));
+            m_serial->writeln(buf);
+        }
         
         
         void MTD_FLASHMEM cmd_ntpdate()
@@ -295,6 +305,15 @@ namespace fdv
         
 		void MTD_FLASHMEM cmd_test()
 		{
+            /*
+            while (1)
+            {
+                cmd_date();
+                cmd_ntpdate();
+                m_serial->printf("\r\n");
+                Task::delay(10000);
+            }
+            */
 		}
 		
 		
