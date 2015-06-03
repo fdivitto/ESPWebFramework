@@ -65,3 +65,9 @@ Network configuration:
 
 Web server, UART and services configuration:
 ![ss4](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/ss4.jpg)
+
+Date and Time configuration:
+![ss5](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/ss5.jpg)
+
+GPIO configuration and control:
+![ss6](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/ss6.jpg)
