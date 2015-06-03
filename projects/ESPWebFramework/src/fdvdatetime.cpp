@@ -34,7 +34,8 @@ namespace fdv
     // static members
     int8_t      DateTime::s_defaultTimezoneHours    = 0;
     uint8_t     DateTime::s_defaultTimezoneMinutes  = 0;
-    char const* DateTime::s_defaultNTPServer        = NULL;
+    char const* DateTime::s_defaultNTPServer        = NULL; // point to the default server of SNTPClient class
+    bool        DateTime::s_NTPSyncEnabled          = true;
 
     
     // a local copy of defaultNTPServer string is perfomed
@@ -43,8 +44,21 @@ namespace fdv
         if (s_defaultNTPServer)
             delete[] s_defaultNTPServer;
         s_defaultNTPServer       = f_strdup(defaultNTPServer);
+        s_NTPSyncEnabled         = f_strlen(s_defaultNTPServer) > 0;
         s_defaultTimezoneHours   = timezoneHours;
         s_defaultTimezoneMinutes = s_defaultTimezoneMinutes;
+        if (s_NTPSyncEnabled)
+        {
+            // this will force NTP synchronization
+            lastMillis() = 0;
+        }
+    }
+    
+    
+    void DateTime::setCurrentDateTime(DateTime const& dateTime)
+    {
+        lastDateTime() = dateTime;
+        lastMillis()   = millis();
     }
 
 
@@ -115,12 +129,15 @@ namespace fdv
     
     bool MTD_FLASHMEM DateTime::getFromNTPServer()
     {
-        SNTPClient sntp(s_defaultNTPServer);
-        uint64_t v = 0;
-        if (sntp.query(&v))
+        if (s_NTPSyncEnabled)
         {
-            setNTPDateTime((uint8_t*)&v);
-            return true;
+            SNTPClient sntp(s_defaultNTPServer);
+            uint64_t v = 0;
+            if (sntp.query(&v))
+            {
+                setNTPDateTime((uint8_t*)&v);
+                return true;
+            }
         }
         return false;
     }
@@ -134,6 +151,7 @@ namespace fdv
         uint32_t currentMillis = millis();
         uint32_t locLastMillis = lastMillis();
         uint32_t diff = (currentMillis < locLastMillis) ? (0xFFFFFFFF - locLastMillis + currentMillis) : (currentMillis - locLastMillis);
+        
         if (locLastMillis == 0 || diff > 6 * 3600 * 1000)
         {
             if (lastDateTime().getFromNTPServer())
@@ -142,7 +160,22 @@ namespace fdv
                 return lastDateTime();
             }
         }
-        return DateTime().setUnixDateTime( lastDateTime().getUnixDateTime() + (diff / 1000) );
+        
+        DateTime result;
+        result.setUnixDateTime( lastDateTime().getUnixDateTime() + (diff / 1000) );
+        
+        if (!s_NTPSyncEnabled)
+        {
+            // NTP synchronizatin is disabled. Take care for millis overflow.
+            if (diff > 10 * 24 * 3600 * 1000)   // past 10 days?
+            {
+                // reset millis counter to avoid overflow (actually it overflows after 50 days)
+                lastMillis()   = currentMillis;
+                lastDateTime() = result;
+            }
+        }
+        
+        return result;
     }
 
 
@@ -157,6 +190,66 @@ namespace fdv
     {
         static uint32_t s_lastMillis = 0;
         return s_lastMillis;
+    }
+    
+    
+    // inbuf can stay only in RAM
+    // formatstr can stay in RAM or Flash
+    // warn: doesn't check correctness and size of input string!
+    // Format:
+    //    '%d' : Day of the month, 2 digits with leading zeros (01..31)
+    //    '%m' : Numeric representation of a month, with leading zeros (01..12)
+    //    '%Y' : A full numeric representation of a year, 4 digits (1999, 2000...)
+    //    '%H' : 24-hour format of an hour with leading zeros (00..23)
+    //    '%M' : Minutes with leading zeros (00..59)
+    //    '%S' : Seconds, with leading zeros (00..59)
+    // Returns position of the next character to process
+    char const* MTD_FLASHMEM DateTime::decode(char const* inbuf, char const* formatstr)
+    {
+        for (; inbuf && getChar(formatstr); ++formatstr)
+        {
+            if (getChar(formatstr) == '%')
+            {
+                ++formatstr;
+                switch (getChar(formatstr))
+                {
+                    case '%':
+                        ++inbuf;
+                        break;
+                    case 'd':
+                        day =  (*inbuf++ - '0') * 10;
+                        day += (*inbuf++ - '0');
+                        break;
+                    case 'm':
+                        month =  (*inbuf++ - '0') * 10;
+                        month += (*inbuf++ - '0');
+                        break;
+                    case 'Y':
+                        year =  (*inbuf++ - '0') * 1000;
+                        year += (*inbuf++ - '0') * 100;
+                        year += (*inbuf++ - '0') * 10;
+                        year += (*inbuf++ - '0');
+                        break;
+                    case 'H':
+                        hours =  (*inbuf++ - '0') * 10;
+                        hours += (*inbuf++ - '0');
+                        break;
+                    case 'M':
+                        minutes =  (*inbuf++ - '0') * 10;
+                        minutes += (*inbuf++ - '0');
+                        break;
+                    case 'S':
+                        seconds =  (*inbuf++ - '0') * 10;
+                        seconds += (*inbuf++ - '0');
+                        break;
+                    default:
+                        return inbuf;   // error!
+                }
+            }
+            else
+                ++inbuf;
+        }
+        return inbuf;
     }
     
     

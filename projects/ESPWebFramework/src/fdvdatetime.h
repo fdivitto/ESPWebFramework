@@ -56,6 +56,12 @@ namespace fdv
         }
 
 
+        DateTime(uint8_t day_, uint8_t month_, uint16_t year_, uint8_t hours_, uint8_t minutes_, uint8_t seconds_)
+            : seconds(seconds_), minutes(minutes_), hours(hours_), year(year_), month(month_), day(day_), timezoneHours(s_defaultTimezoneHours), timezoneMinutes(s_defaultTimezoneMinutes)
+        {  
+        }
+
+        
         DateTime(uint8_t day_, uint8_t month_, uint16_t year_, uint8_t hours_, uint8_t minutes_, uint8_t seconds_, int8_t timezoneHours_, uint8_t timezoneMinutes_)
             : seconds(seconds_), minutes(minutes_), hours(hours_), year(year_), month(month_), day(day_), timezoneHours(timezoneHours_), timezoneMinutes(timezoneMinutes_)
         {  
@@ -63,6 +69,7 @@ namespace fdv
 
 
         static void setDefaults(int8_t timezoneHours, uint8_t timezoneMinutes, char const* defaultNTPServer);
+        static void setCurrentDateTime(DateTime const& dateTime);
         
         uint8_t dayOfWeek() const;
         uint16_t dayOfYear() const;
@@ -73,6 +80,7 @@ namespace fdv
         bool getFromNTPServer();
                 
         uint16_t format(char* outbuf, char const* formatstr);
+        char const* decode(char const* inbuf, char const* formatstr);
 
         static DateTime now();
                 
@@ -86,6 +94,7 @@ namespace fdv
         static int8_t      s_defaultTimezoneHours;
         static uint8_t     s_defaultTimezoneMinutes;
         static char const* s_defaultNTPServer;
+        static bool        s_NTPSyncEnabled;    // true if s_defaultNTPServer = NULL or s_defaultNTPServer = ""
         
         static uint8_t daysInMonth(uint8_t month);
         static long time2long(uint16_t days, uint8_t h, uint8_t m, uint8_t s);
