@@ -33,6 +33,7 @@ extern "C"
 	#include "lwip/netdb.h"
 	#include "lwip/api.h"
 	#include "lwip/netbuf.h"
+    #include "lwip/inet.h"
 	#include "udhcp/dhcpd.h"	
 
 	#include <stdarg.h>
@@ -43,6 +44,42 @@ extern "C"
 namespace fdv
 {
 
+
+
+   	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+    // NSLookup (DNS client)
+    
+    
+    MTD_FLASHMEM NSLookup::NSLookup(char const* hostname)
+    {        
+        if (!lookup(hostname, m_ipaddr, 16))
+            m_ipaddr[0] = 0;
+    }
+    
+    
+    bool MTD_FLASHMEM NSLookup::lookup(char const* hostname, char* ipaddr, int32_t ipaddr_len)
+    {
+        APtr<char> memHostName( f_strdup(hostname) );
+        addrinfo* addrinfo;
+        if (lwip_getaddrinfo(memHostName.get(), NULL, NULL, &addrinfo) == 0 && addrinfo)
+        {
+            // according to lwip documentation uses only first item of "addrinfo"
+            sockaddr_in* sa = (sockaddr_in*)(addrinfo->ai_addr);
+            inet_ntoa_r(sa->sin_addr, ipaddr, ipaddr_len);
+            lwip_freeaddrinfo(addrinfo);
+            return true;
+        }
+        return false;
+    }
+    
+    
+    char const* MTD_FLASHMEM NSLookup::get()
+    {
+        return m_ipaddr;
+    }
+
+        
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////

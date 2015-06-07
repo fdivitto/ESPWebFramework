@@ -256,10 +256,6 @@ namespace fdv
 			return s_queue;
 		}
 		
-		
-		
-		
-
 	};
 	
 
@@ -335,6 +331,31 @@ namespace fdv
     };	
 
 
+   	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+    // NSLookup (DNS client)
+    //
+    // Two ways to use NSLookup. First:
+    //    NSLookup lookup("www.google.com");
+    //    char const* ipaddr = lookup.get());   // ipaddr will contain a string like "149.3.176.24" (zero terminated). Resulting string has the same lifetime as NSLookup object.
+    // Second:
+    //    char ipaddr[16];
+    //    NSLookup::lookup("www.google.com", ipaddr, 16);
+
+    
+    struct NSLookup
+    {
+        NSLookup(char const* hostname);        
+        char const* get();
+        
+        static bool lookup(char const* hostname, char* ipaddr, int32_t ipaddr_len);
+
+    private:
+                
+        char m_ipaddr[16];
+    };
+
+    
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
     // Socket

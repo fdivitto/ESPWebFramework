@@ -305,15 +305,8 @@ namespace fdv
         
 		void MTD_FLASHMEM cmd_test()
 		{
-            /*
-            while (1)
-            {
-                cmd_date();
-                cmd_ntpdate();
-                m_serial->printf("\r\n");
-                Task::delay(10000);
-            }
-            */
+            NSLookup lookup(FSTR("ntp1.inrim.it"));
+            m_serial->writeln(lookup.get());
 		}
 		
 		
