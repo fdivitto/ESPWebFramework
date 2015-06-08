@@ -306,7 +306,7 @@ namespace fdv
 		void MTD_FLASHMEM cmd_test()
 		{
             NSLookup lookup(FSTR("ntp1.inrim.it"));
-            m_serial->writeln(lookup.get());
+            m_serial->writeln(lookup.get().get_str());
 		}
 		
 		

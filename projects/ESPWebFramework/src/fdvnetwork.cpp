@@ -52,13 +52,13 @@ namespace fdv
     
     
     MTD_FLASHMEM NSLookup::NSLookup(char const* hostname)
-    {        
-        if (!lookup(hostname, m_ipaddr, 16))
-            m_ipaddr[0] = 0;
+    {    
+        m_ipaddr = lookup(hostname);
     }
     
     
-    bool MTD_FLASHMEM NSLookup::lookup(char const* hostname, char* ipaddr, int32_t ipaddr_len)
+    // returns IPAddress(0, 0, 0, 0) on fail
+    IPAddress MTD_FLASHMEM NSLookup::lookup(char const* hostname)
     {
         APtr<char> memHostName( f_strdup(hostname) );
         addrinfo* addrinfo;
@@ -66,15 +66,15 @@ namespace fdv
         {
             // according to lwip documentation uses only first item of "addrinfo"
             sockaddr_in* sa = (sockaddr_in*)(addrinfo->ai_addr);
-            inet_ntoa_r(sa->sin_addr, ipaddr, ipaddr_len);
+            in_addr_t addr = sa->sin_addr.s_addr;
             lwip_freeaddrinfo(addrinfo);
-            return true;
+            return IPAddress(addr);
         }
-        return false;
+        return IPAddress(0, 0, 0, 0);   // fail!
     }
     
     
-    char const* MTD_FLASHMEM NSLookup::get()
+    IPAddress MTD_FLASHMEM NSLookup::get()
     {
         return m_ipaddr;
     }
@@ -196,12 +196,12 @@ namespace fdv
     
     
     // from now Socket will use "sendto" instead of "send"
-    void MTD_FLASHMEM Socket::setRemoteAddress(char const* remoteAddress, uint16_t remotePort)
+    void MTD_FLASHMEM Socket::setRemoteAddress(IPAddress remoteAddress, uint16_t remotePort)
     {
         memset(&m_remoteAddress, 0, sizeof(sockaddr_in));
         m_remoteAddress.sin_family      = AF_INET;
         m_remoteAddress.sin_len         = sizeof(sockaddr_in);
-        m_remoteAddress.sin_addr.s_addr = ipaddr_addr(APtr<char>(f_strdup(remoteAddress)).get());
+        m_remoteAddress.sin_addr.s_addr = remoteAddress.get_in_addr_t();
         m_remoteAddress.sin_port        = htons(remotePort);
     }
     
@@ -503,7 +503,7 @@ namespace fdv
 	//////////////////////////////////////////////////////////////////////
 	// UDPClient
     
-    void MTD_FLASHMEM UDPClient::init(char const* remoteAddress, uint16_t remotePort)
+    void MTD_FLASHMEM UDPClient::init(IPAddress remoteAddress, uint16_t remotePort)
     {
         m_socket = lwip_socket(PF_INET, SOCK_DGRAM, 0);
         
@@ -530,12 +530,10 @@ namespace fdv
     ////////////////////////////////////////////////////////////////////////////////////////
     // SNTPClient
 
-    
-    SNTPClient::SNTPClient(char const* serverIP, uint16_t port)
+    // serverIP is a uint8_t[4] IP address or NULL
+    SNTPClient::SNTPClient(IPAddress serverIP, uint16_t port)
         : m_server(serverIP), m_port(port)
     {
-        if (!m_server)
-            m_server = FSTR("193.204.114.232");
     }
     
     

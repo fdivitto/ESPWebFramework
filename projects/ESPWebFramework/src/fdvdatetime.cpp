@@ -34,20 +34,16 @@ namespace fdv
     // static members
     int8_t      DateTime::s_defaultTimezoneHours    = 0;
     uint8_t     DateTime::s_defaultTimezoneMinutes  = 0;
-    char const* DateTime::s_defaultNTPServer        = NULL; // point to the default server of SNTPClient class
-    bool        DateTime::s_NTPSyncEnabled          = true;
+    IPAddress   DateTime::s_defaultNTPServer        = IPAddress(193, 204, 114, 232);    // default is ntp1.inrim.it
 
     
     // a local copy of defaultNTPServer string is perfomed
     void DateTime::setDefaults(int8_t timezoneHours, uint8_t timezoneMinutes, char const* defaultNTPServer)
     {
-        if (s_defaultNTPServer)
-            delete[] s_defaultNTPServer;
-        s_defaultNTPServer       = f_strdup(defaultNTPServer);
-        s_NTPSyncEnabled         = f_strlen(s_defaultNTPServer) > 0;
+        s_defaultNTPServer       = IPAddress(defaultNTPServer);
         s_defaultTimezoneHours   = timezoneHours;
         s_defaultTimezoneMinutes = s_defaultTimezoneMinutes;
-        if (s_NTPSyncEnabled)
+        if (s_defaultNTPServer != IPAddress(0, 0, 0, 0))
         {
             // this will force NTP synchronization
             lastMillis() = 0;
@@ -129,7 +125,7 @@ namespace fdv
     
     bool MTD_FLASHMEM DateTime::getFromNTPServer()
     {
-        if (s_NTPSyncEnabled)
+        if (s_defaultNTPServer != IPAddress(0, 0, 0, 0))
         {
             SNTPClient sntp(s_defaultNTPServer);
             uint64_t v = 0;
@@ -164,7 +160,7 @@ namespace fdv
         DateTime result;
         result.setUnixDateTime( lastDateTime().getUnixDateTime() + (diff / 1000) );
         
-        if (!s_NTPSyncEnabled)
+        if (s_defaultNTPServer == IPAddress(0, 0, 0, 0))
         {
             // NTP synchronizatin is disabled. Take care for millis overflow.
             if (diff > 10 * 24 * 3600 * 1000)   // past 10 days?

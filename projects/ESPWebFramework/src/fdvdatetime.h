@@ -93,8 +93,7 @@ namespace fdv
         
         static int8_t      s_defaultTimezoneHours;
         static uint8_t     s_defaultTimezoneMinutes;
-        static char const* s_defaultNTPServer;
-        static bool        s_NTPSyncEnabled;    // true if s_defaultNTPServer = NULL or s_defaultNTPServer = ""
+        static IPAddress   s_defaultNTPServer;  // NTP synchronization enabled if s_defaultNTPServer != 0.0.0.0
         
         static uint8_t daysInMonth(uint8_t month);
         static long time2long(uint16_t days, uint8_t h, uint8_t m, uint8_t s);

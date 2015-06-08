@@ -56,6 +56,100 @@ sint8 FUNC_FLASHMEM udhcpd_stop(void);
 namespace fdv
 {
 	
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+    // IPAddress
+    
+    struct IPAddress
+    {
+        
+        uint8_t address[4];
+        
+        
+        // a wrapper for IPAddress.get_str()
+        struct IPAddressStr
+        {
+            char address[16];
+            
+            operator char*()
+            {
+                return address;
+            }
+        };
+        
+        
+        IPAddress()
+        {
+            address[0] = 0;
+            address[1] = 0;
+            address[2] = 0;
+            address[3] = 0;
+        }
+        
+        IPAddress(uint8_t v1, uint8_t v2, uint8_t v3, uint8_t v4)
+        {
+            address[0] = v1;
+            address[1] = v2;
+            address[2] = v3;
+            address[3] = v4;
+        }
+        
+        IPAddress(IPAddress const& c)            
+        {
+            *((uint32_t*)&address) = *((uint32_t*)&c.address);
+        }
+        
+        // empty string generates "0.0.0.0"
+        IPAddress(char const* str)
+        {
+            if (!str || f_strlen(str) == 0)
+                *this = IPAddress(0, 0, 0, 0);
+            else
+                *((in_addr_t*)(&address)) = ipaddr_addr(APtr<char>(f_strdup(str)).get());
+        }
+        
+        IPAddress(in_addr inaddr)
+        {
+            *((in_addr_t*)(&address)) = inaddr.s_addr;
+        }
+        
+        IPAddress(in_addr_t inaddr)
+        {
+            *((in_addr_t*)(&address)) = inaddr;
+        }
+        
+        in_addr_t get_in_addr_t()
+        {
+            return *((in_addr_t*)(&address));
+        }
+        
+        ip_addr_t get_ip_addr_t()
+        {
+            ip_addr_t addr;
+            addr.addr = *((u32_t*)(&address));
+            return addr;
+        }
+        
+        IPAddressStr get_str()
+        {
+            IPAddressStr str;
+            ip_addr_t a = get_ip_addr_t();
+            ipaddr_ntoa_r(&a, str, 16);
+            return str;
+        }
+        
+        bool operator==(IPAddress const& rhs)
+        {
+            return *((uint32_t*)&address) == *((uint32_t*)&rhs.address);
+        }
+        
+        bool operator!=(IPAddress const& rhs)
+        {
+            return !(*this == rhs);
+        }
+    };
+    
+   
 	
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -337,22 +431,22 @@ namespace fdv
     //
     // Two ways to use NSLookup. First:
     //    NSLookup lookup("www.google.com");
-    //    char const* ipaddr = lookup.get());   // ipaddr will contain a string like "149.3.176.24" (zero terminated). Resulting string has the same lifetime as NSLookup object.
+    //    char const* ipaddr = strdup(lookup.get().get_str());   // ipaddr will contain a string like "149.3.176.24" (zero terminated). Resulting string has the same lifetime as NSLookup object.
     // Second:
-    //    char ipaddr[16];
-    //    NSLookup::lookup("www.google.com", ipaddr, 16);
+    //    IPAddress ipaddr = NSLookup::lookup("www.google.com");
 
     
     struct NSLookup
     {
         NSLookup(char const* hostname);        
-        char const* get();
+        IPAddress get();
         
-        static bool lookup(char const* hostname, char* ipaddr, int32_t ipaddr_len);
+        // returns IPAddress(0, 0, 0, 0) on fail
+        static IPAddress lookup(char const* hostname);
 
     private:
                 
-        char m_ipaddr[16];
+        IPAddress m_ipaddr;
     };
 
     
@@ -414,7 +508,7 @@ namespace fdv
         }
         
         // from now Socket will use "sendto" instead of "send"
-        void setRemoteAddress(char const* remoteAddress, uint16_t remotePort);
+        void setRemoteAddress(IPAddress remoteAddress, uint16_t remotePort);
         
         // timeOut in ms (0 = no timeout)
         void setTimeOut(uint32_t timeOut);
@@ -435,7 +529,7 @@ namespace fdv
     class UDPClient
     {
     public:
-        UDPClient(char const* remoteAddress, uint16_t remotePort)
+        UDPClient(IPAddress remoteAddress, uint16_t remotePort)
         {
             init(remoteAddress, remotePort);
         }
@@ -451,8 +545,8 @@ namespace fdv
         }        
         
     private:
-        void MTD_FLASHMEM init(char const* remoteAddress, uint16_t remotePort);        
-        static uint16_t MTD_FLASHMEM getUDPPort();
+        void init(IPAddress remoteAddress, uint16_t remotePort);        
+        static uint16_t getUDPPort();
         
     private:
         Socket m_socket;        
@@ -1056,16 +1150,16 @@ namespace fdv
 
     public:
 
-        // serverIP = NULL then IP is 193.204.114.232 (ntp1.inrim.it)
-        explicit SNTPClient(char const* serverIP = NULL, uint16_t port = 123);
+        // default is 193.204.114.232 (ntp1.inrim.it)
+        explicit SNTPClient(IPAddress serverIP = IPAddress(193, 204, 114, 232), uint16_t port = 123);
 
         bool query(uint64_t* outValue) const;
 
 
     private:
 
-        char const* m_server;
-        uint16_t    m_port;
+        IPAddress m_server;
+        uint16_t  m_port;
       };
 
 
