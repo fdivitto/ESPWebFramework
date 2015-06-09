@@ -78,6 +78,20 @@ namespace fdv
     {
         return m_ipaddr;
     }
+    
+    
+    void MTD_FLASHMEM NSLookup::setDNSServer(uint32_t num, IPAddress server)
+    {
+        ip_addr_t a = server.get_ip_addr_t();
+        dns_setserver(num, &a);
+    }
+    
+    
+    IPAddress MTD_FLASHMEM NSLookup::getDNSServer(uint32_t num)
+    {
+        return IPAddress(dns_getserver(num));
+    }
+    
 
         
 

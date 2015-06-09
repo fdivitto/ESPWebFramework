@@ -118,6 +118,11 @@ namespace fdv
             *((in_addr_t*)(&address)) = inaddr;
         }
         
+        IPAddress(ip_addr_t ipaddr)
+        {
+            *((u32_t*)(&address)) = ipaddr.addr;
+        }
+        
         in_addr_t get_in_addr_t()
         {
             return *((in_addr_t*)(&address));
@@ -444,6 +449,10 @@ namespace fdv
         // returns IPAddress(0, 0, 0, 0) on fail
         static IPAddress lookup(char const* hostname);
 
+        // configuration
+        // num = 0 or 1 (which dns server to set or get)
+        static void setDNSServer(uint32_t num, IPAddress server);
+        static IPAddress getDNSServer(uint32_t num);
     private:
                 
         IPAddress m_ipaddr;
