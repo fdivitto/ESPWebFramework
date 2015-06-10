@@ -48,6 +48,7 @@ namespace fdv
 			applyAccessPointIP();
 			applyClientIP();
 			applyDHCPServer();
+            applyDNS();
 			applyWebServer<HTTPCustomServer_T>();
 			applyGPIO();
             applyDateTime();
@@ -208,7 +209,17 @@ namespace fdv
 				if (enabled)
 					DHCPServer::configure(startIP, endIP, maxLeases);
 			}
-		}			
+		}
+
+
+        // can be re-applied
+        static void MTD_FLASHMEM applyDNS()
+        {
+            IPAddress DNS1, DNS2;
+            getDNSParams(&DNS1, &DNS2);
+            NSLookup::setDNSServer(0, DNS1);
+            NSLookup::setDNSServer(1, DNS2);
+        }
 		
 
 		// cannot be re-applied
@@ -353,6 +364,21 @@ namespace fdv
 		}
 		
 		
+        //// DNS parameters
+        
+        static void MTD_FLASHMEM setDNSParams(IPAddress DNS1, IPAddress DNS2)
+        {
+            FlashDictionary::setInt(STR_DNS1, DNS1.get_uint32());
+            FlashDictionary::setInt(STR_DNS2, DNS2.get_uint32());
+        }
+        
+        static void MTD_FLASHMEM getDNSParams(IPAddress* DNS1, IPAddress* DNS2)
+        {
+            *DNS1 = FlashDictionary::getInt(STR_DNS1, IPAddress(8, 8, 8, 8).get_uint32());
+            *DNS2 = FlashDictionary::getInt(STR_DNS2, IPAddress(8, 8, 4, 4).get_uint32());
+        }
+        
+        
 		//// Web Server parameters
 		
 		static void MTD_FLASHMEM setWebServerParams(uint16_t port)

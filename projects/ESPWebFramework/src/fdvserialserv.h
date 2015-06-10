@@ -65,6 +65,7 @@ namespace fdv
 		void MTD_FLASHMEM exec()
 		{
 			m_serial = HardwareSerial::getSerial(0);
+            cmd_help();
 			m_serial->writeNewLine();
 			while (true)
 			{
@@ -227,11 +228,11 @@ namespace fdv
 				uint8_t IP[4];
 				uint8_t netmask[4];
 				uint8_t gateway[4];
-				IP::getIPInfo((WiFi::Network)i, IP, netmask, gateway);				
-				m_serial->printf(FSTR("   inet %d.%d.%d.%d netmask %d.%d.%d.%d gateway %d.%d.%d.%d\r\n"), 
+				IP::getIPInfo((WiFi::Network)i, IP, netmask, gateway);
+                m_serial->printf(FSTR("   inet %d.%d.%d.%d netmask %d.%d.%d.%d gateway %d.%d.%d.%d\r\n"), 
 				                 IP[0], IP[1], IP[2], IP[3],
 								 netmask[0], netmask[1], netmask[2], netmask[3],
-								 gateway[0], gateway[1], gateway[2], gateway[3]);								
+								 gateway[0], gateway[1], gateway[2], gateway[3]);
 				if (i == 0)
 				{
 					// In client mode show status
@@ -259,8 +260,9 @@ namespace fdv
 					}
 					m_serial->printf(FSTR("   status <%s>\r\n"), connectionStatus);
 				}
-
 			}
+            m_serial->printf(FSTR("DNS1 %s DNS2 %s\r\n"), (char const*)NSLookup::getDNSServer(0).get_str(), 
+                                                          (char const*)NSLookup::getDNSServer(1).get_str());
 		}
 		
 		
