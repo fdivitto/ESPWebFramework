@@ -307,8 +307,6 @@ namespace fdv
         
 		void MTD_FLASHMEM cmd_test()
 		{
-            NSLookup::setDNSServer(0, IPAddress(FSTR("1.2.3.4")));
-            NSLookup::setDNSServer(1, IPAddress(FSTR("8.8.8.8")));
             m_serial->writeln(NSLookup::lookup(FSTR("ntp1.inrim.it")).get_str());
             m_serial->writeln(NSLookup::lookup(FSTR("www.google.com")).get_str());
 		}

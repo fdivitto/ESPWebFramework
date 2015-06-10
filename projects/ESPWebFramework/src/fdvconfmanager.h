@@ -609,6 +609,9 @@ namespace fdv
 															  strtol(getRequest().form[STR_maxLeases], NULL, 10));
 				else
 					ConfigurationManager::setDHCPServerParams(false);
+                
+                // set DNS
+                ConfigurationManager::setDNSParams(IPAddress(getRequest().form[STR_DNS1]), IPAddress(getRequest().form[STR_DNS2]));
 			}
 			
 			WiFi::Mode mode = ConfigurationManager::getWiFiMode();
@@ -646,6 +649,14 @@ namespace fdv
 			addParamInt(STR_maxLeases, maxLeases);
 			addParamStr(FSTR("DISP_DHCPD"), mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? STR_ : STR_disabled);
 			
+            // get DNS server configuration
+            IPAddress DNS1, DNS2;
+            ConfigurationManager::getDNSParams(&DNS1, &DNS2);
+            IPAddress::IPAddressStr DNS1str = DNS1.get_str();
+            IPAddress::IPAddressStr DNS2str = DNS2.get_str();
+            addParamStr(STR_DNS1, DNS1str);
+            addParamStr(STR_DNS2, DNS2str);
+            
 			HTTPTemplateResponse::flush();
 		}
 		
