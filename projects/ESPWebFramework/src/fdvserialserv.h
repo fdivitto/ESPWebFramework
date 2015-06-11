@@ -145,6 +145,7 @@ namespace fdv
 				{FSTR("iwlist"),     &SerialConsole::cmd_iwlist},
                 {FSTR("date"),       &SerialConsole::cmd_date},
                 {FSTR("ntpdate"),    &SerialConsole::cmd_ntpdate},
+                {FSTR("nslookup"),   &SerialConsole::cmd_nslookup},
 				{FSTR("test"),       &SerialConsole::cmd_test},
 			};
 			static uint32_t const cmdCount = sizeof(cmds) / sizeof(Cmd);
@@ -175,6 +176,7 @@ namespace fdv
 			m_serial->writeln(FSTR("iwlist [scan] : Display or scan for available wireless networks"));
             m_serial->writeln(FSTR("date          : Display current date/time"));
             m_serial->writeln(FSTR("ntpdate       : Display date/time from NTP server"));
+            m_serial->writeln(FSTR("nslookup NAME : Query DNS"));
 		}
 
 		
@@ -303,6 +305,18 @@ namespace fdv
             else
                 m_serial->printf(FSTR("fail\r\n"));
         }
+
+
+		void MTD_FLASHMEM cmd_nslookup()
+		{
+			if (m_paramsCount != 2)
+            {
+                m_serial->writeln(FSTR("NAME missing\r\n"));
+				return;
+            }
+            APtr<char> name( t_strdup(m_params[1]) );
+            m_serial->writeln(NSLookup::lookup(name.get()).get_str());
+		}
         
         
 		void MTD_FLASHMEM cmd_test()

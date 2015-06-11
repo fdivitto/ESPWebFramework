@@ -475,7 +475,7 @@ namespace fdv
         {
             *timezoneHours    = FlashDictionary::getInt(STR_TZHH, 0);
             *timezoneMinutes  = FlashDictionary::getInt(STR_TZMM, 0);
-            *defaultNTPServer = FlashDictionary::getString(STR_DEFNTPSRV, FSTR("193.204.114.232")); // 193.204.114.232 = ntp1.inrim.it
+            *defaultNTPServer = FlashDictionary::getString(STR_DEFNTPSRV, FSTR("ntp1.inrim.it"));
         }
         
 		
