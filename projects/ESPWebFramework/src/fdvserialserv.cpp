@@ -46,9 +46,11 @@ void MTD_FLASHMEM SerialConsole::cmd_uptime()
     int32_t seconds = DateTime::now() - ConfigurationManager::getBootDateTime();
     uint32_t days = seconds / 86400;
     seconds %= 86400;
-    uint32_t minutes = seconds / 1440;
-    seconds %= 1440;
-    m_serial->printf(FSTR("%d days, %d minutes, %d seconds\r\n"), days, minutes, seconds);
+    uint32_t hours = seconds / 3600;
+    seconds %= 3600;
+    uint32_t minutes = seconds / 60;
+    seconds %= 60;
+    m_serial->printf(FSTR("%d days, %02d:%02d:%02d\r\n"), days, hours, minutes, seconds);
 }
     
     
