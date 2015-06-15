@@ -53,7 +53,7 @@ namespace fdv
 	
 		SerialConsole()
 			: Task(false, 300)
-		{		
+		{
 		}
 
 		// destructor must be called outside This task
@@ -147,6 +147,7 @@ namespace fdv
                 {FSTR("ntpdate"),    &SerialConsole::cmd_ntpdate},
                 {FSTR("nslookup"),   &SerialConsole::cmd_nslookup},
 				{FSTR("test"),       &SerialConsole::cmd_test},
+                {FSTR("uptime"),     &SerialConsole::cmd_uptime},
 			};
 			static uint32_t const cmdCount = sizeof(cmds) / sizeof(Cmd);
 			
@@ -177,6 +178,7 @@ namespace fdv
             m_serial->writeln(FSTR("date          : Display current date/time"));
             m_serial->writeln(FSTR("ntpdate       : Display date/time from NTP server"));
             m_serial->writeln(FSTR("nslookup NAME : Query DNS"));
+            m_serial->writeln(FSTR("uptime        : Display how long the system has been running"));
 		}
 
 		
@@ -319,10 +321,11 @@ namespace fdv
 		}
         
         
+        void cmd_uptime();
+        
+        
 		void MTD_FLASHMEM cmd_test()
 		{
-            m_serial->writeln(NSLookup::lookup(FSTR("ntp1.inrim.it")).get_str());
-            m_serial->writeln(NSLookup::lookup(FSTR("www.google.com")).get_str());
 		}
 		
 		
@@ -331,6 +334,7 @@ namespace fdv
 		LinkedCharChunks        m_receivedChunks;
 		uint32_t                m_paramsCount;
 		CharChunksIterator      m_params[MAX_PARAMETERS];
+        DateTime                m_bootTime; // actually SerialConsole uptime!
 	};
 	
 #endif	// FDV_INCLUDE_SERIALCONSOLE

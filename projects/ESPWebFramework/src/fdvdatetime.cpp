@@ -42,7 +42,7 @@ namespace fdv
     {
         s_defaultNTPServer       = NSLookup::lookup(defaultNTPServer);
         s_defaultTimezoneHours   = timezoneHours;
-        s_defaultTimezoneMinutes = s_defaultTimezoneMinutes;
+        s_defaultTimezoneMinutes = timezoneMinutes;
         if (s_defaultNTPServer != IPAddress(0, 0, 0, 0))
         {
             // this will force NTP synchronization

@@ -28,22 +28,35 @@
 
 
 
-
 namespace fdv
 {
 
 
-#if (FDV_INCLUDE_SERIALCONSOLE == 1)
-SerialConsole* ConfigurationManager::s_serialConsole = NULL;
-#endif
 
-#if (FDV_INCLUDE_SERIALBINARY == 1)
-SerialBinary*  ConfigurationManager::s_serialBinary  = NULL;
-#endif
-
-DateTime ConfigurationManager::s_bootTime;
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+// SerialConsole
 	
+#if (FDV_INCLUDE_SERIALCONSOLE == 1)
+
+
+	
+void MTD_FLASHMEM SerialConsole::cmd_uptime()
+{
+    int32_t seconds = DateTime::now() - ConfigurationManager::getBootDateTime();
+    uint32_t days = seconds / 86400;
+    seconds %= 86400;
+    uint32_t minutes = seconds / 1440;
+    seconds %= 1440;
+    m_serial->printf(FSTR("%d days, %d minutes, %d seconds\r\n"), days, minutes, seconds);
 }
+    
+    
+    
+    
+#endif
 
 
+
+} // end of "fdv" namespace
 

@@ -241,6 +241,7 @@ namespace fdv
             char const* defaultNTPServer;
             getDateTimeParams(&timezoneHours, &timezoneMinutes, &defaultNTPServer);
             DateTime::setDefaults(timezoneHours, timezoneMinutes, defaultNTPServer);
+            s_bootTime = DateTime::now();
         }
 
 		
@@ -478,6 +479,11 @@ namespace fdv
             *defaultNTPServer = FlashDictionary::getString(STR_DEFNTPSRV, FSTR("ntp1.inrim.it"));
         }
         
+        static DateTime MTD_FLASHMEM getBootDateTime()
+        {
+            return s_bootTime;
+        }
+        
 		
 		
 	private:
@@ -487,6 +493,7 @@ namespace fdv
 #if (FDV_INCLUDE_SERIALBINARY == 1)
 		static SerialBinary*  s_serialBinary;
 #endif
+        static DateTime       s_bootTime;
 	};
 
 
