@@ -70,7 +70,7 @@ namespace fdv
 		void cmd_reboot();		
 		void cmd_restore();		
 		void cmd_free();		
-		void cmd_ifconfig();
+        void cmd_ifconfig();
 		void cmd_iwlist();
         void cmd_date();        
         void cmd_ntpdate();

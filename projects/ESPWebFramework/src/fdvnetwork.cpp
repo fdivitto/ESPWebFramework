@@ -45,6 +45,106 @@ namespace fdv
 {
 
 
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+    // IPAddress
+
+    
+    void MTD_FLASHMEM IPAddress::operator=(IPAddress const& c)
+    {
+        address[0] = c.address[0];
+        address[1] = c.address[1];
+        address[2] = c.address[2];
+        address[3] = c.address[3];            
+    }
+    
+    
+    void MTD_FLASHMEM IPAddress::operator=(in_addr inaddr)
+    {
+        address[0] = ((uint8_t*)&inaddr.s_addr)[0];
+        address[1] = ((uint8_t*)&inaddr.s_addr)[1];
+        address[2] = ((uint8_t*)&inaddr.s_addr)[2];
+        address[3] = ((uint8_t*)&inaddr.s_addr)[3];
+    }
+    
+    
+    void MTD_FLASHMEM IPAddress::operator=(in_addr_t inaddr)
+    {
+        address[0] = ((uint8_t*)&inaddr)[0];
+        address[1] = ((uint8_t*)&inaddr)[1];
+        address[2] = ((uint8_t*)&inaddr)[2];
+        address[3] = ((uint8_t*)&inaddr)[3];
+    }
+    
+    
+    void MTD_FLASHMEM IPAddress::operator=(ip_addr_t ipaddr)
+    {
+        address[0] = ((uint8_t*)&ipaddr)[0];
+        address[1] = ((uint8_t*)&ipaddr)[1];
+        address[2] = ((uint8_t*)&ipaddr)[2];
+        address[3] = ((uint8_t*)&ipaddr)[3];
+    }
+    
+    
+    void MTD_FLASHMEM IPAddress::operator=(char const* str)
+    {
+        if (!str || f_strlen(str) == 0)
+            *this = IPAddress(0, 0, 0, 0);
+        else
+            *this = IPAddress(ipaddr_addr(APtr<char>(f_strdup(str)).get()));
+    }
+    
+    
+    in_addr_t MTD_FLASHMEM IPAddress::get_in_addr_t()
+    {
+        in_addr_t a;
+        ((uint8_t*)&a)[0] = address[0];
+        ((uint8_t*)&a)[1] = address[1];
+        ((uint8_t*)&a)[2] = address[2];
+        ((uint8_t*)&a)[3] = address[3];
+        return a;
+    }
+    
+    ip_addr_t MTD_FLASHMEM IPAddress::get_ip_addr_t()
+    {
+        ip_addr_t a;
+        ((uint8_t*)&a.addr)[0] = address[0];
+        ((uint8_t*)&a.addr)[1] = address[1];
+        ((uint8_t*)&a.addr)[2] = address[2];
+        ((uint8_t*)&a.addr)[3] = address[3];
+        return a;
+    }
+    
+    uint32_t MTD_FLASHMEM IPAddress::get_uint32()
+    {
+        uint32_t a;
+        ((uint8_t*)&a)[0] = address[0];
+        ((uint8_t*)&a)[1] = address[1];
+        ((uint8_t*)&a)[2] = address[2];
+        ((uint8_t*)&a)[3] = address[3];
+        return a;
+    }
+    
+    IPAddress::IPAddressStr MTD_FLASHMEM IPAddress::get_str()
+    {
+        IPAddressStr str;
+        ip_addr_t a = get_ip_addr_t();
+        ipaddr_ntoa_r(&a, (char*)str, 16);
+        return str;
+    }
+    
+    bool MTD_FLASHMEM IPAddress::operator==(IPAddress const& rhs)
+    {
+        return address[0] == rhs.address[0] && address[1] == rhs.address[1] &&
+               address[2] == rhs.address[2] && address[3] == rhs.address[3];
+    }
+    
+    bool MTD_FLASHMEM IPAddress::operator!=(IPAddress const& rhs)
+    {
+        return !(*this == rhs);
+    }
+    
+
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////

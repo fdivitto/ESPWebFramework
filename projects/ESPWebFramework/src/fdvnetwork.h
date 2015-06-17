@@ -94,95 +94,53 @@ namespace fdv
             address[3] = v4;
         }
         
-        IPAddress(IPAddress const& c)            
+        IPAddress(IPAddress const& c)
         {
-            address[0] = c.address[0];
-            address[1] = c.address[1];
-            address[2] = c.address[2];
-            address[3] = c.address[3];            
+            *this = c;
         }
         
         // empty string generates "0.0.0.0"
         IPAddress(char const* str)
         {
-            if (!str || f_strlen(str) == 0)
-                *this = IPAddress(0, 0, 0, 0);
-            else
-                *this = IPAddress(ipaddr_addr(APtr<char>(f_strdup(str)).get()));
+            *this = str;
         }
         
         IPAddress(in_addr inaddr)
         {
-            address[0] = ((uint8_t*)&inaddr.s_addr)[0];
-            address[1] = ((uint8_t*)&inaddr.s_addr)[1];
-            address[2] = ((uint8_t*)&inaddr.s_addr)[2];
-            address[3] = ((uint8_t*)&inaddr.s_addr)[3];
+            *this = inaddr;
         }
         
         IPAddress(in_addr_t inaddr)
         {
-            address[0] = ((uint8_t*)&inaddr)[0];
-            address[1] = ((uint8_t*)&inaddr)[1];
-            address[2] = ((uint8_t*)&inaddr)[2];
-            address[3] = ((uint8_t*)&inaddr)[3];
+            *this = inaddr;
         }
         
         IPAddress(ip_addr_t ipaddr)
         {
-            address[0] = ((uint8_t*)&ipaddr)[0];
-            address[1] = ((uint8_t*)&ipaddr)[1];
-            address[2] = ((uint8_t*)&ipaddr)[2];
-            address[3] = ((uint8_t*)&ipaddr)[3];
+            *this = ipaddr;
         }
         
-        in_addr_t get_in_addr_t()
-        {
-            in_addr_t a;
-            ((uint8_t*)&a)[0] = address[0];
-            ((uint8_t*)&a)[1] = address[1];
-            ((uint8_t*)&a)[2] = address[2];
-            ((uint8_t*)&a)[3] = address[3];
-            return a;
-        }
+        void operator=(IPAddress const& c);
         
-        ip_addr_t get_ip_addr_t()
-        {
-            ip_addr_t a;
-            ((uint8_t*)&a.addr)[0] = address[0];
-            ((uint8_t*)&a.addr)[1] = address[1];
-            ((uint8_t*)&a.addr)[2] = address[2];
-            ((uint8_t*)&a.addr)[3] = address[3];
-            return a;
-        }
+        void operator=(in_addr inaddr);
         
-        uint32_t get_uint32()
-        {
-            uint32_t a;
-            ((uint8_t*)&a)[0] = address[0];
-            ((uint8_t*)&a)[1] = address[1];
-            ((uint8_t*)&a)[2] = address[2];
-            ((uint8_t*)&a)[3] = address[3];
-            return a;
-        }
+        void operator=(in_addr_t inaddr);
         
-        IPAddressStr get_str()
-        {
-            IPAddressStr str;
-            ip_addr_t a = get_ip_addr_t();
-            ipaddr_ntoa_r(&a, (char*)str, 16);
-            return str;
-        }
+        void operator=(ip_addr_t ipaddr);
         
-        bool operator==(IPAddress const& rhs)
-        {
-            return address[0] == rhs.address[0] && address[1] == rhs.address[1] &&
-                   address[2] == rhs.address[2] && address[3] == rhs.address[3];
-        }
+        void operator=(char const* str);
         
-        bool operator!=(IPAddress const& rhs)
-        {
-            return !(*this == rhs);
-        }
+        in_addr_t get_in_addr_t();
+        
+        ip_addr_t get_ip_addr_t();
+        
+        uint32_t get_uint32();
+        
+        IPAddressStr get_str();
+        
+        bool operator==(IPAddress const& rhs);
+        
+        bool operator!=(IPAddress const& rhs);
     };
     
    

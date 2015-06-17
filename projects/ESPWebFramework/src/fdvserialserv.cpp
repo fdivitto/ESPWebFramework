@@ -55,16 +55,46 @@ Cmd const* cmdInfo(uint32_t i)
 {
     static const Cmd cmds[] =
     {
-        {FSTR("help"),	     FSTR("[COMMAND]"), FSTR("Show help"), &SerialConsole::cmd_help},
-        {FSTR("reboot"),	 FSTR("[MS]"), FSTR("Restart system in [MS] milliseconds"), &SerialConsole::cmd_reboot},
-        {FSTR("restore"),	 FSTR(""), FSTR("Erase Flash stored settings"), &SerialConsole::cmd_restore},
-        {FSTR("free"),       FSTR(""), FSTR("Display amount of free and used memory"), &SerialConsole::cmd_free},
-        {FSTR("ifconfig"),   FSTR("[static IP NETMASK GATEWAY]"), FSTR("Display or set network info"), &SerialConsole::cmd_ifconfig},
-        {FSTR("iwlist"),     FSTR("[SCAN]"), FSTR("Display or scan for available wireless networks"), &SerialConsole::cmd_iwlist},
-        {FSTR("date"),       FSTR(""), FSTR("Display current date/time"), &SerialConsole::cmd_date},
-        {FSTR("ntpdate"),    FSTR(""), FSTR("Display date/time from NTP server"), &SerialConsole::cmd_ntpdate},
-        {FSTR("nslookup"),   FSTR("NAME"), FSTR("Query DNS"), &SerialConsole::cmd_nslookup},    
-        {FSTR("uptime"),     FSTR(""), FSTR("Display how long the system has been running"), &SerialConsole::cmd_uptime},
+        {FSTR("help"),	     
+         FSTR("[COMMAND]"), 
+         FSTR("Show help"), 
+         &SerialConsole::cmd_help},
+        {FSTR("reboot"),	 
+         FSTR("[MS]"), 
+         FSTR("Restart system in [MS] milliseconds"), 
+         &SerialConsole::cmd_reboot},
+        {FSTR("restore"),	 
+         STR_,
+         FSTR("Erase Flash stored settings"), 
+         &SerialConsole::cmd_restore},
+        {FSTR("free"),       
+         STR_, 
+         FSTR("Display amount of free and used memory"), 
+         &SerialConsole::cmd_free},
+        {FSTR("ifconfig"),   
+         FSTR("[static IP NETMASK GATEWAY] | [dhcp] | [ap IP NETMASK GATEWAY] | [dns DNS1 DNS2]"), 
+         FSTR("No params: Display network info\r\n\tstatic: Set Client Mode static IP\r\n\tdhcp: Set Client Mode DHCP\r\n\tap: Set Access Point static IP\r\n\tdns: Set primary and seconday DNS server"), 
+         &SerialConsole::cmd_ifconfig},
+        {FSTR("iwlist"),     
+         FSTR("[SCAN]"), 
+         FSTR("Display or scan for available wireless networks"), 
+         &SerialConsole::cmd_iwlist},
+        {FSTR("date"),       
+         STR_, 
+         FSTR("Display current date/time"), 
+         &SerialConsole::cmd_date},
+        {FSTR("ntpdate"),             
+         STR_, 
+         FSTR("Display date/time from NTP server"), 
+         &SerialConsole::cmd_ntpdate},
+        {FSTR("nslookup"),   
+         FSTR("NAME"), 
+         FSTR("Query DNS"), 
+         &SerialConsole::cmd_nslookup},    
+        {FSTR("uptime"),     
+         STR_, 
+         FSTR("Display how long the system has been running"), 
+         &SerialConsole::cmd_uptime},
         //{FSTR("test"),       FSTR(""), FSTR(""), &SerialConsole::cmd_test},
     };
     static uint32_t const cmdCount = sizeof(cmds) / sizeof(Cmd);
@@ -163,9 +193,8 @@ void MTD_FLASHMEM SerialConsole::cmd_help()
 {
     if (m_paramsCount == 1)
     {
-        m_serial->writeln(FSTR("\r\nCommands:"));
         for (uint32_t i = 0; cmdInfo(i); ++i)
-            m_serial->printf(FSTR("\t%s %s\r\n"), cmdInfo(i)->cmd, cmdInfo(i)->syntax);
+            m_serial->printf(FSTR("%s %s\r\n"), cmdInfo(i)->cmd, cmdInfo(i)->syntax);
     }
     else if (m_paramsCount == 2)
     {
@@ -182,7 +211,7 @@ void MTD_FLASHMEM SerialConsole::cmd_help()
 
 void MTD_FLASHMEM SerialConsole::cmd_restore()
 {
-    m_serial->write(FSTR("\r\nAre you sure [y/N]? "));
+    m_serial->write(FSTR("Are you sure [y/N]? "));
     m_receivedChunks.clear();
     if (m_serial->readLine(true, &m_receivedChunks))
     {
@@ -202,7 +231,7 @@ void MTD_FLASHMEM SerialConsole::cmd_reboot()
     if (m_paramsCount == 2)
         ms = t_strtol(m_params[1], 10);
     reboot(ms);
-    m_serial->writeln(FSTR("\r\nrebooting...\r\n"));
+    m_serial->writeln(FSTR("rebooting...\r\n"));
 }
 
 
@@ -230,9 +259,34 @@ void MTD_FLASHMEM SerialConsole::cmd_ifconfig()
         ConfigurationManager::applyClientIP();
     }
     else
+    if (m_paramsCount == 2 && t_strcmp(m_params[1], CharIterator(FSTR("dhcp"))) == 0)
+    {
+        // set dyncamic IP (DHCP)
+        ConfigurationManager::setClientIPParams(false, STR_, STR_, STR_);
+        ConfigurationManager::applyClientIP();
+    }
+    else
+    if (m_paramsCount == 5 && t_strcmp(m_params[1], CharIterator(FSTR("ap"))) == 0)
+    {
+        // set Access Point static IP
+        APtr<char> strIP( t_strdup(m_params[2]) );
+        APtr<char> strMSK( t_strdup(m_params[3]) );
+        APtr<char> strGTY( t_strdup(m_params[4]) );
+        ConfigurationManager::setAccessPointIPParams(strIP.get(), strMSK.get(), strGTY.get());
+        ConfigurationManager::applyAccessPointIP();
+    }        
+    else
+    if (m_paramsCount == 4 && t_strcmp(m_params[1], CharIterator(FSTR("dns"))) == 0)
+    {
+        // set DNS1 and DNS2
+        APtr<char> strDNS1( t_strdup(m_params[2]) );
+        APtr<char> strDNS2( t_strdup(m_params[3]) );
+        ConfigurationManager::setDNSParams(IPAddress(strDNS1.get()), IPAddress(strDNS2.get()));
+        ConfigurationManager::applyDNS();
+    }        
+    else
     {
         // show info
-        m_serial->writeNewLine();
         for (int32_t i = 0; i < 2; ++i)
         {
             m_serial->printf(i == 0? FSTR("Client Network:\r\n") : FSTR("Access Point Network:\r\n"));
@@ -283,7 +337,7 @@ void MTD_FLASHMEM SerialConsole::cmd_ifconfig()
 	
 void MTD_FLASHMEM SerialConsole::cmd_iwlist()
 {
-    m_serial->printf(FSTR("\r\nCells found:\r\n"));
+    m_serial->printf(FSTR("Cells found:\r\n"));
     uint32_t count = 0;
     bool scan = (m_paramsCount == 2 && t_strcmp(m_params[1], CharIterator(FSTR("scan"))) == 0);
     WiFi::APInfo* infos = WiFi::getAPList(&count, scan);
