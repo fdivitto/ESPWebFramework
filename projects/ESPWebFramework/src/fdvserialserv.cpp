@@ -40,6 +40,43 @@ namespace fdv
 #if (FDV_INCLUDE_SERIALCONSOLE == 1)
 
 
+typedef void (SerialConsole::*Handler)();
+
+struct Cmd
+{
+    char const* cmd;
+    char const* syntax;
+    char const* description;
+    Handler     handler;
+};
+
+
+Cmd const* cmdInfo(uint32_t i)
+{
+    static const Cmd cmds[] =
+    {
+        {FSTR("help"),	     FSTR("[COMMAND]"), FSTR("Show help"), &SerialConsole::cmd_help},
+        {FSTR("reboot"),	 FSTR("[MS]"), FSTR("Restart system in [MS] milliseconds"), &SerialConsole::cmd_reboot},
+        {FSTR("restore"),	 FSTR(""), FSTR("Erase Flash stored settings"), &SerialConsole::cmd_restore},
+        {FSTR("free"),       FSTR(""), FSTR("Display amount of free and used memory"), &SerialConsole::cmd_free},
+        {FSTR("ifconfig"),   FSTR("[static IP NETMASK GATEWAY]"), FSTR("Display or set network info"), &SerialConsole::cmd_ifconfig},
+        {FSTR("iwlist"),     FSTR("[SCAN]"), FSTR("Display or scan for available wireless networks"), &SerialConsole::cmd_iwlist},
+        {FSTR("date"),       FSTR(""), FSTR("Display current date/time"), &SerialConsole::cmd_date},
+        {FSTR("ntpdate"),    FSTR(""), FSTR("Display date/time from NTP server"), &SerialConsole::cmd_ntpdate},
+        {FSTR("nslookup"),   FSTR("NAME"), FSTR("Query DNS"), &SerialConsole::cmd_nslookup},    
+        {FSTR("uptime"),     FSTR(""), FSTR("Display how long the system has been running"), &SerialConsole::cmd_uptime},
+        //{FSTR("test"),       FSTR(""), FSTR(""), &SerialConsole::cmd_test},
+    };
+    static uint32_t const cmdCount = sizeof(cmds) / sizeof(Cmd);
+    if (i < cmdCount)
+        return &cmds[i];
+    else
+        return NULL;
+}
+    
+
+
+    
 void MTD_FLASHMEM SerialConsole::exec()
 {
     m_serial = HardwareSerial::getSerial(0);
@@ -106,36 +143,14 @@ void MTD_FLASHMEM SerialConsole::separateParameters()
 
 
 void MTD_FLASHMEM SerialConsole::routeCommand()
-{
-    typedef void (SerialConsole::*Handler)();
-    struct Cmd
-    {
-        char const* cmd;
-        Handler     handler;
-    };
-    static const Cmd cmds[] =
-    {
-        {FSTR("help"),	     &SerialConsole::cmd_help},
-        {FSTR("reboot"),	 &SerialConsole::cmd_reboot},
-        {FSTR("restore"),	 &SerialConsole::cmd_restore},
-        {FSTR("free"),       &SerialConsole::cmd_free},
-        {FSTR("ifconfig"),   &SerialConsole::cmd_ifconfig},
-        {FSTR("iwlist"),     &SerialConsole::cmd_iwlist},
-        {FSTR("date"),       &SerialConsole::cmd_date},
-        {FSTR("ntpdate"),    &SerialConsole::cmd_ntpdate},
-        {FSTR("nslookup"),   &SerialConsole::cmd_nslookup},
-        {FSTR("test"),       &SerialConsole::cmd_test},
-        {FSTR("uptime"),     &SerialConsole::cmd_uptime},
-    };
-    static uint32_t const cmdCount = sizeof(cmds) / sizeof(Cmd);
-    
+{    
     if (m_paramsCount > 0)
     {
-        for (uint32_t i = 0; i != cmdCount; ++i)
+        for (uint32_t i = 0; cmdInfo(i); ++i)
         {
-            if (t_strcmp(m_params[0], CharIterator(cmds[i].cmd)) == 0)
+            if (t_strcmp(m_params[0], CharIterator(cmdInfo(i)->cmd)) == 0)
             {
-                (this->*cmds[i].handler)();
+                (this->*(cmdInfo(i)->handler))();
                 return;
             }
         }
@@ -146,17 +161,22 @@ void MTD_FLASHMEM SerialConsole::routeCommand()
 
 void MTD_FLASHMEM SerialConsole::cmd_help()
 {
-    m_serial->writeln(FSTR("\r\nESP Console"));
-    m_serial->writeln(FSTR("help          : Show this help"));
-    m_serial->writeln(FSTR("reboot [ms]   : Restart system in [ms] milliseconds"));
-    m_serial->writeln(FSTR("restore       : Erase Flash stored settings"));
-    m_serial->writeln(FSTR("free          : Display amount of free and used memory"));
-    m_serial->writeln(FSTR("ifconfig      : Display network info"));
-    m_serial->writeln(FSTR("iwlist [scan] : Display or scan for available wireless networks"));
-    m_serial->writeln(FSTR("date          : Display current date/time"));
-    m_serial->writeln(FSTR("ntpdate       : Display date/time from NTP server"));
-    m_serial->writeln(FSTR("nslookup NAME : Query DNS"));
-    m_serial->writeln(FSTR("uptime        : Display how long the system has been running"));
+    if (m_paramsCount == 1)
+    {
+        m_serial->writeln(FSTR("\r\nCommands:"));
+        for (uint32_t i = 0; cmdInfo(i); ++i)
+            m_serial->printf(FSTR("\t%s %s\r\n"), cmdInfo(i)->cmd, cmdInfo(i)->syntax);
+    }
+    else if (m_paramsCount == 2)
+    {
+        for (uint32_t i = 0; cmdInfo(i); ++i)
+            if (t_strcmp(m_params[1], CharIterator(cmdInfo(i)->cmd)) == 0)
+            {
+                m_serial->printf(FSTR("Syntax:\r\n\t%s %s\r\n"), cmdInfo(i)->cmd, cmdInfo(i)->syntax);
+                m_serial->printf(FSTR("Description:\r\n\t%s\r\n"), cmdInfo(i)->description);
+                break;
+            }
+    }
 }
 
 
@@ -200,51 +220,64 @@ void MTD_FLASHMEM SerialConsole::cmd_free()
 
 void MTD_FLASHMEM SerialConsole::cmd_ifconfig()
 {
-    m_serial->writeNewLine();
-    for (int32_t i = 0; i < 2; ++i)
+    if (m_paramsCount == 5 && t_strcmp(m_params[1], CharIterator(FSTR("static"))) == 0)
     {
-        m_serial->printf(i == 0? FSTR("Client Network:\r\n") : FSTR("Access Point Network:\r\n"));
-        uint8_t mac[6];
-        WiFi::getMACAddress((WiFi::Network)i, mac);
-        m_serial->printf(FSTR("   ether %02x:%02x:%02x:%02x:%02x:%02x\r\n"), mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-        uint8_t IP[4];
-        uint8_t netmask[4];
-        uint8_t gateway[4];
-        IP::getIPInfo((WiFi::Network)i, IP, netmask, gateway);
-        m_serial->printf(FSTR("   inet %d.%d.%d.%d netmask %d.%d.%d.%d gateway %d.%d.%d.%d\r\n"), 
-                         IP[0], IP[1], IP[2], IP[3],
-                         netmask[0], netmask[1], netmask[2], netmask[3],
-                         gateway[0], gateway[1], gateway[2], gateway[3]);
-        if (i == 0)
-        {
-            // In client mode show status
-            char const* connectionStatus = FSTR("");
-            switch (WiFi::getClientConnectionStatus())
-            {
-                case WiFi::ClientConnectionStatus_Idle:
-                    connectionStatus = FSTR("Idle");
-                    break;
-                case WiFi::ClientConnectionStatus_Connecting:
-                    connectionStatus = FSTR("Connecting");
-                    break;
-                case WiFi::ClientConnectionStatus_WrongPassword:
-                    connectionStatus = FSTR("Wrong Password");
-                    break;
-                case WiFi::ClientConnectionStatus_NoAPFound:
-                    connectionStatus = FSTR("No AP Found");
-                    break;
-                case WiFi::ClientConnectionStatus_Fail:
-                    connectionStatus = FSTR("Fail");
-                    break;
-                case WiFi::ClientConnectionStatus_GotIP:
-                    connectionStatus = FSTR("Connected");
-                    break;
-            }
-            m_serial->printf(FSTR("   status <%s>\r\n"), connectionStatus);
-        }
+        // set static IP
+        APtr<char> strIP( t_strdup(m_params[2]) );
+        APtr<char> strMSK( t_strdup(m_params[3]) );
+        APtr<char> strGTY( t_strdup(m_params[4]) );
+        ConfigurationManager::setClientIPParams(true, strIP.get(), strMSK.get(), strGTY.get());
+        ConfigurationManager::applyClientIP();
     }
-    m_serial->printf(FSTR("DNS1 %s DNS2 %s\r\n"), (char const*)NSLookup::getDNSServer(0).get_str(), 
-                                                  (char const*)NSLookup::getDNSServer(1).get_str());
+    else
+    {
+        // show info
+        m_serial->writeNewLine();
+        for (int32_t i = 0; i < 2; ++i)
+        {
+            m_serial->printf(i == 0? FSTR("Client Network:\r\n") : FSTR("Access Point Network:\r\n"));
+            uint8_t mac[6];
+            WiFi::getMACAddress((WiFi::Network)i, mac);
+            m_serial->printf(FSTR("   ether %02x:%02x:%02x:%02x:%02x:%02x\r\n"), mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+            uint8_t IP[4];
+            uint8_t netmask[4];
+            uint8_t gateway[4];
+            IP::getIPInfo((WiFi::Network)i, IP, netmask, gateway);
+            m_serial->printf(FSTR("   inet %d.%d.%d.%d netmask %d.%d.%d.%d gateway %d.%d.%d.%d\r\n"), 
+                             IP[0], IP[1], IP[2], IP[3],
+                             netmask[0], netmask[1], netmask[2], netmask[3],
+                             gateway[0], gateway[1], gateway[2], gateway[3]);
+            if (i == 0)
+            {
+                // In client mode show status
+                char const* connectionStatus = FSTR("");
+                switch (WiFi::getClientConnectionStatus())
+                {
+                    case WiFi::ClientConnectionStatus_Idle:
+                        connectionStatus = FSTR("Idle");
+                        break;
+                    case WiFi::ClientConnectionStatus_Connecting:
+                        connectionStatus = FSTR("Connecting");
+                        break;
+                    case WiFi::ClientConnectionStatus_WrongPassword:
+                        connectionStatus = FSTR("Wrong Password");
+                        break;
+                    case WiFi::ClientConnectionStatus_NoAPFound:
+                        connectionStatus = FSTR("No AP Found");
+                        break;
+                    case WiFi::ClientConnectionStatus_Fail:
+                        connectionStatus = FSTR("Fail");
+                        break;
+                    case WiFi::ClientConnectionStatus_GotIP:
+                        connectionStatus = FSTR("Connected");
+                        break;
+                }
+                m_serial->printf(FSTR("   status <%s>\r\n"), connectionStatus);
+            }
+        }
+        m_serial->printf(FSTR("DNS1 %s DNS2 %s\r\n"), (char const*)NSLookup::getDNSServer(0).get_str(), 
+                                                      (char const*)NSLookup::getDNSServer(1).get_str());
+    }
 }
 
 	
