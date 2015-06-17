@@ -112,8 +112,7 @@ struct LinkedCharChunks
 	LinkedCharChunks(LinkedCharChunks& c)
 		: m_chunks(NULL), m_current(NULL)
 	{
-		clear();
-		addChunks(&c);
+        *this = c;
 	}
 	
 	
@@ -134,6 +133,7 @@ struct LinkedCharChunks
 	CharChunksIterator getIterator();
 	uint32_t getItemsCount();
 	void dump();
+    void operator=(LinkedCharChunks& c);
 
 private:
 	CharChunk* m_chunks;

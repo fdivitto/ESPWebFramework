@@ -562,6 +562,15 @@ namespace fdv
 	//////////////////////////////////////////////////////////////////////
 	// HTTPResponse
 	
+    MTD_FLASHMEM HTTPResponse::HTTPResponse(HTTPHandler* httpHandler, char const* status, char const* content)
+        : m_httpHandler(httpHandler), m_status(status)
+    {
+        // content (if present, otherwise use addContent())
+        if (content)
+            addContent(content);
+    }
+    
+    
     HTTPHandler::Request& MTD_FLASHMEM HTTPResponse::getRequest()
     {
         return m_httpHandler->getRequest();
@@ -634,6 +643,13 @@ namespace fdv
 	// ParameterReplacer
 
 	
+    MTD_FLASHMEM ParameterReplacer::ParameterReplacer(char const* strStart, char const* strEnd, Params* params)
+        : m_params(params), m_strStart(strStart), m_strEnd(strEnd)
+    {
+        processInput();
+    }
+    
+    
 	void MTD_FLASHMEM ParameterReplacer::processInput()
 	{
 		char const* curc  = m_strStart;
@@ -737,6 +753,12 @@ namespace fdv
 	//////////////////////////////////////////////////////////////////////
 	// HTTPTemplateResponse
 
+    
+    MTD_FLASHMEM HTTPTemplateResponse::HTTPTemplateResponse(HTTPHandler* httpHandler, char const* filename)
+        : HTTPResponse(httpHandler, NULL), m_filename(filename)
+    {			
+    }
+    
 
     void MTD_FLASHMEM HTTPTemplateResponse::addParamStr(char const* key, char const* value)
     {
@@ -847,6 +869,18 @@ namespace fdv
 	//////////////////////////////////////////////////////////////////////
 	// UDPClient
     
+    MTD_FLASHMEM UDPClient::UDPClient(IPAddress remoteAddress, uint16_t remotePort)
+    {
+        init(remoteAddress, remotePort);
+    }
+    
+    
+    MTD_FLASHMEM UDPClient::~UDPClient()
+    {
+        m_socket.close();
+    }
+    
+    
     void MTD_FLASHMEM UDPClient::init(IPAddress remoteAddress, uint16_t remotePort)
     {
         m_socket = lwip_socket(PF_INET, SOCK_DGRAM, 0);
@@ -875,7 +909,7 @@ namespace fdv
     // SNTPClient
 
     // serverIP is a uint8_t[4] IP address or NULL
-    SNTPClient::SNTPClient(IPAddress serverIP, uint16_t port)
+    MTD_FLASHMEM SNTPClient::SNTPClient(IPAddress serverIP, uint16_t port)
         : m_server(serverIP), m_port(port)
     {
     }

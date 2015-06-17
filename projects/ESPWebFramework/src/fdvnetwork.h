@@ -367,15 +367,9 @@ namespace fdv
     class UDPClient
     {
     public:
-        UDPClient(IPAddress remoteAddress, uint16_t remotePort)
-        {
-            init(remoteAddress, remotePort);
-        }
+        UDPClient(IPAddress remoteAddress, uint16_t remotePort);
         
-        ~UDPClient()
-        {
-            m_socket.close();
-        }
+        ~UDPClient();
         
         Socket* MTD_FLASHMEM getSocket()
         {
@@ -772,13 +766,7 @@ namespace fdv
 		typedef IterDict<CharIterator, CharIterator> Fields;
 	
 	
-		HTTPResponse(HTTPHandler* httpHandler, char const* status, char const* content = NULL)
-			: m_httpHandler(httpHandler), m_status(status)
-		{
-			// content (if present, otherwise use addContent())
-			if (content)
-				addContent(content);
-		}
+		HTTPResponse(HTTPHandler* httpHandler, char const* status, char const* content = NULL);
 		
 		HTTPHandler* MTD_FLASHMEM getHttpHandler()
 		{
@@ -822,6 +810,7 @@ namespace fdv
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	// HTTPStaticFileResponse
+    
 	struct HTTPStaticFileResponse : public HTTPResponse
 	{
 		template <typename Iterator>
@@ -869,11 +858,7 @@ namespace fdv
 	{
 		typedef ObjectDict<LinkedCharChunks> Params;
 		
-		ParameterReplacer(char const* strStart, char const* strEnd, Params* params)
-			: m_params(params), m_strStart(strStart), m_strEnd(strEnd)
-		{
-			processInput();
-		}
+		ParameterReplacer(char const* strStart, char const* strEnd, Params* params);
 		
 		LinkedCharChunks* MTD_FLASHMEM getResult()
 		{
@@ -947,10 +932,7 @@ namespace fdv
 	{
 		typedef ObjectDict<LinkedCharChunks> Params;
 
-		HTTPTemplateResponse(HTTPHandler* httpHandler, char const* filename)
-			: HTTPResponse(httpHandler, NULL), m_filename(filename)
-		{			
-		}
+		HTTPTemplateResponse(HTTPHandler* httpHandler, char const* filename);
 		
 		void MTD_FLASHMEM setFilename(char const* filename)
 		{

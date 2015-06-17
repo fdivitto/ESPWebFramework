@@ -280,14 +280,8 @@ namespace fdv
 				: valid(true), ID(ID_), command(command_), dataSize(dataSize_), data(dataSize_? new uint8_t[dataSize_] : NULL)
 			{
 			}
-			void MTD_FLASHMEM freeData()
-			{
-				if (data != NULL)
-				{
-					delete[] data;
-					data = NULL;
-				}
-			}
+            
+			void MTD_FLASHMEM freeData();
 		};
 		
 

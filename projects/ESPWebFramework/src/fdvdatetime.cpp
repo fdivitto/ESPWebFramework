@@ -38,7 +38,7 @@ namespace fdv
 
     
     // a local copy of defaultNTPServer string is perfomed
-    void DateTime::setDefaults(int8_t timezoneHours, uint8_t timezoneMinutes, char const* defaultNTPServer)
+    void MTD_FLASHMEM DateTime::setDefaults(int8_t timezoneHours, uint8_t timezoneMinutes, char const* defaultNTPServer)
     {
         s_defaultNTPServer       = NSLookup::lookup(defaultNTPServer);
         s_defaultTimezoneHours   = timezoneHours;
@@ -51,7 +51,7 @@ namespace fdv
     }
     
     
-    void DateTime::setCurrentDateTime(DateTime const& dateTime)
+    void MTD_FLASHMEM DateTime::setCurrentDateTime(DateTime const& dateTime)
     {
         lastDateTime() = dateTime;
         lastMillis()   = millis();
