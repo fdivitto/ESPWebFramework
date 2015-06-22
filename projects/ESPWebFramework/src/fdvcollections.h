@@ -37,28 +37,90 @@ namespace fdv
 /////////////////////////////////////////////////////////////////////////
 // CharChunk
 
-struct CharChunk
+
+struct CharChunkBase
 {
-	CharChunk* next;
-	uint32_t   items;
-	uint32_t   capacity;
-	char*      data;
-	bool       freeOnDestroy;	// free "data" on destroy
-	
-	CharChunk(uint32_t capacity_)
-		: next(NULL), items(0), capacity(capacity_), data(new char[capacity_]), freeOnDestroy(true)
-	{
-	}
-	CharChunk(char* data_, uint32_t items_, bool freeOnDestroy_)
-		: next(NULL), items(items_), capacity(items_), data(data_), freeOnDestroy(freeOnDestroy_)
-	{
-	}
-	~CharChunk()
-	{
-		if (freeOnDestroy)
-			delete[] data;
-	}
+    CharChunkBase* next;
+    char*          data;
+    uint8_t        type;    // refers to ::TYPE value in inherited classes
+    
+    CharChunkBase(CharChunkBase* next_, char* data_, uint8_t type_)
+        : next(next_), data(data_), type(type_)
+    {
+    }
+    
+    uint32_t getItems();
+    void setItems(uint32_t value);
+    uint32_t getCapacity();
+} __attribute__((packed));
+
+
+template <uint8_t TYPE_V, typename SIZE_T>
+struct CharChunkReference : public CharChunkBase
+{
+    static uint8_t const TYPE = TYPE_V;
+    
+    SIZE_T items;
+        
+    CharChunkReference(char* data_, SIZE_T items_)
+        : CharChunkBase(NULL, data_, TYPE), items(items_)
+    {
+    }
+} __attribute__((packed));
+
+
+typedef CharChunkReference<0, uint8_t>  CharChunkReference8;
+typedef CharChunkReference<1, uint16_t> CharChunkReference16;
+typedef CharChunkReference<2, uint32_t> CharChunkReference32;
+
+
+template <uint8_t TYPE_V, typename SIZE_T>
+struct CharChunkOwn : public CharChunkReference<TYPE_V, SIZE_T>
+{
+    CharChunkOwn(char* data_, SIZE_T items_)
+        : CharChunkReference<TYPE_V, SIZE_T>(data_, items_)
+    {
+    }
+    
+    ~CharChunkOwn()
+    {
+        delete[] CharChunkBase::data;
+    }
+} __attribute__((packed));
+
+
+typedef CharChunkOwn<3, uint8_t>  CharChunkOwn8;
+typedef CharChunkOwn<4, uint16_t> CharChunkOwn16;
+typedef CharChunkOwn<5, uint32_t> CharChunkOwn32;
+    
+
+template <uint8_t TYPE_V, typename SIZE_T>
+struct CharChunkAllocated : public CharChunkOwn<TYPE_V, SIZE_T>
+{
+    SIZE_T capacity;
+    
+    CharChunkAllocated(SIZE_T capacity_)
+        : CharChunkOwn<TYPE_V, SIZE_T>(new char[capacity_], 0), capacity(capacity_)
+    {
+    }
+} __attribute__((packed));
+
+
+typedef CharChunkAllocated<6, uint8_t> CharChunkAllocated8;
+typedef CharChunkAllocated<7, uint8_t> CharChunkAllocated16;
+typedef CharChunkAllocated<8, uint8_t> CharChunkAllocated32;
+
+
+struct CharChunkFactory
+{
+    static CharChunkBase* createCharChunkReference(char* data, uint32_t items);
+    static CharChunkBase* createCharChunkOwn(char* data, uint32_t items);
+    static CharChunkBase* createCharChunkAllocated(uint32_t capacity);
+    
+    // this to avoid virtual destructors usage
+    static void deleteCharChunk(CharChunkBase* chunk);
 };
+    
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -67,7 +129,7 @@ struct CharChunk
 
 struct CharChunksIterator
 {
-	CharChunksIterator(CharChunk* chunk = NULL)
+	CharChunksIterator(CharChunkBase* chunk = NULL)
 		: m_chunk(chunk), m_pos(0), m_absPos(0)
 	{
 	}
@@ -87,9 +149,9 @@ private:
 	void next();
 
 private:
-	CharChunk* m_chunk;
-	uint32_t   m_pos;  	   // position inside this chunk
-	uint32_t   m_absPos;   // absolute position (starting from beginning of LinkedCharChunks)
+	CharChunkBase* m_chunk;
+	uint32_t       m_pos;  	   // position inside this chunk
+	uint32_t       m_absPos;   // absolute position (starting from beginning of LinkedCharChunks)
 };
 
 
@@ -97,7 +159,7 @@ private:
 /////////////////////////////////////////////////////////////////////////
 // LinkedCharChunks
 //
-// Warn: copy constructor copies only pointers. Should not used when with heap or stack buffers.
+// Warn: copy constructor copies only pointers. Should not used with heap or stack buffers.
 
 struct LinkedCharChunks
 {	
@@ -123,21 +185,21 @@ struct LinkedCharChunks
 	
 	
 	void clear();
-	CharChunk* addChunk(uint32_t capacity);
-	CharChunk* addChunk(char* data, uint32_t items, bool freeOnDestroy);
-	CharChunk* addChunk(char const* data, uint32_t items, bool freeOnDestroy);
+	CharChunkBase* addChunk(uint32_t capacity);
+	CharChunkBase* addChunk(char* data, uint32_t items, bool freeOnDestroy);
+	CharChunkBase* addChunk(char const* data, uint32_t items, bool freeOnDestroy);
 	void addChunk(char const* str, bool freeOnDestroy = false);
 	void addChunks(LinkedCharChunks* src);
 	void append(char value, uint32_t newChunkSize = 1);
-	CharChunk* getFirstChunk();
+	CharChunkBase* getFirstChunk();
 	CharChunksIterator getIterator();
 	uint32_t getItemsCount();
 	void dump();
     void operator=(LinkedCharChunks& c);
 
 private:
-	CharChunk* m_chunks;
-	CharChunk* m_current;
+	CharChunkBase* m_chunks;
+	CharChunkBase* m_current;
 };
 
 

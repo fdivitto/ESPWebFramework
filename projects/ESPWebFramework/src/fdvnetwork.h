@@ -552,8 +552,8 @@ namespace fdv
 		{			
 			while (getSocket()->isConnected())
 			{
-				CharChunk* chunk = m_receivedData.addChunk(CHUNK_CAPACITY);
-				chunk->items = getSocket()->read(chunk->data, CHUNK_CAPACITY);
+				CharChunkBase* chunk = m_receivedData.addChunk(CHUNK_CAPACITY);
+				chunk->setItems(getSocket()->read(chunk->data, CHUNK_CAPACITY));
 				if (processRequest())
 					break;
 			}
@@ -623,9 +623,9 @@ namespace fdv
 					int32_t missingBytes = headerEnd.getPosition() + contentLength - m_receivedData.getItemsCount();
 					while (getSocket()->isConnected() && missingBytes > 0)
 					{
-						CharChunk* chunk = m_receivedData.addChunk(missingBytes);
-						chunk->items = getSocket()->read(chunk->data, missingBytes);		
-						missingBytes -= chunk->items;
+						CharChunkBase* chunk = m_receivedData.addChunk(missingBytes);
+						chunk->setItems(getSocket()->read(chunk->data, missingBytes));
+						missingBytes -= chunk->getItems();
 					}
 					m_receivedData.append(0);	// add additional terminating "0"
 					// check content type

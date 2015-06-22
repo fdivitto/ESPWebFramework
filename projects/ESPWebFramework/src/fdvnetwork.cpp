@@ -626,10 +626,10 @@ namespace fdv
         // actual content
         if (m_content.getItemsCount() > 0)
         {				
-            CharChunk* chunk = m_content.getFirstChunk();
+            CharChunkBase* chunk = m_content.getFirstChunk();
             while (chunk)
             {
-                m_httpHandler->getSocket()->write((uint8_t const*)chunk->data, chunk->items);
+                m_httpHandler->getSocket()->write((uint8_t const*)chunk->data, chunk->getItems());
                 chunk = chunk->next;
             }
             m_content.clear();

@@ -32,6 +32,152 @@ namespace fdv
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
+// CharChunkBase
+
+uint32_t MTD_FLASHMEM CharChunkBase::getItems()
+{
+    switch (type)
+    {
+        case CharChunkReference8::TYPE:
+            return static_cast<CharChunkReference8*>(this)->items;
+        case CharChunkReference16::TYPE:
+            return static_cast<CharChunkReference16*>(this)->items;
+        case CharChunkReference32::TYPE:
+            return static_cast<CharChunkReference32*>(this)->items;
+        case CharChunkOwn8::TYPE:
+            return static_cast<CharChunkOwn8*>(this)->items;
+        case CharChunkOwn16::TYPE:
+            return static_cast<CharChunkOwn16*>(this)->items;
+        case CharChunkOwn32::TYPE:
+            return static_cast<CharChunkOwn32*>(this)->items;
+        case CharChunkAllocated8::TYPE:
+            return static_cast<CharChunkAllocated8*>(this)->items;
+        case CharChunkAllocated16::TYPE:
+            return static_cast<CharChunkAllocated16*>(this)->items;
+        case CharChunkAllocated32::TYPE:
+            return static_cast<CharChunkAllocated32*>(this)->items;
+    }
+}
+
+
+void MTD_FLASHMEM CharChunkBase::setItems(uint32_t value)
+{
+    switch (type)
+    {
+        case CharChunkAllocated8::TYPE:
+            static_cast<CharChunkAllocated8*>(this)->items = value;
+            break;
+        case CharChunkAllocated16::TYPE:
+            static_cast<CharChunkAllocated16*>(this)->items = value;
+            break;
+        case CharChunkAllocated32::TYPE:
+            static_cast<CharChunkAllocated32*>(this)->items = value;
+            break;
+    }
+}
+
+
+uint32_t MTD_FLASHMEM CharChunkBase::getCapacity()
+{
+    switch (type)
+    {
+        case CharChunkReference8::TYPE:
+            return static_cast<CharChunkReference8*>(this)->items;
+        case CharChunkReference16::TYPE:
+            return static_cast<CharChunkReference16*>(this)->items;
+        case CharChunkReference32::TYPE:
+            return static_cast<CharChunkReference32*>(this)->items;
+        case CharChunkOwn8::TYPE:
+            return static_cast<CharChunkOwn8*>(this)->items;
+        case CharChunkOwn16::TYPE:
+            return static_cast<CharChunkOwn16*>(this)->items;
+        case CharChunkOwn32::TYPE:
+            return static_cast<CharChunkOwn32*>(this)->items;
+        case CharChunkAllocated8::TYPE:
+            return static_cast<CharChunkAllocated8*>(this)->capacity;
+        case CharChunkAllocated16::TYPE:
+            return static_cast<CharChunkAllocated16*>(this)->capacity;
+        case CharChunkAllocated32::TYPE:
+            return static_cast<CharChunkAllocated32*>(this)->capacity;
+    }
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// CharChunkFactory
+
+CharChunkBase* MTD_FLASHMEM CharChunkFactory::createCharChunkReference(char* data, uint32_t items)
+{
+    if (items < 256)
+        return new CharChunkReference8(data, items);
+    else if (items < 65536)
+        return new CharChunkReference16(data, items);
+    else
+        return new CharChunkReference32(data, items);
+}
+
+
+CharChunkBase* MTD_FLASHMEM CharChunkFactory::createCharChunkOwn(char* data, uint32_t items)
+{
+    if (items < 256)
+        return new CharChunkOwn8(data, items);
+    else if (items < 65536)
+        return new CharChunkOwn16(data, items);
+    else
+        return new CharChunkOwn32(data, items);
+}
+
+
+CharChunkBase* MTD_FLASHMEM CharChunkFactory::createCharChunkAllocated(uint32_t capacity)
+{
+    if (capacity < 256)
+        return new CharChunkAllocated8(capacity);
+    else if (capacity < 65536)
+        return new CharChunkAllocated16(capacity);
+    else
+        return new CharChunkAllocated32(capacity);
+}
+
+
+void MTD_FLASHMEM CharChunkFactory::deleteCharChunk(CharChunkBase* chunk)
+{
+    switch (chunk->type)
+    {
+        case CharChunkReference8::TYPE:
+            delete static_cast<CharChunkReference8*>(chunk);
+            break;
+        case CharChunkReference16::TYPE:
+            delete static_cast<CharChunkReference16*>(chunk);
+            break;
+        case CharChunkReference32::TYPE:
+            delete static_cast<CharChunkReference32*>(chunk);
+            break;
+        case CharChunkOwn8::TYPE:
+            delete static_cast<CharChunkOwn8*>(chunk);
+            break;
+        case CharChunkOwn16::TYPE:
+            delete static_cast<CharChunkOwn16*>(chunk);
+            break;
+        case CharChunkOwn32::TYPE:
+            delete static_cast<CharChunkOwn32*>(chunk);
+            break;
+        case CharChunkAllocated8::TYPE:
+            delete static_cast<CharChunkAllocated8*>(chunk);
+            break;
+        case CharChunkAllocated16::TYPE:
+            delete static_cast<CharChunkAllocated16*>(chunk);
+            break;
+        case CharChunkAllocated32::TYPE:
+            delete static_cast<CharChunkAllocated32*>(chunk);
+            break;
+    }
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 // CharChunksIterator
 
 char& MTD_FLASHMEM CharChunksIterator::operator*()
@@ -92,7 +238,7 @@ uint32_t MTD_FLASHMEM CharChunksIterator::getPosition()
 
 bool MTD_FLASHMEM CharChunksIterator::isLast()
 {
-	return m_chunk->next == NULL && m_pos + 1 >= m_chunk->items;
+	return m_chunk->next == NULL && m_pos + 1 >= m_chunk->getItems();
 }
 
 bool MTD_FLASHMEM CharChunksIterator::isValid()
@@ -104,7 +250,7 @@ void MTD_FLASHMEM CharChunksIterator::next()
 {
 	++m_absPos;
 	++m_pos;
-	if (m_pos == m_chunk->items)
+	if (m_pos == m_chunk->getItems())
 	{
 		m_pos = 0;
 		m_chunk = m_chunk->next;
@@ -121,20 +267,20 @@ void MTD_FLASHMEM CharChunksIterator::next()
 
 void MTD_FLASHMEM LinkedCharChunks::clear()
 {
-	CharChunk* chunk = m_chunks;
+	CharChunkBase* chunk = m_chunks;
 	while (chunk)
 	{
-		CharChunk* next = chunk->next;
-		delete chunk;
+		CharChunkBase* next = chunk->next;
+		CharChunkFactory::deleteCharChunk(chunk);
 		chunk = next;
 	}
 	m_chunks = m_current = NULL;
 }
 
 
-CharChunk* MTD_FLASHMEM LinkedCharChunks::addChunk(uint32_t capacity)
+CharChunkBase* MTD_FLASHMEM LinkedCharChunks::addChunk(uint32_t capacity)
 {
-	CharChunk* newChunk = new CharChunk(capacity);
+	CharChunkBase* newChunk = CharChunkFactory::createCharChunkAllocated(capacity);    
 	if (m_chunks == NULL)
 		m_current = m_chunks = newChunk;
 	else
@@ -143,9 +289,9 @@ CharChunk* MTD_FLASHMEM LinkedCharChunks::addChunk(uint32_t capacity)
 }
 
 
-CharChunk* MTD_FLASHMEM LinkedCharChunks::addChunk(char* data, uint32_t items, bool freeOnDestroy)
+CharChunkBase* MTD_FLASHMEM LinkedCharChunks::addChunk(char* data, uint32_t items, bool freeOnDestroy)
 {
-	CharChunk* newChunk = new CharChunk(data, items, freeOnDestroy);
+	CharChunkBase* newChunk = freeOnDestroy? CharChunkFactory::createCharChunkOwn(data, items) : CharChunkFactory::createCharChunkReference(data, items);
 	if (m_chunks == NULL)
 		m_current = m_chunks = newChunk;
 	else
@@ -155,7 +301,7 @@ CharChunk* MTD_FLASHMEM LinkedCharChunks::addChunk(char* data, uint32_t items, b
 
 
 // const to non const cast
-CharChunk* MTD_FLASHMEM LinkedCharChunks::addChunk(char const* data, uint32_t items, bool freeOnDestroy)
+CharChunkBase* MTD_FLASHMEM LinkedCharChunks::addChunk(char const* data, uint32_t items, bool freeOnDestroy)
 {
 	return addChunk((char*)data, items, freeOnDestroy);
 }
@@ -169,35 +315,38 @@ void MTD_FLASHMEM LinkedCharChunks::addChunk(char const* str, bool freeOnDestroy
 
 // adds all chunks of src
 // Only data pointers are copied and they will be not freed
+// todo: copy only the entire LinkedCharChunks instead of single items!!
 void MTD_FLASHMEM LinkedCharChunks::addChunks(LinkedCharChunks* src)
 {
-	CharChunk* srcChunk = src->m_chunks;
+	CharChunkBase* srcChunk = src->m_chunks;
 	while (srcChunk)
 	{
-		addChunk(srcChunk->data, srcChunk->items, false);
+		addChunk(srcChunk->data, srcChunk->getItems(), false);
 		srcChunk = srcChunk->next;
 	}
 }
 
 
 void MTD_FLASHMEM LinkedCharChunks::append(char value, uint32_t newChunkSize)
-{
-	if (m_current && m_current->items < m_current->capacity)
+{    
+	if (m_current && m_current->getItems() < m_current->getCapacity())
 	{
 		// can use current chunk
-		m_current->data[m_current->items++] = value;
+        uint32_t items = m_current->getItems();
+		m_current->data[items++] = value;
+        m_current->setItems(items);
 	}
 	else
 	{
 		// need another chunk
-		CharChunk* chunk = addChunk(newChunkSize);
+		CharChunkBase* chunk = addChunk(newChunkSize);
 		chunk->data[0] = value;
-		chunk->items = 1;
+		chunk->setItems(1);
 	}
 }
 
 
-CharChunk* MTD_FLASHMEM LinkedCharChunks::getFirstChunk()
+CharChunkBase* MTD_FLASHMEM LinkedCharChunks::getFirstChunk()
 {
 	return m_chunks;
 }
@@ -212,10 +361,10 @@ CharChunksIterator MTD_FLASHMEM LinkedCharChunks::getIterator()
 uint32_t MTD_FLASHMEM LinkedCharChunks::getItemsCount()
 {
 	uint32_t len = 0;
-	CharChunk* chunk = m_chunks;
+	CharChunkBase* chunk = m_chunks;
 	while (chunk)
 	{
-		len += chunk->items;
+		len += chunk->getItems();
 		chunk = chunk->next;
 	}
 	return len;
