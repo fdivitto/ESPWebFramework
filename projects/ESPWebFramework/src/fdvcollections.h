@@ -117,6 +117,43 @@ private:
 };
 
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+// Generic stack based on Vector
+
+template <typename T>
+class Stack
+{
+public:
+    
+    void push(T const& value)
+    {
+        m_data.add(value);
+    }
+    
+    T pop()
+    {
+        uint32_t lastIndex = m_data.size() - 1;
+        T ret = m_data[lastIndex];
+        m_data.remove(lastIndex);
+        return ret;
+    }
+    
+    uint32_t size()
+    {
+        return m_data.size();
+    }
+    
+    void clear()
+    {
+        m_data.clear();
+    }
+    
+private:
+    Vector<T> m_data;
+};
+
+
 
 
 /////////////////////////////////////////////////////////////////////////
