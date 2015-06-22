@@ -453,20 +453,20 @@ namespace fdv
     // ret -1 = error, ret 0 = disconnected
     int32_t MTD_FLASHMEM Socket::write(void const* buffer, uint32_t length)
     {
-        static uint32_t const CHUNKSIZE = 256;
+        static uint32_t const MAXCHUNKSIZE = 128;
         
         int32_t bytesSent = 0;
         if (isStoredInFlash(buffer))
         {
-            // copy from Flash, send in chunks of CHUNKSIZE bytes
-            APtr<uint8_t> rambuf(new uint8_t[length]);
+            // copy from Flash, send in chunks of up to MAXCHUNKSIZE bytes
+            uint8_t rambuf[min(length, MAXCHUNKSIZE)];
             uint8_t const* src = (uint8_t const*)buffer;
             while (bytesSent < length)
             {
-                uint32_t bytesToSend = min(CHUNKSIZE, length - bytesSent);
-                f_memcpy(rambuf.get(), src, bytesToSend);
-                uint32_t chunkBytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, rambuf.get(), bytesToSend, 0) :
-                                                                        lwip_sendto(m_socket, rambuf.get(), bytesToSend, 0, (sockaddr*)&m_remoteAddress, sizeof(m_remoteAddress));
+                uint32_t bytesToSend = min(MAXCHUNKSIZE, length - bytesSent);
+                f_memcpy(rambuf, src, bytesToSend);
+                uint32_t chunkBytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, rambuf, bytesToSend, 0) :
+                                                                        lwip_sendto(m_socket, rambuf, bytesToSend, 0, (sockaddr*)&m_remoteAddress, sizeof(m_remoteAddress));
                 if (chunkBytesSent == 0)
                 {
                     // error
@@ -588,7 +588,7 @@ namespace fdv
     // WARN: data is not copied! Just a pointer is stored
     void MTD_FLASHMEM HTTPResponse::addContent(void const* data, uint32_t length)
     {
-        CharChunk* chunk = m_content.addChunk((char*)data, length, false);
+        m_content.addChunk((char*)data, length, false);
     }
     
     
