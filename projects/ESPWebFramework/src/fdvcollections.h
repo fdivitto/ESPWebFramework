@@ -33,6 +33,92 @@ namespace fdv
 
 
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+// VectorBase
+// A non-template vector
+// Max item size: 65535 bytes
+// Max items: 65535
+
+class VectorBase
+{
+public:
+    VectorBase(uint16_t itemSize);
+    ~VectorBase();
+    void add(void const* item);
+    void insert(uint32_t position, void const* item);
+    void remove(uint32_t position);
+    int32_t indexof(void const* item);
+    void clear();
+    uint32_t size();
+    void* getItem(uint32_t position);
+    
+private:
+    void allocate(uint32_t itemsCount);    
+    
+private:
+    uint16_t m_itemSize;
+    uint16_t m_itemsCount;
+    uint16_t m_itemsAllocated;
+    void*    m_data;
+};
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+// Generic vector based on VectorBase
+
+template <typename T>
+class Vector
+{
+public:
+    Vector()
+        : m_data(sizeof(T))
+    {
+    }
+    
+    void add(T const& value)
+    {
+        m_data.add(&value);
+    }
+    
+    void insert(uint32_t position, T const& value)
+    {
+        m_data.insert(position, &value);
+    }
+    
+    void remove(uint32_t position)
+    {
+        m_data.remove(position);
+    }
+    
+    int32_t indexof(T const& value)
+    {
+        return m_data.indexof(&value);
+    }
+    
+    void clear()
+    {
+        m_data.clear();
+    }
+    
+    uint32_t size()
+    {
+        return m_data.size();
+    }
+    
+    T& operator[](uint32_t position)
+    {
+        return *static_cast<T*>(m_data.getItem(position));
+    }
+    
+private:
+    VectorBase m_data;    
+};
+
+
+
+
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 // CharChunk
@@ -617,6 +703,7 @@ struct FlashFileSystem
 		
 	static bool find(char const* filename, char const** mimetype, void const** data, uint16_t* dataLength);
 };
+
 
 
 

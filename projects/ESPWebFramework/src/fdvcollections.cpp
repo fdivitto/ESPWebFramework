@@ -29,6 +29,92 @@ namespace fdv
 {
 
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+// VectorBase
+
+MTD_FLASHMEM VectorBase::VectorBase(uint16_t itemSize)
+    : m_itemSize(itemSize), m_data(NULL)
+{
+    clear();
+}
+
+
+MTD_FLASHMEM VectorBase::~VectorBase()
+{
+    clear();
+}
+
+
+void MTD_FLASHMEM VectorBase::allocate(uint32_t itemsCount)
+{
+    void* newbuf = Memory::malloc(m_itemSize * itemsCount);
+    if (m_data)
+    {
+        memcpy(newbuf, m_data, m_itemSize * itemsCount);
+        Memory::free(m_data);
+    }
+    m_data = newbuf;
+    m_itemsAllocated = itemsCount;
+}
+
+
+void* MTD_FLASHMEM VectorBase::getItem(uint32_t position)
+{
+    return (uint8_t*)m_data + m_itemSize * position;
+}
+
+
+void MTD_FLASHMEM VectorBase::add(void const* item)
+{
+    insert(m_itemsCount, item);
+}
+
+
+void MTD_FLASHMEM VectorBase::insert(uint32_t position, void const* item)
+{
+    if (m_itemsCount == m_itemsAllocated)
+        allocate(max(1, m_itemsAllocated * 2));
+    memmove(getItem(position + 1), getItem(position), m_itemSize * (m_itemsCount - position));
+    memcpy(getItem(position), item, m_itemSize);
+    ++m_itemsCount;
+}
+
+
+void MTD_FLASHMEM VectorBase::remove(uint32_t position)
+{
+    memmove(getItem(position), getItem(position + 1), m_itemSize);
+    --m_itemsCount;
+}
+
+
+// returns -1 if not found
+int32_t MTD_FLASHMEM VectorBase::indexof(void const* item)
+{
+    for (uint32_t i = 0; i != m_itemsCount; ++i)
+        if (memcmp(item, getItem(i), m_itemSize) == 0)
+            return i;
+    return -1;
+}
+
+
+void MTD_FLASHMEM VectorBase::clear()
+{
+    if (m_data)
+        Memory::free(m_data);
+    m_data = NULL;
+    m_itemsCount = 0;
+    m_itemsAllocated = 0;
+}
+
+
+uint32_t MTD_FLASHMEM VectorBase::size()
+{
+    return m_itemsCount;
+}
+
+
+
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
