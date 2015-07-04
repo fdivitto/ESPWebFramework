@@ -45,7 +45,6 @@ namespace fdv
     SerialBinary*  ConfigurationManager::s_serialBinary  = NULL;
     #endif
 
-    DateTime ConfigurationManager::s_bootTime;
 	
     
     // can be re-applied
@@ -211,7 +210,7 @@ namespace fdv
         char const* defaultNTPServer;
         getDateTimeParams(&timezoneHours, &timezoneMinutes, &defaultNTPServer);
         DateTime::setDefaults(timezoneHours, timezoneMinutes, defaultNTPServer);
-        s_bootTime = DateTime::now();
+        DateTime().now();   // force NTP server sync
     }
 
     
@@ -435,9 +434,24 @@ namespace fdv
     }
     
     
-    DateTime STC_FLASHMEM ConfigurationManager::getBootDateTime()
+    DateTime& STC_FLASHMEM ConfigurationManager::getBootDateTime()
     {
+        static DateTime s_bootTime;
         return s_bootTime;
+    }
+    
+    
+    // outbuf must be at least 22 bytes
+    void STC_FLASHMEM ConfigurationManager::getUpTimeStr(char* outbuf)
+    {
+        int32_t seconds = DateTime::now() - getBootDateTime();
+        uint32_t days = seconds / 86400;
+        seconds %= 86400;
+        uint32_t hours = seconds / 3600;
+        seconds %= 3600;
+        uint32_t minutes = seconds / 60;
+        seconds %= 60;
+        sprintf(outbuf, FSTR("%d days, %02d:%02d:%02d\r\n"), days, hours, minutes, seconds);
     }
     
     

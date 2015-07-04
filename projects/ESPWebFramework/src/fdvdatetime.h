@@ -101,8 +101,8 @@ namespace fdv
         static uint16_t date2days(uint16_t y, uint8_t m, uint8_t d);                
         
         static void syncWithNTPServer();
-        static DateTime& lastSyncDateTime();    // datetime at the time of NTP synchronization
-        static uint32_t& lastSyncMillis();      // millisecs at the time of NTP synchronization
+        static DateTime lastSyncDateTime(bool set = false, DateTime const& value = DateTime());    // datetime at the time of NTP synchronization
+        static uint32_t lastSyncMillis(bool set = false, uint32_t value = 0);      // millisecs at the time of NTP synchronization
 
     };
 

@@ -34,7 +34,7 @@ namespace fdv
     // static members
     int8_t      DateTime::s_defaultTimezoneHours    = 0;
     uint8_t     DateTime::s_defaultTimezoneMinutes  = 0;
-    IPAddress   DateTime::s_defaultNTPServer        = IPAddress(193, 204, 114, 232);    // default is ntp1.inrim.it
+    IPAddress   DateTime::s_defaultNTPServer;   // never initialize (no constructor is called here!)
     bool        DateTime::s_synchingWithNTPServer   = false;
 
     
@@ -47,15 +47,15 @@ namespace fdv
         if (s_defaultNTPServer != IPAddress(0, 0, 0, 0))
         {
             // this will force NTP synchronization
-            lastSyncMillis() = 0;
+            lastSyncMillis(true, 0);
         }
     }
     
     
     void MTD_FLASHMEM DateTime::setCurrentDateTime(DateTime const& dateTime)
     {
-        lastSyncDateTime() = dateTime;
-        lastSyncMillis()   = millis();
+        lastSyncDateTime(true, dateTime);
+        lastSyncMillis(true, millis());
     }
 
 
@@ -150,9 +150,11 @@ namespace fdv
             s_synchingWithNTPServer = true;
             for (uint32_t i = 0; i != MAXTRIES; ++i)
             {
-                if (DateTime::lastSyncDateTime().getFromNTPServer())
+                DateTime dt;
+                if (dt.getFromNTPServer())
                 {
-                    DateTime::lastSyncMillis() = millis();
+                    DateTime::lastSyncDateTime(true, dt);
+                    DateTime::lastSyncMillis(true, millis());
                     break;
                 }
                 Task::delay(DELAY);
@@ -171,6 +173,7 @@ namespace fdv
         uint32_t locLastMillis = lastSyncMillis();
         uint32_t diff = (currentMillis < locLastMillis) ? (0xFFFFFFFF - locLastMillis + currentMillis) : (currentMillis - locLastMillis);
         
+        // need to synch with NTP server?
         if (locLastMillis == 0 || diff > 6 * 3600 * 1000)
         {
             if (!s_synchingWithNTPServer)
@@ -182,12 +185,12 @@ namespace fdv
         
         if (s_defaultNTPServer == IPAddress(0, 0, 0, 0))
         {
-            // NTP synchronizatin is disabled. Take care for millis overflow.
+            // NTP synchronization is disabled. Take care for millis overflow.
             if (diff > 10 * 24 * 3600 * 1000)   // past 10 days?
             {
                 // reset millis counter to avoid overflow (actually it overflows after 50 days)
-                lastSyncMillis()   = currentMillis;
-                lastSyncDateTime() = result;
+                lastSyncMillis(true, currentMillis);
+                lastSyncDateTime(true, result);
             }
         }
         
@@ -195,16 +198,28 @@ namespace fdv
     }
 
 
-    DateTime& MTD_FLASHMEM DateTime::lastSyncDateTime()
+    DateTime MTD_FLASHMEM DateTime::lastSyncDateTime(bool set, DateTime const& value)
     {
         static DateTime s_lastDateTime;
+
+        if (set)
+            s_lastDateTime = value;
+        
+        // Maybe this is the first right datetime we see. Setup boot time.
+        if (s_lastDateTime.year > 2000 && ConfigurationManager::getBootDateTime().year == 2000)
+        {
+            ConfigurationManager::getBootDateTime() = s_lastDateTime;
+        }
+            
         return s_lastDateTime;
     }
 
 
-    uint32_t& MTD_FLASHMEM DateTime::lastSyncMillis()
+    uint32_t MTD_FLASHMEM DateTime::lastSyncMillis(bool set, uint32_t value)
     {
         static uint32_t s_lastMillis = 0;
+        if (set)
+            s_lastMillis = value;
         return s_lastMillis;
     }
     

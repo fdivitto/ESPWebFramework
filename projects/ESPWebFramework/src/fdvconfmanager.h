@@ -49,9 +49,9 @@ namespace fdv
 			applyClientIP();
 			applyDHCPServer();
             applyDNS();
-			applyWebServer<HTTPCustomServer_T>();
-			applyGPIO();
             applyDateTime();
+			applyGPIO();
+			applyWebServer<HTTPCustomServer_T>();            
 		}
 		
 	
@@ -60,6 +60,7 @@ namespace fdv
 		template <typename HTTPCustomServer_T>
 		static void MTD_FLASHMEM applyAll()
 		{
+            //Task::delay(3000);  // debug!
 			applyUARTServices();
 			applyWiFi();
 			asyncExec< applyDelayed<HTTPCustomServer_T> >(512);
@@ -195,7 +196,8 @@ namespace fdv
         
         static void getDateTimeParams(int8_t* timezoneHours, uint8_t* timezoneMinutes, char const** defaultNTPServer);
         
-        static DateTime getBootDateTime();        
+        static DateTime& getBootDateTime();        
+        static void getUpTimeStr(char* outbuf);
 		
 		
 	private:
@@ -205,7 +207,6 @@ namespace fdv
 #if (FDV_INCLUDE_SERIALBINARY == 1)
 		static SerialBinary*  s_serialBinary;
 #endif
-        static DateTime       s_bootTime;
 	};
 
 

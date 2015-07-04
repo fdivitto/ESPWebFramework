@@ -79,7 +79,7 @@ namespace fdv
              FSTR("[SCAN]"), 
              FSTR("Display or scan for available wireless networks"), 
              &SerialConsole::cmd_iwlist},
-            {FSTR("date"),       
+            {STR_date,       
              STR_, 
              FSTR("Display current date/time"), 
              &SerialConsole::cmd_date},
@@ -91,7 +91,7 @@ namespace fdv
              FSTR("NAME"), 
              FSTR("Query DNS"), 
              &SerialConsole::cmd_nslookup},    
-            {FSTR("uptime"),     
+            {STR_uptime,
              STR_, 
              FSTR("Display how long the system has been running"), 
              &SerialConsole::cmd_uptime},
@@ -388,14 +388,9 @@ namespace fdv
         
     void MTD_FLASHMEM SerialConsole::cmd_uptime()
     {
-        int32_t seconds = DateTime::now() - ConfigurationManager::getBootDateTime();
-        uint32_t days = seconds / 86400;
-        seconds %= 86400;
-        uint32_t hours = seconds / 3600;
-        seconds %= 3600;
-        uint32_t minutes = seconds / 60;
-        seconds %= 60;
-        m_serial->printf(FSTR("%d days, %02d:%02d:%02d\r\n"), days, hours, minutes, seconds);
+        char uptimeStr[22];
+        ConfigurationManager::getUpTimeStr(uptimeStr);
+        m_serial->write(uptimeStr);
     }
 
 

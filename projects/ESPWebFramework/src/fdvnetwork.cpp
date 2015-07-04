@@ -835,6 +835,11 @@ namespace fdv
         char datetimeStr[34];
         DateTime::now().format(datetimeStr, FSTR("%c"));
         addParamStr(STR_now, datetimeStr);
+        
+        // {{uptime}} predefined parameter : display uptime
+        char uptimeStr[22];
+        ConfigurationManager::getUpTimeStr(uptimeStr);
+        addParamStr(STR_uptime, uptimeStr);
 
         processFileRequest();
         HTTPResponse::flush();
