@@ -200,7 +200,15 @@ namespace fdv
 
     DateTime MTD_FLASHMEM DateTime::lastSyncDateTime(bool set, DateTime const& value)
     {
-        static DateTime s_lastDateTime;
+        static DateTime s_lastDateTime;        
+        static bool s_init = false;
+        
+        if (!s_init)
+        {
+            // this is necessary because statics classes (like DateTime is not initializated automatically)
+            s_init = true;
+            s_lastDateTime = DateTime();
+        }
 
         if (set)
             s_lastDateTime = value;
@@ -208,7 +216,7 @@ namespace fdv
         // Maybe this is the first right datetime we see. Setup boot time.
         if (s_lastDateTime.year > 2000 && ConfigurationManager::getBootDateTime().year == 2000)
         {
-            ConfigurationManager::getBootDateTime() = s_lastDateTime;
+            ConfigurationManager::getBootDateTime(true, s_lastDateTime);
         }
             
         return s_lastDateTime;

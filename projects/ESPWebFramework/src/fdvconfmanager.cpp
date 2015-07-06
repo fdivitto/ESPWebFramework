@@ -434,9 +434,21 @@ namespace fdv
     }
     
     
-    DateTime& STC_FLASHMEM ConfigurationManager::getBootDateTime()
+    DateTime STC_FLASHMEM ConfigurationManager::getBootDateTime(bool set, DateTime const& value)
     {
         static DateTime s_bootTime;
+        static bool s_init = false;
+        
+        if (!s_init)
+        {
+            // this is necessary because statics classes (like DateTime is not initializated automatically)
+            s_init = true;
+            s_bootTime = DateTime();
+        }
+        
+        if (set)
+            s_bootTime = value;
+        
         return s_bootTime;
     }
     

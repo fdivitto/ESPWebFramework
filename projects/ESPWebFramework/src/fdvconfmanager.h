@@ -196,7 +196,7 @@ namespace fdv
         
         static void getDateTimeParams(int8_t* timezoneHours, uint8_t* timezoneMinutes, char const** defaultNTPServer);
         
-        static DateTime& getBootDateTime();        
+        static DateTime getBootDateTime(bool set = false, DateTime const& value = DateTime());        
         static void getUpTimeStr(char* outbuf);
 		
 		
