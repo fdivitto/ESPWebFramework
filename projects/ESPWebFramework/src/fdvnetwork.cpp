@@ -439,6 +439,20 @@ namespace fdv
         return bytesRecv;
     }
     
+    // ret 1 = error
+    int32_t MTD_FLASHMEM Socket::read(void* buffer, uint32_t maxLength, IPAddress* sourceAddress, uint16_t* sourcePort)
+    {
+        sockaddr_in from;
+        int fromlen;
+        int32_t bytesRecv = lwip_recvfrom(m_socket, buffer, maxLength, 0, (sockaddr*)&from, (socklen_t*)&fromlen);
+        if (bytesRecv > 0)
+        {
+            *sourceAddress = IPAddress(from.sin_addr.s_addr);
+            *sourcePort    = ntohs(from.sin_port);
+        }
+        return bytesRecv;
+    }
+    
     // ret -1 = error, ret 0 = disconnected
     int32_t MTD_FLASHMEM Socket::peek(void* buffer, uint32_t maxLength)
     {
@@ -906,7 +920,7 @@ namespace fdv
     
     void MTD_FLASHMEM UDPClient::init(IPAddress remoteAddress, uint16_t remotePort)
     {
-        m_socket = lwip_socket(PF_INET, SOCK_DGRAM, 0);
+        m_socket = lwip_socket(AF_INET, SOCK_DGRAM, 0);
         
         sockaddr_in localAddress     = {0};
         localAddress.sin_family      = AF_INET;

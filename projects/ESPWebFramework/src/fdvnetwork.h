@@ -36,6 +36,9 @@ extern "C"
 	#include "lwip/netdb.h"
 	#include "lwip/api.h"
 	#include "lwip/netbuf.h"
+    #include "lwip/ip4.h"
+    #include "lwip/icmp.h"
+    #include "lwip/inet_chksum.h"
 	#include "udhcp/dhcpd.h"	
 
 	#include <stdarg.h>
@@ -313,6 +316,9 @@ namespace fdv
         
 		// ret -1 = error, ret 0 = disconnected
 		int32_t read(void* buffer, uint32_t maxLength);
+        
+        // ret -1 = error
+        int32_t read(void* buffer, uint32_t maxLength, IPAddress* sourceAddress, uint16_t* sourcePort);
 		
 		// ret -1 = error, ret 0 = disconnected
 		int32_t peek(void* buffer, uint32_t maxLength);
@@ -986,7 +992,101 @@ namespace fdv
 
         IPAddress m_server;
         uint16_t  m_port;
-      };
+    };
+    
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // ICMP
+    
+    struct ICMP
+    {
+        
+        // send Echo Request and wait for Echo Reply
+        // return "measured" echo time in milliseconds. ret 0xFFFFFFFF on timeout or error
+        static uint32_t STC_FLASHMEM ping(IPAddress const& dest)
+        {            
+            static uint32_t const TIMEOUT = 4000;
+            static uint32_t const TIMEOUT_RESULT = 0xFFFFFFFF;
+        
+            uint32_t result = TIMEOUT_RESULT;
+        
+            Socket socket = lwip_socket(AF_INET, SOCK_RAW, IP_PROTO_ICMP);
+            debug("s=%d\r\n", socket.getSocket());
+            
+            // generate random ID
+            uint16_t id = rand() & 0xFFFF;
+            
+            // prepare packet to send
+            icmp_echo_hdr hdr;
+            hdr.type   = ICMP_ECHO;
+            hdr.code   = 0;
+            hdr.chksum = 0;
+            hdr.id     = id;
+            hdr.seqno  = 0;
+            hdr.chksum = inet_chksum((uint16_t*)&hdr, sizeof(icmp_echo_hdr));
+            
+            // send Echo request
+            socket.setRemoteAddress(dest, 0);
+            if (socket.write(&hdr, sizeof(icmp_echo_hdr)) > 0)
+            {
+                // wait for reply
+                debug("P0\r\n");
+                socket.setTimeOut(TIMEOUT);
+                SoftTimeOut timeOut(TIMEOUT);
+                while (!timeOut)
+                {
+                    char buf[64];
+                    IPAddress sourceAddress;
+                    uint16_t sourcePort;
+                    if (socket.read(&buf, sizeof(buf), &sourceAddress, &sourcePort) > sizeof(ip_hdr) + sizeof(icmp_echo_hdr))
+                    {
+                        debug("P1\r\n");
+                    }
+                }            
+            }
+         
+            // free resources
+            socket.close();
+            
+            return result;
+            
+          /*
+          uint32_t t1 = millis();
+
+          // prepare Echo Request
+          uint16_t id  = rand() & 0xFFFF;
+          m_receivedID = ~id; // just to make it different
+          uint8_t data[] =
+          {
+            8,         // type = 8, Echo Request
+            0,         // code = 0
+            0,         // checksum high
+            0,         // checksum low
+            id >> 8,   // identifier high
+            id & 0xFF, // identifier low
+            0,         // sequence number high
+            0          // sequence number low 
+          };
+          // calculate and set checksum
+          uint16_t checksum = DataList(NULL, &data[0], sizeof(data)).calcInternetChecksum();
+          data[2] = checksum >> 8;
+          data[3] = checksum & 0xFF;      
+          // send Echo Request
+          m_IP->send(IPAddress(0, 0, 0, 0), dest, 0x01, DataList(NULL, &data[0], sizeof(data)), false);
+
+          // wait for reply
+          TimeOut timeOut(MAXECHOREPLYTIME);
+          while (m_receivedID != id && !timeOut)
+            m_IP->receive();
+
+          return (m_receivedID == id? millis() - t1 : 0xFFFFFFFF);
+          */
+        }
+        
+        
+    };
 
 
 	

@@ -95,7 +95,9 @@ namespace fdv
              STR_, 
              FSTR("Display how long the system has been running"), 
              &SerialConsole::cmd_uptime},
-            //{FSTR("test"),       FSTR(""), FSTR(""), &SerialConsole::cmd_test},
+            {FSTR("test"),       
+             FSTR(""), FSTR(""), 
+             &SerialConsole::cmd_test},
         };
         static uint32_t const cmdCount = sizeof(cmds) / sizeof(Cmd);
         if (i < cmdCount)
@@ -396,6 +398,7 @@ namespace fdv
 
     void MTD_FLASHMEM SerialConsole::cmd_test()
     {
+        ICMP::ping(IPAddress(FSTR("192.168.1.32")));
     }
 
         
