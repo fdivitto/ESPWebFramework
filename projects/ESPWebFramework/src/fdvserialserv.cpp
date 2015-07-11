@@ -55,46 +55,76 @@ namespace fdv
     {
         static const Cmd cmds[] =
         {
+            // example:
+            //   help
+            //   help ifconfig
             {FSTR("help"),	     
              FSTR("[COMMAND]"), 
              FSTR("Show help"), 
              &SerialConsole::cmd_help},
+             
+             // example:
+             //   reboot
+             //   reboot 500
             {FSTR("reboot"),	 
              FSTR("[MS]"), 
              FSTR("Restart system in [MS] milliseconds"), 
              &SerialConsole::cmd_reboot},
+             
             {FSTR("restore"),	 
              STR_,
              FSTR("Erase Flash stored settings"), 
              &SerialConsole::cmd_restore},
+             
             {FSTR("free"),       
              STR_, 
              FSTR("Display amount of free and used memory"), 
              &SerialConsole::cmd_free},
+             
+             // example:
+             //  ifconfig
+             //  ifconfig static 192.168.1.99 255.255.255.0 192.168.1.1
+             //  ifconfig dhcp
+             //  ifconfig ap 192.168.5.1 255.255.255.0 192.168.5.1
+             //  ifconfig dns 8.8.8.8 8.8.4.4
             {FSTR("ifconfig"),   
              FSTR("[static IP NETMASK GATEWAY] | [dhcp] | [ap IP NETMASK GATEWAY] | [dns DNS1 DNS2]"), 
              FSTR("No params: Display network info\r\n\tstatic: Set Client Mode static IP\r\n\tdhcp: Set Client Mode DHCP\r\n\tap: Set Access Point static IP\r\n\tdns: Set primary and seconday DNS server"), 
              &SerialConsole::cmd_ifconfig},
+             
+             // example:
+             //   iwlist
+             //   iwlist scan
             {FSTR("iwlist"),     
              FSTR("[scan]"), 
              FSTR("Display or scan for available wireless networks"), 
              &SerialConsole::cmd_iwlist},
+             
             {STR_date,       
              STR_, 
              FSTR("Display current date/time"), 
              &SerialConsole::cmd_date},
+             
+             // example:
+             //   ntpdate 192.168.1.10
+             //   ntpdate ntp1.inrim.it
             {FSTR("ntpdate"),             
-             STR_, 
+             FSTR("[SERVER]"), 
              FSTR("Display date/time from NTP server"), 
              &SerialConsole::cmd_ntpdate},
+             
+             // example:
+             //   nslookup www.google.com
             {FSTR("nslookup"),   
              FSTR("NAME"), 
              FSTR("Query DNS"), 
              &SerialConsole::cmd_nslookup},    
+             
             {STR_uptime,
              STR_, 
              FSTR("Display how long the system has been running"), 
              &SerialConsole::cmd_uptime},
+             
             {FSTR("test"),       
              FSTR(""), FSTR(""), 
              &SerialConsole::cmd_test},
@@ -364,9 +394,18 @@ namespace fdv
 
     void MTD_FLASHMEM SerialConsole::cmd_ntpdate()
     {
+        IPAddress serverIP; // default is 0.0.0.0, accepted by getFromNTPServer()
+        
+        // is there the SERVER parameter?
+        if (m_paramsCount > 1)
+        {
+            APtr<char> server( t_strdup(m_params[1]) );
+            serverIP = NSLookup::lookup(server.get());
+        }
+        
         char buf[30];
         DateTime dt;
-        if (dt.getFromNTPServer())
+        if (dt.getFromNTPServer(serverIP))
         {                
             dt.format(buf, FSTR("%c"));
             m_serial->writeln(buf);

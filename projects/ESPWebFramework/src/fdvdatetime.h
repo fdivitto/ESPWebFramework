@@ -77,7 +77,7 @@ namespace fdv
         DateTime& setUnixDateTime(uint32_t unixTime);
         uint32_t getUnixDateTime() const;
         
-        bool getFromNTPServer();
+        bool getFromNTPServer(IPAddress const& serverIP = IPAddress(0, 0, 0, 0));
                 
         uint16_t format(char* outbuf, char const* formatstr);
         char const* decode(char const* inbuf, char const* formatstr);

@@ -124,11 +124,13 @@ namespace fdv
     }
     
     
-    bool MTD_FLASHMEM DateTime::getFromNTPServer()
+    // if serverIP = 0.0.0.0 then look into s_defaultNTPServer
+    bool MTD_FLASHMEM DateTime::getFromNTPServer(IPAddress const& serverIP)
     {
-        if (s_defaultNTPServer != IPAddress(0, 0, 0, 0))
+        IPAddress ip = (serverIP == IPAddress(0, 0, 0, 0)? s_defaultNTPServer : serverIP);
+        if (ip != IPAddress(0, 0, 0, 0))
         {
-            SNTPClient sntp(s_defaultNTPServer);
+            SNTPClient sntp(ip);
             uint64_t v = 0;
             if (sntp.query(&v))
             {
