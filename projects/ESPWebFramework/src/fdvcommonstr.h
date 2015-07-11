@@ -54,7 +54,6 @@ namespace fdv
 	static char const STR_DHCPDEN[] FLASHMEM        = "DHCPDEN";
 	static char const STR_DHCPDIP1[] FLASHMEM       = "DHCPDIP1";
 	static char const STR_DHCPDIP2[] FLASHMEM       = "DHCPDIP2";
-	static char const STR_DHCPDMXL[] FLASHMEM       = "DHCPDMXL";
 	static char const STR_WEBPORT[] FLASHMEM        = "WEBPORT";
 	static char const STR_BAUD[] FLASHMEM           = "BAUD";
 	static char const STR_SYSOUT[] FLASHMEM         = "SYSOUT";
@@ -71,7 +70,6 @@ namespace fdv
 	static char const STR_debugout[] FLASHMEM       = "debugout";
 	static char const STR_clientmode[] FLASHMEM     = "clientmode";
 	static char const STR_apmode[] FLASHMEM         = "apmode";
-	static char const STR_maxLeases[] FLASHMEM      = "maxLeases";
 	static char const STR_HI[] FLASHMEM             = "HI";
 	static char const STR_LO[] FLASHMEM             = "LO";
 	static char const STR_BINPRORDY[] FLASHMEM      = "BINPRORDY";

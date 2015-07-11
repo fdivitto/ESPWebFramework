@@ -36,16 +36,6 @@ extern "C" void ets_intr_unlock();
 namespace fdv
 {
 
-	void FUNC_FLASHMEM DisableWatchDog()
-	{
-		ets_wdt_disable();
-	}
-	
-	
-	void FUNC_FLASHMEM EnableWatchDog()
-	{
-		ets_wdt_enable();
-	}
 	
 	
 	uint32_t FUNC_FLASHMEM millisISR()
@@ -71,6 +61,12 @@ namespace fdv
 			return time2 - time1;
 	}
 	
+    
+    uint32_t FUNC_FLASHMEM micros()
+    {
+        return system_get_time();
+    }
+    
 	
 	/////////////////////////////////////////////////////////////////////+
 	/////////////////////////////////////////////////////////////////////+

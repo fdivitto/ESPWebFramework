@@ -185,10 +185,9 @@ namespace fdv
             bool enabled;
             char const* startIP;
             char const* endIP;
-            uint32_t maxLeases;
-            getDHCPServerParams(&enabled, &startIP, &endIP, &maxLeases);
+            getDHCPServerParams(&enabled, &startIP, &endIP);
             if (enabled)
-                DHCPServer::configure(startIP, endIP, maxLeases);
+                DHCPServer::configure(startIP, endIP);
         }
     }
     
@@ -307,24 +306,22 @@ namespace fdv
     }
     
     
-    void STC_FLASHMEM ConfigurationManager::setDHCPServerParams(bool enabled, char const* startIP, char const* endIP, uint32_t maxLeases)
+    void STC_FLASHMEM ConfigurationManager::setDHCPServerParams(bool enabled, char const* startIP, char const* endIP)
     {
         FlashDictionary::setBool(STR_DHCPDEN, enabled);
-        if (startIP && endIP && maxLeases)
+        if (startIP && endIP)
         {
             FlashDictionary::setString(STR_DHCPDIP1, startIP);
             FlashDictionary::setString(STR_DHCPDIP2, endIP);
-            FlashDictionary::setInt(STR_DHCPDMXL, maxLeases);
         }
     }
     
     
-    void STC_FLASHMEM ConfigurationManager::getDHCPServerParams(bool* enabled, char const** startIP, char const** endIP, uint32_t* maxLeases)
+    void STC_FLASHMEM ConfigurationManager::getDHCPServerParams(bool* enabled, char const** startIP, char const** endIP)
     {
         *enabled   = FlashDictionary::getBool(STR_DHCPDEN, true);
         *startIP   = FlashDictionary::getString(STR_DHCPDIP1, FSTR("192.168.4.100"));
         *endIP     = FlashDictionary::getString(STR_DHCPDIP2, FSTR("192.168.4.110"));
-        *maxLeases = FlashDictionary::getInt(STR_DHCPDMXL, 10);
     }
     
     

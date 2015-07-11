@@ -146,7 +146,6 @@ void testfunc()
 
 extern "C" void FUNC_FLASHMEM user_init(void) 
 {
-	DisableWatchDog();				
 	ConfigurationManager::applyAll< TCPServer<MyHTTPHandler, 2, 512> >();
     /*#if (FDV_INCLUDE_SERIALBINARY == 1)
 	asyncExec<testfunc>();

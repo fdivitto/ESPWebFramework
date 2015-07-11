@@ -42,9 +42,8 @@ namespace fdv
 	uint32_t millisISR();		
 	uint32_t millis();
 	uint32_t millisDiff(uint32_t time1, uint32_t time2);
-	void DisableWatchDog();
-	void EnableWatchDog();
-
+    uint32_t micros();
+    
 
 	inline void enterCritical()
 	{
@@ -299,7 +298,7 @@ namespace fdv
 				return xQueueSend(m_handle, &item, msTimeOut / portTICK_RATE_MS);
 			}
 			
-			bool TMTD_FLASHMEM send(uint32_t msTimeOut = portMAX_DELAY)
+			bool TMTD_FLASHMEM signal(uint32_t msTimeOut = portMAX_DELAY)
 			{
 				T dummyItem;
 				return send(dummyItem, msTimeOut);

@@ -123,7 +123,6 @@ namespace fdv
 		void MTD_FLASHMEM exec()
 		{
 			delay(m_time);
-			EnableWatchDog();
 			taskENTER_CRITICAL();
 			taskDISABLE_INTERRUPTS();
 			while(1);	// reset using watchdog

@@ -34,7 +34,6 @@ extern "C"
 	#include "lwip/api.h"
 	#include "lwip/netbuf.h"
     #include "lwip/inet.h"
-	#include "udhcp/dhcpd.h"	
 
 	#include <stdarg.h>
 }
@@ -95,7 +94,7 @@ namespace fdv
     }
     
     
-    in_addr_t MTD_FLASHMEM IPAddress::get_in_addr_t()
+    in_addr_t MTD_FLASHMEM IPAddress::get_in_addr_t() const
     {
         in_addr_t a;
         ((uint8_t*)&a)[0] = address[0];
@@ -105,7 +104,7 @@ namespace fdv
         return a;
     }
     
-    ip_addr_t MTD_FLASHMEM IPAddress::get_ip_addr_t()
+    ip_addr_t MTD_FLASHMEM IPAddress::get_ip_addr_t() const
     {
         ip_addr_t a;
         ((uint8_t*)&a.addr)[0] = address[0];
@@ -115,7 +114,7 @@ namespace fdv
         return a;
     }
     
-    uint32_t MTD_FLASHMEM IPAddress::get_uint32()
+    uint32_t MTD_FLASHMEM IPAddress::get_uint32() const
     {
         uint32_t a;
         ((uint8_t*)&a)[0] = address[0];
@@ -125,7 +124,7 @@ namespace fdv
         return a;
     }
     
-    IPAddress::IPAddressStr MTD_FLASHMEM IPAddress::get_str()
+    IPAddress::IPAddressStr MTD_FLASHMEM IPAddress::get_str() const
     {
         IPAddressStr str;
         ip_addr_t a = get_ip_addr_t();
@@ -133,13 +132,13 @@ namespace fdv
         return str;
     }
     
-    bool MTD_FLASHMEM IPAddress::operator==(IPAddress const& rhs)
+    bool MTD_FLASHMEM IPAddress::operator==(IPAddress const& rhs) const
     {
         return address[0] == rhs.address[0] && address[1] == rhs.address[1] &&
                address[2] == rhs.address[2] && address[3] == rhs.address[3];
     }
     
-    bool MTD_FLASHMEM IPAddress::operator!=(IPAddress const& rhs)
+    bool MTD_FLASHMEM IPAddress::operator!=(IPAddress const& rhs) const
     {
         return !(*this == rhs);
     }
@@ -201,7 +200,7 @@ namespace fdv
         config.ssid_len = f_strlen(SSID);
         f_strcpy((char *)config.password, securityKey);
         config.channel = channel;
-        config.authmode = securityProtocol;
+        config.authmode = (AUTH_MODE)securityProtocol;
         config.ssid_hidden = (uint8)hiddenSSID;
         Critical critical;
         wifi_softap_set_config(&config);
@@ -240,13 +239,10 @@ namespace fdv
     {
         if (rescan)
         {
-            Mode prevMode = getMode();
-            if (prevMode == AccessPoint)
+            if (getMode() == AccessPoint)
                 setMode(ClientAndAccessPoint);
             wifi_station_scan(NULL, scanDoneCB);
             getAPInfo()->receive();	// wait for completion
-            if (prevMode != getMode())
-                setMode(prevMode);
         }
         APInfo* infos;
         getAPInfo(&infos, count);
@@ -275,7 +271,7 @@ namespace fdv
                 infos->AuthMode = (SecurityProtocol)bss_link->authmode;
                 infos->isHidden = (bool)bss_link->is_hidden;
             }
-            getAPInfo()->send();
+            getAPInfo()->signal();
         }
     }
     
@@ -284,9 +280,15 @@ namespace fdv
     // allocateCount < 0  -> get infos
     Queue<bool>* STC_FLASHMEM WiFi::getAPInfo(APInfo** infos, uint32_t* count, int32_t allocateCount)
     {
-        static APInfo*  s_infos = NULL;
-        static uint32_t s_count = 0;
-        static Queue<bool>* s_queue = new Queue<bool>(1);	// never deleted
+        static bool         s_init  = false;
+        static APInfo*      s_infos = NULL;
+        static uint32_t     s_count = 0;
+        static Queue<bool>* s_queue;
+        if (!s_init)
+        {
+            s_queue = new Queue<bool>(1);	// never deleted        
+            s_init = true;
+        }
         if (allocateCount >= 0)
         {
             if (s_infos != NULL)
@@ -319,9 +321,10 @@ namespace fdv
         info.ip.addr      = ipaddr_addr(APtr<char>(f_strdup(IP)).get());
         info.netmask.addr = ipaddr_addr(APtr<char>(f_strdup(netmask)).get());
         info.gw.addr      = ipaddr_addr(APtr<char>(f_strdup(gateway)).get());
+        
         Critical critical;
-        if (network == WiFi::ClientNetwork)
-            wifi_station_dhcpc_stop();
+        wifi_station_dhcpc_stop();
+        wifi_softap_dhcps_stop();
         wifi_set_ip_info(network, &info);
     }
     
@@ -358,21 +361,20 @@ namespace fdv
 	// DHCPServer
 	
     // warn: each IP in the range requires memory!
-    void STC_FLASHMEM DHCPServer::configure(char const* startIP, char const* endIP, uint32_t maxLeases)
+    void STC_FLASHMEM DHCPServer::configure(char const* startIP, char const* endIP)
     {		
-        //udhcpd_stop();
-        dhcp_info info = {0};
-        info.start_ip      = ipaddr_addr(APtr<char>(f_strdup(startIP)).get());
-        info.end_ip        = ipaddr_addr(APtr<char>(f_strdup(endIP)).get());
-        info.max_leases    = maxLeases;
-        info.auto_time     = 60;
-        info.decline_time  = 60;
-        info.conflict_time = 60;
-        info.offer_time    = 60;
-        info.min_lease_sec = 60;
-        dhcp_set_info(&info);
-        udhcpd_start();			
-    }
+        wifi_softap_dhcps_stop();
+        
+        dhcps_lease lease;
+        lease.start_ip = IPAddress(startIP).get_ip_addr_t();
+        lease.end_ip   = IPAddress(endIP).get_ip_addr_t();
+        wifi_softap_set_dhcps_lease(&lease);
+        
+        uint8_t mode = 1;
+        wifi_softap_set_dhcps_offer_option(OFFER_ROUTER, &mode);
+        
+        wifi_softap_dhcps_start();
+    }    
         
         
 
@@ -981,6 +983,77 @@ namespace fdv
     }
 
     
+ 
+    ////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // ICMP
+    
+    MTD_FLASHMEM ICMP::ICMP()
+        : m_waitingID(rand() & 0xFFFF), m_waitingSeq(0), m_queue(1)
+    {
+    }
+    
+    
+    uint32_t MTD_FLASHMEM ICMP::ping(IPAddress const& dest)
+    {       
+        static uint32_t const TIMEOUT        = 4000;
+        static uint32_t const TIMEOUT_RESULT = 0xFFFFFFFF;
+    
+        uint32_t result = TIMEOUT_RESULT;
+                
+        // generate seq
+        m_waitingSeq++;
+        
+        // prepare packet to send
+        pbuf* hdrbuf = pbuf_alloc(PBUF_IP, sizeof(icmp_echo_hdr), PBUF_RAM);
+        icmp_echo_hdr* hdr = (icmp_echo_hdr*)hdrbuf->payload;
+        hdr->type   = ICMP_ECHO;
+        hdr->code   = 0;
+        hdr->chksum = 0;
+        hdr->id     = htons(m_waitingID);
+        hdr->seqno  = htons(m_waitingSeq);
+        hdr->chksum = inet_chksum((uint16_t*)hdr, sizeof(icmp_echo_hdr));
+        
+        // send Echo request
+        raw_pcb* pcb = raw_new(IP_PROTO_ICMP);
+        raw_recv(pcb, ICMP::raw_recv_fn, this);
+        raw_bind(pcb, IP_ADDR_ANY);            
+        
+        ip_addr_t addr = dest.get_ip_addr_t();
+        raw_sendto(pcb, hdrbuf, &addr);
+        pbuf_free(hdrbuf);
+        
+        uint32_t t1 = micros();
+        if (m_queue.receive(TIMEOUT))
+            result = (micros() - t1) / 1000;
+                
+        raw_remove(pcb);
+        
+        return result;            
+    }
+
+    
+    uint8_t STC_FLASHMEM ICMP::raw_recv_fn(void *arg, raw_pcb *pcb, pbuf *p, ip_addr_t *addr)
+    {
+        //debug("raw_recv_fn\r\n");
+        
+        ICMP* this_ = (ICMP*)arg;
+        
+        if (p->tot_len >= PBUF_IP_HLEN + sizeof(icmp_echo_hdr) && pbuf_header(p, -PBUF_IP_HLEN) == 0)
+        {
+            icmp_echo_hdr* hdr = (icmp_echo_hdr*)p->payload;
+            //debug("%d=%d %d=%d\r\n", ntohs(hdr->id), this_->m_waitingID, ntohs(hdr->seqno), this_->m_waitingSeq);
+            if (ntohs(hdr->id) == this_->m_waitingID && ntohs(hdr->seqno) == this_->m_waitingSeq)
+            {
+                //debug("  echo\r\n");
+                this_->m_queue.signal();
+                pbuf_free(p);
+                return 1;
+            }
+        }
+        
+        return 0;
+    }    
     
     
 	

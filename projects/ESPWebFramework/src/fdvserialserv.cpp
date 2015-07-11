@@ -76,7 +76,7 @@ namespace fdv
              FSTR("No params: Display network info\r\n\tstatic: Set Client Mode static IP\r\n\tdhcp: Set Client Mode DHCP\r\n\tap: Set Access Point static IP\r\n\tdns: Set primary and seconday DNS server"), 
              &SerialConsole::cmd_ifconfig},
             {FSTR("iwlist"),     
-             FSTR("[SCAN]"), 
+             FSTR("[scan]"), 
              FSTR("Display or scan for available wireless networks"), 
              &SerialConsole::cmd_iwlist},
             {STR_date,       
@@ -398,7 +398,13 @@ namespace fdv
 
     void MTD_FLASHMEM SerialConsole::cmd_test()
     {
-        ICMP::ping(IPAddress(FSTR("192.168.1.32")));
+        ICMP icmp;
+        for (uint32_t i = 0; i != 10; ++i)
+        {
+            uint32_t t = icmp.ping(IPAddress(FSTR("192.168.1.32")));
+            m_serial->printf(FSTR("%dms\r\n"), t);
+            Task::delay(1000);
+        }
     }
 
         

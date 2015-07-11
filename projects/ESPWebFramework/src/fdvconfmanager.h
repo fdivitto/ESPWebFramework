@@ -144,9 +144,9 @@ namespace fdv
 		
 		//// DHCP server parameters
 		
-		static void setDHCPServerParams(bool enabled, char const* startIP = NULL, char const* endIP = NULL, uint32_t maxLeases = 0);
+		static void setDHCPServerParams(bool enabled, char const* startIP = NULL, char const* endIP = NULL);
 		
-		static void getDHCPServerParams(bool* enabled, char const** startIP, char const** endIP, uint32_t* maxLeases);
+		static void getDHCPServerParams(bool* enabled, char const** startIP, char const** endIP);
 		
 		
         //// DNS parameters
@@ -325,8 +325,7 @@ namespace fdv
 				if (getRequest().form[FSTR("DHCPD")] != NULL)
 					ConfigurationManager::setDHCPServerParams(true,
 															  getRequest().form[FSTR("startIP")],
-															  getRequest().form[FSTR("endIP")],
-															  strtol(getRequest().form[STR_maxLeases], NULL, 10));
+															  getRequest().form[FSTR("endIP")]);
 				else
 					ConfigurationManager::setDHCPServerParams(false);
                 
@@ -360,13 +359,11 @@ namespace fdv
 			bool DHCPDEnabled;
 			char const* startIP;
 			char const* endIP;
-			uint32_t maxLeases;
-			ConfigurationManager::getDHCPServerParams(&DHCPDEnabled, &startIP, &endIP, &maxLeases);
+			ConfigurationManager::getDHCPServerParams(&DHCPDEnabled, &startIP, &endIP);
 			if (DHCPDEnabled)
 				addParamStr(FSTR("DHCPD"), STR_checked);
 			addParamStr(FSTR("startIP"), startIP);
 			addParamStr(FSTR("endIP"), endIP);
-			addParamInt(STR_maxLeases, maxLeases);
 			addParamStr(FSTR("DISP_DHCPD"), mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? STR_ : STR_disabled);
 			
             // get DNS server configuration
