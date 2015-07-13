@@ -1009,8 +1009,23 @@ namespace fdv
         ICMP();
     
         // send Echo Request and wait for Echo Reply
-        // return "measured" echo time in milliseconds. ret 0xFFFFFFFF on timeout or error
-        uint32_t ping(IPAddress const& dest);
+        // return "measured" echo time in microseconds. ret -1 on timeout or error
+        int32_t ping(IPAddress const& dest);
+        
+        uint16_t receivedBytes()
+        {
+            return m_receivedBytes;
+        }
+        
+        uint16_t receivedTTL()
+        {
+            return m_receivedTTL;
+        }
+        
+        uint16_t receivedSeq()
+        {
+            return m_waitingSeq;
+        }
         
     private:
     
@@ -1019,6 +1034,8 @@ namespace fdv
         uint16_t        m_waitingID;
         uint16_t        m_waitingSeq;
         Queue<uint32_t> m_queue;
+        uint16_t        m_receivedBytes;
+        uint16_t        m_receivedTTL;
         
     };
 

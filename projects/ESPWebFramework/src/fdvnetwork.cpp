@@ -994,10 +994,10 @@ namespace fdv
     }
     
     
-    uint32_t MTD_FLASHMEM ICMP::ping(IPAddress const& dest)
+    int32_t MTD_FLASHMEM ICMP::ping(IPAddress const& dest)
     {       
         static uint32_t const TIMEOUT        = 4000;
-        static uint32_t const TIMEOUT_RESULT = 0xFFFFFFFF;
+        static int32_t const TIMEOUT_RESULT  = -1;
     
         uint32_t result = TIMEOUT_RESULT;
                 
@@ -1025,7 +1025,7 @@ namespace fdv
         
         uint32_t t1 = micros();
         if (m_queue.receive(TIMEOUT))
-            result = (micros() - t1) / 1000;
+            result = (micros() - t1);
                 
         raw_remove(pcb);
         
@@ -1035,17 +1035,19 @@ namespace fdv
     
     uint8_t STC_FLASHMEM ICMP::raw_recv_fn(void *arg, raw_pcb *pcb, pbuf *p, ip_addr_t *addr)
     {
-        //debug("raw_recv_fn\r\n");
-        
         ICMP* this_ = (ICMP*)arg;
+        
+        ip_hdr *iphdr = (ip_hdr*)p->payload;
+        
+        uint16_t ttl = IPH_TTL(iphdr);
         
         if (p->tot_len >= PBUF_IP_HLEN + sizeof(icmp_echo_hdr) && pbuf_header(p, -PBUF_IP_HLEN) == 0)
         {
             icmp_echo_hdr* hdr = (icmp_echo_hdr*)p->payload;
-            //debug("%d=%d %d=%d\r\n", ntohs(hdr->id), this_->m_waitingID, ntohs(hdr->seqno), this_->m_waitingSeq);
             if (ntohs(hdr->id) == this_->m_waitingID && ntohs(hdr->seqno) == this_->m_waitingSeq)
             {
-                //debug("  echo\r\n");
+                this_->m_receivedBytes = p->tot_len;
+                this_->m_receivedTTL   = ttl;
                 this_->m_queue.signal();
                 pbuf_free(p);
                 return 1;

@@ -75,7 +75,8 @@ namespace fdv
         void cmd_date();        
         void cmd_ntpdate();
 		void cmd_nslookup();        
-        void cmd_uptime();                
+        void cmd_uptime();
+        void cmd_ping();       
 		void cmd_test();		
 		
 	private:

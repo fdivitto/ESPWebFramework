@@ -125,6 +125,11 @@ namespace fdv
              FSTR("Display how long the system has been running"), 
              &SerialConsole::cmd_uptime},
              
+            {FSTR("ping"),
+             FSTR("SERVER"),
+             FSTR("Sends ICMP ECHO_REQUEST and waits for ECHO_RESPONSE"),
+             &SerialConsole::cmd_ping},
+             
             {FSTR("test"),       
              FSTR(""), FSTR(""), 
              &SerialConsole::cmd_test},
@@ -419,7 +424,7 @@ namespace fdv
     {
         if (m_paramsCount != 2)
         {
-            m_serial->writeln(FSTR("NAME missing\r\n"));
+            m_serial->writeln(FSTR("Error\r\n"));
             return;
         }
         APtr<char> name( t_strdup(m_params[1]) );
@@ -432,6 +437,29 @@ namespace fdv
         char uptimeStr[22];
         ConfigurationManager::getUpTimeStr(uptimeStr);
         m_serial->write(uptimeStr);
+    }
+    
+    
+    void MTD_FLASHMEM SerialConsole::cmd_ping()
+    {
+        if (m_paramsCount != 2)
+        {
+            m_serial->writeln(FSTR("Error\r\n"));
+            return;
+        }
+        APtr<char> server( t_strdup(m_params[1]) );
+        IPAddress serverIP = NSLookup::lookup(server.get());
+        ICMP icmp;
+        while (true)
+        {
+            float r = icmp.ping(serverIP) / 1000.0;
+            m_serial->printf(FSTR("%d bytes from %s: icmp_seq=%d ttl=%d time=%.3f ms\r\n"), icmp.receivedBytes(), (char const*)serverIP.get_str(), icmp.receivedSeq(), icmp.receivedTTL(), r);
+            
+            if (m_serial->available() > 0 && m_serial->read() == 27)
+                break;
+            
+            Task::delay(1000);
+        }
     }
 
 

@@ -41,7 +41,7 @@ extern "C"
 
 
 // Enable if you need "%f"
-//#define HAS_FLOAT 1
+#define HAS_FLOAT 1
 
 #define ZEROPAD  	(1<<0)	/* Pad with zero */
 #define SIGN    	(1<<1)	/* Unsigned/signed long */

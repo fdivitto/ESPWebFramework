@@ -41,7 +41,7 @@ SDK_LDDIR   = $(SDKBASE)esp_iot_rtos_sdk-master/ld
 
 # linking libgccirom.a instead of libgcc.a causes reset when working with flash memory (ie spi_flash_erase_sector)
 # linking libcirom.a causes conflicts with come std c routines (like strstr, strchr...)
-LIBS        = -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lmain -lfreertos -llwip
+LIBS        = -lm -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lmain -lfreertos -llwip
 
 
 OBJ  = user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o fdvprintf.o fdvdebug.o fdvstrings.o fdvnetwork.o fdvcollections.o fdvconfmanager.o fdvdatetime.o fdvserialserv.o
