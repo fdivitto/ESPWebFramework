@@ -233,7 +233,7 @@ namespace fdv
 	}
 	
 	
-	void HardwareSerial_rx_handler()
+	void HardwareSerial_rx_handler(void* arg)
 	{
 		uint32_t uart_intr_status = READ_PERI_REG(UART_INT_ST(0));
 
@@ -289,7 +289,7 @@ namespace fdv
 		
 		CLEAR_PERI_REG_MASK(UART_INT_ENA(0), UART_INTR_MASK);		
 		SET_PERI_REG_MASK(UART_INT_ENA(0), UART_RXFIFO_FULL_INT_ENA);		
-		_xt_isr_attach(ETS_UART_INUM, HardwareSerial_rx_handler);
+		_xt_isr_attach(ETS_UART_INUM, HardwareSerial_rx_handler, NULL);
 		
 		ETS_UART_INTR_ENABLE();		
 	}
