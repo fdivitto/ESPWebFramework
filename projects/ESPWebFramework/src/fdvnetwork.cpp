@@ -1086,11 +1086,17 @@ namespace fdv
     {
         if (!s_enabled)
         {
+            Critical critical;
             for (uint32_t i = 0; i != INTFCOUNT; ++i)
             {
                 netif* en = NetInterface::get(i);
-                s_prevInput[i] = en->input;
-                en->input = Router::netif_input;
+                if (en)
+                {
+                    s_prevInput[i] = en->input;
+                    en->input = Router::netif_input;
+                }
+                else
+                    s_prevInput[i] = NULL;
             }
             s_enabled = true;
         }
@@ -1101,10 +1107,12 @@ namespace fdv
     {
         if (s_enabled)
         {
+            Critical critical;
             for (uint32_t i = 0; i != INTFCOUNT; ++i)
             {
                 netif* en = NetInterface::get(i);
-                en->input = s_prevInput[i];
+                if (en && s_prevInput[i])
+                    en->input = s_prevInput[i];
             }
             s_enabled = false;
         }

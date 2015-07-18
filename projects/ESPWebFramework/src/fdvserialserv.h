@@ -45,12 +45,11 @@ namespace fdv
 	
 #if (FDV_INCLUDE_SERIALCONSOLE == 1)
 	
-	struct SerialConsole : public Task
+	class SerialConsole : public Task
 	{
-
-		static uint32_t const MAX_PARAMETERS = 6;	// including command name
-		
-	
+        
+    public:
+    
 		SerialConsole()
 			: Task(false, 300)
 		{
@@ -61,11 +60,19 @@ namespace fdv
 		{
 			terminate();
 		}
+        
+    private:
 		
+        static uint32_t const MAX_PARAMETERS = 6;	// including command name
+        
 		void exec();		
 		void separateParameters();				
 		void routeCommand();
+        bool hasParameter(uint32_t paramIndex, char const* str);
 		
+        
+    public:
+    
 		void cmd_help();
 		void cmd_reboot();		
 		void cmd_restore();		
@@ -76,7 +83,8 @@ namespace fdv
         void cmd_ntpdate();
 		void cmd_nslookup();        
         void cmd_uptime();
-        void cmd_ping();       
+        void cmd_ping();
+        void cmd_router();        
 		void cmd_test();		
 		
 	private:

@@ -130,6 +130,14 @@ namespace fdv
              FSTR("Sends ICMP ECHO_REQUEST and waits for ECHO_RESPONSE"),
              &SerialConsole::cmd_ping},
              
+             // example:
+             //   router on
+             //   router off
+            {FSTR("router"),
+             FSTR("on | off"),
+             FSTR("Enable/disable routing between networks"),
+             &SerialConsole::cmd_router},
+             
             {FSTR("test"),       
              FSTR(""), FSTR(""), 
              &SerialConsole::cmd_test},
@@ -215,7 +223,7 @@ namespace fdv
         {
             for (uint32_t i = 0; cmdInfo(i); ++i)
             {
-                if (t_strcmp(m_params[0], CharIterator(cmdInfo(i)->cmd)) == 0)
+                if (hasParameter(0, cmdInfo(i)->cmd))
                 {
                     (this->*(cmdInfo(i)->handler))();
                     return;
@@ -223,6 +231,12 @@ namespace fdv
             }
             m_serial->writeln(FSTR("Unknown command"));
         }
+    }
+    
+    
+    bool MTD_FLASHMEM SerialConsole::hasParameter(uint32_t paramIndex, char const* str)
+    {
+        return t_strcmp(m_params[paramIndex], CharIterator(str)) == 0;
     }
 
 
@@ -236,7 +250,7 @@ namespace fdv
         else if (m_paramsCount == 2)
         {
             for (uint32_t i = 0; cmdInfo(i); ++i)
-                if (t_strcmp(m_params[1], CharIterator(cmdInfo(i)->cmd)) == 0)
+                if (hasParameter(1, cmdInfo(i)->cmd))
                 {
                     m_serial->printf(FSTR("Syntax:\r\n\t%s %s\r\n"), cmdInfo(i)->cmd, cmdInfo(i)->syntax);
                     m_serial->printf(FSTR("Description:\r\n\t%s\r\n"), cmdInfo(i)->description);
@@ -286,7 +300,7 @@ namespace fdv
 
     void MTD_FLASHMEM SerialConsole::cmd_ifconfig()
     {
-        if (m_paramsCount == 5 && t_strcmp(m_params[1], CharIterator(FSTR("static"))) == 0)
+        if (m_paramsCount == 5 && hasParameter(1, FSTR("static")))
         {
             // set static IP
             APtr<char> strIP( t_strdup(m_params[2]) );
@@ -296,14 +310,14 @@ namespace fdv
             ConfigurationManager::applyClientIP();
         }
         else
-        if (m_paramsCount == 2 && t_strcmp(m_params[1], CharIterator(FSTR("dhcp"))) == 0)
+        if (m_paramsCount == 2 && hasParameter(1, FSTR("dhcp")))
         {
             // set dyncamic IP (DHCP)
             ConfigurationManager::setClientIPParams(false, STR_, STR_, STR_);
             ConfigurationManager::applyClientIP();
         }
         else
-        if (m_paramsCount == 5 && t_strcmp(m_params[1], CharIterator(FSTR("ap"))) == 0)
+        if (m_paramsCount == 5 && hasParameter(1, FSTR("ap")))
         {
             // set Access Point static IP
             APtr<char> strIP( t_strdup(m_params[2]) );
@@ -313,7 +327,7 @@ namespace fdv
             ConfigurationManager::applyAccessPointIP();
         }        
         else
-        if (m_paramsCount == 4 && t_strcmp(m_params[1], CharIterator(FSTR("dns"))) == 0)
+        if (m_paramsCount == 4 && hasParameter(1, FSTR("dns")))
         {
             // set DNS1 and DNS2
             APtr<char> strDNS1( t_strdup(m_params[2]) );
@@ -376,7 +390,7 @@ namespace fdv
     {
         m_serial->printf(FSTR("Cells found:\r\n"));
         uint32_t count = 0;
-        bool scan = (m_paramsCount == 2 && t_strcmp(m_params[1], CharIterator(FSTR("scan"))) == 0);
+        bool scan = (m_paramsCount == 2 && hasParameter(1, FSTR("scan")));
         WiFi::APInfo* infos = WiFi::getAPList(&count, scan);
         for (uint32_t i = 0; i != count; ++i)
         {
@@ -462,7 +476,17 @@ namespace fdv
         }
     }
 
+    
+    void MTD_FLASHMEM SerialConsole::cmd_router()
+    {
+        if (m_paramsCount == 2)
+        {
+            ConfigurationManager::setRouting(hasParameter(1, FSTR("on")));
+            ConfigurationManager::applyRouting();
+        }
+    }
 
+            
     void MTD_FLASHMEM SerialConsole::cmd_test()
     {
     }
