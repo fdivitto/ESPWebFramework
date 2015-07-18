@@ -85,6 +85,7 @@ namespace fdv
     static char const STR_uptime[] FLASHMEM         = "uptime";
     static char const STR_DNS1[] FLASHMEM           = "DNS1";
     static char const STR_DNS2[] FLASHMEM           = "DNS2";
+    static char const STR_ROUTING[] FLASHMEM        = "ROUTING";
 }
 
 #endif

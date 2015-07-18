@@ -40,20 +40,10 @@ extern "C"
     #include "lwip/icmp.h"
     #include "lwip/inet_chksum.h"
     #include "lwip/raw.h"
-	#include "udhcp/dhcpd.h"	
 
 	#include <stdarg.h>
 }
 
-
-
-extern "C"
-{
-bool wifi_station_dhcpc_start(void);
-bool wifi_station_dhcpc_stop(void);
-bool dhcp_set_info(dhcp_info *if_dhcp);
-sint8 FUNC_FLASHMEM udhcpd_stop(void);
-}	
 
 	
 
@@ -1039,6 +1029,42 @@ namespace fdv
         
     };
 
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // NetInterface
+    // Returns interfaces info
+
+    struct NetInterface
+    {
+        static netif* get(uint32_t index);
+    };
+    
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // Router
+    
+    class Router
+    {
+    
+        static uint32_t const INTFCOUNT = 2;
+    
+    public:
+        
+        static void enable();        
+        static void disable();
+    
+    private:
+    
+        static err_t netif_input(pbuf *p, netif *inp);
+        
+        static bool           s_enabled;
+        static netif_input_fn s_prevInput[INTFCOUNT];
+    };
+    
 
 	
 }	// fdv namespace

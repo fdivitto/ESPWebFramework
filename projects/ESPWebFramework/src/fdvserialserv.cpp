@@ -465,13 +465,6 @@ namespace fdv
 
     void MTD_FLASHMEM SerialConsole::cmd_test()
     {
-        ICMP icmp;
-        for (uint32_t i = 0; i != 10; ++i)
-        {
-            uint32_t t = icmp.ping(IPAddress(FSTR("192.168.1.32")));
-            m_serial->printf(FSTR("%dms\r\n"), t);
-            Task::delay(1000);
-        }
     }
 
         

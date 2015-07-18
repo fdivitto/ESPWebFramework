@@ -52,6 +52,7 @@ namespace fdv
             applyDateTime();
 			applyGPIO();
 			applyWebServer<HTTPCustomServer_T>();            
+            applyRouting();
 		}
 		
 	
@@ -60,7 +61,6 @@ namespace fdv
 		template <typename HTTPCustomServer_T>
 		static void MTD_FLASHMEM applyAll()
 		{
-            //Task::delay(3000);  // debug!
 			applyUARTServices();
 			applyWiFi();
 			asyncExec< applyDelayed<HTTPCustomServer_T> >(512);
@@ -88,6 +88,9 @@ namespace fdv
 
         // can be re-applied
         static void applyDNS();
+        
+        // can be re-applied
+        static void applyRouting();
         
 		// cannot be re-applied
 		template <typename HTTPCustomServer_T>
@@ -147,6 +150,13 @@ namespace fdv
 		static void setDHCPServerParams(bool enabled, char const* startIP = NULL, char const* endIP = NULL);
 		
 		static void getDHCPServerParams(bool* enabled, char const** startIP, char const** endIP);
+        
+        
+        //// Routing
+        
+        static void setRouting(bool enabled);
+        
+        static void getRouting(bool* enabled);
 		
 		
         //// DNS parameters
@@ -331,6 +341,10 @@ namespace fdv
                 
                 // set DNS
                 ConfigurationManager::setDNSParams(IPAddress(getRequest().form[STR_DNS1]), IPAddress(getRequest().form[STR_DNS2]));
+                
+                // set Routing
+                ConfigurationManager::setRouting(getRequest().form[STR_ROUTING] != NULL);
+                ConfigurationManager::applyRouting();
 			}
 			
 			WiFi::Mode mode = ConfigurationManager::getWiFiMode();
@@ -373,6 +387,12 @@ namespace fdv
             IPAddress::IPAddressStr DNS2str = DNS2.get_str();
             addParamStr(STR_DNS1, DNS1str);
             addParamStr(STR_DNS2, DNS2str);
+            
+            // get routing configuration
+            bool routing;
+            ConfigurationManager::getRouting(&routing);
+            if (routing)
+                addParamStr(STR_ROUTING, STR_checked);
             
 			HTTPTemplateResponse::flush();
 		}

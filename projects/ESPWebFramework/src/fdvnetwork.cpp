@@ -34,6 +34,7 @@ extern "C"
 	#include "lwip/api.h"
 	#include "lwip/netbuf.h"
     #include "lwip/inet.h"
+    #include "lwip/netif/etharp.h"
 
 	#include <stdarg.h>
 }
@@ -1056,6 +1057,119 @@ namespace fdv
         
         return 0;
     }    
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // NetInterface
+    
+    netif* NetInterface::get(uint32_t index)
+    {
+        char name[4] = "enX";
+        name[2] = '0' + index;
+        return netif_find(name);
+    }
+
+        
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // Router
+    
+    netif_input_fn Router::s_prevInput[INTFCOUNT];
+    
+    bool Router::s_enabled = false;
+    
+    
+    void MTD_FLASHMEM Router::enable()
+    {
+        if (!s_enabled)
+        {
+            for (uint32_t i = 0; i != INTFCOUNT; ++i)
+            {
+                netif* en = NetInterface::get(i);
+                s_prevInput[i] = en->input;
+                en->input = Router::netif_input;
+            }
+            s_enabled = true;
+        }
+    }
+    
+    
+    void MTD_FLASHMEM Router::disable()
+    {
+        if (s_enabled)
+        {
+            for (uint32_t i = 0; i != INTFCOUNT; ++i)
+            {
+                netif* en = NetInterface::get(i);
+                en->input = s_prevInput[i];
+            }
+            s_enabled = false;
+        }
+    }
+    
+    
+    // remove MTD_FLASHMEM to speedup routing
+    err_t MTD_FLASHMEM Router::netif_input(pbuf *p, netif *inp)
+    {
+        eth_hdr* ethdr = (eth_hdr*)p->payload;
+        
+        if (ntohs(ethdr->type) == ETHTYPE_IP)
+        {
+
+            // move buffer pointer to start of IP header
+            pbuf_header(p, -sizeof(eth_hdr));
+            ip_hdr* iphdr = (ip_hdr*)(p->payload);
+            
+            // needs to route?
+            // 1. check match of source interface IP/netmask and destination IP
+            bool route = ((iphdr->dest.addr & inp->netmask.addr) != (inp->ip_addr.addr & inp->netmask.addr));
+            // 2. check if not multicast or broadcast (>=224.0.0.0 up to 255.255.255.255)
+            route = route && ((iphdr->dest.addr & 0xE0) != 0xE0);
+            
+            if (route)
+            {
+                /*
+                debug("netif_input intf=%d len=%d id=%d prot=%d src=%s dst=%s route?=%c\r\n", 
+                      inp->num, p->tot_len, IPH_ID(iphdr), IPH_PROTO(iphdr),
+                      (char const*)IPAddress(iphdr->src.addr).get_str(),
+                      (char const*)IPAddress(iphdr->dest.addr).get_str(),
+                      route?'Y':'N');
+                */
+                
+                // find destination interface
+                ip_addr_t ipdest;
+                ipdest.addr = iphdr->dest.addr;
+                netif* destIntf = ip_route(&ipdest);
+                
+                // decrement TTL
+                IPH_TTL_SET(iphdr, IPH_TTL(iphdr) - 1);
+                
+                if (IPH_TTL(iphdr) > 0)
+                {
+                    // update IP checksum
+                    if (IPH_CHKSUM(iphdr) >= PP_HTONS(0xffffU - 0x100))
+                        IPH_CHKSUM_SET(iphdr, IPH_CHKSUM(iphdr) + PP_HTONS(0x100) + 1);
+                    else
+                        IPH_CHKSUM_SET(iphdr, IPH_CHKSUM(iphdr) + PP_HTONS(0x100));
+                
+                    // send the packet
+                    ip_output_if(p, NULL, IP_HDRINCL, 0, 0, 0, destIntf);
+                }
+                      
+                pbuf_free(p);
+                return ERR_OK;
+            }
+
+            // restore buffer pointer to start of Ethernet header
+            pbuf_header(p, +sizeof(eth_hdr));
+        }
+              
+        return (Router::s_prevInput[inp->num])(p, inp);
+    }
+    
     
     
 	

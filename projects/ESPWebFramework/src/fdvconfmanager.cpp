@@ -199,6 +199,17 @@ namespace fdv
         NSLookup::setDNSServer(0, DNS1);
         NSLookup::setDNSServer(1, DNS2);
     }
+    
+    
+    void STC_FLASHMEM ConfigurationManager::applyRouting()
+    {
+        bool routing;
+        getRouting(&routing);
+        if (routing)
+            Router::enable();
+        else
+            Router::disable();
+    }
         
     
     // can be re-applied
@@ -302,7 +313,7 @@ namespace fdv
     {
         *IP       = FlashDictionary::getString(STR_APIP, FSTR("192.168.4.1"));
         *netmask  = FlashDictionary::getString(STR_APNETMSK, FSTR("255.255.255.0"));
-        *gateway  = FlashDictionary::getString(STR_APGTW, STR_);
+        *gateway  = FlashDictionary::getString(STR_APGTW, FSTR("192.168.4.1"));
     }
     
     
@@ -324,6 +335,18 @@ namespace fdv
         *endIP     = FlashDictionary::getString(STR_DHCPDIP2, FSTR("192.168.4.110"));
     }
     
+
+    void STC_FLASHMEM ConfigurationManager::setRouting(bool enabled)
+    {
+        FlashDictionary::setBool(STR_ROUTING, enabled);
+    }
+    
+
+    void STC_FLASHMEM ConfigurationManager::getRouting(bool* enabled)
+    {
+        *enabled = FlashDictionary::getBool(STR_ROUTING, false);
+    }
+
     
     void STC_FLASHMEM ConfigurationManager::setDNSParams(IPAddress DNS1, IPAddress DNS2)
     {
