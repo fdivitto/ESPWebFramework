@@ -55,68 +55,25 @@ namespace fdv
 	{
 	public:
 		
-		Task(bool suspended = true, uint16_t stackDepth = 256, uint32_t priority = 2)
-			: m_stackDepth(stackDepth), m_priority(priority), m_handle(NULL)
-		{
-			if (!suspended)
-				resume();			
-		}
-		
-		// call only when "suspended" in constructor is true and before resume()
-		void MTD_FLASHMEM setStackDepth(uint16_t stackDepth)
-		{
-			m_stackDepth = stackDepth;
-		}
-		
-		void MTD_FLASHMEM suspend()
-		{
-			vTaskSuspend(m_handle);
-		}
-		
-		void MTD_FLASHMEM terminate()
-		{
-			vTaskDelete(m_handle);
-		}
-		
-		void MTD_FLASHMEM resume()
-		{
-			if (m_handle)
-				vTaskResume(m_handle);
-			else
-				xTaskCreate(entry, (const signed char*)"", m_stackDepth, this, m_priority, &m_handle);			
-		}
-		
-		static void MTD_FLASHMEM delay(uint32_t ms)
-		{
-			vTaskDelay(ms / portTICK_RATE_MS);
-		}
-		
-		// task min touched free stack (in bytes)
-		static uint32_t MTD_FLASHMEM getMinFreeStack()
-		{
-			return uxTaskGetStackHighWaterMark(NULL) * 4;
-		}
-		
-		// global free heap (in bytes)
-		static uint32_t MTD_FLASHMEM getFreeHeap()
-		{
-			return system_get_free_heap_size();
-		}
+		Task(bool suspended = true, uint16_t stackDepth = 256, uint32_t priority = 2);		
+		void setStackDepth(uint16_t stackDepth);		
+		void suspend();		
+		void terminate();		
+		void resume();		
+		static void delay(uint32_t ms);
+		static uint32_t getMinFreeStack();
+		static uint32_t getFreeHeap();
 		
 	public:
 	
 		virtual void exec() = 0;
 		
-
 	private:
 	
-		static void MTD_FLASHMEM entry(void* params)
-		{
-			static_cast<Task*>(params)->exec();
-			vTaskSuspend(NULL);
-		}
+		static void entry(void* params);
 		
 	private:
+    
 		uint16_t    m_stackDepth;
 		uint32_t    m_priority;
 		xTaskHandle m_handle;
@@ -164,7 +121,7 @@ namespace fdv
 			m_object = object;
 		}
 		
-		void MTD_FLASHMEM exec()
+		void exec()
 		{
 			(m_object->*Method)();
 		}

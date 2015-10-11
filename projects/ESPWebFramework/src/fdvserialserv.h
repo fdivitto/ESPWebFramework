@@ -98,6 +98,7 @@ namespace fdv
 #endif	// FDV_INCLUDE_SERIALCONSOLE
 
 
+
 #if (FDV_INCLUDE_SERIALBINARY == 1)
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -533,453 +534,42 @@ namespace fdv
 		
 	public:
 	
-		SerialBinary()
-			: m_serial(HardwareSerial::getSerial(0)), 
-			  m_recvID(255), 
-			  m_sendID(0), 
-			  m_recvACKQueue(ACKMSG_QUEUE_LENGTH), 
-			  m_receiveTask(this, false, 256),
-			  m_isReady(false),
-			  m_platform(PLATFORM_BASELINE)
-		{
-		}
-		
-		
-		~SerialBinary()
-		{
-			m_receiveTask.terminate();
-			// todo: free pending messages
-		}
-		
-		
-		bool MTD_FLASHMEM isReady()
-		{
-			MutexLock lock(&m_mutex);
-			return m_isReady;
-		}
-
-		
-		bool MTD_FLASHMEM checkReady()
-		{
-			if (!isReady())
-				send_CMD_READY();
-			return isReady();
-		}
-		
-		
-		
-		uint8_t MTD_FLASHMEM getPlatform()
-		{
-			checkReady();
-			MutexLock lock(&m_mutex);
-			return m_platform;
-		}
-
+		SerialBinary();        		
+		~SerialBinary();		
+		bool isReady();		
+		bool checkReady();				
+		uint8_t getPlatform();
 
 	private:
-				
-		
-		Message MTD_FLASHMEM receive()
-		{
-			Message msg;
-			SoftTimeOut timeout(WAIT_MSG_TIMEOUT);
-			while (!timeout)
-			{
-				// ID
-				int16_t r = m_serial->read(INTRA_MSG_TIMEOUT);
-				if (r < 0)
-					continue;
-				msg.ID = r;
-
-				// Command
-				r = m_serial->read(INTRA_MSG_TIMEOUT);
-				if (r < 0)
-					continue;
-				msg.command = r;
-
-				// Data Size Low
-				r = m_serial->read(INTRA_MSG_TIMEOUT);
-				if (r < 0)
-					continue;
-				msg.dataSize = r;
-
-				// Data Size High
-				r = m_serial->read(INTRA_MSG_TIMEOUT);
-				if (r < 0)
-					continue;
-				msg.dataSize |= r << 8;
-
-				// Data			
-				if (msg.dataSize > 0 && msg.dataSize < (Task::getFreeHeap() >> 1))
-				{
-					msg.data = new uint8_t[msg.dataSize];
-					if (m_serial->read(msg.data, msg.dataSize, INTRA_MSG_TIMEOUT) < msg.dataSize)
-					{
-						msg.freeData();
-						continue;
-					}
-				}
-				
-				// check ID
-				if (msg.ID == m_recvID)
-				{
-					msg.freeData();
-					continue;
-				}
-				m_recvID = msg.ID;
-				
-				msg.valid = true;
-				return msg;
-			}			
-			return msg;
-		}
-		
-		
-		uint8_t MTD_FLASHMEM getNextID()
-		{
-			MutexLock lock(&m_mutex);
-			return ++m_sendID;
-		}
-		
-		
-		void MTD_FLASHMEM send(Message* msg)
-		{
-			MutexLock lock(&m_mutex);
-			m_serial->write(msg->ID);
-			m_serial->write(msg->command);
-			m_serial->write(msg->dataSize & 0xFF);
-			m_serial->write((msg->dataSize >> 8) & 0xFF);
-			if (msg->dataSize > 0)
-				m_serial->write(msg->data, msg->dataSize);
-		}
-		
-		
-		// send ACK without parameters
-		void MTD_FLASHMEM sendNoParamsACK(uint8_t ackID)
-		{
-			Message msgContainer(getNextID(), CMD_ACK, Message_ACK::SIZE);
-			Message_ACK msgACK(&msgContainer, ackID);
-			send(&msgContainer);
-			msgContainer.freeData();			
-		}
-		
-		
-		Message MTD_FLASHMEM waitACK(uint8_t ackID)
-		{
-			Message msgContainer;
-			SoftTimeOut timeout(GETACK_TIMEOUT);
-			while (!timeout)
-			{
-				if (m_recvACKQueue.receive(&msgContainer, GETACK_TIMEOUT))
-				{
-					Message_ACK msgACK(&msgContainer);
-					if (msgACK.ackID == ackID)
-						return msgContainer;
-					msgContainer.freeData();	// discard this ACK
-				}
-			}
-			msgContainer.valid = false;
-			return msgContainer;
-		}
-		
-		
-		bool MTD_FLASHMEM waitNoParamsACK(uint8_t ackID)
-		{
-			Message msgContainer = waitACK(ackID);
-			if (msgContainer.valid)
-			{
-				msgContainer.freeData();
-				return true;
-			}
-			return false;
-		}		
-		
-
-		void MTD_FLASHMEM receiveTask()
-		{
-			while (true)
-			{
-				Message msg = receive();
-				if (msg.valid)
-				{
-					if (msg.command == CMD_ACK)
-						// if message is an ACK then put it into the ACK message queue, another task will handle it
-						m_recvACKQueue.send(msg, PUTACK_TIMEOUT);
-					else
-						processMessage(&msg);
-				}
-			}
-		}
-		
-		
-		// must not process CMD_ACK messages
-		void MTD_FLASHMEM processMessage(Message* msg)
-		{
-			switch (msg->command)
-			{
-				case CMD_READY:
-					handle_CMD_READY(msg);
-					break;
-				case CMD_IOCONF:
-					handle_CMD_IOCONF(msg);
-					break;
-				case CMD_IOSET:
-					handle_CMD_IOSET(msg);
-					break;
-				case CMD_IOGET:
-					handle_CMD_IOGET(msg);
-					break;
-				case CMD_IOASET:
-					handle_CMD_IOASET(msg);
-					break;
-				case CMD_IOAGET:
-					handle_CMD_IOAGET(msg);
-					break;
-			}			
-			msg->freeData();
-		}
-		
-		
-		void MTD_FLASHMEM handle_CMD_READY(Message* msg)
-		{
-			// process message
-			Message_CMD_READY msgCMDREADY(msg);
-			m_mutex.lock();
-			m_isReady  = (msgCMDREADY.protocolVersion == PROTOCOL_VERSION && f_strcmp(msgCMDREADY.magicString, STR_BINPRORDY) == 0);
-			m_platform = msgCMDREADY.platform;
-			m_mutex.unlock();
-			
-			// send ACK with parameters
-			Message msgContainer(getNextID(), CMD_ACK, Message_CMD_READY_ACK::SIZE);
-			Message_CMD_READY_ACK msgCMDREADYACK(&msgContainer, msg->ID, PROTOCOL_VERSION, PLATFORM_THIS, STR_BINPRORDY);
-			send(&msgContainer);
-			msgContainer.freeData();
-		}
-		
-		
-		void MTD_FLASHMEM handle_CMD_IOCONF(Message* msg)
-		{
-			// process message
-			Message_CMD_IOCONF msgIOCONF(msg);
-			if (msgIOCONF.flags & PIN_CONF_OUTPUT)
-				GPIOX(msgIOCONF.pin).modeOutput();
-			else
-				GPIOX(msgIOCONF.pin).modeInput();
-			GPIOX(msgIOCONF.pin).enablePullUp(msgIOCONF.flags & PIN_CONF_PULLUP);
 						
-			// send simple ACK
-			sendNoParamsACK(msg->ID);
-		}
+		Message receive();
+		uint8_t getNextID();		
+		void send(Message* msg);		
+		void sendNoParamsACK(uint8_t ackID);				
+		Message waitACK(uint8_t ackID);		
+		bool waitNoParamsACK(uint8_t ackID);
+		void receiveTask();						
+		void processMessage(Message* msg);		
 		
-		
-		void MTD_FLASHMEM handle_CMD_IOSET(Message* msg)
-		{
-			// process message
-			Message_CMD_IOSET msgIOSET(msg);
-			GPIOX(msgIOSET.pin).write(msgIOSET.state);
-			
-			// send simple ACK
-			sendNoParamsACK(msg->ID);
-		}
-		
-		
-		void MTD_FLASHMEM handle_CMD_IOGET(Message* msg)
-		{
-			// process message
-			Message_CMD_IOGET msgIOGET(msg);
-			bool state = GPIOX(msgIOGET.pin).read();
-			
-			// send ACK with parameters
-			Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOGET_ACK::SIZE);
-			Message_CMD_IOGET_ACK msgCMDIOGETACK(&msgContainer, msg->ID, state);
-			send(&msgContainer);
-			msgContainer.freeData();
-		}
-		
-		
-		// not implemented
-		void MTD_FLASHMEM handle_CMD_IOASET(Message* msg)
-		{
-			// process message
-			// not implemented
-			
-			// send simple ACK
-			sendNoParamsACK(msg->ID);
-		}
-		
-		
-		// not implemented
-		void MTD_FLASHMEM handle_CMD_IOAGET(Message* msg)
-		{
-			// process message
-			// not implemented
-			
-			// send ACK with parameters
-			Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOAGET_ACK::SIZE);
-			Message_CMD_IOAGET_ACK msgCMDIOGETACK(&msgContainer, msg->ID, 0);	// always returns 0!
-			send(&msgContainer);
-			msgContainer.freeData();
-		}		
+		void handle_CMD_READY(Message* msg);		
+		void handle_CMD_IOCONF(Message* msg);		
+		void handle_CMD_IOSET(Message* msg);		
+		void handle_CMD_IOGET(Message* msg);
+		void handle_CMD_IOASET(Message* msg);
+		void handle_CMD_IOAGET(Message* msg);
 						
 		
 	public:
 	
-		bool MTD_FLASHMEM send_CMD_READY()
-		{
-			m_isReady = false;
-			for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
-			{
-				// send message
-				uint8_t msgID = getNextID();
-				Message msgContainer(msgID, CMD_READY, Message_CMD_READY::SIZE);
-				Message_CMD_READY msgCMDREADY(&msgContainer, PROTOCOL_VERSION, PLATFORM_THIS, STR_BINPRORDY);
-				send(&msgContainer);
-				msgContainer.freeData();
-				
-				// wait for ACK
-				msgContainer = waitACK(msgID);
-				if (msgContainer.valid)
-				{
-					Message_CMD_READY_ACK msgCMDREADYACK(&msgContainer);
-					MutexLock lock(&m_mutex);
-					m_isReady  = (msgCMDREADYACK.protocolVersion == PROTOCOL_VERSION && f_strcmp(msgCMDREADYACK.magicString, STR_BINPRORDY) == 0);
-					m_platform = msgCMDREADYACK.platform;
-					msgContainer.freeData();
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		
-		bool MTD_FLASHMEM send_CMD_IOCONF(uint8_t pin, uint8_t flags)
-		{
-			if (checkReady())
-			{
-				for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
-				{
-					// send message
-					uint8_t msgID = getNextID();
-					Message msgContainer(msgID, CMD_IOCONF, Message_CMD_IOCONF::SIZE);
-					Message_CMD_IOCONF msgCMDIOCONF(&msgContainer, pin, flags);
-					send(&msgContainer);
-					msgContainer.freeData();
-					
-					// wait for ACK
-					if (waitNoParamsACK(msgID))
-						return true;
-				}
-				m_isReady = false;	// no more ready
-			}
-			return false;
-		}
-
-
-		bool MTD_FLASHMEM send_CMD_IOSET(uint8_t pin, uint8_t state)
-		{
-			if (checkReady())
-			{
-				for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
-				{
-					// send message
-					uint8_t msgID = getNextID();
-					Message msgContainer(msgID, CMD_IOSET, Message_CMD_IOSET::SIZE);
-					Message_CMD_IOSET msgCMDIOSET(&msgContainer, pin, state);
-					send(&msgContainer);
-					msgContainer.freeData();
-					
-					// wait for ACK
-					if (waitNoParamsACK(msgID))
-						return true;
-				}
-				m_isReady = false;	// no more ready
-			}
-			return false;
-		}
-
-
-		bool MTD_FLASHMEM send_CMD_IOGET(uint8_t pin, uint8_t* state)
-		{
-			if (checkReady())
-			{
-				for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
-				{
-					// send message
-					uint8_t msgID = getNextID();
-					Message msgContainer(msgID, CMD_IOGET, Message_CMD_IOGET::SIZE);
-					Message_CMD_IOGET msgCMDIOGET(&msgContainer, pin);
-					send(&msgContainer);
-					msgContainer.freeData();
-					
-					// wait for ACK
-					msgContainer = waitACK(msgID);
-					if (msgContainer.valid)
-					{
-						Message_CMD_IOGET_ACK msgCMDIOGETACK(&msgContainer);
-						*state = msgCMDIOGETACK.state;
-						msgContainer.freeData();
-						return true;
-					}
-				}
-				m_isReady = false;	// no more ready
-			}
-			return false;
-		}
-
-
-		bool MTD_FLASHMEM send_CMD_IOASET(uint8_t pin, uint16_t state)
-		{
-			if (checkReady())
-			{
-				for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
-				{
-					// send message
-					uint8_t msgID = getNextID();
-					Message msgContainer(msgID, CMD_IOASET, Message_CMD_IOASET::SIZE);
-					Message_CMD_IOASET msgCMDIOASET(&msgContainer, pin, state);
-					send(&msgContainer);
-					msgContainer.freeData();
-					
-					// wait for ACK
-					if (waitNoParamsACK(msgID))
-						return true;
-				}
-				m_isReady = false;	// no more ready
-			}
-			return false;
-		}
-
-
-		bool MTD_FLASHMEM send_CMD_IOAGET(uint8_t pin, uint16_t* state)
-		{
-			if (checkReady())
-			{
-				for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
-				{
-					// send message
-					uint8_t msgID = getNextID();
-					Message msgContainer(msgID, CMD_IOAGET, Message_CMD_IOAGET::SIZE);
-					Message_CMD_IOAGET msgCMDIOAGET(&msgContainer, pin);
-					send(&msgContainer);
-					msgContainer.freeData();
-					
-					// wait for ACK
-					msgContainer = waitACK(msgID);
-					if (msgContainer.valid)
-					{
-						Message_CMD_IOAGET_ACK msgCMDIOAGETACK(&msgContainer);
-						*state = msgCMDIOAGETACK.state;
-						msgContainer.freeData();
-						return true;
-					}
-				}
-				m_isReady = false;	// no more ready
-			}
-			return false;
-		}
-		
+		bool send_CMD_READY();		
+		bool send_CMD_IOCONF(uint8_t pin, uint8_t flags);
+		bool send_CMD_IOSET(uint8_t pin, uint8_t state);
+		bool send_CMD_IOGET(uint8_t pin, uint8_t* state);
+		bool send_CMD_IOASET(uint8_t pin, uint16_t state);
+		bool send_CMD_IOAGET(uint8_t pin, uint16_t* state);
 		
 	private:
+    
 		Serial*                                              m_serial;
 		uint8_t                                              m_recvID;		
 		uint8_t                                              m_sendID;
