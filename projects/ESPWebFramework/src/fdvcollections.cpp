@@ -777,5 +777,81 @@ uint32_t MTD_FLASHMEM FlashDictionary::getUsedSpace()
 }
 
 
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+// StringList
+// A list zero terminated strings
+
+MTD_FLASHMEM StringList::StringList()
+{
+}
+
+
+MTD_FLASHMEM StringList::~StringList()
+{
+    clear();
+}
+
+
+void MTD_FLASHMEM StringList::freeItem(uint32_t position)
+{
+    if (m_items[position].storage == Heap)
+        delete m_items[position].ptr;
+}            
+
+
+void MTD_FLASHMEM StringList::add(char const* string, Storage storage)
+{
+    m_items.add(Item(storage, storage == Heap? f_strdup(string) : string));
+}
+
+
+void MTD_FLASHMEM StringList::insert(uint32_t position, char const* string, Storage storage)
+{
+    m_items.insert(position, Item(storage, storage == Heap? f_strdup(string) : string));
+}
+
+
+void MTD_FLASHMEM StringList::remove(uint32_t position)
+{
+    freeItem(position);
+    m_items.remove(position);
+}
+
+
+int32_t MTD_FLASHMEM StringList::indexof(const char* string)
+{
+    for (uint32_t i = 0; i != m_items.size(); ++i)
+    {
+        if (f_strcmp(string, m_items[i].ptr) == 0)
+            return i;
+    }
+    return -1;
+}
+
+
+void MTD_FLASHMEM StringList::clear()
+{
+    for (uint32_t i = 0; i != m_items.size(); ++i)
+        freeItem(i);
+    m_items.clear();
+}
+
+
+uint32_t MTD_FLASHMEM StringList::size()
+{
+    return m_items.size();
+}
+
+
+char const* MTD_FLASHMEM StringList::getItem(uint32_t position)
+{
+    return m_items[position].ptr;
+}
+
+
+
+
 }
 

@@ -783,7 +783,45 @@ struct FlashFileSystem
 
 
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+// StringList
+// A list zero terminated strings
 
+class StringList
+{
+    public:
+    
+        enum Storage {Reference, Heap};
+    
+        StringList();
+        ~StringList();
+        
+        void add(char const* string, Storage storage);
+        void insert(uint32_t position, char const* string, Storage storage);
+        void remove(uint32_t position);
+        int32_t indexof(const char* string);
+        void clear();
+        uint32_t size();
+        char const* getItem(uint32_t position);
+        
+    private:
+        
+        void freeItem(uint32_t position);
+        
+        struct Item
+        {
+            Storage storage;
+            char const* ptr;
+            
+            Item(Storage storage_, char const* ptr_)
+                : storage(storage_), ptr(ptr_)
+            {
+            }
+        };
+        
+        Vector<Item> m_items;        
+};
 
 
 
