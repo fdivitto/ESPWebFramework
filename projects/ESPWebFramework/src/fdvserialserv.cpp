@@ -506,6 +506,324 @@ namespace fdv
     
 
 
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// SerialBinary::Message
+
+
+    MTD_FLASHMEM SerialBinary::Message::Message()
+        : valid(false), ID(0), command(0), dataSize(0), data(NULL)
+    {
+    }
+    
+    
+    MTD_FLASHMEM SerialBinary::Message::Message(uint8_t ID_, uint8_t command_, uint16_t dataSize_)
+        : valid(true), ID(ID_), command(command_), dataSize(dataSize_), data(dataSize_? new uint8_t[dataSize_] : NULL)
+    {
+    }
+    
+
+    void MTD_FLASHMEM SerialBinary::Message::freeData()
+    {
+        if (data != NULL)
+        {
+            delete[] data;
+            data = NULL;
+        }
+    }
+
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Message_ACK
+    
+    // base for ACK messages 
+    struct Message_ACK
+    {
+        static uint16_t const SIZE = 1;
+        
+        uint8_t& ackID;
+        
+        // used to decode message
+        Message_ACK(SerialBinary::Message* msg)
+            : ackID(msg->data[0])
+        {
+        }
+        // used to encode message
+        Message_ACK(SerialBinary::Message* msg, uint8_t ackID_)
+            : ackID(msg->data[0])
+        {
+            ackID = ackID_;
+        }
+    };
+		
+			
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Message_CMD_READY
+            
+    struct Message_CMD_READY
+    {
+        static uint16_t const SIZE = 12;
+        
+        uint8_t& protocolVersion;
+        uint8_t& platform;
+        char*    magicString;
+        
+        // used to decode message
+        Message_CMD_READY(SerialBinary::Message* msg)
+            : protocolVersion(msg->data[0]), 
+              platform(msg->data[1]), 
+              magicString((char*)msg->data + 2)
+        {
+        }
+        // used to encode message
+        Message_CMD_READY(SerialBinary::Message* msg, uint8_t protocolVersion_, uint8_t platform_, char const* magicString_)
+            : protocolVersion(msg->data[0]), 
+              platform(msg->data[1]), 
+              magicString((char*)msg->data + 2)
+        {
+            protocolVersion = protocolVersion_;
+            platform        = platform_;
+            f_strcpy(magicString, magicString_);
+        }
+        
+    };
+		
+        
+        
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Message_CMD_READY_ACK        
+		
+    struct Message_CMD_READY_ACK : Message_ACK
+    {
+        static uint16_t const SIZE = Message_ACK::SIZE + 12;
+        
+        uint8_t& protocolVersion;
+        uint8_t& platform;
+        char*    magicString;
+        
+        // used to decode message
+        Message_CMD_READY_ACK(SerialBinary::Message* msg)
+            : Message_ACK(msg), 
+              protocolVersion(msg->data[Message_ACK::SIZE + 0]), 
+              platform(msg->data[Message_ACK::SIZE + 1]), 
+              magicString((char*)msg->data + Message_ACK::SIZE + 2)
+        {
+        }
+        // used to encode message
+        Message_CMD_READY_ACK(SerialBinary::Message* msg, uint8_t ackID_, uint8_t protocolVersion_, uint8_t platform_, char const* magicString_)
+            : Message_ACK(msg, ackID_), 
+              protocolVersion(msg->data[Message_ACK::SIZE + 0]), 
+              platform(msg->data[Message_ACK::SIZE + 1]), 
+              magicString((char*)msg->data + Message_ACK::SIZE + 2)
+        {
+            protocolVersion = protocolVersion_;
+            platform        = platform_;
+            f_strcpy(magicString, magicString_);
+        }			
+    };
+
+
+    
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Message_CMD_IOCONF        
+    
+    struct Message_CMD_IOCONF
+    {
+        static uint16_t const SIZE = 2;
+        
+        uint8_t& pin;
+        uint8_t& flags;
+        
+        // used to decode message
+        Message_CMD_IOCONF(SerialBinary::Message* msg)
+            : pin(msg->data[0]), 
+              flags(msg->data[1])
+        {
+        }
+        // used to encode message
+        Message_CMD_IOCONF(SerialBinary::Message* msg, uint8_t pin_, uint8_t flags_)
+            : pin(msg->data[0]), 
+              flags(msg->data[1])
+        {
+            pin   = pin_;
+            flags = flags_;
+        }			
+    };
+
+
+    
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Message_CMD_IOSET        
+    
+    struct Message_CMD_IOSET
+    {
+        static uint16_t const SIZE = 2;
+        
+        uint8_t& pin;
+        uint8_t& state;
+        
+        // used to decode message
+        Message_CMD_IOSET(SerialBinary::Message* msg)
+            : pin(msg->data[0]), 
+              state(msg->data[1])
+        {
+        }
+        // used to encode message
+        Message_CMD_IOSET(SerialBinary::Message* msg, uint8_t pin_, uint8_t state_)
+            : pin(msg->data[0]), 
+              state(msg->data[1])
+        {
+            pin   = pin_;
+            state = state_;
+        }			
+    };
+
+    
+    
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Message_CMD_IOGET        
+    
+    struct Message_CMD_IOGET
+    {
+        static uint16_t const SIZE = 1;
+        
+        uint8_t& pin;
+        
+        // used to decode message
+        Message_CMD_IOGET(SerialBinary::Message* msg)
+            : pin(msg->data[0])
+        {
+        }
+        // used to encode message
+        Message_CMD_IOGET(SerialBinary::Message* msg, uint8_t pin_)
+            : pin(msg->data[0])
+        {
+            pin   = pin_;
+        }			
+    };
+
+
+    
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Message_CMD_IOGET_ACK        
+    
+    struct Message_CMD_IOGET_ACK : Message_ACK
+    {
+        static uint16_t const SIZE = Message_ACK::SIZE + 1;
+        
+        uint8_t& state;
+        
+        // used to decode message
+        Message_CMD_IOGET_ACK(SerialBinary::Message* msg)
+            : Message_ACK(msg), 
+              state(msg->data[Message_ACK::SIZE + 0])
+        {
+        }
+        // used to encode message
+        Message_CMD_IOGET_ACK(SerialBinary::Message* msg, uint8_t ackID_, uint8_t state_)
+            : Message_ACK(msg, ackID_), 
+              state(msg->data[Message_ACK::SIZE + 0])
+        {
+            state = state_;
+        }			
+    };
+
+    
+    
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Message_CMD_IOASET        
+    
+    struct Message_CMD_IOASET
+    {
+        static uint16_t const SIZE = 3;
+        
+        uint8_t&  pin;
+        uint16_t& state;
+        
+        // used to decode message
+        Message_CMD_IOASET(SerialBinary::Message* msg)
+            : pin(msg->data[0]), 
+              state(*(uint16_t*)(msg->data + 1))
+        {
+        }
+        // used to encode message
+        Message_CMD_IOASET(SerialBinary::Message* msg, uint8_t pin_, uint16_t state_)
+            : pin(msg->data[0]), 
+              state(*(uint16_t*)(msg->data + 1))
+        {
+            pin   = pin_;
+            state = state_;
+        }			
+    };
+
+
+    
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Message_CMD_IOAGET        
+    
+    struct Message_CMD_IOAGET
+    {
+        static uint16_t const SIZE = 1;
+        
+        uint8_t& pin;
+        
+        // used to decode message
+        Message_CMD_IOAGET(SerialBinary::Message* msg)
+            : pin(msg->data[0])
+        {
+        }
+        // used to encode message
+        Message_CMD_IOAGET(SerialBinary::Message* msg, uint8_t pin_)
+            : pin(msg->data[0])
+        {
+            pin   = pin_;
+        }			
+    };
+		
+
+        
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// Message_CMD_IOAGET_ACK        
+        
+    struct Message_CMD_IOAGET_ACK : Message_ACK
+    {
+        static uint16_t const SIZE = Message_ACK::SIZE + 2;
+        
+        uint16_t& state;
+        
+        // used to decode message
+        Message_CMD_IOAGET_ACK(SerialBinary::Message* msg)
+            : Message_ACK(msg), 
+              state(*(uint16_t*)(msg->data + Message_ACK::SIZE + 0))
+        {
+        }
+        // used to encode message
+        Message_CMD_IOAGET_ACK(SerialBinary::Message* msg, uint8_t ackID_, uint16_t state_)
+            : Message_ACK(msg, ackID_), 
+              state(*(uint16_t*)(msg->data + Message_ACK::SIZE + 0))
+        {
+            state = state_;
+        }			
+    };
+
+
+    
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////
+    
     MTD_FLASHMEM SerialBinary::SerialBinary()
         : m_serial(HardwareSerial::getSerial(0)), 
           m_recvID(255), 
@@ -946,15 +1264,6 @@ namespace fdv
     }
     
     
-    void MTD_FLASHMEM SerialBinary::Message::freeData()
-    {
-        if (data != NULL)
-        {
-            delete[] data;
-            data = NULL;
-        }
-    }
-
 
 
 

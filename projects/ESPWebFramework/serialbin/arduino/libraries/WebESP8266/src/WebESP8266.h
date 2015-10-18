@@ -26,7 +26,6 @@ https://github.com/fdivitto/ESPWebFramework
 #include <inttypes.h>
 #include <Stream.h>
 
-#include "WebESP8266priv.h"
 
 
 /******************************************************************************
@@ -79,8 +78,8 @@ public:
 	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD4  = 20; // Arduino 4
 	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD5  = 21; // Arduino 5
 	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD6  = 22; // Arduino 6
-	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD7  = 23; // Arduino 7
-	
+	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD7  = 23; // Arduino 7	   
+    
 	// Public Methods
 	WebESP8266();
 	void begin(Stream& stream);
@@ -96,26 +95,43 @@ public:
 	bool send_CMD_IOASET(uint8_t pin, uint16_t state);
 	bool send_CMD_IOAGET(uint8_t pin, uint16_t* state);
 	
+    // Types	
+	struct Message
+	{
+		bool     valid;
+		uint8_t  ID;
+		uint8_t  command;
+		uint16_t dataSize;
+		uint8_t* data;
+		
+		Message();
+		Message(uint8_t ID_, uint8_t command_, uint16_t dataSize_);        
+		void freeData(); // warn: memory must be explicitly delete using freeData(). Don't create a destructor to free data!
+	};
+    
 private:
 
 	// Private Methods
-	WebESP8266priv::Message receive();
+	Message receive();
 	int readByte(uint32_t timeOut);
 	uint32_t readBuffer(uint8_t* buffer, uint32_t size, uint32_t timeOut);
-	void processMessage(WebESP8266priv::Message* msg);
-	void handle_CMD_READY(WebESP8266priv::Message* msg);
+	void processMessage(Message* msg);
 	uint8_t getNextID();
-	void send(WebESP8266priv::Message* msg);
-	WebESP8266priv::Message waitACK(uint8_t ackID);
+	void send(Message* msg);
+	Message waitACK(uint8_t ackID);
 	void sendNoParamsACK(uint8_t ackID);
 	bool waitNoParamsACK(uint8_t ackID);
-	void handle_CMD_IOCONF(WebESP8266priv::Message* msg);
-	void handle_CMD_IOSET(WebESP8266priv::Message* msg);
-	void handle_CMD_IOGET(WebESP8266priv::Message* msg);
-	void handle_CMD_IOASET(WebESP8266priv::Message* msg);
-	void handle_CMD_IOAGET(WebESP8266priv::Message* msg);
+    
+	void handle_CMD_READY(Message* msg);
+	void handle_CMD_IOCONF(Message* msg);
+	void handle_CMD_IOSET(Message* msg);
+	void handle_CMD_IOGET(Message* msg);
+	void handle_CMD_IOASET(Message* msg);
+	void handle_CMD_IOAGET(Message* msg);
 	
 private:
+
+    // Private Fields
 	Stream* _stream;
 	uint8_t _recvID;
 	uint8_t _sendID;

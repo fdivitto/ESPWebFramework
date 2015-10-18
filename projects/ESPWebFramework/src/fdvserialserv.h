@@ -270,10 +270,6 @@ namespace fdv
 		static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD6  = 6;  // Arduino 6
 		static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD7  = 7;  // Arduino 7
 		
-
-	private:
-		
-		// warn: memory must be excplitely delete using freeData(). Don't create a destructor to free data!
 		struct Message
 		{
 			bool     valid;
@@ -282,254 +278,10 @@ namespace fdv
 			uint16_t dataSize;
 			uint8_t* data;
 			
-			Message()
-				: valid(false), ID(0), command(0), dataSize(0), data(NULL)
-			{
-			}
-			Message(uint8_t ID_, uint8_t command_, uint16_t dataSize_)
-				: valid(true), ID(ID_), command(command_), dataSize(dataSize_), data(dataSize_? new uint8_t[dataSize_] : NULL)
-			{
-			}
-            
-			void MTD_FLASHMEM freeData();
-		};
-		
-
-		// base for ACK messages 
-		struct Message_ACK
-		{
-			static uint16_t const SIZE = 1;
-			
-			uint8_t& ackID;
-			
-			// used to decode message
-			Message_ACK(Message* msg)
-				: ackID(msg->data[0])
-			{
-			}
-			// used to encode message
-			Message_ACK(Message* msg, uint8_t ackID_)
-				: ackID(msg->data[0])
-			{
-				ackID = ackID_;
-			}
-		};
-		
-				
-		struct Message_CMD_READY
-		{
-			static uint16_t const SIZE = 12;
-			
-			uint8_t& protocolVersion;
-			uint8_t& platform;
-			char*    magicString;
-			
-			// used to decode message
-			Message_CMD_READY(Message* msg)
-				: protocolVersion(msg->data[0]), 
-				  platform(msg->data[1]), 
-				  magicString((char*)msg->data + 2)
-			{
-			}
-			// used to encode message
-			Message_CMD_READY(Message* msg, uint8_t protocolVersion_, uint8_t platform_, char const* magicString_)
-				: protocolVersion(msg->data[0]), 
-				  platform(msg->data[1]), 
-				  magicString((char*)msg->data + 2)
-			{
-				protocolVersion = protocolVersion_;
-				platform        = platform_;
-				f_strcpy(magicString, magicString_);
-			}
-			
-		};
-		
-		
-		struct Message_CMD_READY_ACK : Message_ACK
-		{
-			static uint16_t const SIZE = Message_ACK::SIZE + 12;
-			
-			uint8_t& protocolVersion;
-			uint8_t& platform;
-			char*    magicString;
-			
-			// used to decode message
-			Message_CMD_READY_ACK(Message* msg)
-				: Message_ACK(msg), 
-				  protocolVersion(msg->data[Message_ACK::SIZE + 0]), 
-				  platform(msg->data[Message_ACK::SIZE + 1]), 
-				  magicString((char*)msg->data + Message_ACK::SIZE + 2)
-			{
-			}
-			// used to encode message
-			Message_CMD_READY_ACK(Message* msg, uint8_t ackID_, uint8_t protocolVersion_, uint8_t platform_, char const* magicString_)
-				: Message_ACK(msg, ackID_), 
-				  protocolVersion(msg->data[Message_ACK::SIZE + 0]), 
-				  platform(msg->data[Message_ACK::SIZE + 1]), 
-				  magicString((char*)msg->data + Message_ACK::SIZE + 2)
-			{
-				protocolVersion = protocolVersion_;
-				platform        = platform_;
-				f_strcpy(magicString, magicString_);
-			}			
-		};
-
-
-		struct Message_CMD_IOCONF
-		{
-			static uint16_t const SIZE = 2;
-			
-			uint8_t& pin;
-			uint8_t& flags;
-			
-			// used to decode message
-			Message_CMD_IOCONF(Message* msg)
-				: pin(msg->data[0]), 
-				  flags(msg->data[1])
-			{
-			}
-			// used to encode message
-			Message_CMD_IOCONF(Message* msg, uint8_t pin_, uint8_t flags_)
-				: pin(msg->data[0]), 
-				  flags(msg->data[1])
-			{
-				pin   = pin_;
-				flags = flags_;
-			}			
-		};
-
-
-		struct Message_CMD_IOSET
-		{
-			static uint16_t const SIZE = 2;
-			
-			uint8_t& pin;
-			uint8_t& state;
-			
-			// used to decode message
-			Message_CMD_IOSET(Message* msg)
-				: pin(msg->data[0]), 
-				  state(msg->data[1])
-			{
-			}
-			// used to encode message
-			Message_CMD_IOSET(Message* msg, uint8_t pin_, uint8_t state_)
-				: pin(msg->data[0]), 
-				  state(msg->data[1])
-			{
-				pin   = pin_;
-				state = state_;
-			}			
-		};
-
-
-		struct Message_CMD_IOGET
-		{
-			static uint16_t const SIZE = 1;
-			
-			uint8_t& pin;
-			
-			// used to decode message
-			Message_CMD_IOGET(Message* msg)
-				: pin(msg->data[0])
-			{
-			}
-			// used to encode message
-			Message_CMD_IOGET(Message* msg, uint8_t pin_)
-				: pin(msg->data[0])
-			{
-				pin   = pin_;
-			}			
-		};
-
-
-		struct Message_CMD_IOGET_ACK : Message_ACK
-		{
-			static uint16_t const SIZE = Message_ACK::SIZE + 1;
-			
-			uint8_t& state;
-			
-			// used to decode message
-			Message_CMD_IOGET_ACK(Message* msg)
-				: Message_ACK(msg), 
-				  state(msg->data[Message_ACK::SIZE + 0])
-			{
-			}
-			// used to encode message
-			Message_CMD_IOGET_ACK(Message* msg, uint8_t ackID_, uint8_t state_)
-				: Message_ACK(msg, ackID_), 
-				  state(msg->data[Message_ACK::SIZE + 0])
-			{
-				state = state_;
-			}			
-		};
-
-
-		struct Message_CMD_IOASET
-		{
-			static uint16_t const SIZE = 3;
-			
-			uint8_t&  pin;
-			uint16_t& state;
-			
-			// used to decode message
-			Message_CMD_IOASET(Message* msg)
-				: pin(msg->data[0]), 
-				  state(*(uint16_t*)(msg->data + 1))
-			{
-			}
-			// used to encode message
-			Message_CMD_IOASET(Message* msg, uint8_t pin_, uint16_t state_)
-				: pin(msg->data[0]), 
-				  state(*(uint16_t*)(msg->data + 1))
-			{
-				pin   = pin_;
-				state = state_;
-			}			
-		};
-
-
-		struct Message_CMD_IOAGET
-		{
-			static uint16_t const SIZE = 1;
-			
-			uint8_t& pin;
-			
-			// used to decode message
-			Message_CMD_IOAGET(Message* msg)
-				: pin(msg->data[0])
-			{
-			}
-			// used to encode message
-			Message_CMD_IOAGET(Message* msg, uint8_t pin_)
-				: pin(msg->data[0])
-			{
-				pin   = pin_;
-			}			
-		};
-		
-
-		struct Message_CMD_IOAGET_ACK : Message_ACK
-		{
-			static uint16_t const SIZE = Message_ACK::SIZE + 2;
-			
-			uint16_t& state;
-			
-			// used to decode message
-			Message_CMD_IOAGET_ACK(Message* msg)
-				: Message_ACK(msg), 
-				  state(*(uint16_t*)(msg->data + Message_ACK::SIZE + 0))
-			{
-			}
-			// used to encode message
-			Message_CMD_IOAGET_ACK(Message* msg, uint8_t ackID_, uint16_t state_)
-				: Message_ACK(msg, ackID_), 
-				  state(*(uint16_t*)(msg->data + Message_ACK::SIZE + 0))
-			{
-				state = state_;
-			}			
-		};
-
+			Message();
+			Message(uint8_t ID_, uint8_t command_, uint16_t dataSize_);
+			void MTD_FLASHMEM freeData(); // warn: memory must be explicitly delete using freeData(). Don't create a destructor to free data!
+		};	
 
 		
 	public:
@@ -539,7 +291,14 @@ namespace fdv
 		bool isReady();		
 		bool checkReady();				
 		uint8_t getPlatform();
-
+								
+		bool send_CMD_READY();		
+		bool send_CMD_IOCONF(uint8_t pin, uint8_t flags);
+		bool send_CMD_IOSET(uint8_t pin, uint8_t state);
+		bool send_CMD_IOGET(uint8_t pin, uint8_t* state);
+		bool send_CMD_IOASET(uint8_t pin, uint16_t state);
+		bool send_CMD_IOAGET(uint8_t pin, uint16_t* state);
+		
 	private:
 						
 		Message receive();
@@ -557,18 +316,8 @@ namespace fdv
 		void handle_CMD_IOGET(Message* msg);
 		void handle_CMD_IOASET(Message* msg);
 		void handle_CMD_IOAGET(Message* msg);
-						
-		
-	public:
-	
-		bool send_CMD_READY();		
-		bool send_CMD_IOCONF(uint8_t pin, uint8_t flags);
-		bool send_CMD_IOSET(uint8_t pin, uint8_t state);
-		bool send_CMD_IOGET(uint8_t pin, uint8_t* state);
-		bool send_CMD_IOASET(uint8_t pin, uint16_t state);
-		bool send_CMD_IOAGET(uint8_t pin, uint16_t* state);
-		
-	private:
+
+     private:
     
 		Serial*                                              m_serial;
 		uint8_t                                              m_recvID;		
