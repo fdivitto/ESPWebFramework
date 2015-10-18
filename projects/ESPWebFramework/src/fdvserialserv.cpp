@@ -819,8 +819,8 @@ namespace fdv
         }			
     };
 
-
     
+
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -1261,6 +1261,41 @@ namespace fdv
             m_isReady = false;	// no more ready
         }
         return false;
+    }
+    
+    
+    bool MTD_FLASHMEM SerialBinary::send_CMD_GETHTTPHANDLEDPAGES(StringList* outList)
+    {
+        outList->clear();
+        if (checkReady())
+        {
+            for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
+            {
+                // send message
+                uint8_t msgID = getNextID();
+                Message msgContainer(msgID, CMD_GETHTTPHANDLEDPAGES, 0);
+                send(&msgContainer);
+                msgContainer.freeData();
+                
+                // wait for ACK
+                msgContainer = waitACK(msgID);
+                if (msgContainer.valid)
+                {
+                    uint32_t readPos = Message_ACK::SIZE;
+                    uint8_t itemsCount = msgContainer.data[readPos++];
+                    for (uint8_t j = 0; j != itemsCount; ++j)
+                    {
+                        char const* string = (char const*)(msgContainer.data + readPos);
+                        outList->add(string, StringList::Heap);
+                        readPos += f_strlen(string);
+                    }                    
+                    msgContainer.freeData();
+                    return true;
+                }
+            }
+            m_isReady = false;	// no more ready
+        }
+        return false;        
     }
     
     

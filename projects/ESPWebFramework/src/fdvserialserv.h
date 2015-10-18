@@ -202,12 +202,23 @@ namespace fdv
 	//     CMD Parameters:
 	//       1  uint8_t  : pin identifier (see PIN_IDENTIFIER_XX values)
 	//     ACK Parameters (added to CMD_ACK parameters):
-	//       1  uint16_t : input state (0..1023)  
+	//       1  uint16_t : input state (0..1023)
+    //
+    //   CMD_GETHTTPHANDLEDPAGES
+    //     Description:
+    //       Requests for the list of HTTP handled pages
+    //     CMD Parameters:
+    //       none
+    //     ACK Parameters:
+    //       1 uint8_t : number of pages in the list (max 255)
+    //       for n times [
+    //         m uint8_t : zero terminated string
+    //       ]
 	
 	class SerialBinary
 	{
 
-		static uint8_t const  PROTOCOL_VERSION      = 1;
+		static uint8_t const  PROTOCOL_VERSION     = 1;
 	
 		static uint32_t const INTRA_MSG_TIMEOUT    = 200;
 		static uint32_t const WAIT_MSG_TIMEOUT     = 2000;
@@ -217,13 +228,14 @@ namespace fdv
 		static uint32_t const MAX_RESEND_COUNT     = 3;
 		
 		// commands
-		static uint8_t const CMD_ACK               = 0;
-		static uint8_t const CMD_READY             = 1;
-		static uint8_t const CMD_IOCONF            = 2;
-		static uint8_t const CMD_IOSET             = 3;
-		static uint8_t const CMD_IOGET             = 4;
-		static uint8_t const CMD_IOASET            = 5;
-		static uint8_t const CMD_IOAGET            = 6;
+		static uint8_t const CMD_ACK                 = 0;
+		static uint8_t const CMD_READY               = 1;
+		static uint8_t const CMD_IOCONF              = 2;
+		static uint8_t const CMD_IOSET               = 3;
+		static uint8_t const CMD_IOGET               = 4;
+		static uint8_t const CMD_IOASET              = 5;
+		static uint8_t const CMD_IOAGET              = 6;
+        static uint8_t const CMD_GETHTTPHANDLEDPAGES = 7;
 		
 	public:
 		
@@ -280,7 +292,7 @@ namespace fdv
 			
 			Message();
 			Message(uint8_t ID_, uint8_t command_, uint16_t dataSize_);
-			void MTD_FLASHMEM freeData(); // warn: memory must be explicitly delete using freeData(). Don't create a destructor to free data!
+			void MTD_FLASHMEM freeData(); // warn: memory must be explicitly deleted using freeData(). Don't create a destructor to free data!
 		};	
 
 		
@@ -298,6 +310,7 @@ namespace fdv
 		bool send_CMD_IOGET(uint8_t pin, uint8_t* state);
 		bool send_CMD_IOASET(uint8_t pin, uint16_t state);
 		bool send_CMD_IOAGET(uint8_t pin, uint16_t* state);
+        bool send_CMD_GETHTTPHANDLEDPAGES(StringList* outList);
 		
 	private:
 						
