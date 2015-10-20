@@ -831,7 +831,8 @@ namespace fdv
           m_recvACKQueue(ACKMSG_QUEUE_LENGTH), 
           m_receiveTask(this, false, 256),
           m_isReady(false),
-          m_platform(PLATFORM_BASELINE)
+          m_platform(PLATFORM_BASELINE),
+          m_HTTPRoutes(NULL)
     {
     }
     
@@ -839,6 +840,7 @@ namespace fdv
     MTD_FLASHMEM SerialBinary::~SerialBinary()
     {
         m_receiveTask.terminate();
+        delete m_HTTPRoutes;
         // todo: free pending messages
     }
 
@@ -863,6 +865,25 @@ namespace fdv
         checkReady();
         MutexLock lock(&m_mutex);
         return m_platform;
+    }
+    
+    
+    StringList* MTD_FLASHMEM SerialBinary::getHTTPRoutes()
+    {
+        MutexLock lock(&m_himutex);
+        checkReady();
+        if (m_HTTPRoutes == NULL)   // already requested?
+        {
+            // request handled pages
+            m_HTTPRoutes = new StringList;
+            if (!send_CMD_GETHTTPHANDLEDPAGES())
+            {
+                // get a chance to retry            
+                delete m_HTTPRoutes;    
+                m_HTTPRoutes = NULL;
+            }
+        }
+        return m_HTTPRoutes;
     }
     
     
@@ -1264,9 +1285,9 @@ namespace fdv
     }
     
     
-    bool MTD_FLASHMEM SerialBinary::send_CMD_GETHTTPHANDLEDPAGES(StringList* outList)
+    bool MTD_FLASHMEM SerialBinary::send_CMD_GETHTTPHANDLEDPAGES()
     {
-        outList->clear();
+        m_HTTPRoutes->clear();
         if (checkReady())
         {
             for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
@@ -1281,13 +1302,12 @@ namespace fdv
                 msgContainer = waitACK(msgID);
                 if (msgContainer.valid)
                 {
-                    uint32_t readPos = Message_ACK::SIZE;
-                    uint8_t itemsCount = msgContainer.data[readPos++];
+                    char const* rpos = (char const*)(msgContainer.data + Message_ACK::SIZE);
+                    uint8_t itemsCount = (uint8_t)(*rpos++);
                     for (uint8_t j = 0; j != itemsCount; ++j)
                     {
-                        char const* string = (char const*)(msgContainer.data + readPos);
-                        outList->add(string, StringList::Heap);
-                        readPos += f_strlen(string);
+                        m_HTTPRoutes->add(rpos, StringList::Heap);
+                        rpos += f_strlen(rpos) + 1;
                     }                    
                     msgContainer.freeData();
                     return true;

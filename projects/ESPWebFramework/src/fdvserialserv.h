@@ -299,18 +299,22 @@ namespace fdv
 	public:
 	
 		SerialBinary();        		
-		~SerialBinary();		
+		~SerialBinary();	
+
+        // high level interface
 		bool isReady();		
 		bool checkReady();				
 		uint8_t getPlatform();
+        StringList* getHTTPRoutes();
 								
+        // low level interface
 		bool send_CMD_READY();		
 		bool send_CMD_IOCONF(uint8_t pin, uint8_t flags);
 		bool send_CMD_IOSET(uint8_t pin, uint8_t state);
 		bool send_CMD_IOGET(uint8_t pin, uint8_t* state);
 		bool send_CMD_IOASET(uint8_t pin, uint16_t state);
 		bool send_CMD_IOAGET(uint8_t pin, uint16_t* state);
-        bool send_CMD_GETHTTPHANDLEDPAGES(StringList* outList);
+        bool send_CMD_GETHTTPHANDLEDPAGES();
 		
 	private:
 						
@@ -337,9 +341,11 @@ namespace fdv
 		uint8_t                                              m_sendID;
 		Queue<Message>                                       m_recvACKQueue;
 		MethodTask<SerialBinary, &SerialBinary::receiveTask> m_receiveTask;
-		Mutex                                                m_mutex;
+		Mutex                                                m_mutex;    // low level mutex
+        Mutex                                                m_himutex;  // high level mutex
 		bool                                                 m_isReady;
 		uint8_t                                              m_platform;
+        StringList*                                          m_HTTPRoutes;
 	};
 
 #endif // FDV_INCLUDE_SERIALBINARY
