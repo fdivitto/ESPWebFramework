@@ -2,6 +2,10 @@
 WebESP8266.h
 Binary Bidirectional Protocol for ESP8266
 
+Created by Fabrizio Di Vittorio (fdivitto2013@gmail.com)
+Copyright (c) 2015 Fabrizio Di Vittorio.
+All rights reserved.
+
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
@@ -25,12 +29,36 @@ https://github.com/fdivitto/ESPWebFramework
 
 #include <inttypes.h>
 #include <Stream.h>
+#include <avr/pgmspace.h>
 
 
 
 /******************************************************************************
 * Definitions
 ******************************************************************************/
+
+
+class HTTPFields
+{
+    // todo
+};
+
+
+class HTTPResponse
+{
+    // todo
+};
+
+
+typedef void (*WebHandler)(PGM_P page, HTTPFields const& headers, HTTPFields const& query, HTTPFields const& form, HTTPResponse& response);
+
+
+struct WebRoute
+{
+    PGM_P      page;
+    WebHandler handler;
+};
+
 
 class WebESP8266
 {
@@ -80,9 +108,27 @@ public:
 	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD6  = 22; // Arduino 6
 	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD7  = 23; // Arduino 7	   
     
+    // Types	
+    
+	struct Message
+	{
+		bool     valid;
+		uint8_t  ID;
+		uint8_t  command;
+		uint16_t dataSize;
+		uint8_t* data;
+		
+		Message();
+		Message(uint8_t ID_, uint8_t command_, uint16_t dataSize_);        
+		void freeData(); // warn: memory must be explicitly deleted using freeData(). Don't create a destructor to free data!
+	};
+    
+    
 	// Public Methods
+    
 	WebESP8266();
 	void begin(Stream& stream);
+    void setupWebRoutes(WebRoute* webRoutes, uint8_t count);
 	bool isReady();
 	bool checkReady();
 	uint8_t getPlatform();
@@ -94,24 +140,11 @@ public:
 	bool send_CMD_IOGET(uint8_t pin, uint8_t* state);
 	bool send_CMD_IOASET(uint8_t pin, uint16_t state);
 	bool send_CMD_IOAGET(uint8_t pin, uint16_t* state);
-	
-    // Types	
-	struct Message
-	{
-		bool     valid;
-		uint8_t  ID;
-		uint8_t  command;
-		uint16_t dataSize;
-		uint8_t* data;
-		
-		Message();
-		Message(uint8_t ID_, uint8_t command_, uint16_t dataSize_);        
-		void freeData(); // warn: memory must be explicitly delete using freeData(). Don't create a destructor to free data!
-	};
-    
+	    
 private:
 
 	// Private Methods
+    
 	Message receive();
 	int readByte(uint32_t timeOut);
 	uint32_t readBuffer(uint8_t* buffer, uint32_t size, uint32_t timeOut);
@@ -128,15 +161,19 @@ private:
 	void handle_CMD_IOGET(Message* msg);
 	void handle_CMD_IOASET(Message* msg);
 	void handle_CMD_IOAGET(Message* msg);
+    void handle_CMD_GETHTTPHANDLEDPAGES(Message* msg);
 	
 private:
 
     // Private Fields
-	Stream* _stream;
-	uint8_t _recvID;
-	uint8_t _sendID;
-	bool    _isReady;
-	uint8_t _platform;
+    
+	Stream*   _stream;
+	uint8_t   _recvID;
+	uint8_t   _sendID;
+	bool      _isReady;
+	uint8_t   _platform;
+    WebRoute* _webRoutes;
+    uint8_t   _webRoutesCount;
 };
 
 

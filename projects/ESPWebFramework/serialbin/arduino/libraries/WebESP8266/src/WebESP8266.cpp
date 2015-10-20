@@ -2,6 +2,10 @@
 WebESP8266.cpp
 Binary Bidirectional Protocol for ESP8266
 
+Created by Fabrizio Di Vittorio (fdivitto2013@gmail.com)
+Copyright (c) 2015 Fabrizio Di Vittorio.
+All rights reserved.
+
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
@@ -32,7 +36,7 @@ https://github.com/fdivitto/ESPWebFramework
 
 
 // Protocol version
-static uint8_t const  PROTOCOL_VERSION      = 1;
+static uint8_t const  PROTOCOL_VERSION     = 1;
 
 // Timings, etc...
 static uint32_t const INTRA_MSG_TIMEOUT    = 200;
@@ -44,13 +48,14 @@ static uint32_t const MAX_RESEND_COUNT     = 3;
 static uint32_t const MAX_DATA_SIZE        = 256;
 
 // Commands
-static uint8_t const CMD_ACK               = 0;
-static uint8_t const CMD_READY             = 1;
-static uint8_t const CMD_IOCONF            = 2;
-static uint8_t const CMD_IOSET             = 3;
-static uint8_t const CMD_IOGET             = 4;
-static uint8_t const CMD_IOASET            = 5;
-static uint8_t const CMD_IOAGET            = 6;
+static uint8_t const CMD_ACK                 = 0;
+static uint8_t const CMD_READY               = 1;
+static uint8_t const CMD_IOCONF              = 2;
+static uint8_t const CMD_IOSET               = 3;
+static uint8_t const CMD_IOGET               = 4;
+static uint8_t const CMD_IOASET              = 5;
+static uint8_t const CMD_IOAGET              = 6;
+static uint8_t const CMD_GETHTTPHANDLEDPAGES = 7;
 
 // Strings
 static char const STR_BINPRORDY[] PROGMEM  = "BINPRORDY";
@@ -712,6 +717,33 @@ void WebESP8266::handle_CMD_IOAGET(Message* msg)
 	send(&msgContainer);
 	msgContainer.freeData();
 }		
+
+
+void WebESP8266::setupWebRoutes(WebRoute* webRoutes, uint8_t count)
+{
+    _webRoutes      = webRoutes;
+    _webRoutesCount = count;
+}
+
+
+void WebESP8266::handle_CMD_GETHTTPHANDLEDPAGES(Message* msg)
+{
+    // calc message size
+    uint16_t msgSize = sizeof(uint8_t);    // uint8_t for items count
+    for (uint8_t i = 0; i != _webRoutesCount; ++i)
+        msgSize += strlen_P(_webRoutes[i].page) + 1;
+    
+    // send ACK with parameters
+    Message msgContainer(getNextID(), CMD_ACK, msgSize);
+    char* wpos = (char*)(msgContainer.data + Message_ACK::SIZE);
+    for (uint8_t i = 0; i != _webRoutesCount; ++i)
+    {
+        strcpy_P(wpos, _webRoutes[i].page);
+        wpos += strlen_P(_webRoutes[i].page) + 1;
+    }
+    send(&msgContainer);
+    msgContainer.freeData();
+}
 
 
 bool WebESP8266::send_CMD_READY()
