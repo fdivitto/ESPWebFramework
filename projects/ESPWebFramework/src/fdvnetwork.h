@@ -713,21 +713,7 @@ namespace fdv
 			}
 			return curc;
 		}
-		
-		
-		virtual void MTD_FLASHMEM dispatch()
-		{
-			for (uint32_t i = 0; i != m_routesCount; ++i)
-			{
-				if (f_strcmp(FSTR("*"), m_routes[i].page) == 0 || t_strcmp(m_request.requestedPage, CharIterator(m_routes[i].page)) == 0)
-				{
-					(this->*m_routes[i].pageHandler)();
-					return;
-				}
-			}
-			// not found (routes should always have route "*" to handle 404 not found)
-		}
-		
+			
 
 	public:
 		
@@ -742,7 +728,20 @@ namespace fdv
 		{
 			return m_request;
 		}
-		
+	
+		virtual void MTD_FLASHMEM dispatch()
+		{
+			for (uint32_t i = 0; i != m_routesCount; ++i)
+			{
+				if (f_strcmp(FSTR("*"), m_routes[i].page) == 0 || t_strcmp(m_request.requestedPage, CharIterator(m_routes[i].page)) == 0)
+				{
+					(this->*m_routes[i].pageHandler)();
+					return;
+				}
+			}
+			// not found (routes should always have route "*" to handle 404 not found)
+		}
+	
 		
 	private:
 	

@@ -37,13 +37,13 @@ namespace fdv
 	// ConfigurationManager
 
 
-    #if (FDV_INCLUDE_SERIALCONSOLE == 1)
+#if (FDV_INCLUDE_SERIALCONSOLE == 1)
     SerialConsole* ConfigurationManager::s_serialConsole = NULL;
-    #endif
+#endif
 
-    #if (FDV_INCLUDE_SERIALBINARY == 1)
+#if (FDV_INCLUDE_SERIALBINARY == 1)
     SerialBinary*  ConfigurationManager::s_serialBinary  = NULL;
-    #endif
+#endif
 
 	
     
