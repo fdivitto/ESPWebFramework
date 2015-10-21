@@ -496,6 +496,9 @@ void WebESP8266::processMessage(Message* msg)
 		case CMD_IOAGET:
 			handle_CMD_IOAGET(msg);
 			break;
+        case CMD_GETHTTPHANDLEDPAGES:
+            handle_CMD_GETHTTPHANDLEDPAGES(msg);
+            break;
 	}			
 	msg->freeData();
 }
@@ -641,7 +644,7 @@ bool WebESP8266::waitNoParamsACK(uint8_t ackID)
 
 
 void WebESP8266::handle_CMD_READY(Message* msg)
-{
+{    
 	// process message
 	Message_CMD_READY msgCMDREADY(msg);
 	_isReady  = (msgCMDREADY.protocolVersion == PROTOCOL_VERSION && strcmp_P(msgCMDREADY.magicString, STR_BINPRORDY) == 0);
@@ -735,10 +738,12 @@ void WebESP8266::handle_CMD_GETHTTPHANDLEDPAGES(Message* msg)
     
     // send ACK with parameters
     Message msgContainer(getNextID(), CMD_ACK, msgSize);
-    char* wpos = (char*)(msgContainer.data + Message_ACK::SIZE);
+    Message_ACK msgACK(&msgContainer, msg->ID);
+    uint8_t* wpos = msgContainer.data + Message_ACK::SIZE;
+    *wpos++ = _webRoutesCount;
     for (uint8_t i = 0; i != _webRoutesCount; ++i)
-    {
-        strcpy_P(wpos, _webRoutes[i].page);
+    {        
+        strcpy_P((char*)wpos, _webRoutes[i].page);
         wpos += strlen_P(_webRoutes[i].page) + 1;
     }
     send(&msgContainer);

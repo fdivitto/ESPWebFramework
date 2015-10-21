@@ -871,7 +871,6 @@ namespace fdv
     StringList* MTD_FLASHMEM SerialBinary::getHTTPRoutes()
     {
         MutexLock lock(&m_himutex);
-        checkReady();
         if (m_HTTPRoutes == NULL)   // already requested?
         {
             // request handled pages
@@ -1302,13 +1301,13 @@ namespace fdv
                 msgContainer = waitACK(msgID);
                 if (msgContainer.valid)
                 {
-                    char const* rpos = (char const*)(msgContainer.data + Message_ACK::SIZE);
-                    uint8_t itemsCount = (uint8_t)(*rpos++);
+                    uint8_t const* rpos = msgContainer.data + Message_ACK::SIZE;
+                    uint8_t itemsCount = *rpos++;
                     for (uint8_t j = 0; j != itemsCount; ++j)
                     {
-                        m_HTTPRoutes->add(rpos, StringList::Heap);
-                        rpos += f_strlen(rpos) + 1;
-                    }                    
+                        m_HTTPRoutes->add((char const*)rpos, StringList::Heap);
+                        rpos += strlen((char const*)rpos) + 1;
+                    }
                     msgContainer.freeData();
                     return true;
                 }
