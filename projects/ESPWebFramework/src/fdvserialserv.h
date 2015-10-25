@@ -138,7 +138,9 @@ namespace fdv
 	//   1 uint8_t  : Incremental ID. Each part maintain an incremental ID, which identifies a message. Replies include the same ID.
 	//   1 uint8_t  : Command
 	//   1 uint16_t : Data size. This is 0x0000 if there isn't data
-	//   n uint8_t  : Optional command parameters (See CMD Parameters below)
+    //   for n times [
+	//     1 uint8_t  : Optional command parameters (See CMD Parameters below)
+    //   ]
 	//
 	// Commands:
 	//
@@ -147,7 +149,7 @@ namespace fdv
 	//       Acknowledge of a message
 	//     Parameters:
 	//       1 uint8_t : ID of acknowledged message (different than this ACK message ID!)
-	//       n uint8_t : Optional ACK parameters (See ACK Parameters below)
+	//       ? uint8_t : Optional ACK parameters (See ACK Parameters below)
 	//
 	//   CMD_READY
 	//     Description:
@@ -212,8 +214,41 @@ namespace fdv
     //     ACK Parameters:
     //       1 uint8_t : number of pages in the list (max 255)
     //       for n times [
-    //         m uint8_t : zero terminated string
+    //         ? char : page (zero terminated string)
     //       ]
+    //
+    //   CMD_HTTPREQUEST
+    //     Description:
+    //       Request a page
+    //     CMD Parameters:
+    //       1 uint8_t : method (see HTTPSENDMETHOD_xxx constants)
+    //       1 uint8_t : page index (registered using CMD_GETHTTPHANDLEDPAGES)
+    //       ? char    : page (zero terminated string) (i.e. "/", "/data")
+    //       1 uint8_t : number of headers fields
+    //       for n times [
+    //         ? char : header field key (zero terminated string)
+    //         ? char : header field value (zero terminated string)
+    //       ]    
+    //       1 uint8_t : number of query fields (/page?field1=xx&field2=yy, has two fields "field1" and "field2")
+    //       for n times [
+    //         ? char : query field key (zero terminated string)
+    //         ? char : query field value (zero terminated string)
+    //       ]
+    //       1 uint8_t : number of form fields
+    //       for n times [
+    //         ? char : form field key (zero terminated string)
+    //         ? char : form field value (zero terminated string)
+    //       ]
+    //     ACK Parameters
+    //       1 uint8_t : status (see HTTPSTATUS_xxx constants)
+    //       1 uint8_t : number of headers fields
+    //       for n times [
+    //         ? char : header field key (zero terminated string)
+    //         ? char : header field value (zero terminated string)
+    //       ]
+    //       1 uint16_t : content length
+    //       ? uint8_t  : content
+    
 	
 	class SerialBinary
 	{
@@ -236,7 +271,25 @@ namespace fdv
 		static uint8_t const CMD_IOASET              = 5;
 		static uint8_t const CMD_IOAGET              = 6;
         static uint8_t const CMD_GETHTTPHANDLEDPAGES = 7;
+        static uint8_t const CMD_HTTPREQUEST         = 8;
 		
+        // CMD_HTTPREQUEST - method
+        static uint8_t const HTTPSENDMETHOD_UNSUPPORTED = 0;
+        static uint8_t const HTTPSENDMETHOD_GET         = 1;
+        static uint8_t const HTTPSENDMETHOD_POST        = 2;
+        static uint8_t const HTTPSENDMETHOD_HEAD        = 3;
+        
+        // CMD_HTTPREQUEST - status
+        static uint8_t const HTTPSTATUS_200 = 0;    // 200 OK
+        static uint8_t const HTTPSTATUS_301 = 1;    // 301 Moved Permanently
+        static uint8_t const HTTPSTATUS_302 = 2;    // 302 Found
+        static uint8_t const HTTPSTATUS_400 = 3;    // 400 Bad Request
+        static uint8_t const HTTPSTATUS_401 = 4;    // 401 Unauthorized
+        static uint8_t const HTTPSTATUS_403 = 5;    // 403 Forbidden
+        static uint8_t const HTTPSTATUS_404 = 6;    // 404 Not Found
+        
+        
+        
 	public:
 		
 		// platforms		
@@ -281,6 +334,7 @@ namespace fdv
 		static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD5  = 5;  // Arduino 5
 		static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD6  = 6;  // Arduino 6
 		static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD7  = 7;  // Arduino 7
+                
 		
 		struct Message
 		{
@@ -315,6 +369,7 @@ namespace fdv
 		bool send_CMD_IOASET(uint8_t pin, uint16_t state);
 		bool send_CMD_IOAGET(uint8_t pin, uint16_t* state);
         bool send_CMD_GETHTTPHANDLEDPAGES();
+        bool send_CMD_HTTPREQUEST(uint8_t pageIndex, HTTPHandler* handler);
 		
 	private:
 						

@@ -25,8 +25,10 @@
 using namespace fdv;
 
 
-struct MyHTTPHandler : public HTTPHandler
+class MyHTTPHandler : public HTTPHandler
 {
+    
+public:
     
 	MyHTTPHandler()
 	{
@@ -46,6 +48,27 @@ struct MyHTTPHandler : public HTTPHandler
 		setRoutes(routes, sizeof(routes) / sizeof(Route));
 	} 
 	
+    virtual void MTD_FLASHMEM dispatch()
+    {
+        if (ConfigurationManager::getSerialBinary())
+        {
+            StringList* routes = ConfigurationManager::getSerialBinary()->getHTTPRoutes();
+            if (routes)
+            {                
+                for (uint32_t i = 0; i != routes->size(); ++i)
+                {
+                    if (f_strcmp(FSTR("*"), routes->getItem(i)) == 0 || t_strcmp(getRequest().requestedPage, CharIterator(routes->getItem(i))) == 0)
+                    {
+                        ConfigurationManager::getSerialBinary()->send_CMD_HTTPREQUEST(i, this);
+                        return;
+                    }
+                }
+            }
+        }
+        
+        HTTPHandler::dispatch();
+    }
+    
 	void MTD_FLASHMEM get_home()
 	{
 		HTTPTemplateResponse response(this, FSTR("home.html"));
@@ -113,7 +136,8 @@ struct MyHTTPHandler : public HTTPHandler
 	{
 		HTTPStaticFileResponse response(this, getRequest().requestedPage);
 		response.flush();
-	}			
+	}		
+
 };
 
 
@@ -133,22 +157,22 @@ void testfunc()
             if (sb->isReady())
             {
                 sb->send_CMD_IOSET(13, true);
-                //Task::delay(10);
+                Task::delay(10);
                 sb->send_CMD_IOSET(13, false);
-                //Task::delay(10);
+                Task::delay(10);
             }
         }
 	}
 }
 #endif
-*/
+//*/
 
 
 extern "C" void FUNC_FLASHMEM user_init(void) 
 {
 	ConfigurationManager::applyAll< TCPServer<MyHTTPHandler, 2, 512> >();
-    /*#if (FDV_INCLUDE_SERIALBINARY == 1)
-	asyncExec<testfunc>();
-    #endif*/
+    #if (FDV_INCLUDE_SERIALBINARY == 1)
+	//asyncExec<testfunc>();
+    #endif
 }
 

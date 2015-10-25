@@ -1318,6 +1318,128 @@ namespace fdv
     }
     
     
+    // wpos can be NULL (to just calculate total length)
+    // return copied bytes
+    uint32_t FUNC_FLASHMEM copyFields(HTTPHandler::Fields& fields, uint8_t** wpos)
+    {
+        uint32_t len = 0;
+        for (uint32_t i = 0; i != fields.getItemsCount(); ++i)
+        {
+            uint32_t keylen = t_strlen(fields[i]->key) + 1;
+            uint32_t vallen = t_strlen(fields[i]->value) + 1;
+            len += keylen + vallen;
+            if (wpos)
+            {
+                t_strcpy((char*)*wpos, fields[i]->key);
+                *wpos += keylen;
+                t_strcpy((char*)*wpos, fields[i]->value);
+                *wpos += vallen;
+            }
+        }
+        return len;
+    }
+    
+    
+    bool MTD_FLASHMEM SerialBinary::send_CMD_HTTPREQUEST(uint8_t pageIndex, HTTPHandler* handler)
+    {
+        if (checkReady())
+        {
+            for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
+            {                
+                uint8_t msgID = getNextID();
+             
+                // calculate message payload length
+                uint32_t msglen = 5;    // (1) method, (1) page index, (1) headers fields count, (1) query fields count, (1) form fields count
+                msglen += t_strlen(handler->getRequest().requestedPage) + 1;    // page len
+                msglen += copyFields(handler->getRequest().headers, NULL);      // headers len
+                msglen += copyFields(handler->getRequest().query, NULL);        // query len
+                msglen += copyFields(handler->getRequest().form , NULL);        // form len
+                
+                // prepare message
+                Message msgContainer(msgID, CMD_HTTPREQUEST, msglen);
+                uint8_t* wpos = msgContainer.data;
+                // method
+                *wpos++ = (uint8_t)handler->getRequest().method;
+                // page index
+                *wpos++ = pageIndex;
+                // page (zero terminated string)
+                t_strcpy((char*)wpos, handler->getRequest().requestedPage);
+                wpos += t_strlen(handler->getRequest().requestedPage) + 1;
+                // header fields
+                *wpos++ = handler->getRequest().headers.getItemsCount();
+                copyFields(handler->getRequest().headers, &wpos);
+                // query fields
+                *wpos++ = handler->getRequest().query.getItemsCount();
+                copyFields(handler->getRequest().query, &wpos);
+                // form fields
+                *wpos++ = handler->getRequest().form.getItemsCount();
+                copyFields(handler->getRequest().form, &wpos);
+                
+                // send message
+                send(&msgContainer);
+                msgContainer.freeData();
+                
+                // wait for ACK
+                msgContainer = waitACK(msgID);
+                if (msgContainer.valid)
+                {
+                    uint8_t const* rpos = msgContainer.data + Message_ACK::SIZE;
+                    
+                    // read status and initialize response object
+                    uint8_t status = *rpos++;
+                    char const* statusStr = STR_200_OK; 
+                    switch (status)
+                    {
+                        case HTTPSTATUS_301:
+                            statusStr = STR_301_Moved_Permanently;
+                            break;
+                        case HTTPSTATUS_302:
+                            statusStr = STR_302_Found;
+                            break;
+                        case HTTPSTATUS_400:
+                            statusStr = STR_400_Bad_Request;
+                            break;
+                        case HTTPSTATUS_401:
+                            statusStr = STR_401_Unauthorized;
+                            break;
+                        case HTTPSTATUS_403:
+                            statusStr = STR_403_Forbidden;
+                            break;
+                        case HTTPSTATUS_404:
+                            statusStr = STR_404_Not_Found;
+                            break;
+                    }
+                    HTTPResponse response(handler, statusStr);
+                    
+                    // read and add additional headers
+                    uint8_t headersCount = *rpos++;
+                    for (uint8_t i = 0; i != headersCount; ++i)
+                    {
+                        char const* headerKey = (char const*)rpos;
+                        rpos += t_strlen(headerKey) + 1;
+                        char const* headerValue = (char const*)rpos;
+                        rpos += t_strlen(headerValue) + 1;
+                        response.addHeader(headerKey, headerValue);
+                    }
+                    
+                    // content length and content data
+                    uint16_t contentLen = *rpos + (*(rpos + 1) << 8);
+                    rpos += 2;
+                    response.addContent(rpos, contentLen);
+                    
+                    // flush http
+                    response.flush();
+                    
+                    msgContainer.freeData();
+                    return true;
+                }
+            }
+            m_isReady = false; // no more ready            
+        }
+        return false;
+    }
+    
+    
 
 
 
