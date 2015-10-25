@@ -636,6 +636,127 @@ namespace fdv
 		}
 		
 	};
+
+
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+    // DefaultHTTPHandler
+    
+
+    class DefaultHTTPHandler : public HTTPHandler
+    {
+        
+    public:
+        
+        DefaultHTTPHandler()
+        {
+            static const Route routes[] =
+            {
+                {FSTR("/"),	         (PageHandler)&DefaultHTTPHandler::get_home},
+                {FSTR("/confwifi"),  (PageHandler)&DefaultHTTPHandler::get_confwifi},
+                {FSTR("/wifiscan"),  (PageHandler)&DefaultHTTPHandler::get_wifiscan},
+                {FSTR("/confnet"),   (PageHandler)&DefaultHTTPHandler::get_confnet},
+                {FSTR("/confserv"),  (PageHandler)&DefaultHTTPHandler::get_confserv},
+                {FSTR("/confgpio"),  (PageHandler)&DefaultHTTPHandler::get_confgpio},
+                {FSTR("/conftime"),  (PageHandler)&DefaultHTTPHandler::get_conftime},
+                {FSTR("/reboot"),    (PageHandler)&DefaultHTTPHandler::get_reboot},
+                {FSTR("/restore"),   (PageHandler)&DefaultHTTPHandler::get_restore},
+                {FSTR("*"),          (PageHandler)&DefaultHTTPHandler::get_all},
+            };
+            setRoutes(routes, sizeof(routes) / sizeof(Route));
+        } 
+        
+        virtual void MTD_FLASHMEM dispatch()
+        {
+            if (ConfigurationManager::getSerialBinary())
+            {
+                StringList* routes = ConfigurationManager::getSerialBinary()->getHTTPRoutes();
+                if (routes)
+                {                
+                    for (uint32_t i = 0; i != routes->size(); ++i)
+                    {
+                        if (f_strcmp(FSTR("*"), routes->getItem(i)) == 0 || t_strcmp(getRequest().requestedPage, CharIterator(routes->getItem(i))) == 0)
+                        {
+                            ConfigurationManager::getSerialBinary()->send_CMD_HTTPREQUEST(i, this);
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            HTTPHandler::dispatch();
+        }
+        
+        void MTD_FLASHMEM get_home()
+        {
+            HTTPTemplateResponse response(this, FSTR("home.html"));
+            response.flush();
+        }
+
+        void MTD_FLASHMEM get_confwifi()
+        {
+            HTTPWifiConfigurationResponse response(this, FSTR("configwifi.html"));
+            response.flush();
+        }
+
+        void MTD_FLASHMEM get_wifiscan()
+        {
+            HTTPWiFiScanResponse response(this, FSTR("wifiscan.html"));
+            response.flush();
+        }
+
+        void MTD_FLASHMEM get_confnet()
+        {
+            HTTPNetworkConfigurationResponse response(this, FSTR("confignet.html"));
+            response.flush();
+        }
+
+        void MTD_FLASHMEM get_confserv()
+        {
+            HTTPServicesConfigurationResponse response(this, FSTR("confserv.html"));
+            response.flush();
+        }
+
+        void MTD_FLASHMEM get_confgpio()
+        {
+            HTTPGPIOConfigurationResponse response(this, FSTR("confgpio.html"));
+            response.flush();
+        }
+
+        void MTD_FLASHMEM get_conftime()
+        {
+            HTTPTimeConfigurationResponse response(this, FSTR("conftime.html"));
+            response.flush();
+        }
+        
+        void MTD_FLASHMEM get_reboot()
+        {
+            HTTPTemplateResponse response(this, FSTR("reboot.html"));
+            reboot(3000);	// reboot in 3s
+            response.flush();
+        }
+
+        void MTD_FLASHMEM get_restore()
+        {
+            if (getRequest().method == HTTPHandler::Get)
+            {
+                HTTPTemplateResponse response(this, FSTR("restore.html"));
+                response.flush();
+            }
+            else
+            {
+                ConfigurationManager::restore();
+                get_reboot();
+            }
+        }
+        
+        void MTD_FLASHMEM get_all()
+        {
+            HTTPStaticFileResponse response(this, getRequest().requestedPage);
+            response.flush();
+        }		
+
+    };
 	
 	
 }
