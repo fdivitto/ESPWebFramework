@@ -56,7 +56,6 @@ void loop()
 void handle_page0(HTTPRequest const& request, HTTPResponse& response)
 {
   Serial.println("handle_page0");
-  response.addHeader_P(PSTR("Content-Type"), PSTR("text/html"));
   response.addContent_P(PSTR("Hello World-0!!"));
 }
 
@@ -64,7 +63,6 @@ void handle_page0(HTTPRequest const& request, HTTPResponse& response)
 void handle_page1(HTTPRequest const& request, HTTPResponse& response)
 {
   Serial.println("handle_page1");
-  response.addHeader_P(PSTR("Content-Type"), PSTR("text/html"));
   response.addContent_P(PSTR("Hello World-1!!"));
 }
 
@@ -72,7 +70,6 @@ void handle_page1(HTTPRequest const& request, HTTPResponse& response)
 void handle_page2(HTTPRequest const& request, HTTPResponse& response)
 {
   Serial.println("handle_page2");
-  response.addHeader_P(PSTR("Content-Type"), PSTR("text/html"));
   response.addContent_P(PSTR("Hello World-2!!"));
 }
 

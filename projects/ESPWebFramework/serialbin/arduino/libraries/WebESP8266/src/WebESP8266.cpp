@@ -190,7 +190,10 @@ uint16_t HTTPFields::calcBufferSize()
 // HTTPResponse
 
 HTTPResponse::HTTPResponse()
-    : m_contentItems(NULL), m_headerItems(NULL), m_status(WebESP8266::HTTPSTATUS_200)
+    : m_contentItems(NULL), 
+      m_headerItems(NULL), 
+      m_status(HTTPSTATUS_200),
+      m_contentType(HTTPCONTENTTYPE_TEXTHTML)
 {
 }
 
@@ -215,7 +218,7 @@ HTTPResponse::~HTTPResponse()
 }
 
 
-// one if WebESP8266::HTTPSTATUS_xxx constants
+// one of HTTPResponse::HTTPSTATUS_xxx constants
 void HTTPResponse::setStatus(uint8_t status)
 {
     m_status = status;
@@ -225,6 +228,21 @@ void HTTPResponse::setStatus(uint8_t status)
 uint8_t HTTPResponse::getStatus()
 {
     return m_status;
+}
+
+
+// This is an alternative way to add Contenty-Type header instead of using addHeader() methods.
+// User can still add content-type using addHeader methods calling setContentType(HTTPResponse::HTTPCONTENTTYPE_UNSPECIFIED).
+// one of HTTPResponse::HTTPCONTENTTYPE_xxx constants
+void HTTPResponse::setContentType(uint8_t contentType)
+{
+    m_contentType = contentType;
+}
+
+
+uint8_t HTTPResponse::getContentType()
+{
+    return m_contentType;
 }
 
 
@@ -835,18 +853,13 @@ WebESP8266::Message WebESP8266::receive()
 			continue;
 		msg.dataSize |= r << 8;
         
-        Serial.print("msgsize="); Serial.println(msg.dataSize);
-
 		// Data
         if (msg.dataSize > MAX_DATA_SIZE)
         {
             discardData(msg.dataSize, INTRA_MSG_TIMEOUT);
             continue;
         }
-        Serial.print("free="); Serial.println(freeMemory());
         msg.data = new uint8_t[msg.dataSize];
-        if (msg.data != NULL) Serial.println("alloc ok");
-        Serial.print("free="); Serial.println(freeMemory());
         if (readBuffer(msg.data, msg.dataSize, INTRA_MSG_TIMEOUT) < msg.dataSize)
         {
             msg.freeData();
@@ -1010,8 +1023,6 @@ void WebESP8266::handle_CMD_IOAGET(Message* msg)
 
 void WebESP8266::handle_CMD_GETHTTPHANDLEDPAGES(Message* msg)
 {
-    Serial.println("handle_CMD_GETHTTPHANDLEDPAGES");
-    
     // calc message size
     uint16_t msgSize = sizeof(uint8_t);    // uint8_t for items count
     for (uint8_t i = 0; i != _webRoutesCount; ++i)
@@ -1034,8 +1045,6 @@ void WebESP8266::handle_CMD_GETHTTPHANDLEDPAGES(Message* msg)
 
 void WebESP8266::handle_CMD_HTTPREQUEST(Message* msg)
 {
-    Serial.println("handle_CMD_HTTPREQUEST");
-    
     //// decode message
     
     HTTPRequest request;
@@ -1050,7 +1059,6 @@ void WebESP8266::handle_CMD_HTTPREQUEST(Message* msg)
     
     // page (zero terminated string)
     request.page = (char const*)rpos;
-    Serial.print("page="); Serial.println(request.page);
     rpos += strlen(request.page) + 1;
     
     // headers count
@@ -1081,7 +1089,7 @@ void WebESP8266::handle_CMD_HTTPREQUEST(Message* msg)
         _webRoutes[request.pageIndex].handler(request, response);
         uint16_t headersBufferSize = response.calcHeadersBufferSize();
         uint16_t contentBufferSize = response.calcContentBufferSize();
-        uint16_t msgSize = 1 + 1 + 2 + headersBufferSize + contentBufferSize;   // +1 = status, +1 = headers fields count, +2 = content length
+        uint16_t msgSize = 1 + 1 + 1 + 2 + headersBufferSize + contentBufferSize;   // +1 = status, +1 = headers fields count, +1 = content type, +2 = content length
         Message msgContainer(getNextID(), CMD_ACK, Message_ACK::SIZE + msgSize);
         Message_ACK msgACK(&msgContainer, msg->ID);
         uint8_t* wpos = msgContainer.data + Message_ACK::SIZE;
@@ -1094,9 +1102,11 @@ void WebESP8266::handle_CMD_HTTPREQUEST(Message* msg)
         
         // header fields
         wpos = response.copyHeadersToBuffer(wpos);
-        
+
+        // content-type header
+        *wpos++ = response.getContentType();
+            
         // content length
-        Serial.println(contentBufferSize);
         *wpos++ = contentBufferSize & 0xFF;
         *wpos++ = contentBufferSize >> 8;
         response.copyContentToBuffer(wpos);

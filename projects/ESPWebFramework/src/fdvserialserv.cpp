@@ -1262,22 +1262,28 @@ namespace fdv
                 msglen += copyFields(handler->getRequest().query, NULL);        // query len
                 msglen += copyFields(handler->getRequest().form , NULL);        // form len
                 
-                // prepare message
+                //// prepare message
                 Message msgContainer(msgID, CMD_HTTPREQUEST, msglen);
                 uint8_t* wpos = msgContainer.data;
+                
                 // method
                 *wpos++ = (uint8_t)handler->getRequest().method;
+                
                 // page index
                 *wpos++ = pageIndex;
+                
                 // page (zero terminated string)
                 t_strcpy((char*)wpos, handler->getRequest().requestedPage);
                 wpos += t_strlen(handler->getRequest().requestedPage) + 1;
+                
                 // header fields
                 *wpos++ = handler->getRequest().headers.getItemsCount();
                 copyFields(handler->getRequest().headers, &wpos);
+                
                 // query fields
                 *wpos++ = handler->getRequest().query.getItemsCount();
                 copyFields(handler->getRequest().query, &wpos);
+                
                 // form fields
                 *wpos++ = handler->getRequest().form.getItemsCount();
                 copyFields(handler->getRequest().form, &wpos);
@@ -1327,6 +1333,27 @@ namespace fdv
                         char const* headerValue = (char const*)rpos;
                         rpos += t_strlen(headerValue) + 1;
                         response.addHeader(headerKey, headerValue);
+                    }
+                    
+                    // content-type header (if not unspecified)
+                    uint8_t contentType = *rpos++;
+                    switch (contentType)
+                    {
+                        case HTTPCONTENTTYPE_TEXTHTML:
+                            response.addHeader(STR_Content_Type, STR_TEXTHTML);
+                            break;
+                        case HTTPCONTENTTYPE_TEXTHTML_UTF8:
+                            response.addHeader(STR_Content_Type, STR_TEXTHTML_UTF8);
+                            break;
+                        case HTTPCONTENTTYPE_APPJSON:
+                            response.addHeader(STR_Content_Type, STR_APPJSON);
+                            break;
+                        case HTTPCONTENTTYPE_TEXTPLAIN:
+                            response.addHeader(STR_Content_Type, STR_TEXTPLAIN);
+                            break;
+                        case HTTPCONTENTTYPE_TEXTXML:
+                            response.addHeader(STR_Content_Type, STR_TEXTXML);
+                            break;
                     }
                     
                     // content length and content data

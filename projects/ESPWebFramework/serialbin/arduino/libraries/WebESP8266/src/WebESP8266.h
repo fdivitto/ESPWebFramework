@@ -75,11 +75,34 @@ struct HTTPRequest
 class HTTPResponse
 {
 public:
+
+    // status
+    static uint8_t const HTTPSTATUS_200 = 0;    // 200 OK (DEFAULT)
+    static uint8_t const HTTPSTATUS_301 = 1;    // 301 Moved Permanently
+    static uint8_t const HTTPSTATUS_302 = 2;    // 302 Found
+    static uint8_t const HTTPSTATUS_400 = 3;    // 400 Bad Request
+    static uint8_t const HTTPSTATUS_401 = 4;    // 401 Unauthorized
+    static uint8_t const HTTPSTATUS_403 = 5;    // 403 Forbidden
+    static uint8_t const HTTPSTATUS_404 = 6;    // 404 Not Found
+    
+    // preset content types
+    static uint8_t const HTTPCONTENTTYPE_UNSPECIFIED   = 0;  // header not added. User can still add content-type using addHeader methods.
+    static uint8_t const HTTPCONTENTTYPE_TEXTHTML      = 1;  // text/html (DEFAULT)
+    static uint8_t const HTTPCONTENTTYPE_TEXTHTML_UTF8 = 2;  // text/html; charset=utf-8
+    static uint8_t const HTTPCONTENTTYPE_APPJSON       = 3;  // application/json
+    static uint8_t const HTTPCONTENTTYPE_TEXTPLAIN     = 4;  // text/plain
+    static uint8_t const HTTPCONTENTTYPE_TEXTXML       = 5;  // text/xml
+
+
+public:
     HTTPResponse();
     ~HTTPResponse();
     
-    void setStatus(uint8_t status); // one if WebESP8266::HTTPSTATUS_xxx constants
+    void setStatus(uint8_t status); // one of HTTPResponse::HTTPSTATUS_xxx constants
     uint8_t getStatus();
+    
+    void setContentType(uint8_t contentType);  // one of HTTPResponse::HTTPCONTENTTYPE_xxx constants
+    uint8_t getContentType();
     
     void addHeader(PGM_P key, char const* value, bool copy = false);
     void addHeader_P(PGM_P key, PGM_P value);
@@ -132,6 +155,7 @@ private:
     ContentItem* m_contentItems;
     HeaderItem*  m_headerItems;
     uint8_t      m_status;
+    uint8_t      m_contentType;
 };
 
 
@@ -192,15 +216,6 @@ public:
 	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD5  = 21; // Arduino 5
 	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD6  = 22; // Arduino 6
 	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD7  = 23; // Arduino 7	   
-
-    // CMD_HTTPREQUEST - status
-    static uint8_t const HTTPSTATUS_200 = 0;    // 200 OK
-    static uint8_t const HTTPSTATUS_301 = 1;    // 301 Moved Permanently
-    static uint8_t const HTTPSTATUS_302 = 2;    // 302 Found
-    static uint8_t const HTTPSTATUS_400 = 3;    // 400 Bad Request
-    static uint8_t const HTTPSTATUS_401 = 4;    // 401 Unauthorized
-    static uint8_t const HTTPSTATUS_403 = 5;    // 403 Forbidden
-    static uint8_t const HTTPSTATUS_404 = 6;    // 404 Not Found
 
     
     // Types	

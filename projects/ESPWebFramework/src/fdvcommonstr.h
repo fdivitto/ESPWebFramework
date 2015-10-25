@@ -91,6 +91,11 @@ namespace fdv
     static char const STR_400_Bad_Request[] FLASHMEM       = "400 Bad Request";
     static char const STR_401_Unauthorized[] FLASHMEM      = "401 Unauthorized";
     static char const STR_403_Forbidden[] FLASHMEM         = "403 Forbidden";
+    static char const STR_TEXTHTML[] FLASHMEM       = "text/html";
+    static char const STR_TEXTHTML_UTF8[] FLASHMEM  = "text/html; charset=utf-8";
+    static char const STR_APPJSON[] FLASHMEM        = "application/json";
+    static char const STR_TEXTPLAIN[] FLASHMEM      = "text/plain";
+    static char const STR_TEXTXML[] FLASHMEM        = "text/xml";
 }
 
 #endif

@@ -246,6 +246,7 @@ namespace fdv
     //         ? char : header field key (zero terminated string)
     //         ? char : header field value (zero terminated string)
     //       ]
+    //       1 uint8_t  : content type header (see HTTPCONTENTTYPE_xxx constants)
     //       1 uint16_t : content length
     //       ? uint8_t  : content
     
@@ -287,6 +288,14 @@ namespace fdv
         static uint8_t const HTTPSTATUS_401 = 4;    // 401 Unauthorized
         static uint8_t const HTTPSTATUS_403 = 5;    // 403 Forbidden
         static uint8_t const HTTPSTATUS_404 = 6;    // 404 Not Found
+
+        // CMD_HTTPREQUEST - preset content types
+        static uint8_t const HTTPCONTENTTYPE_UNSPECIFIED   = 0;  // header not added. User can still add content-type using addHeader methods.
+        static uint8_t const HTTPCONTENTTYPE_TEXTHTML      = 1;  // text/html (DEFAULT)
+        static uint8_t const HTTPCONTENTTYPE_TEXTHTML_UTF8 = 2;  // text/html; charset=utf-8
+        static uint8_t const HTTPCONTENTTYPE_APPJSON       = 3;  // application/json
+        static uint8_t const HTTPCONTENTTYPE_TEXTPLAIN     = 4;  // text/plain
+        static uint8_t const HTTPCONTENTTYPE_TEXTXML       = 5;  // text/xml
         
         
         
