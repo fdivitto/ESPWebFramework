@@ -33,8 +33,6 @@ https://github.com/fdivitto/ESPWebFramework
 #include <avr/pgmspace.h>
 
 
-
-
 // Protocol version
 static uint8_t const  PROTOCOL_VERSION     = 1;
 
@@ -45,7 +43,7 @@ static uint32_t const PUTACK_TIMEOUT       = 200;
 static uint32_t const GETACK_TIMEOUT       = 2000;
 static uint32_t const ACKMSG_QUEUE_LENGTH  = 2;
 static uint32_t const MAX_RESEND_COUNT     = 3;	
-static uint32_t const MAX_DATA_SIZE        = 256;
+static uint32_t const MAX_DATA_SIZE        = 512;
 
 // Commands
 static uint8_t const CMD_ACK                 = 0;
@@ -192,7 +190,7 @@ uint16_t HTTPFields::calcBufferSize()
 // HTTPResponse
 
 HTTPResponse::HTTPResponse()
-    : m_contentItems(NULL), m_headerItems(NULL)
+    : m_contentItems(NULL), m_headerItems(NULL), m_status(WebESP8266::HTTPSTATUS_200)
 {
 }
 
@@ -217,7 +215,7 @@ HTTPResponse::~HTTPResponse()
 }
 
 
-// one if HTTPSTATUS_xxx constants
+// one if WebESP8266::HTTPSTATUS_xxx constants
 void HTTPResponse::setStatus(uint8_t status)
 {
     m_status = status;
@@ -341,7 +339,7 @@ uint16_t HTTPResponse::calcHeadersBufferSize()
 {
     uint16_t len = 0;
     for (HeaderItem* item = m_headerItems; item; item = item->next)
-        len += 2 + strlen_P(item->key) + item->storage == HTTPResponse::Flash? strlen_P((PGM_P)item->data) : strlen((char const*)item->data);
+        len += 2 + strlen_P(item->key) + (item->storage == HTTPResponse::Flash? strlen_P((PGM_P)item->data) : strlen((char const*)item->data));
     return len;
 }
 
@@ -624,34 +622,6 @@ struct Message_CMD_IOGET_ACK : Message_ACK
 
 
 
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// Message_CMD_IOASET
-
-struct Message_CMD_IOASET
-{
-    static uint16_t const SIZE = 3;
-    
-    uint8_t&  pin;
-    uint16_t& state;
-    
-    // used to decode message
-    Message_CMD_IOASET(WebESP8266::Message* msg)
-        : pin(msg->data[0]), 
-          state(*(uint16_t*)(msg->data + 1))
-    {
-    }
-    // used to encode message
-    Message_CMD_IOASET(WebESP8266::Message* msg, uint8_t pin_, uint16_t state_)
-        : pin(msg->data[0]), 
-          state(*(uint16_t*)(msg->data + 1))
-    {
-        pin   = pin_;
-        state = state_;
-    }			
-};
-
-
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -827,6 +797,14 @@ uint32_t WebESP8266::readBuffer(uint8_t* buffer, uint32_t size, uint32_t timeOut
 }
 
 
+void WebESP8266::discardData(uint32_t size, uint32_t timeOut)
+{
+	for (uint32_t i = 0; i != size; ++i)
+		if (readByte(timeOut) < 0)
+			return;
+}
+
+
 WebESP8266::Message WebESP8266::receive()
 {
 	Message msg;
@@ -856,17 +834,24 @@ WebESP8266::Message WebESP8266::receive()
 		if (r < 0)
 			continue;
 		msg.dataSize |= r << 8;
+        
+        Serial.print("msgsize="); Serial.println(msg.dataSize);
 
-		// Data			
-		if (msg.dataSize > 0 && msg.dataSize < MAX_DATA_SIZE)
-		{
-			msg.data = new uint8_t[msg.dataSize];
-			if (readBuffer(msg.data, msg.dataSize, INTRA_MSG_TIMEOUT) < msg.dataSize)
-			{
-				msg.freeData();
-				continue;
-			}
-		}
+		// Data
+        if (msg.dataSize > MAX_DATA_SIZE)
+        {
+            discardData(msg.dataSize, INTRA_MSG_TIMEOUT);
+            continue;
+        }
+        Serial.print("free="); Serial.println(freeMemory());
+        msg.data = new uint8_t[msg.dataSize];
+        if (msg.data != NULL) Serial.println("alloc ok");
+        Serial.print("free="); Serial.println(freeMemory());
+        if (readBuffer(msg.data, msg.dataSize, INTRA_MSG_TIMEOUT) < msg.dataSize)
+        {
+            msg.freeData();
+            continue;
+        }
 		
 		// check ID
 		if (msg.ID == _recvID)
@@ -999,8 +984,10 @@ void WebESP8266::handle_CMD_IOGET(Message* msg)
 void WebESP8266::handle_CMD_IOASET(Message* msg)
 {
 	// process message
-	Message_CMD_IOASET msgIOASET(msg);
-	analogWrite(msgIOASET.pin, msgIOASET.state);
+    uint8_t* rpos = msg->data;
+    uint8_t pin = *rpos++;
+    uint16_t state = *rpos + (*(rpos + 1) << 8);
+	analogWrite(pin, state);
 	
 	// send simple ACK
 	sendNoParamsACK(msg->ID);
@@ -1063,6 +1050,7 @@ void WebESP8266::handle_CMD_HTTPREQUEST(Message* msg)
     
     // page (zero terminated string)
     request.page = (char const*)rpos;
+    Serial.print("page="); Serial.println(request.page);
     rpos += strlen(request.page) + 1;
     
     // headers count
@@ -1231,8 +1219,11 @@ bool WebESP8266::send_CMD_IOASET(uint8_t pin, uint16_t state)
 		{
 			// send message
 			uint8_t msgID = getNextID();
-			Message msgContainer(msgID, CMD_IOASET, Message_CMD_IOASET::SIZE);
-			Message_CMD_IOASET msgCMDIOASET(&msgContainer, pin, state);
+			Message msgContainer(msgID, CMD_IOASET, 3);
+            uint8_t* wpos = msgContainer.data;
+            *wpos++ = pin;
+            *wpos++ = state & 0xFF;
+            *wpos++ = state >> 8;            
 			send(&msgContainer);
 			msgContainer.freeData();
 			

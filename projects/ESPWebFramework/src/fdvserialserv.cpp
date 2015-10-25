@@ -738,88 +738,7 @@ namespace fdv
         }			
     };
 
-    
-    
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Message_CMD_IOASET        
-    
-    struct Message_CMD_IOASET
-    {
-        static uint16_t const SIZE = 3;
-        
-        uint8_t&  pin;
-        uint16_t& state;
-        
-        // used to decode message
-        Message_CMD_IOASET(SerialBinary::Message* msg)
-            : pin(msg->data[0]), 
-              state(*(uint16_t*)(msg->data + 1))
-        {
-        }
-        // used to encode message
-        Message_CMD_IOASET(SerialBinary::Message* msg, uint8_t pin_, uint16_t state_)
-            : pin(msg->data[0]), 
-              state(*(uint16_t*)(msg->data + 1))
-        {
-            pin   = pin_;
-            state = state_;
-        }			
-    };
-
-
-    
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Message_CMD_IOAGET        
-    
-    struct Message_CMD_IOAGET
-    {
-        static uint16_t const SIZE = 1;
-        
-        uint8_t& pin;
-        
-        // used to decode message
-        Message_CMD_IOAGET(SerialBinary::Message* msg)
-            : pin(msg->data[0])
-        {
-        }
-        // used to encode message
-        Message_CMD_IOAGET(SerialBinary::Message* msg, uint8_t pin_)
-            : pin(msg->data[0])
-        {
-            pin   = pin_;
-        }			
-    };
-		
-
-        
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Message_CMD_IOAGET_ACK        
-        
-    struct Message_CMD_IOAGET_ACK : Message_ACK
-    {
-        static uint16_t const SIZE = Message_ACK::SIZE + 2;
-        
-        uint16_t& state;
-        
-        // used to decode message
-        Message_CMD_IOAGET_ACK(SerialBinary::Message* msg)
-            : Message_ACK(msg), 
-              state(*(uint16_t*)(msg->data + Message_ACK::SIZE + 0))
-        {
-        }
-        // used to encode message
-        Message_CMD_IOAGET_ACK(SerialBinary::Message* msg, uint8_t ackID_, uint16_t state_)
-            : Message_ACK(msg, ackID_), 
-              state(*(uint16_t*)(msg->data + Message_ACK::SIZE + 0))
-        {
-            state = state_;
-        }			
-    };
-
-    
+       
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -1039,9 +958,6 @@ namespace fdv
             case CMD_IOASET:
                 handle_CMD_IOASET(msg);
                 break;
-            case CMD_IOAGET:
-                handle_CMD_IOAGET(msg);
-                break;
         }			
         msg->freeData();
     }
@@ -1115,20 +1031,6 @@ namespace fdv
     }
     
     
-    // not implemented
-    void MTD_FLASHMEM SerialBinary::handle_CMD_IOAGET(Message* msg)
-    {
-        // process message
-        // not implemented
-        
-        // send ACK with parameters
-        Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOAGET_ACK::SIZE);
-        Message_CMD_IOAGET_ACK msgCMDIOGETACK(&msgContainer, msg->ID, 0);	// always returns 0!
-        send(&msgContainer);
-        msgContainer.freeData();
-    }		
-    
-
     bool MTD_FLASHMEM SerialBinary::send_CMD_READY()
     {
         m_isReady = false;
@@ -1240,8 +1142,11 @@ namespace fdv
             {
                 // send message
                 uint8_t msgID = getNextID();
-                Message msgContainer(msgID, CMD_IOASET, Message_CMD_IOASET::SIZE);
-                Message_CMD_IOASET msgCMDIOASET(&msgContainer, pin, state);
+                Message msgContainer(msgID, CMD_IOASET, 3);
+                uint8_t* wpos = msgContainer.data;
+                *wpos++ = pin;
+                *wpos++ = state & 0xFF;
+                *wpos++ = state >> 8;
                 send(&msgContainer);
                 msgContainer.freeData();
                 
@@ -1263,8 +1168,9 @@ namespace fdv
             {
                 // send message
                 uint8_t msgID = getNextID();
-                Message msgContainer(msgID, CMD_IOAGET, Message_CMD_IOAGET::SIZE);
-                Message_CMD_IOAGET msgCMDIOAGET(&msgContainer, pin);
+                Message msgContainer(msgID, CMD_IOAGET, 1);
+                uint8_t* wpos = msgContainer.data;
+                *wpos = pin;
                 send(&msgContainer);
                 msgContainer.freeData();
                 
@@ -1272,8 +1178,8 @@ namespace fdv
                 msgContainer = waitACK(msgID);
                 if (msgContainer.valid)
                 {
-                    Message_CMD_IOAGET_ACK msgCMDIOAGETACK(&msgContainer);
-                    *state = msgCMDIOAGETACK.state;
+                    uint8_t const* rpos = msgContainer.data + Message_ACK::SIZE;
+                    *state = *rpos + (*(rpos + 1) << 8);
                     msgContainer.freeData();
                     return true;
                 }
@@ -1342,6 +1248,7 @@ namespace fdv
     
     bool MTD_FLASHMEM SerialBinary::send_CMD_HTTPREQUEST(uint8_t pageIndex, HTTPHandler* handler)
     {
+        MutexLock lock(&m_himutex);
         if (checkReady())
         {
             for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)

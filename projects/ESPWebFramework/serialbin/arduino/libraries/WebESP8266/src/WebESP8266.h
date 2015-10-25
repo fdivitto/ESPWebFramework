@@ -78,7 +78,7 @@ public:
     HTTPResponse();
     ~HTTPResponse();
     
-    void setStatus(uint8_t status); // one if HTTPSTATUS_xxx constants
+    void setStatus(uint8_t status); // one if WebESP8266::HTTPSTATUS_xxx constants
     uint8_t getStatus();
     
     void addHeader(PGM_P key, char const* value, bool copy = false);
@@ -243,6 +243,7 @@ private:
 	Message receive();
 	int readByte(uint32_t timeOut);
 	uint32_t readBuffer(uint8_t* buffer, uint32_t size, uint32_t timeOut);
+    void discardData(uint32_t size, uint32_t timeOut);
 	void processMessage(Message* msg);
 	uint8_t getNextID();
 	void send(Message* msg);
