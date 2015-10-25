@@ -56,6 +56,14 @@ static uint8_t const CMD_IOGET               = 4;
 static uint8_t const CMD_IOASET              = 5;
 static uint8_t const CMD_IOAGET              = 6;
 static uint8_t const CMD_GETHTTPHANDLEDPAGES = 7;
+static uint8_t const CMD_HTTPREQUEST         = 8;
+
+// CMD_HTTPREQUEST - method
+static uint8_t const HTTPSENDMETHOD_UNSUPPORTED = 0;
+static uint8_t const HTTPSENDMETHOD_GET         = 1;
+static uint8_t const HTTPSENDMETHOD_POST        = 2;
+static uint8_t const HTTPSENDMETHOD_HEAD        = 3;
+
 
 // Strings
 static char const STR_BINPRORDY[] PROGMEM  = "BINPRORDY";
@@ -99,6 +107,287 @@ class SoftTimeOut
         uint32_t m_timeOut;
         uint32_t m_startTime;
 };	
+
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+// HTTPFields
+
+// data contains a set of key/value zero terminated strings:
+//   keyA\0valueA\0keyB\0valueB\0....
+HTTPFields::HTTPFields(char const* data, uint8_t itemsCount) 
+    : m_data(data), m_itemsCount(itemsCount)
+{
+}
+
+
+HTTPFields::HTTPFields()
+    : m_data(NULL), m_itemsCount(0)
+{
+}
+    
+
+void HTTPFields::reset(char const* data, uint8_t itemsCount)
+{
+    m_data       = data;
+    m_itemsCount = itemsCount;
+}
+
+    
+uint8_t HTTPFields::itemsCount()
+{
+    return m_itemsCount;
+}
+
+
+// note: doesn't validate index
+char const* HTTPFields::getkey(uint8_t index)
+{
+    char const* key = m_data;
+    for (uint8_t i = 0; i != index; ++i)
+        key = strchrnul(strchrnul(key, 0) + 1, 0) + 1;
+    return key;
+}
+
+
+// get value at specified index
+char const* HTTPFields::operator[](uint8_t index)
+{
+    char const* value = strchrnul(m_data, 0) + 1;
+    for (uint8_t i = 0; i != index; ++i)
+        value = strchrnul(strchrnul(value, 0) + 1, 0) + 1;
+    return value;
+}
+
+
+// get value for specified key or NULL if not found
+char const* HTTPFields::operator[](char const* key)
+{
+    char const* curkey = m_data;
+    for (uint8_t i = 0; i != m_itemsCount; ++i)
+    {
+        if (strcmp(curkey, key) == 0)
+            return strchrnul(curkey, 0) + 1;
+        curkey = strchrnul(strchrnul(curkey, 0) + 1, 0) + 1;
+    }
+    return NULL;
+}
+
+
+// ret. required size (in bytes) to contain all fields (included ending zeroes)
+uint16_t HTTPFields::calcBufferSize()
+{
+    char const* key = m_data;
+    for (uint8_t i = 0; i != m_itemsCount; ++i)
+        key = strchrnul(strchrnul(key, 0) + 1, 0) + 1;
+    return key - m_data;
+}
+
+
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+// HTTPResponse
+
+HTTPResponse::HTTPResponse()
+    : m_contentItems(NULL), m_headerItems(NULL)
+{
+}
+
+
+template <typename T>
+void freelist(T* item)
+{
+    while (item)
+    {
+        if (item->storage == HTTPResponse::HeapToFree)
+            free((void*)item->data);
+        T* nitem = item->next;
+        delete item;
+        item = nitem;
+    }
+}
+
+HTTPResponse::~HTTPResponse()
+{
+    freelist(m_contentItems);
+    freelist(m_headerItems);
+}
+
+
+// one if HTTPSTATUS_xxx constants
+void HTTPResponse::setStatus(uint8_t status)
+{
+    m_status = status;
+}
+
+
+uint8_t HTTPResponse::getStatus()
+{
+    return m_status;
+}
+
+
+template <typename T>
+T* getLast(T* item)
+{
+    while (item->next)
+        item = item->next;
+    return item;
+}
+
+
+void HTTPResponse::addHeaderItem(HeaderItem* item)
+{
+    if (!m_headerItems)
+        m_headerItems = item;
+    else
+        getLast(m_headerItems)->next = item;
+}
+
+
+void HTTPResponse::addHeader(PGM_P key, char const* value, bool copy)
+{
+    addHeaderItem( new HeaderItem(NULL, 
+                                  copy? HTTPResponse::HeapToFree : HTTPResponse::Heap, 
+                                  key, 
+                                  copy? strdup(value) : value) 
+                 );
+}
+
+
+void HTTPResponse::addHeader_P(PGM_P key, PGM_P value)
+{
+    addHeaderItem( new HeaderItem(NULL, HTTPResponse::Flash, key, value) );
+}
+
+
+void HTTPResponse::addContentItem(ContentItem* item)
+{
+    if (!m_contentItems)
+        m_contentItems = item;
+    else
+        getLast(m_contentItems)->next = item;
+}
+
+
+void HTTPResponse::addContent(char const* string, bool copy)
+{
+    addContentItem( new ContentItem(NULL,
+                                    copy? HTTPResponse::HeapToFree : HTTPResponse::Heap,
+                                    copy? strdup(string) : string,
+                                    strlen(string) + 1)
+                  );
+}
+
+
+void HTTPResponse::addContent_P(PGM_P string)
+{
+    addContentItem( new ContentItem(NULL, HTTPResponse::Flash, string, strlen_P(string) + 1) );
+}
+
+
+// not memory checked!
+void* memdup(void const* src, uint32_t len)
+{
+    void* dst = malloc(len);
+    memcpy(dst, src, len);
+    return dst;
+}
+
+
+void HTTPResponse::addContent(void const* data, uint16_t length, bool copy)
+{
+    addContentItem( new ContentItem(NULL,
+                                    copy? HTTPResponse::HeapToFree : HTTPResponse::Heap,
+                                    copy? memdup(data, length) : data,
+                                    length)
+                  );
+}
+
+
+void HTTPResponse::addContent_P(PGM_P data, uint16_t length)
+{
+    addContentItem( new ContentItem(NULL, HTTPResponse::Flash, data, length) );
+}
+
+
+void HTTPResponse::addContent(uint32_t value)
+{
+    char str[12];
+    addContent(ultoa(value, str, 10), true);    
+}
+
+
+void HTTPResponse::addContent(float value, int8_t width, uint8_t prec)
+{
+    char str[abs(width) + prec + 3];    // todo: verify buf size formula!
+    addContent(dtostrf(value, width, prec, str), true);
+}
+
+
+uint8_t HTTPResponse::calcHeadersFieldsCount()
+{
+    uint8_t count = 0;
+    for (HeaderItem* item = m_headerItems; item; item = item->next)
+        ++count;
+    return count;
+}
+
+
+uint16_t HTTPResponse::calcHeadersBufferSize()
+{
+    uint16_t len = 0;
+    for (HeaderItem* item = m_headerItems; item; item = item->next)
+        len += 2 + strlen_P(item->key) + item->storage == HTTPResponse::Flash? strlen_P((PGM_P)item->data) : strlen((char const*)item->data);
+    return len;
+}
+
+
+uint8_t* HTTPResponse::copyHeadersToBuffer(uint8_t* dest)
+{
+    for (HeaderItem* item = m_headerItems; item; item = item->next)
+    {
+        strcpy_P((char*)dest, item->key);
+        dest += strlen_P(item->key) + 1;
+        if (item->storage == HTTPResponse::Flash)
+        {
+            strcpy_P((char*)dest, (char*)item->data);
+            dest += strlen_P((char*)item->data) + 1;
+        }
+        else
+        {
+            strcpy((char*)dest, (char*)item->data);
+            dest += strlen((char*)item->data) + 1;
+        }
+    }
+    return dest;
+}
+
+
+uint16_t HTTPResponse::calcContentBufferSize()
+{
+    uint16_t len = 0;
+    for (ContentItem* item = m_contentItems; item; item = item->next)
+        len += item->dataLength;
+    return len;
+}
+
+
+uint8_t* HTTPResponse::copyContentToBuffer(uint8_t* dest)
+{
+    for (ContentItem* item = m_contentItems; item; item = item->next)
+    {
+        if (item->storage == HTTPResponse::Flash)
+            memcpy_P(dest, item->data, item->dataLength);
+        else
+            memcpy(dest, item->data, item->dataLength);
+        dest += item->dataLength;
+    }
+    return dest;
+}
 
 
 
@@ -438,6 +727,13 @@ void WebESP8266::begin(Stream& stream)
 }
 
 
+void WebESP8266::setupWebRoutes(WebRoute* webRoutes, uint8_t count)
+{
+    _webRoutes      = webRoutes;
+    _webRoutesCount = count;
+}
+
+
 bool WebESP8266::isReady()
 {
 	return _isReady;
@@ -498,6 +794,9 @@ void WebESP8266::processMessage(Message* msg)
 			break;
         case CMD_GETHTTPHANDLEDPAGES:
             handle_CMD_GETHTTPHANDLEDPAGES(msg);
+            break;
+        case CMD_HTTPREQUEST:
+            handle_CMD_HTTPREQUEST(msg);
             break;
 	}			
 	msg->freeData();
@@ -722,22 +1021,17 @@ void WebESP8266::handle_CMD_IOAGET(Message* msg)
 }		
 
 
-void WebESP8266::setupWebRoutes(WebRoute* webRoutes, uint8_t count)
-{
-    _webRoutes      = webRoutes;
-    _webRoutesCount = count;
-}
-
-
 void WebESP8266::handle_CMD_GETHTTPHANDLEDPAGES(Message* msg)
 {
+    Serial.println("handle_CMD_GETHTTPHANDLEDPAGES");
+    
     // calc message size
     uint16_t msgSize = sizeof(uint8_t);    // uint8_t for items count
     for (uint8_t i = 0; i != _webRoutesCount; ++i)
         msgSize += strlen_P(_webRoutes[i].page) + 1;
     
     // send ACK with parameters
-    Message msgContainer(getNextID(), CMD_ACK, msgSize);
+    Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOAGET_ACK::SIZE + msgSize);
     Message_ACK msgACK(&msgContainer, msg->ID);
     uint8_t* wpos = msgContainer.data + Message_ACK::SIZE;
     *wpos++ = _webRoutesCount;
@@ -748,6 +1042,82 @@ void WebESP8266::handle_CMD_GETHTTPHANDLEDPAGES(Message* msg)
     }
     send(&msgContainer);
     msgContainer.freeData();
+}
+
+
+void WebESP8266::handle_CMD_HTTPREQUEST(Message* msg)
+{
+    Serial.println("handle_CMD_HTTPREQUEST");
+    
+    //// decode message
+    
+    HTTPRequest request;
+    
+    uint8_t const* rpos = msg->data;
+    
+    // method (get, post...)
+    request.method = (HTTPRequest::Method)*rpos++;
+    
+    // page index (as registered by handle_CMD_GETHTTPHANDLEDPAGES)
+    request.pageIndex = *rpos++;
+    
+    // page (zero terminated string)
+    request.page = (char const*)rpos;
+    rpos += strlen(request.page) + 1;
+    
+    // headers count
+    uint8_t headersCount = *rpos++;
+    
+    // headers key->value
+    request.headers.reset((char const*)rpos, headersCount);
+    rpos += request.headers.calcBufferSize();
+
+    // query count
+    uint8_t queryCount = *rpos++;
+    
+    // query key->value
+    request.query.reset((char const*)rpos, queryCount);
+    rpos += request.query.calcBufferSize();
+
+    // form count
+    uint8_t formCount = *rpos++;
+    
+    // form key->value
+    request.form.reset((char const*)rpos, formCount);
+    rpos += request.form.calcBufferSize();
+    
+    // call the handler and send ACK with parameters
+    if (request.pageIndex < _webRoutesCount)
+    {
+        HTTPResponse response;
+        _webRoutes[request.pageIndex].handler(request, response);
+        uint16_t headersBufferSize = response.calcHeadersBufferSize();
+        uint16_t contentBufferSize = response.calcContentBufferSize();
+        uint16_t msgSize = 1 + 1 + 2 + headersBufferSize + contentBufferSize;   // +1 = status, +1 = headers fields count, +2 = content length
+        Message msgContainer(getNextID(), CMD_ACK, Message_ACK::SIZE + msgSize);
+        Message_ACK msgACK(&msgContainer, msg->ID);
+        uint8_t* wpos = msgContainer.data + Message_ACK::SIZE;
+        
+        // status
+        *wpos++ = response.getStatus();
+        
+        // header fields count
+        *wpos++ = response.calcHeadersFieldsCount();
+        
+        // header fields
+        wpos = response.copyHeadersToBuffer(wpos);
+        
+        // content length
+        Serial.println(contentBufferSize);
+        *wpos++ = contentBufferSize & 0xFF;
+        *wpos++ = contentBufferSize >> 8;
+        response.copyContentToBuffer(wpos);
+        
+        // send and free
+        send(&msgContainer);
+        msgContainer.freeData();        
+    }    
+    
 }
 
 

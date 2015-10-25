@@ -40,17 +40,102 @@ https://github.com/fdivitto/ESPWebFramework
 
 class HTTPFields
 {
-    // todo
+public:
+    HTTPFields();
+    HTTPFields(char const* data, uint8_t itemsCount);
+    
+    void reset(char const* data, uint8_t itemsCount);
+    
+    uint8_t itemsCount();
+    char const* getkey(uint8_t index);
+    char const* operator[](uint8_t index);
+    char const* operator[](char const* key);
+    
+    uint16_t calcBufferSize();
+    
+private:
+    char const* m_data;
+    uint8_t     m_itemsCount;
+};
+
+
+struct HTTPRequest
+{
+    enum Method {Unsupported, Get, Post, Head};
+    
+    Method      method;
+    uint8_t     pageIndex;
+    char const* page;
+    HTTPFields  headers;
+    HTTPFields  query;
+    HTTPFields  form;
 };
 
 
 class HTTPResponse
 {
-    // todo
+public:
+    HTTPResponse();
+    ~HTTPResponse();
+    
+    void setStatus(uint8_t status); // one if HTTPSTATUS_xxx constants
+    uint8_t getStatus();
+    
+    void addHeader(PGM_P key, char const* value, bool copy = false);
+    void addHeader_P(PGM_P key, PGM_P value);
+    
+    void addContent(char const* string, bool copy = false);
+    void addContent_P(PGM_P string);
+    void addContent(void const* data, uint16_t length, bool copy = false);
+    void addContent_P(PGM_P data, uint16_t length);
+    void addContent(uint32_t value);
+    void addContent(float value, int8_t width, uint8_t prec);  // todo: evaluate impact on code size!!
+    
+    uint8_t calcHeadersFieldsCount();
+    uint16_t calcHeadersBufferSize();
+    uint8_t* copyHeadersToBuffer(uint8_t* dest);
+    
+    uint16_t calcContentBufferSize();    
+    uint8_t* copyContentToBuffer(uint8_t* dest);
+    
+public:
+    enum Storage {Heap, HeapToFree, Flash};
+
+    struct ContentItem
+    {
+        ContentItem* next; // NULL = end of list
+        Storage      storage;
+        void const*  data;
+        uint16_t     dataLength;
+        ContentItem(ContentItem* next_, Storage storage_, void const* data_, uint16_t dataLength_)
+            : next(next_), storage(storage_), data(data_), dataLength(dataLength_)
+        {
+        }
+    };
+    
+    struct HeaderItem
+    {
+        HeaderItem* next; // NULL = end of list
+        Storage     storage;
+        PGM_P       key;
+        void const* data;   // aka "value"
+        HeaderItem(HeaderItem* next_, Storage storage_, PGM_P key_, void const* data_)
+            : next(next_), storage(storage_), key(key_), data(data_)
+        {
+        }
+    };
+    
+private:
+    void addHeaderItem(HeaderItem* item);
+    void addContentItem(ContentItem* item);
+
+    ContentItem* m_contentItems;
+    HeaderItem*  m_headerItems;
+    uint8_t      m_status;
 };
 
 
-typedef void (*WebHandler)(PGM_P page, HTTPFields const& headers, HTTPFields const& query, HTTPFields const& form, HTTPResponse& response);
+typedef void (*WebHandler)(HTTPRequest const& request, HTTPResponse& response);
 
 
 struct WebRoute
@@ -107,6 +192,16 @@ public:
 	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD5  = 21; // Arduino 5
 	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD6  = 22; // Arduino 6
 	static uint8_t const PIN_IDENTIFIER_ATMEGA328_PD7  = 23; // Arduino 7	   
+
+    // CMD_HTTPREQUEST - status
+    static uint8_t const HTTPSTATUS_200 = 0;    // 200 OK
+    static uint8_t const HTTPSTATUS_301 = 1;    // 301 Moved Permanently
+    static uint8_t const HTTPSTATUS_302 = 2;    // 302 Found
+    static uint8_t const HTTPSTATUS_400 = 3;    // 400 Bad Request
+    static uint8_t const HTTPSTATUS_401 = 4;    // 401 Unauthorized
+    static uint8_t const HTTPSTATUS_403 = 5;    // 403 Forbidden
+    static uint8_t const HTTPSTATUS_404 = 6;    // 404 Not Found
+
     
     // Types	
     
@@ -162,6 +257,7 @@ private:
 	void handle_CMD_IOASET(Message* msg);
 	void handle_CMD_IOAGET(Message* msg);
     void handle_CMD_GETHTTPHANDLEDPAGES(Message* msg);
+    void handle_CMD_HTTPREQUEST(Message* msg);
 	
 private:
 

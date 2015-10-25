@@ -21,16 +21,21 @@ WebESP8266 webESP;
 
 const char page0[] PROGMEM = "/page0";
 const char page1[] PROGMEM = "/page1";
+const char page2[] PROGMEM = "/page2";
 
 WebRoute webRoutes[] = {
     {page0, handle_page0},
     {page1, handle_page1},
+    {page2, handle_page2},
   };
 
 
 void setup()
 {
-  //while(1);  // debug
+  // debug
+  //while(1);
+  Serial.begin(9600);
+  
   // setup software serial baud rate
   softSerial.begin(9600);
   
@@ -48,12 +53,23 @@ void loop()
 }
 
 
-void handle_page0(PGM_P page, HTTPFields const& headers, HTTPFields const& query, HTTPFields const& form, HTTPResponse& response)
+void handle_page0(HTTPRequest const& request, HTTPResponse& response)
 {
+  Serial.println("handle_page0");
+  response.addContent_P(PSTR("Hello World-0!!"));
 }
 
 
-void handle_page1(PGM_P page, HTTPFields const& headers, HTTPFields const& query, HTTPFields const& form, HTTPResponse& response)
+void handle_page1(HTTPRequest const& request, HTTPResponse& response)
 {
+  Serial.println("handle_page1");
+  response.addContent_P(PSTR("Hello World-1!!"));
+}
+
+
+void handle_page2(HTTPRequest const& request, HTTPResponse& response)
+{
+  Serial.println("handle_page2");
+  response.addContent_P(PSTR("Hello World-2!!"));
 }
 
