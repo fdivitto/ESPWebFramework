@@ -55,22 +55,19 @@ void loop()
 
 void handle_page0(HTTPRequest const& request, HTTPResponse& response)
 {
-  Serial.println("handle_page0");
-  response.addContent_P(PSTR("Hello World-0!!"));
+  response.addContent_P(PSTR("<HTML><HEAD></HEAD><BODY><H1>This is page ZERO from Arduino!</H1></BODY></HTML>"));
 }
 
 
 void handle_page1(HTTPRequest const& request, HTTPResponse& response)
 {
-  Serial.println("handle_page1");
-  response.addContent_P(PSTR("Hello World-1!!"));
+  response.addContent_P(PSTR("This is page ONE from Arduino!"));
 }
 
 
 void handle_page2(HTTPRequest const& request, HTTPResponse& response)
 {
-  Serial.println("handle_page2");
-  response.addContent_P(PSTR("Hello World-2!!"));
+  response.addContent_P(PSTR("This is page TWO from Arduino!"));
 }
 
 
