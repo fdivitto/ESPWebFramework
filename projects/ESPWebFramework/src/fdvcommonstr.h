@@ -61,9 +61,7 @@ namespace fdv
 	static char const STR_checked[] FLASHMEM        = "checked";
 	static char const STR_selected[] FLASHMEM       = "selected"; 
 	static char const STR_disabled[] FLASHMEM       = "disabled";
-	static char const STR_200_OK[] FLASHMEM         = "200 OK";
 	static char const STR_Content_Type[] FLASHMEM   = "Content-Type";
-	static char const STR_404_Not_Fount[] FLASHMEM  = "404 Not Found";
 	static char const STR_Content_Length[] FLASHMEM = "Content-Length";
 	static char const STR_httpport[] FLASHMEM       = "httpport";
 	static char const STR_baud[] FLASHMEM           = "baud";
@@ -86,6 +84,13 @@ namespace fdv
     static char const STR_DNS1[] FLASHMEM           = "DNS1";
     static char const STR_DNS2[] FLASHMEM           = "DNS2";
     static char const STR_ROUTING[] FLASHMEM        = "ROUTING";
+	static char const STR_200_OK[] FLASHMEM                = "200 OK";
+	static char const STR_404_Not_Found[] FLASHMEM         = "404 Not Found";
+    static char const STR_301_Moved_Permanently[] FLASHMEM = "301 Moved Permanently";
+    static char const STR_302_Found[] FLASHMEM             = "302 Found";
+    static char const STR_400_Bad_Request[] FLASHMEM       = "400 Bad Request";
+    static char const STR_401_Unauthorized[] FLASHMEM      = "401 Unauthorized";
+    static char const STR_403_Forbidden[] FLASHMEM         = "403 Forbidden";
 }
 
 #endif

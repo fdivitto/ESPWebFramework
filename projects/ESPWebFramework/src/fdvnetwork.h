@@ -833,7 +833,7 @@ namespace fdv
 			else
 			{
 				// not found
-				setStatus(STR_404_Not_Fount);
+				setStatus(STR_404_Not_Found);
 			}
 			HTTPResponse::flush();
 		}

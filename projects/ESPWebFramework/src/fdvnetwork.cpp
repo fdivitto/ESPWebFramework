@@ -899,7 +899,7 @@ namespace fdv
             }
         }
         // not found
-        setStatus(STR_404_Not_Fount);
+        setStatus(STR_404_Not_Found);
     }
     
     
