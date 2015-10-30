@@ -716,9 +716,8 @@ private:
 // Call eraseContent only if you want to erase old dictionary
 
 struct FlashDictionary
-{
-	static uint32_t const FLASH_DICTIONARY_POS = 0x16000;
-	static uint32_t const MAGIC                = 0x46445631;
+{	
+	static uint32_t const MAGIC = 0x46445631;
 	
 	// clear the entire available space and write MAGIC at the beginning of the dictionary
 	// This is required only if you want to remove previous content
@@ -768,15 +767,14 @@ struct FlashDictionary
 // It is just a files extractor from the flash.
 // You can write files into the flash using "binarydir.py" (to prepare) and "esptool.py" (to flash) tools.
 // For example, having some files in webcontent subdirectory you can do:
-//   python binarydir.py webcontent webcontent.bin 167936
-//   python ../esptool.py --port COM7 write_flash 0x17000 webcontent.bin
+//   python binarydir.py webcontent webcontent.bin 61440
+//   python ../esptool.py --port COM7 write_flash 0x6C000 webcontent.bin
 // Then you can use FlashFileSystem static methods to get actual files content
-// Maximum content size is 167936 bytes and starts from 0x17000 of the flash memory
+// Maximum content size is 64K bytes and starts from FLASHFILESYSTEM_POS of the flash memory
 
 struct FlashFileSystem
-{
-	static uint32_t const FLASHFILESYSTEM_POS = 0x17000;
-	static uint32_t const MAGIC               = 0x93841A03;
+{	
+	static uint32_t const MAGIC = 0x93841A03;
 		
 	static bool find(char const* filename, char const** mimetype, void const** data, uint16_t* dataLength);
 };

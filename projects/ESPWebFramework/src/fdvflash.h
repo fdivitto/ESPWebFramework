@@ -29,12 +29,16 @@
 
 
 
-// Flash from 0x0 to 0x8000      mapped to 0x40100000, len = 0x8000 (32KBytes)    - ".text"
-// Flash from 0x40000 to 0x7C000 mapped to 0x40240000, len = 0x3C000 (240KBytes)  - ".irom0.text"
+// Flash from 0x0 to 0x8000      mapped to 0x40100000 (RAM), len = 0x8000 (32KBytes) -> ".text"
+// Flash from 0x11000 to 0x6C000 mapped to 0x40211000, len = 0x5B000 (364KBytes)     -> ".irom.text", ".irom0.text", ".irom1.text", ".irom2.text", ".irom3.text", ".irom4.text"
+// Flash from 0x6C000 to 0x7B000 mapped to 0x4026C000, len = 0x10000 (60KBytes)      -> FlashFileSystem content
+// Flash from 0x7B000 to 0x7C000 mapped to 0x4027B000, len = 0x1000  (4KBytes)       -> FlashDictionary content
 
+static uint32_t const FLASH_MAP_START      = 0x40200000;    // based on the CPU address space
 
-static uint32_t const FLASH_MAP_START = 0x40200000;
-
+// Flash address space
+static uint32_t const FLASHFILESYSTEM_POS  = 0x6C000;       
+static uint32_t const FLASH_DICTIONARY_POS = 0x7B000;
 
 
 
@@ -54,7 +58,7 @@ namespace fdv
 	// isStoredInFlash
 	inline bool isStoredInFlash(void const* ptr)
 	{
-		return (uint32_t)ptr >= 0x40200000 && (uint32_t)ptr < 0x40300000;
+		return (uint32_t)ptr >= FLASH_MAP_START;
 	}
 	
 

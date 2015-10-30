@@ -50,8 +50,8 @@ OBJ += fdvnetwork.o fdvcollections.o fdvconfmanager.o fdvdatetime.o fdvserialser
 
 SRCDIR = ./src/
 WEBDIR = ./webcontent/
-WEBCONTENTADDRS = 0x17000
-MAXWEBCONTENT = 167936
+WEBCONTENTADDRS = 0x6C000
+MAXWEBCONTENT = 61440
 
 TARGET_OUT = app.out
 
@@ -82,8 +82,8 @@ libuser.a: $(OBJ)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 
-flash:  $(TARGET_OUT)-0x00000.bin $(TARGET_OUT)-0x40000.bin flashweb
-	@-$(ESPTOOL) --port $(PORT) write_flash 0x40000 $(TARGET_OUT)-0x40000.bin 0x00000 $(TARGET_OUT)-0x00000.bin
+flash:  $(TARGET_OUT)-0x00000.bin $(TARGET_OUT)-0x11000.bin flashweb
+	@-$(ESPTOOL) --port $(PORT) write_flash 0x11000 $(TARGET_OUT)-0x11000.bin 0x00000 $(TARGET_OUT)-0x00000.bin
 
 
 flashweb:
