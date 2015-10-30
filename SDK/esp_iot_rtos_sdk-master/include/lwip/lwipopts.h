@@ -239,6 +239,11 @@
  */
 #define TCP_SYNMAXRTX                   3
 
+/**
+ * TCP_LISTEN_BACKLOG: Enable the backlog option for tcp listen pcb.
+ */
+#define TCP_LISTEN_BACKLOG              1
+
 /*
    ----------------------------------
    ---------- Pbuf options ----------
@@ -250,6 +255,13 @@
    ---------- Network Interfaces options ----------
    ------------------------------------------------
 */
+
+/**
+ * LWIP_NETIF_HOSTNAME==1: use DHCP_OPTION_HOSTNAME with netif's hostname
+ * field.
+ */
+#define LWIP_NETIF_HOSTNAME             1
+
 /**
  * LWIP_NETIF_TX_SINGLE_PBUF: if this is set to 1, lwIP tries to put all data
  * to be sent into one single pbuf. This is for compatibility with DMA-enabled
@@ -336,7 +348,7 @@
  * LWIP_TCPIP_CORE_LOCKING: (EXPERIMENTAL!)
  * Don't use it if you're not an active lwIP project member
  */
-#define LWIP_TCPIP_CORE_LOCKING         1
+#define LWIP_TCPIP_CORE_LOCKING         0
 
 /*
    ------------------------------------
@@ -370,7 +382,7 @@
 /**
  * SO_REUSE==1: Enable SO_REUSEADDR option.
  */
-#define SO_REUSE                        1
+#define SO_REUSE                        0
 
 /*
    ----------------------------------------
