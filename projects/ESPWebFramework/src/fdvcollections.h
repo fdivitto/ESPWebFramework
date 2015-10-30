@@ -767,10 +767,10 @@ struct FlashDictionary
 // It is just a files extractor from the flash.
 // You can write files into the flash using "binarydir.py" (to prepare) and "esptool.py" (to flash) tools.
 // For example, having some files in webcontent subdirectory you can do:
-//   python binarydir.py webcontent webcontent.bin 61440
+//   python binarydir.py webcontent webcontent.bin 57344
 //   python ../esptool.py --port COM7 write_flash 0x6C000 webcontent.bin
 // Then you can use FlashFileSystem static methods to get actual files content
-// Maximum content size is 64K bytes and starts from FLASHFILESYSTEM_POS of the flash memory
+// Maximum content size is 56K bytes and starts from FLASHFILESYSTEM_POS of the flash memory
 
 struct FlashFileSystem
 {	
