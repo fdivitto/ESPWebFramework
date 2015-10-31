@@ -523,6 +523,12 @@ namespace fdv
     {
     }
     
+    
+    MTD_FLASHMEM SerialBinary::Message::Message(uint8_t ID_, uint8_t command_, uint8_t* data_, uint16_t dataSize_)
+        : valid(true), ID(ID_), command(command_), data(data_), dataSize(dataSize_)
+    {
+    }
+    
 
     void MTD_FLASHMEM SerialBinary::Message::freeData()
     {
@@ -559,41 +565,7 @@ namespace fdv
         }
     };
 		
-			
-
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Message_CMD_READY
-            
-    struct Message_CMD_READY
-    {
-        static uint16_t const SIZE = 12;
-        
-        uint8_t& protocolVersion;
-        uint8_t& platform;
-        char*    magicString;
-        
-        // used to decode message
-        Message_CMD_READY(SerialBinary::Message* msg)
-            : protocolVersion(msg->data[0]), 
-              platform(msg->data[1]), 
-              magicString((char*)msg->data + 2)
-        {
-        }
-        // used to encode message
-        Message_CMD_READY(SerialBinary::Message* msg, uint8_t protocolVersion_, uint8_t platform_, char const* magicString_)
-            : protocolVersion(msg->data[0]), 
-              platform(msg->data[1]), 
-              magicString((char*)msg->data + 2)
-        {
-            protocolVersion = protocolVersion_;
-            platform        = platform_;
-            f_strcpy(magicString, magicString_);
-        }
-        
-    };
-		
-        
+			        
         
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -966,17 +938,18 @@ namespace fdv
     void MTD_FLASHMEM SerialBinary::handle_CMD_READY(Message* msg)
     {
         // process message
-        Message_CMD_READY msgCMDREADY(msg);
         m_mutex.lock();
-        m_isReady  = (msgCMDREADY.protocolVersion == PROTOCOL_VERSION && f_strcmp(msgCMDREADY.magicString, STR_BINPRORDY) == 0);
-        m_platform = msgCMDREADY.platform;
+        uint8_t protocolVersion = msg->data[0];
+        m_platform              = msg->data[1];
+        char const* magicString = (char const*)msg->data + 2;
+        m_isReady = (protocolVersion == PROTOCOL_VERSION && f_strcmp(magicString, STR_BINPRORDY) == 0);
         m_mutex.unlock();
         
         // send ACK with parameters
         Message msgContainer(getNextID(), CMD_ACK, Message_CMD_READY_ACK::SIZE);
         Message_CMD_READY_ACK msgCMDREADYACK(&msgContainer, msg->ID, PROTOCOL_VERSION, PLATFORM_THIS, STR_BINPRORDY);
         send(&msgContainer);
-        msgContainer.freeData();
+        msgContainer.freeData(); 
     }
     
     
@@ -1038,10 +1011,12 @@ namespace fdv
         {
             // send message
             uint8_t msgID = getNextID();
-            Message msgContainer(msgID, CMD_READY, Message_CMD_READY::SIZE);
-            Message_CMD_READY msgCMDREADY(&msgContainer, PROTOCOL_VERSION, PLATFORM_THIS, STR_BINPRORDY);
-            send(&msgContainer);
-            msgContainer.freeData();
+            uint8_t data[12];
+            Message msgContainer(msgID, CMD_READY, data, 12);
+            data[0] = PROTOCOL_VERSION;
+            data[1] = PLATFORM_THIS;
+            f_strcpy((char*)data + 2, STR_BINPRORDY);
+            send(&msgContainer);            
             
             // wait for ACK
             msgContainer = waitACK(msgID);

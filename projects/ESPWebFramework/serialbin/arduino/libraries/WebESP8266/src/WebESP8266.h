@@ -229,7 +229,8 @@ public:
 		uint8_t* data;
 		
 		Message();
-		Message(uint8_t ID_, uint8_t command_, uint16_t dataSize_);        
+		Message(uint8_t ID_, uint8_t command_, uint16_t dataSize_);
+        Message(uint8_t ID_, uint8_t command_, uint8_t* data_, uint16_t dataSize_);
 		void freeData(); // warn: memory must be explicitly deleted using freeData(). Don't create a destructor to free data!
 	};
     

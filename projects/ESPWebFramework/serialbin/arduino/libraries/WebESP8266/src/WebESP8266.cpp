@@ -66,6 +66,7 @@ static uint8_t const HTTPSENDMETHOD_HEAD        = 3;
 // Strings
 static char const STR_BINPRORDY[] PROGMEM  = "BINPRORDY";
 
+
 // calculates time difference in milliseconds, taking into consideration the time overflow
 // note: time1 must be less than time2 (time1 < time2)
 inline uint32_t millisDiff(uint32_t time1, uint32_t time2)
@@ -423,6 +424,12 @@ WebESP8266::Message::Message(uint8_t ID_, uint8_t command_, uint16_t dataSize_)
 }
 
 
+WebESP8266::Message::Message(uint8_t ID_, uint8_t command_, uint8_t* data_, uint16_t dataSize_)
+    : valid(true), ID(ID_), command(command_), data(data_), dataSize(dataSize_)
+{
+}
+
+
 // warn: memory must be explicitly delete using freeData(). Don't create a destructor to free data!
 void WebESP8266::Message::freeData()
 {
@@ -457,40 +464,6 @@ struct Message_ACK
     {
         ackID = ackID_;
     }
-};
-
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// Message_CMD_READY
-
-struct Message_CMD_READY
-{
-    static uint16_t const SIZE = 12;
-    
-    uint8_t& protocolVersion;
-    uint8_t& platform;
-    char*    magicString;
-    
-    // used to decode message
-    Message_CMD_READY(WebESP8266::Message* msg)
-        : protocolVersion(msg->data[0]), 
-          platform(msg->data[1]), 
-          magicString((char*)msg->data + 2)
-    {
-    }
-    // used to encode message
-    Message_CMD_READY(WebESP8266::Message* msg, uint8_t protocolVersion_, uint8_t platform_, PGM_P magicString_)
-        : protocolVersion(msg->data[0]), 
-          platform(msg->data[1]), 
-          magicString((char*)msg->data + 2)
-    {
-        protocolVersion = protocolVersion_;
-        platform        = platform_;
-        strcpy_P(magicString, magicString_);
-    }
-    
 };
 
 
@@ -943,10 +916,11 @@ bool WebESP8266::waitNoParamsACK(uint8_t ackID)
 void WebESP8266::handle_CMD_READY(Message* msg)
 {    
 	// process message
-	Message_CMD_READY msgCMDREADY(msg);
-	_isReady  = (msgCMDREADY.protocolVersion == PROTOCOL_VERSION && strcmp_P(msgCMDREADY.magicString, STR_BINPRORDY) == 0);
-	_platform = msgCMDREADY.platform;
-	
+    uint8_t protocolVersion = msg->data[0];
+    _platform               = msg->data[1];
+    char const* magicString = (char const*)msg->data + 2;
+	_isReady  = (protocolVersion == PROTOCOL_VERSION && strcmp_P(magicString, STR_BINPRORDY) == 0);
+    
 	// send ACK with parameters
 	Message msgContainer(getNextID(), CMD_ACK, Message_CMD_READY_ACK::SIZE);
 	Message_CMD_READY_ACK msgCMDREADYACK(&msgContainer, msg->ID, PROTOCOL_VERSION, PLATFORM_THIS, STR_BINPRORDY);
@@ -1125,11 +1099,13 @@ bool WebESP8266::send_CMD_READY()
 	for (uint8_t i = 0; i != MAX_RESEND_COUNT; ++i)
 	{
 		// send message
-		uint8_t msgID = getNextID();
-		Message msgContainer(msgID, CMD_READY, Message_CMD_READY::SIZE);
-		Message_CMD_READY msgCMDREADY(&msgContainer, PROTOCOL_VERSION, PLATFORM_THIS, STR_BINPRORDY);
-		send(&msgContainer);
-		msgContainer.freeData();
+        uint8_t msgID = getNextID();
+        uint8_t data[12];
+        Message msgContainer(msgID, CMD_READY, data, 12);
+        data[0] = PROTOCOL_VERSION;
+        data[1] = PLATFORM_THIS;
+        strcpy_P((char*)data + 2, STR_BINPRORDY);
+        send(&msgContainer);            
 		
 		// wait for ACK
 		msgContainer = waitACK(msgID);
