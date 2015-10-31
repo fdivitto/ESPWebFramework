@@ -45,16 +45,10 @@ namespace fdv
     uint32_t micros();
     
 
-	inline void enterCritical()
-	{
-		taskENTER_CRITICAL();
-	}
-	
-	inline void exitCritical()
-	{
-		taskEXIT_CRITICAL();
-	}
+	void enterCritical();
+	void exitCritical();
 
+    
 
 	/////////////////////////////////////////////////////////////////////+
 	/////////////////////////////////////////////////////////////////////+

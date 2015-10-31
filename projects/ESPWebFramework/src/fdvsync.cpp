@@ -37,6 +37,18 @@ namespace fdv
 {
 
 	
+    
+	void FUNC_FLASHMEM enterCritical()
+	{
+		taskENTER_CRITICAL();
+	}
+	
+    
+	void FUNC_FLASHMEM exitCritical()
+	{
+		taskEXIT_CRITICAL();
+	}
+    
 	
 	uint32_t FUNC_FLASHMEM millisISR()
 	{

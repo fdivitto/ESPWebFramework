@@ -277,171 +277,24 @@ int32_t TMTD_FLASHMEM t_strtol(Iterator str, int32_t base)
 ///////////////////////////////////////////////////////////////////////////////////////
 
 
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-// f_strlen
-// str can be stored in Flash or/and in RAM
-inline uint32_t TMTD_FLASHMEM f_strlen(char const* str)
-{
-	return t_strlen(CharIterator(str));
-}
-
-	
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-// f_strnlen
-// str can be stored in Flash or/and in RAM
-inline uint32_t TMTD_FLASHMEM f_strnlen(char const* str, uint32_t maxlen)
-{
-	return t_strnlen(CharIterator(str), maxlen);
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-// f_strcpy
-// source can be stored in Flash or/and in RAM
-inline char* TMTD_FLASHMEM f_strcpy(char* destination, char const* source)
-{
-	return t_strcpy(destination, CharIterator(source));
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-// f_strdup
-// use delete[] to free memory
-// str can be stored in Flash or/and in RAM
-inline char* TMTD_FLASHMEM f_strdup(char const* str)
-{
-	return t_strdup(CharIterator(str));
-}
-
-// adds automatically ending zero
-inline char* TMTD_FLASHMEM f_strdup(char const* sourceStart, char const* sourceEnd)
-{
-	return t_strdup(CharIterator(sourceStart), CharIterator(sourceEnd));
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-// f_memdup
-// use delete[] to free memory
-// str can be stored in Flash or/and in RAM
-inline void* TMTD_FLASHMEM f_memdup(void const* buffer, uint32_t length)
-{
-	return t_memdup(ByteIterator((uint8_t const*)buffer), length);
-}
-		
-
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-// f_strcmp
-// both s1 and s2 can be stored in Flash or/and in RAM
-inline int32_t TMTD_FLASHMEM f_strcmp(char const* s1, char const* s2)
-{
-	return t_strcmp(CharIterator(s1), CharIterator(s2));
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-// f_memcmp
-// both s1 and s2 can be stored in Flash or/and in RAM
-inline int32_t TMTD_FLASHMEM f_memcmp(void const* s1, void const* s2, uint32_t length)
-{
-	return t_memcmp(ByteIterator((uint8_t const*)s1), ByteIterator((uint8_t const*)s2), length);
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-// f_memcpy
-// source can be stored in Flash or/and in RAM
-inline void* TMTD_FLASHMEM f_memcpy(void* destination, void const* source, uint32_t length)
-{
-	return t_memcpy(destination, ByteIterator((uint8_t const*)source), length);
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-// f_strstr
-// both str and substr can be stored in Flash or/and RAM
-inline char const* TMTD_FLASHMEM f_strstr(char const* str, char const* substr)
-{
-	return t_strstr(CharIterator(str), CharIterator(substr)).get();
-}
-
-inline char const* TMTD_FLASHMEM f_strstr(char const* str, char const* strEnd, char const* substr)
-{
-	return t_strstr(CharIterator(str), CharIterator(strEnd), CharIterator(substr)).get();
-}
-
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// isspace
-inline bool TMTD_FLASHMEM isspace(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r');
-}
-
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// isalpha
-inline bool TMTD_FLASHMEM isalpha(char c)
-{
-	return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
-}
-
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// isdigit
-inline bool TMTD_FLASHMEM isdigit(char c)
-{
-    return (c >= '0' && c <= '9');
-}
-
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// isxdigit
-inline bool TMTD_FLASHMEM isxdigit(char c)
-{
-    return isdigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
-}
-
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// isupper
-inline bool TMTD_FLASHMEM isupper(char c)
-{
-    return c >= 'A' && c <= 'Z';
-}
-
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// islower
-inline bool TMTD_FLASHMEM islower(char c)
-{
-    return c >= 'a' && c <= 'z';
-}
-
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// hexDigitToInt
-// assume x is a valid hex digit
-inline uint32_t TMTD_FLASHMEM hexDigitToInt(char x)
-{
-    return isdigit(x)? x - '0' : (islower(x)? x - 'a' + 10 : x - 'A' + 10);
-}
+uint32_t f_strlen(char const* str);
+uint32_t f_strnlen(char const* str, uint32_t maxlen);
+char* f_strcpy(char* destination, char const* source);
+char* f_strdup(char const* str);
+char* f_strdup(char const* sourceStart, char const* sourceEnd);
+void* f_memdup(void const* buffer, uint32_t length);
+int32_t f_strcmp(char const* s1, char const* s2);
+int32_t f_memcmp(void const* s1, void const* s2, uint32_t length);
+void* f_memcpy(void* destination, void const* source, uint32_t length);
+char const* f_strstr(char const* str, char const* substr);
+char const* f_strstr(char const* str, char const* strEnd, char const* substr);
+bool isspace(char c);
+bool isalpha(char c);
+bool isdigit(char c);
+bool isxdigit(char c);
+bool isupper(char c);
+bool islower(char c);
+uint32_t hexDigitToInt(char x);
 
 
 /////////////////////////////////////////////////////////////////////////
