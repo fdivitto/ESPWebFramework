@@ -33,13 +33,60 @@
 namespace fdv
 {
 
+
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
-// reboot
 // creates a task and reboot after specified time (ms)
 
+struct RebootTask : Task
+{
+    RebootTask(uint32_t time);
+    void exec();
+
+private:    
+    uint32_t m_time;
+};
+
+
+// Helper for RebootTask
 void reboot(uint32_t time);
 
+
+
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// MemPool
+
+class MemPool
+{
+public:
+
+    typedef uint16_t SIZE_T;
+    
+    MemPool(void* buffer, SIZE_T bufferLength);
+    
+    void* malloc(SIZE_T size);
+    void free(void const* ptr);
+    
+    void getStats(SIZE_T* largestFreeBlock, SIZE_T* totalFreeSize);
+    SIZE_T getLargestFreeBlock();   // just an helper of getStats()
+    
+private:
+
+    struct MemPoolBlock
+    {
+        MemPoolBlock* next;
+        SIZE_T        size;  // size not including this structure. This is a multiple of sizeof(MemPoolBlock)
+        uint8_t       alloc; // 0 = free, 1 = allocated
+    };
+    
+    MemPoolBlock* findFreeBlock(SIZE_T minsize);
+    MemPoolBlock* findBlockFromPtr(void const* ptr);
+    void mergeFreeBlocks();
+    
+    MemPoolBlock* m_blocks;
+};
 
 
 /////////////////////////////////////////////////////////////////////////
