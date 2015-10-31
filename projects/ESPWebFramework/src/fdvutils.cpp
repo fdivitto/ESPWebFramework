@@ -32,7 +32,10 @@ extern "C"
 
 
 
-void *__dso_handle;
+void*__dso_handle;
+
+// placement-new requires to be declared
+void* operator new(size_t size, void* ptr);
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -42,22 +45,16 @@ void *__dso_handle;
 namespace fdv
 {
     
-    //static uint32_t s_blocksAllocated = 0;
     
-
 	void* STC_FLASHMEM Memory::malloc(uint32_t size)
 	{
 		return pvPortMalloc(size);
-        /*++s_blocksAllocated;
-        void* ptr = pvPortMalloc(size);
-        if (s_blocksAllocated > 2) debug("malloc %d %p (%d bytes)\r\n", s_blocksAllocated, ptr, size);
-        return ptr;*/
 	}
 
+    
 	void STC_FLASHMEM Memory::free(void* ptr)
 	{        
-        //debug("free %d %p\r\n", --s_blocksAllocated, ptr);
-		vPortFree(ptr);
+        vPortFree(ptr);
 	}
 
 }
@@ -65,22 +62,27 @@ namespace fdv
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
-void * FUNC_FLASHMEM operator new(size_t size)
+void* FUNC_FLASHMEM operator new(size_t size)
 {
     return fdv::Memory::malloc(size);
 }
 
-void * FUNC_FLASHMEM operator new[](size_t size) 
+void* FUNC_FLASHMEM operator new(size_t size, void* ptr)
+{
+    return ptr;
+}
+
+void* FUNC_FLASHMEM operator new[](size_t size) 
 {
     return fdv::Memory::malloc(size);
 }
 
-void FUNC_FLASHMEM operator delete(void * ptr) 
+void FUNC_FLASHMEM operator delete(void* ptr) 
 {
     fdv::Memory::free(ptr);
 }
 
-void FUNC_FLASHMEM operator delete[](void * ptr) 
+void FUNC_FLASHMEM operator delete[](void* ptr) 
 {
     fdv::Memory::free(ptr);
 }
@@ -143,6 +145,7 @@ void FUNC_FLASHMEM reboot(uint32_t time)
 /////////////////////////////////////////////////////////////////////////
 // MemPool
 
+#if (FDV_INCLUDE_MEMPOOL == 1)
 
 // bufferLength should be a multiple of MemPoolBlock size
 MTD_FLASHMEM MemPool::MemPool(void* buffer, SIZE_T bufferLength)
@@ -262,6 +265,7 @@ MemPool::SIZE_T MTD_FLASHMEM MemPool::getLargestFreeBlock()
     return largestFreeBlock;
 }
 
+#endif
 
 
 

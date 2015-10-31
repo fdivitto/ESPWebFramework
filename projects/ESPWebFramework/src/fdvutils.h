@@ -53,10 +53,33 @@ void reboot(uint32_t time);
 
 
 
-
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 // MemPool
+//
+// Example of malloc/free implementation using MemPool
+//
+// static uint32_t const FDVHEAPSIZE = 16384;
+// static MemPool* s_memPool = NULL;
+//
+// void* malloc(uint32_t size)
+// {
+//     enterCritical();    // or use mutex
+//     if (s_memPool == NULL)
+//         s_memPool = new(pvPortMalloc(sizeof(MemPool))) MemPool(pvPortMalloc(FDVHEAPSIZE), FDVHEAPSIZE);
+//     void* ptr = s_memPool->malloc(size);
+//     exitCritical();
+//     return ptr;
+// }
+//
+// void free(void* ptr)
+// {        
+//     enterCritical();
+//     s_memPool->free(ptr);
+//     exitCritical();
+// }
+
+#if (FDV_INCLUDE_MEMPOOL == 1)
 
 class MemPool
 {
@@ -88,16 +111,19 @@ private:
     MemPoolBlock* m_blocks;
 };
 
+#endif
+
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 // Memory
 
 struct Memory
-{
+{        
 	static void* malloc(uint32_t size);
 	static void free(void* ptr);
 };
+
 
 
 /////////////////////////////////////////////////////////////////////////
