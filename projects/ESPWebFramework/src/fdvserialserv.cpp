@@ -691,29 +691,29 @@ namespace fdv
     
     SerialBinary::Message MTD_FLASHMEM SerialBinary::waitACK(uint8_t ackID)
     {
-        Message msgContainer;
+        Message msg;
         SoftTimeOut timeout(GETACK_TIMEOUT);
         while (!timeout)
         {
-            if (m_recvACKQueue.receive(&msgContainer, GETACK_TIMEOUT))
+            if (m_recvACKQueue.receive(&msg, GETACK_TIMEOUT))
             {
-                uint8_t msgAckID = msgContainer.data[0];
+                uint8_t msgAckID = msg.data[0];
                 if (msgAckID == ackID)
-                    return msgContainer;
-                msgContainer.freeData();	// discard this ACK
+                    return msg;
+                msg.freeData();	// discard this ACK
             }
         }
-        msgContainer.valid = false;
-        return msgContainer;
+        msg.valid = false;
+        return msg;
     }
     
 
     bool MTD_FLASHMEM SerialBinary::waitNoParamsACK(uint8_t ackID)
     {
-        Message msgContainer = waitACK(ackID);
-        if (msgContainer.valid)
+        Message msg = waitACK(ackID);
+        if (msg.valid)
         {
-            msgContainer.freeData();
+            msg.freeData();
             return true;
         }
         return false;
@@ -842,15 +842,15 @@ namespace fdv
             send(Message(msgID, CMD_READY, data, sizeof(data)));            
             
             // wait for ACK
-            Message msgContainer = waitACK(msgID);
-            if (msgContainer.valid)
+            Message msg = waitACK(msgID);
+            if (msg.valid)
             {
                 MutexLock lock(&m_mutex);
-                uint8_t protocolVersion = msgContainer.data[1];
-                m_platform = msgContainer.data[2];
-                char const* magicString = (char const*)msgContainer.data + 3;
+                uint8_t protocolVersion = msg.data[1];
+                m_platform = msg.data[2];
+                char const* magicString = (char const*)msg.data + 3;
                 m_isReady = (protocolVersion == PROTOCOL_VERSION && f_strcmp(magicString, STR_BINPRORDY) == 0);
-                msgContainer.freeData();
+                msg.freeData();
                 return true;
             }
         }
@@ -912,11 +912,11 @@ namespace fdv
                 send(Message(msgID, CMD_IOGET, data, sizeof(data)));
                 
                 // wait for ACK
-                Message msgContainer = waitACK(msgID);
-                if (msgContainer.valid)
+                Message msg = waitACK(msgID);
+                if (msg.valid)
                 {
-                    *state = msgContainer.data[1];
-                    msgContainer.freeData();
+                    *state = msg.data[1];
+                    msg.freeData();
                     return true;
                 }
             }
@@ -959,11 +959,11 @@ namespace fdv
                 send(Message(msgID, CMD_IOAGET, data, sizeof(data)));
                 
                 // wait for ACK
-                Message msgContainer = waitACK(msgID);
-                if (msgContainer.valid)
+                Message msg = waitACK(msgID);
+                if (msg.valid)
                 {
-                    *state = msgContainer.data[1] + (msgContainer.data[2] << 8);
-                    msgContainer.freeData();
+                    *state = msg.data[1] + (msg.data[2] << 8);
+                    msg.freeData();
                     return true;
                 }
             }
@@ -985,17 +985,17 @@ namespace fdv
                 send(Message(msgID, CMD_GETHTTPHANDLEDPAGES, NULL, 0));
                 
                 // wait for ACK
-                Message msgContainer = waitACK(msgID);
-                if (msgContainer.valid)
+                Message msg = waitACK(msgID);
+                if (msg.valid)
                 {
-                    uint8_t const* rpos = msgContainer.data + 1;
+                    uint8_t const* rpos = msg.data + 1;
                     uint8_t itemsCount = *rpos++;
                     for (uint8_t j = 0; j != itemsCount; ++j)
                     {
                         m_HTTPRoutes->add((char const*)rpos, StringList::Heap);
                         rpos += strlen((char const*)rpos) + 1;
                     }
-                    msgContainer.freeData();
+                    msg.freeData();
                     return true;
                 }
             }
@@ -1044,8 +1044,8 @@ namespace fdv
                 msglen += copyFields(handler->getRequest().form , NULL);        // form len
                 
                 //// prepare message
-                Message msgContainer(msgID, CMD_HTTPREQUEST, msglen);
-                uint8_t* wpos = msgContainer.data;
+                Message msg(msgID, CMD_HTTPREQUEST, msglen);
+                uint8_t* wpos = msg.data;
                 
                 // method
                 *wpos++ = (uint8_t)handler->getRequest().method;
@@ -1070,14 +1070,14 @@ namespace fdv
                 copyFields(handler->getRequest().form, &wpos);
                 
                 // send message
-                send(msgContainer);
-                msgContainer.freeData();
+                send(msg);
+                msg.freeData();
                 
                 // wait for ACK
-                msgContainer = waitACK(msgID);
-                if (msgContainer.valid)
+                msg = waitACK(msgID);
+                if (msg.valid)
                 {
-                    uint8_t const* rpos = msgContainer.data + 1;
+                    uint8_t const* rpos = msg.data + 1;
                     
                     // read status and initialize response object
                     uint8_t status = *rpos++;
@@ -1145,7 +1145,7 @@ namespace fdv
                     // flush http
                     response.flush();
                     
-                    msgContainer.freeData();
+                    msg.freeData();
                     return true;
                 }
             }

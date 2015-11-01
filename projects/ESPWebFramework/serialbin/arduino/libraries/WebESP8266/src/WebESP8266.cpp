@@ -657,30 +657,30 @@ void WebESP8266::sendNoParamsACK(uint8_t ackID)
 
 WebESP8266::Message WebESP8266::waitACK(uint8_t ackID)
 {
-	Message msgContainer;
+	Message msg;
 	SoftTimeOut timeout(GETACK_TIMEOUT);
 	while (!timeout)
 	{
-		msgContainer = receive();
-		if (msgContainer.valid)
+		msg = receive();
+		if (msg.valid)
 		{
-            uint8_t msgAckID = msgContainer.data[0];
+            uint8_t msgAckID = msg.data[0];
             if (msgAckID == ackID)
-                return msgContainer;
-            msgContainer.freeData();	// discard this ACK
+                return msg;
+            msg.freeData();	// discard this ACK
 		}
 	}
-	msgContainer.valid = false;
-	return msgContainer;
+	msg.valid = false;
+	return msg;
 }
 
 
 bool WebESP8266::waitNoParamsACK(uint8_t ackID)
 {
-	Message msgContainer = waitACK(ackID);
-	if (msgContainer.valid)
+	Message msg = waitACK(ackID);
+	if (msg.valid)
 	{
-		msgContainer.freeData();
+		msg.freeData();
 		return true;
 	}
 	return false;
@@ -875,14 +875,14 @@ bool WebESP8266::send_CMD_READY()
         send(Message(msgID, CMD_READY, data, sizeof(data)));            
 		
 		// wait for ACK
-		Message msgContainer = waitACK(msgID);
-		if (msgContainer.valid)
+		Message msg = waitACK(msgID);
+		if (msg.valid)
 		{
-            uint8_t protocolVersion = msgContainer.data[1];
-            _platform = msgContainer.data[2];
-            char const* magicString = (char const*)msgContainer.data + 3;
+            uint8_t protocolVersion = msg.data[1];
+            _platform = msg.data[2];
+            char const* magicString = (char const*)msg.data + 3;
 			_isReady  = (protocolVersion == PROTOCOL_VERSION && strcmp_P(magicString, STR_BINPRORDY) == 0);
-			msgContainer.freeData();
+			msg.freeData();
 			return true;
 		}
 	}
@@ -944,11 +944,11 @@ bool WebESP8266::send_CMD_IOGET(uint8_t pin, uint8_t* state)
             send(Message(msgID, CMD_IOGET, data, sizeof(data)));
 			
 			// wait for ACK
-			Message msgContainer = waitACK(msgID);
-			if (msgContainer.valid)
+			Message msg = waitACK(msgID);
+			if (msg.valid)
 			{
-                *state = msgContainer.data[1];
-                msgContainer.freeData();
+                *state = msg.data[1];
+                msg.freeData();
 				return true;
 			}
 		}
@@ -991,11 +991,11 @@ bool WebESP8266::send_CMD_IOAGET(uint8_t pin, uint16_t* state)
 			send(Message(msgID, CMD_IOAGET, data, sizeof(data)));
 			
 			// wait for ACK
-			Message msgContainer = waitACK(msgID);
-			if (msgContainer.valid)
+			Message msg = waitACK(msgID);
+			if (msg.valid)
 			{
-                *state = msgContainer.data[1] + (msgContainer.data[2] << 8);
-				msgContainer.freeData();
+                *state = msg.data[1] + (msg.data[2] << 8);
+				msg.freeData();
 				return true;
 			}
 		}
