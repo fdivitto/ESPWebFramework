@@ -600,38 +600,6 @@ namespace fdv
         }			
     };
 
-
-    
-
-
-    
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Message_CMD_IOSET        
-    
-    struct Message_CMD_IOSET
-    {
-        static uint16_t const SIZE = 2;
-        
-        uint8_t& pin;
-        uint8_t& state;
-        
-        // used to decode message
-        Message_CMD_IOSET(SerialBinary::Message* msg)
-            : pin(msg->data[0]), 
-              state(msg->data[1])
-        {
-        }
-        // used to encode message
-        Message_CMD_IOSET(SerialBinary::Message* msg, uint8_t pin_, uint8_t state_)
-            : pin(msg->data[0]), 
-              state(msg->data[1])
-        {
-            pin   = pin_;
-            state = state_;
-        }			
-    };
-
     
     
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -946,8 +914,9 @@ namespace fdv
     void MTD_FLASHMEM SerialBinary::handle_CMD_IOSET(Message* msg)
     {
         // process message
-        Message_CMD_IOSET msgIOSET(msg);
-        GPIOX(msgIOSET.pin).write(msgIOSET.state);
+        uint8_t pin   = msg->data[0];
+        uint8_t state = msg->data[1];
+        GPIOX(pin).write(state);
         
         // send simple ACK
         sendNoParamsACK(msg->ID);
@@ -984,10 +953,10 @@ namespace fdv
         m_isReady = false;
         for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
         {
-            // send message
-            uint8_t msgID = getNextID();
+            // send message            
             uint8_t data[12] = {PROTOCOL_VERSION, PLATFORM_THIS};
             f_strcpy((char*)data + 2, STR_BINPRORDY);
+            uint8_t msgID = getNextID();
             send(Message(msgID, CMD_READY, data, sizeof(data)));            
             
             // wait for ACK
@@ -1012,9 +981,9 @@ namespace fdv
         {
             for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
             {
-                // send message
-                uint8_t msgID = getNextID();
+                // send message                
                 uint8_t data[2] = {pin, flags};
+                uint8_t msgID = getNextID();
                 send(Message(msgID, CMD_IOCONF, data, sizeof(data)));
                 
                 // wait for ACK
@@ -1033,12 +1002,10 @@ namespace fdv
         {
             for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
             {
-                // send message
+                // send message                
+                uint8_t data[2] = {pin, state};                
                 uint8_t msgID = getNextID();
-                Message msgContainer(msgID, CMD_IOSET, Message_CMD_IOSET::SIZE);
-                Message_CMD_IOSET msgCMDIOSET(&msgContainer, pin, state);
-                send(msgContainer);
-                msgContainer.freeData();
+                send(Message(msgID, CMD_IOSET, data, sizeof(data)));
                 
                 // wait for ACK
                 if (waitNoParamsACK(msgID))

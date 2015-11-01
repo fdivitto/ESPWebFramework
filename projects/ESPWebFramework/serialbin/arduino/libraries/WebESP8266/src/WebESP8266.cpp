@@ -505,35 +505,6 @@ struct Message_CMD_READY_ACK : Message_ACK
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-// Message_CMD_IOSET
-
-struct Message_CMD_IOSET
-{
-    static uint16_t const SIZE = 2;
-    
-    uint8_t& pin;
-    uint8_t& state;
-    
-    // used to decode message
-    Message_CMD_IOSET(WebESP8266::Message* msg)
-        : pin(msg->data[0]), 
-          state(msg->data[1])
-    {
-    }
-    // used to encode message
-    Message_CMD_IOSET(WebESP8266::Message* msg, uint8_t pin_, uint8_t state_)
-        : pin(msg->data[0]), 
-          state(msg->data[1])
-    {
-        pin   = pin_;
-        state = state_;
-    }			
-};
-
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
 // Message_CMD_IOGET
 
 struct Message_CMD_IOGET
@@ -918,8 +889,9 @@ void WebESP8266::handle_CMD_IOCONF(Message* msg)
 void WebESP8266::handle_CMD_IOSET(Message* msg)
 {
 	// process message
-	Message_CMD_IOSET msgIOSET(msg);
-	digitalWrite(msgIOSET.pin, msgIOSET.state);
+    uint8_t pin   = msg->data[0];
+    uint8_t state = msg->data[1];
+	digitalWrite(pin, state);
 	
 	// send simple ACK
 	sendNoParamsACK(msg->ID);
@@ -1070,10 +1042,10 @@ bool WebESP8266::send_CMD_READY()
 	_isReady = false;
 	for (uint8_t i = 0; i != MAX_RESEND_COUNT; ++i)
 	{
-		// send message
-        uint8_t msgID = getNextID();
+		// send message        
         uint8_t data[12] = {PROTOCOL_VERSION, PLATFORM_THIS};
         strcpy_P((char*)data + 2, STR_BINPRORDY);
+        uint8_t msgID = getNextID();
         send(Message(msgID, CMD_READY, data, sizeof(data)));            
 		
 		// wait for ACK
@@ -1097,9 +1069,9 @@ bool WebESP8266::send_CMD_IOCONF(uint8_t pin, uint8_t flags)
 	{
 		for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
 		{
-			// send message
-			uint8_t msgID = getNextID();
+			// send message			
             uint8_t data[2] = {pin, flags};
+            uint8_t msgID = getNextID();
 			send(Message(msgID, CMD_IOCONF, data, sizeof(data)));
 			
 			// wait for ACK
@@ -1118,12 +1090,10 @@ bool WebESP8266::send_CMD_IOSET(uint8_t pin, uint8_t state)
 	{
 		for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
 		{
-			// send message
-			uint8_t msgID = getNextID();
-			Message msgContainer(msgID, CMD_IOSET, Message_CMD_IOSET::SIZE);
-			Message_CMD_IOSET msgCMDIOSET(&msgContainer, pin, state);
-			send(msgContainer);
-			msgContainer.freeData();
+			// send message            
+            uint8_t data[2] = {pin, state};                
+            uint8_t msgID = getNextID();
+            send(Message(msgID, CMD_IOSET, data, sizeof(data)));
 			
 			// wait for ACK
 			if (waitNoParamsACK(msgID))
