@@ -602,32 +602,6 @@ namespace fdv
 
 
     
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Message_CMD_IOCONF        
-    
-    struct Message_CMD_IOCONF
-    {
-        static uint16_t const SIZE = 2;
-        
-        uint8_t& pin;
-        uint8_t& flags;
-        
-        // used to decode message
-        Message_CMD_IOCONF(SerialBinary::Message* msg)
-            : pin(msg->data[0]), 
-              flags(msg->data[1])
-        {
-        }
-        // used to encode message
-        Message_CMD_IOCONF(SerialBinary::Message* msg, uint8_t pin_, uint8_t flags_)
-            : pin(msg->data[0]), 
-              flags(msg->data[1])
-        {
-            pin   = pin_;
-            flags = flags_;
-        }			
-    };
 
 
     
@@ -840,15 +814,15 @@ namespace fdv
     }
     
 
-    void MTD_FLASHMEM SerialBinary::send(Message* msg)
+    void MTD_FLASHMEM SerialBinary::send(Message const& msg)
     {
         MutexLock lock(&m_mutex);
-        m_serial->write(msg->ID);
-        m_serial->write(msg->command);
-        m_serial->write(msg->dataSize & 0xFF);
-        m_serial->write((msg->dataSize >> 8) & 0xFF);
-        if (msg->dataSize > 0)
-            m_serial->write(msg->data, msg->dataSize);
+        m_serial->write(msg.ID);
+        m_serial->write(msg.command);
+        m_serial->write(msg.dataSize & 0xFF);
+        m_serial->write((msg.dataSize >> 8) & 0xFF);
+        if (msg.dataSize > 0)
+            m_serial->write(msg.data, msg.dataSize);
     }
     
     
@@ -857,7 +831,7 @@ namespace fdv
     {
         Message msgContainer(getNextID(), CMD_ACK, Message_ACK::SIZE);
         Message_ACK msgACK(&msgContainer, ackID);
-        send(&msgContainer);
+        send(msgContainer);
         msgContainer.freeData();			
     }
     
@@ -948,7 +922,7 @@ namespace fdv
         // send ACK with parameters
         Message msgContainer(getNextID(), CMD_ACK, Message_CMD_READY_ACK::SIZE);
         Message_CMD_READY_ACK msgCMDREADYACK(&msgContainer, msg->ID, PROTOCOL_VERSION, PLATFORM_THIS, STR_BINPRORDY);
-        send(&msgContainer);
+        send(msgContainer);
         msgContainer.freeData(); 
     }
     
@@ -956,12 +930,13 @@ namespace fdv
     void MTD_FLASHMEM SerialBinary::handle_CMD_IOCONF(Message* msg)
     {
         // process message
-        Message_CMD_IOCONF msgIOCONF(msg);
-        if (msgIOCONF.flags & PIN_CONF_OUTPUT)
-            GPIOX(msgIOCONF.pin).modeOutput();
+        uint8_t pin   = msg->data[0];
+        uint8_t flags = msg->data[1];
+        if (flags & PIN_CONF_OUTPUT)
+            GPIOX(pin).modeOutput();
         else
-            GPIOX(msgIOCONF.pin).modeInput();
-        GPIOX(msgIOCONF.pin).enablePullUp(msgIOCONF.flags & PIN_CONF_PULLUP);
+            GPIOX(pin).modeInput();
+        GPIOX(pin).enablePullUp(flags & PIN_CONF_PULLUP);
                     
         // send simple ACK
         sendNoParamsACK(msg->ID);
@@ -988,7 +963,7 @@ namespace fdv
         // send ACK with parameters
         Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOGET_ACK::SIZE);
         Message_CMD_IOGET_ACK msgCMDIOGETACK(&msgContainer, msg->ID, state);
-        send(&msgContainer);
+        send(msgContainer);
         msgContainer.freeData();
     }
     
@@ -1011,15 +986,12 @@ namespace fdv
         {
             // send message
             uint8_t msgID = getNextID();
-            uint8_t data[12];
-            Message msgContainer(msgID, CMD_READY, data, 12);
-            data[0] = PROTOCOL_VERSION;
-            data[1] = PLATFORM_THIS;
+            uint8_t data[12] = {PROTOCOL_VERSION, PLATFORM_THIS};
             f_strcpy((char*)data + 2, STR_BINPRORDY);
-            send(&msgContainer);            
+            send(Message(msgID, CMD_READY, data, sizeof(data)));            
             
             // wait for ACK
-            msgContainer = waitACK(msgID);
+            Message msgContainer = waitACK(msgID);
             if (msgContainer.valid)
             {
                 Message_CMD_READY_ACK msgCMDREADYACK(&msgContainer);
@@ -1042,10 +1014,8 @@ namespace fdv
             {
                 // send message
                 uint8_t msgID = getNextID();
-                Message msgContainer(msgID, CMD_IOCONF, Message_CMD_IOCONF::SIZE);
-                Message_CMD_IOCONF msgCMDIOCONF(&msgContainer, pin, flags);
-                send(&msgContainer);
-                msgContainer.freeData();
+                uint8_t data[2] = {pin, flags};
+                send(Message(msgID, CMD_IOCONF, data, sizeof(data)));
                 
                 // wait for ACK
                 if (waitNoParamsACK(msgID))
@@ -1067,7 +1037,7 @@ namespace fdv
                 uint8_t msgID = getNextID();
                 Message msgContainer(msgID, CMD_IOSET, Message_CMD_IOSET::SIZE);
                 Message_CMD_IOSET msgCMDIOSET(&msgContainer, pin, state);
-                send(&msgContainer);
+                send(msgContainer);
                 msgContainer.freeData();
                 
                 // wait for ACK
@@ -1090,7 +1060,7 @@ namespace fdv
                 uint8_t msgID = getNextID();
                 Message msgContainer(msgID, CMD_IOGET, Message_CMD_IOGET::SIZE);
                 Message_CMD_IOGET msgCMDIOGET(&msgContainer, pin);
-                send(&msgContainer);
+                send(msgContainer);
                 msgContainer.freeData();
                 
                 // wait for ACK
@@ -1122,7 +1092,7 @@ namespace fdv
                 *wpos++ = pin;
                 *wpos++ = state & 0xFF;
                 *wpos++ = state >> 8;
-                send(&msgContainer);
+                send(msgContainer);
                 msgContainer.freeData();
                 
                 // wait for ACK
@@ -1146,7 +1116,7 @@ namespace fdv
                 Message msgContainer(msgID, CMD_IOAGET, 1);
                 uint8_t* wpos = msgContainer.data;
                 *wpos = pin;
-                send(&msgContainer);
+                send(msgContainer);
                 msgContainer.freeData();
                 
                 // wait for ACK
@@ -1175,7 +1145,7 @@ namespace fdv
                 // send message
                 uint8_t msgID = getNextID();
                 Message msgContainer(msgID, CMD_GETHTTPHANDLEDPAGES, 0);
-                send(&msgContainer);
+                send(msgContainer);
                 msgContainer.freeData();
                 
                 // wait for ACK
@@ -1264,7 +1234,7 @@ namespace fdv
                 copyFields(handler->getRequest().form, &wpos);
                 
                 // send message
-                send(&msgContainer);
+                send(msgContainer);
                 msgContainer.freeData();
                 
                 // wait for ACK

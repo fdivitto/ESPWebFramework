@@ -385,7 +385,7 @@ namespace fdv
 						
 		Message receive();
 		uint8_t getNextID();		
-		void send(Message* msg);		
+		void send(Message const& msg);		
 		void sendNoParamsACK(uint8_t ackID);				
 		Message waitACK(uint8_t ackID);		
 		bool waitNoParamsACK(uint8_t ackID);
