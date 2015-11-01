@@ -563,35 +563,8 @@ namespace fdv
         {
             ackID = ackID_;
         }
-    };
-		
-			            
-    
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Message_CMD_IOGET_ACK        
-    
-    struct Message_CMD_IOGET_ACK : Message_ACK
-    {
-        static uint16_t const SIZE = Message_ACK::SIZE + 1;
-        
-        uint8_t& state;
-        
-        // used to decode message
-        Message_CMD_IOGET_ACK(SerialBinary::Message* msg)
-            : Message_ACK(msg), 
-              state(msg->data[Message_ACK::SIZE + 0])
-        {
-        }
-        // used to encode message
-        Message_CMD_IOGET_ACK(SerialBinary::Message* msg, uint8_t ackID_, uint8_t state_)
-            : Message_ACK(msg, ackID_), 
-              state(msg->data[Message_ACK::SIZE + 0])
-        {
-            state = state_;
-        }			
-    };
-
+    };		
+			           
        
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -874,10 +847,11 @@ namespace fdv
         bool state = GPIOX(pin).read();
         
         // send ACK with parameters
-        Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOGET_ACK::SIZE);
-        Message_CMD_IOGET_ACK msgCMDIOGETACK(&msgContainer, msg->ID, state);
+        uint8_t data[Message_ACK::SIZE + 1];
+        data[Message_ACK::SIZE + 0] = state;
+        Message msgContainer(getNextID(), CMD_ACK, data, sizeof(data));
+        Message_ACK msgCMDACK(&msgContainer, msg->ID);
         send(msgContainer);
-        msgContainer.freeData();
     }
     
     
@@ -977,8 +951,7 @@ namespace fdv
                 Message msgContainer = waitACK(msgID);
                 if (msgContainer.valid)
                 {
-                    Message_CMD_IOGET_ACK msgCMDIOGETACK(&msgContainer);
-                    *state = msgCMDIOGETACK.state;
+                    *state = msgContainer.data[Message_ACK::SIZE + 0];
                     msgContainer.freeData();
                     return true;
                 }

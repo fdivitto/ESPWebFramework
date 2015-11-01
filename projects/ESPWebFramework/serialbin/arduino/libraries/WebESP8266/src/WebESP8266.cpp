@@ -470,33 +470,6 @@ struct Message_ACK
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-// Message_CMD_IOGET_ACK
-
-struct Message_CMD_IOGET_ACK : Message_ACK
-{
-    static uint16_t const SIZE = Message_ACK::SIZE + 1;
-    
-    uint8_t& state;
-    
-    // used to decode message
-    Message_CMD_IOGET_ACK(WebESP8266::Message* msg)
-        : Message_ACK(msg), 
-          state(msg->data[Message_ACK::SIZE + 0])
-    {
-    }
-    // used to encode message
-    Message_CMD_IOGET_ACK(WebESP8266::Message* msg, uint8_t ackID_, uint8_t state_)
-        : Message_ACK(msg, ackID_), 
-          state(msg->data[Message_ACK::SIZE + 0])
-    {
-        state = state_;
-    }			
-};
-
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
 // Message_CMD_IOAGET_ACK
 
 struct Message_CMD_IOAGET_ACK : Message_ACK
@@ -823,10 +796,11 @@ void WebESP8266::handle_CMD_IOGET(Message* msg)
 	bool state = digitalRead(pin);
 	
 	// send ACK with parameters
-	Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOGET_ACK::SIZE);
-	Message_CMD_IOGET_ACK msgCMDIOGETACK(&msgContainer, msg->ID, state);
-	send(msgContainer);
-	msgContainer.freeData();
+    uint8_t data[Message_ACK::SIZE + 1];
+    data[Message_ACK::SIZE + 0] = state;
+    Message msgContainer(getNextID(), CMD_ACK, data, sizeof(data));
+    Message_ACK msgCMDACK(&msgContainer, msg->ID);
+    send(msgContainer);
 }
 
 
@@ -1039,9 +1013,8 @@ bool WebESP8266::send_CMD_IOGET(uint8_t pin, uint8_t* state)
 			Message msgContainer = waitACK(msgID);
 			if (msgContainer.valid)
 			{
-				Message_CMD_IOGET_ACK msgCMDIOGETACK(&msgContainer);
-				*state = msgCMDIOGETACK.state;
-				msgContainer.freeData();
+                *state = msgContainer.data[Message_ACK::SIZE + 0];
+                msgContainer.freeData();
 				return true;
 			}
 		}
