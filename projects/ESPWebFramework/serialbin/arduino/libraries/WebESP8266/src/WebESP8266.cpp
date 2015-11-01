@@ -744,9 +744,8 @@ void WebESP8266::handle_CMD_IOGET(Message* msg)
 void WebESP8266::handle_CMD_IOASET(Message* msg)
 {
 	// process message
-    uint8_t* rpos = msg->data;
-    uint8_t pin = *rpos++;
-    uint16_t state = *rpos + (*(rpos + 1) << 8);
+    uint8_t  pin = msg->data[0];
+    uint16_t state = msg->data[1] + (msg->data[2] << 8);
 	analogWrite(pin, state);
 	
 	// send simple ACK
@@ -966,14 +965,9 @@ bool WebESP8266::send_CMD_IOASET(uint8_t pin, uint16_t state)
 		for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
 		{
 			// send message
-			uint8_t msgID = getNextID();
-			Message msgContainer(msgID, CMD_IOASET, 3);
-            uint8_t* wpos = msgContainer.data;
-            *wpos++ = pin;
-            *wpos++ = state & 0xFF;
-            *wpos++ = state >> 8;            
-			send(msgContainer);
-			msgContainer.freeData();
+            uint8_t data[3] = {pin, state & 0xFF, state >> 8};
+            uint8_t msgID = getNextID();
+            send(Message(msgID, CMD_IOASET, data, sizeof(data)));
 			
 			// wait for ACK
 			if (waitNoParamsACK(msgID))

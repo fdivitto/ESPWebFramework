@@ -933,14 +933,9 @@ namespace fdv
             for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
             {
                 // send message
+                uint8_t data[3] = {pin, state & 0xFF, state >> 8};
                 uint8_t msgID = getNextID();
-                Message msgContainer(msgID, CMD_IOASET, 3);
-                uint8_t* wpos = msgContainer.data;
-                *wpos++ = pin;
-                *wpos++ = state & 0xFF;
-                *wpos++ = state >> 8;
-                send(msgContainer);
-                msgContainer.freeData();
+                send(Message(msgID, CMD_IOASET, data, sizeof(data)));
                 
                 // wait for ACK
                 if (waitNoParamsACK(msgID))
@@ -959,15 +954,12 @@ namespace fdv
             for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
             {
                 // send message
+                uint8_t data[1] = {pin};
                 uint8_t msgID = getNextID();
-                Message msgContainer(msgID, CMD_IOAGET, 1);
-                uint8_t* wpos = msgContainer.data;
-                *wpos = pin;
-                send(msgContainer);
-                msgContainer.freeData();
+                send(Message(msgID, CMD_IOAGET, data, sizeof(data)));
                 
                 // wait for ACK
-                msgContainer = waitACK(msgID);
+                Message msgContainer = waitACK(msgID);
                 if (msgContainer.valid)
                 {
                     *state = msgContainer.data[1] + (msgContainer.data[2] << 8);
@@ -990,12 +982,10 @@ namespace fdv
             {
                 // send message
                 uint8_t msgID = getNextID();
-                Message msgContainer(msgID, CMD_GETHTTPHANDLEDPAGES, 0);
-                send(msgContainer);
-                msgContainer.freeData();
+                send(Message(msgID, CMD_GETHTTPHANDLEDPAGES, NULL, 0));
                 
                 // wait for ACK
-                msgContainer = waitACK(msgID);
+                Message msgContainer = waitACK(msgID);
                 if (msgContainer.valid)
                 {
                     uint8_t const* rpos = msgContainer.data + 1;
