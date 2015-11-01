@@ -565,42 +565,7 @@ namespace fdv
         }
     };
 		
-			        
-        
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Message_CMD_READY_ACK        
-		
-    struct Message_CMD_READY_ACK : Message_ACK
-    {
-        static uint16_t const SIZE = Message_ACK::SIZE + 12;
-        
-        uint8_t& protocolVersion;
-        uint8_t& platform;
-        char*    magicString;
-        
-        // used to decode message
-        Message_CMD_READY_ACK(SerialBinary::Message* msg)
-            : Message_ACK(msg), 
-              protocolVersion(msg->data[Message_ACK::SIZE + 0]), 
-              platform(msg->data[Message_ACK::SIZE + 1]), 
-              magicString((char*)msg->data + Message_ACK::SIZE + 2)
-        {
-        }
-        // used to encode message
-        Message_CMD_READY_ACK(SerialBinary::Message* msg, uint8_t ackID_, uint8_t protocolVersion_, uint8_t platform_, char const* magicString_)
-            : Message_ACK(msg, ackID_), 
-              protocolVersion(msg->data[Message_ACK::SIZE + 0]), 
-              platform(msg->data[Message_ACK::SIZE + 1]), 
-              magicString((char*)msg->data + Message_ACK::SIZE + 2)
-        {
-            protocolVersion = protocolVersion_;
-            platform        = platform_;
-            f_strcpy(magicString, magicString_);
-        }			
-    };
-    
-
+			            
     
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -863,10 +828,14 @@ namespace fdv
         m_mutex.unlock();
         
         // send ACK with parameters
-        Message msgContainer(getNextID(), CMD_ACK, Message_CMD_READY_ACK::SIZE);
-        Message_CMD_READY_ACK msgCMDREADYACK(&msgContainer, msg->ID, PROTOCOL_VERSION, PLATFORM_THIS, STR_BINPRORDY);
+        uint8_t data[Message_ACK::SIZE + 12];
+        uint8_t* wpos = data + Message_ACK::SIZE;
+        *wpos++ = PROTOCOL_VERSION;
+        *wpos++ = PLATFORM_THIS;
+        f_strcpy((char*)wpos, STR_BINPRORDY);
+        Message msgContainer(getNextID(), CMD_ACK, data, sizeof(data));
+        Message_ACK msgCMDACK(&msgContainer, msg->ID);
         send(msgContainer);
-        msgContainer.freeData(); 
     }
     
     
@@ -938,10 +907,11 @@ namespace fdv
             Message msgContainer = waitACK(msgID);
             if (msgContainer.valid)
             {
-                Message_CMD_READY_ACK msgCMDREADYACK(&msgContainer);
                 MutexLock lock(&m_mutex);
-                m_isReady  = (msgCMDREADYACK.protocolVersion == PROTOCOL_VERSION && f_strcmp(msgCMDREADYACK.magicString, STR_BINPRORDY) == 0);
-                m_platform = msgCMDREADYACK.platform;
+                uint8_t protocolVersion = msgContainer.data[Message_ACK::SIZE + 0];
+                m_platform = msgContainer.data[Message_ACK::SIZE + 1];
+                char const* magicString = (char const*)msgContainer.data + Message_ACK::SIZE + 2;
+                m_isReady = (protocolVersion == PROTOCOL_VERSION && f_strcmp(magicString, STR_BINPRORDY) == 0);
                 msgContainer.freeData();
                 return true;
             }

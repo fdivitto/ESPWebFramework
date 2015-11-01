@@ -470,41 +470,6 @@ struct Message_ACK
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-// Message_CMD_READY_ACK
-
-struct Message_CMD_READY_ACK : Message_ACK
-{
-    static uint16_t const SIZE = Message_ACK::SIZE + 12;
-    
-    uint8_t& protocolVersion;
-    uint8_t& platform;
-    char*    magicString;
-    
-    // used to decode message
-    Message_CMD_READY_ACK(WebESP8266::Message* msg)
-            : Message_ACK(msg), 
-              protocolVersion(msg->data[Message_ACK::SIZE + 0]), 
-              platform(msg->data[Message_ACK::SIZE + 1]), 
-              magicString((char*)msg->data + Message_ACK::SIZE + 2)
-    {
-    }
-    // used to encode message
-    Message_CMD_READY_ACK(WebESP8266::Message* msg, uint8_t ackID_, uint8_t protocolVersion_, uint8_t platform_, PGM_P magicString_)
-            : Message_ACK(msg, ackID_), 
-              protocolVersion(msg->data[Message_ACK::SIZE + 0]), 
-              platform(msg->data[Message_ACK::SIZE + 1]), 
-              magicString((char*)msg->data + Message_ACK::SIZE + 2)
-    {
-        protocolVersion = protocolVersion_;
-        platform        = platform_;
-        strcpy_P(magicString, magicString_);
-    }			
-};
-
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
 // Message_CMD_IOGET_ACK
 
 struct Message_CMD_IOGET_ACK : Message_ACK
@@ -813,10 +778,14 @@ void WebESP8266::handle_CMD_READY(Message* msg)
 	_isReady  = (protocolVersion == PROTOCOL_VERSION && strcmp_P(magicString, STR_BINPRORDY) == 0);
     
 	// send ACK with parameters
-	Message msgContainer(getNextID(), CMD_ACK, Message_CMD_READY_ACK::SIZE);
-	Message_CMD_READY_ACK msgCMDREADYACK(&msgContainer, msg->ID, PROTOCOL_VERSION, PLATFORM_THIS, STR_BINPRORDY);
-	send(msgContainer);
-	msgContainer.freeData();
+    uint8_t data[Message_ACK::SIZE + 12];
+    uint8_t* wpos = data + Message_ACK::SIZE;
+    *wpos++ = PROTOCOL_VERSION;
+    *wpos++ = PLATFORM_THIS;
+    strcpy_P((char*)wpos, STR_BINPRORDY);
+    Message msgContainer(getNextID(), CMD_ACK, data, sizeof(data));
+    Message_ACK msgCMDACK(&msgContainer, msg->ID);
+    send(msgContainer);
 }
 
 
@@ -1001,9 +970,10 @@ bool WebESP8266::send_CMD_READY()
 		Message msgContainer = waitACK(msgID);
 		if (msgContainer.valid)
 		{
-			Message_CMD_READY_ACK msgCMDREADYACK(&msgContainer);
-			_isReady  = (msgCMDREADYACK.protocolVersion == PROTOCOL_VERSION && strcmp_P(msgCMDREADYACK.magicString, STR_BINPRORDY) == 0);
-			_platform = msgCMDREADYACK.platform;
+            uint8_t protocolVersion = msgContainer.data[Message_ACK::SIZE + 0];
+            _platform = msgContainer.data[Message_ACK::SIZE + 1];
+            char const* magicString = (char const*)msgContainer.data + Message_ACK::SIZE + 2;			
+			_isReady  = (protocolVersion == PROTOCOL_VERSION && strcmp_P(magicString, STR_BINPRORDY) == 0);
 			msgContainer.freeData();
 			return true;
 		}
