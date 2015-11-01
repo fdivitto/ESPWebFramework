@@ -441,32 +441,6 @@ void WebESP8266::Message::freeData()
 }
 
 
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// Message_ACK
-
-// base for ACK messages 
-struct Message_ACK
-{
-    static uint16_t const SIZE = 1;
-    
-    uint8_t& ackID;
-    
-    // used to decode message
-    Message_ACK(WebESP8266::Message* msg)
-        : ackID(msg->data[0])
-    {
-    }
-    // used to encode message
-    Message_ACK(WebESP8266::Message* msg, uint8_t ackID_)
-        : ackID(msg->data[0])
-    {
-        ackID = ackID_;
-    }
-};
-
-
     
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -676,10 +650,8 @@ void WebESP8266::send(Message const& msg)
 // send ACK without parameters
 void WebESP8266::sendNoParamsACK(uint8_t ackID)
 {
-	Message msgContainer(getNextID(), CMD_ACK, Message_ACK::SIZE);
-	Message_ACK msgACK(&msgContainer, ackID);
-	send(msgContainer);
-	msgContainer.freeData();			
+    uint8_t data[1] = {ackID};
+    send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
 }
 
 
@@ -692,10 +664,10 @@ WebESP8266::Message WebESP8266::waitACK(uint8_t ackID)
 		msgContainer = receive();
 		if (msgContainer.valid)
 		{
-			Message_ACK msgACK(&msgContainer);
-			if (msgACK.ackID == ackID)
-				return msgContainer;
-			msgContainer.freeData();	// discard this ACK
+            uint8_t msgAckID = msgContainer.data[0];
+            if (msgAckID == ackID)
+                return msgContainer;
+            msgContainer.freeData();	// discard this ACK
 		}
 	}
 	msgContainer.valid = false;
@@ -724,14 +696,9 @@ void WebESP8266::handle_CMD_READY(Message* msg)
 	_isReady  = (protocolVersion == PROTOCOL_VERSION && strcmp_P(magicString, STR_BINPRORDY) == 0);
     
 	// send ACK with parameters
-    uint8_t data[Message_ACK::SIZE + 12];
-    uint8_t* wpos = data + Message_ACK::SIZE;
-    *wpos++ = PROTOCOL_VERSION;
-    *wpos++ = PLATFORM_THIS;
-    strcpy_P((char*)wpos, STR_BINPRORDY);
-    Message msgContainer(getNextID(), CMD_ACK, data, sizeof(data));
-    Message_ACK msgCMDACK(&msgContainer, msg->ID);
-    send(msgContainer);
+    uint8_t data[13] = {msg->ID, PROTOCOL_VERSION, PLATFORM_THIS};
+    strcpy_P((char*)data + 3, STR_BINPRORDY);
+    send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
 }
 
 
@@ -769,11 +736,8 @@ void WebESP8266::handle_CMD_IOGET(Message* msg)
 	bool state = digitalRead(pin);
 	
 	// send ACK with parameters
-    uint8_t data[Message_ACK::SIZE + 1];
-    data[Message_ACK::SIZE + 0] = state;
-    Message msgContainer(getNextID(), CMD_ACK, data, sizeof(data));
-    Message_ACK msgCMDACK(&msgContainer, msg->ID);
-    send(msgContainer);
+    uint8_t data[2] = {msg->ID, state};
+    send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
 }
 
 
@@ -797,12 +761,8 @@ void WebESP8266::handle_CMD_IOAGET(Message* msg)
 	uint16_t state = analogRead(pin);
 	
 	// send ACK with parameters
-    uint8_t data[Message_ACK::SIZE + 2];
-    data[Message_ACK::SIZE + 0] = state & 0xFF;
-    data[Message_ACK::SIZE + 1] = state >> 8;    
-	Message msgContainer(getNextID(), CMD_ACK, data, sizeof(data));
-	Message_ACK msgCMDACK(&msgContainer, msg->ID);
-	send(msgContainer);
+    uint8_t data[3] = {msg->ID, state & 0xFF, state >> 8};
+	send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
 }		
 
 
@@ -814,17 +774,16 @@ void WebESP8266::handle_CMD_GETHTTPHANDLEDPAGES(Message* msg)
         msgSize += strlen_P(_webRoutes[i].page) + 1;
     
     // send ACK with parameters
-    Message msgContainer(getNextID(), CMD_ACK, Message_ACK::SIZE + msgSize);
-    Message_ACK msgACK(&msgContainer, msg->ID);
-    uint8_t* wpos = msgContainer.data + Message_ACK::SIZE;
+    uint8_t data[1 + msgSize];
+    uint8_t* wpos = data;
+    *wpos++ = msg->ID;
     *wpos++ = _webRoutesCount;
     for (uint8_t i = 0; i != _webRoutesCount; ++i)
     {        
         strcpy_P((char*)wpos, _webRoutes[i].page);
         wpos += strlen_P(_webRoutes[i].page) + 1;
     }
-    send(msgContainer);
-    msgContainer.freeData();
+    send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
 }
 
 
@@ -875,9 +834,11 @@ void WebESP8266::handle_CMD_HTTPREQUEST(Message* msg)
         uint16_t headersBufferSize = response.calcHeadersBufferSize();
         uint16_t contentBufferSize = response.calcContentBufferSize();
         uint16_t msgSize = 1 + 1 + 1 + 2 + headersBufferSize + contentBufferSize;   // +1 = status, +1 = headers fields count, +1 = content type, +2 = content length
-        Message msgContainer(getNextID(), CMD_ACK, Message_ACK::SIZE + msgSize);
-        Message_ACK msgACK(&msgContainer, msg->ID);
-        uint8_t* wpos = msgContainer.data + Message_ACK::SIZE;
+        uint8_t data[1 + msgSize];    
+        uint8_t* wpos = data;
+        
+        // ACK - ID
+        *wpos++ = msg->ID;
         
         // status
         *wpos++ = response.getStatus();
@@ -896,9 +857,8 @@ void WebESP8266::handle_CMD_HTTPREQUEST(Message* msg)
         *wpos++ = contentBufferSize >> 8;
         response.copyContentToBuffer(wpos);
         
-        // send and free
-        send(msgContainer);
-        msgContainer.freeData();        
+        // send ACK
+        send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
     }    
     
 }
@@ -919,9 +879,9 @@ bool WebESP8266::send_CMD_READY()
 		Message msgContainer = waitACK(msgID);
 		if (msgContainer.valid)
 		{
-            uint8_t protocolVersion = msgContainer.data[Message_ACK::SIZE + 0];
-            _platform = msgContainer.data[Message_ACK::SIZE + 1];
-            char const* magicString = (char const*)msgContainer.data + Message_ACK::SIZE + 2;			
+            uint8_t protocolVersion = msgContainer.data[1];
+            _platform = msgContainer.data[2];
+            char const* magicString = (char const*)msgContainer.data + 3;
 			_isReady  = (protocolVersion == PROTOCOL_VERSION && strcmp_P(magicString, STR_BINPRORDY) == 0);
 			msgContainer.freeData();
 			return true;
@@ -988,7 +948,7 @@ bool WebESP8266::send_CMD_IOGET(uint8_t pin, uint8_t* state)
 			Message msgContainer = waitACK(msgID);
 			if (msgContainer.valid)
 			{
-                *state = msgContainer.data[Message_ACK::SIZE + 0];
+                *state = msgContainer.data[1];
                 msgContainer.freeData();
 				return true;
 			}
@@ -1040,8 +1000,7 @@ bool WebESP8266::send_CMD_IOAGET(uint8_t pin, uint16_t* state)
 			Message msgContainer = waitACK(msgID);
 			if (msgContainer.valid)
 			{
-                uint8_t const* rpos = msgContainer.data + Message_ACK::SIZE;
-                *state = *rpos + (*(rpos + 1) << 8);
+                *state = msgContainer.data[1] + (msgContainer.data[2] << 8);
 				msgContainer.freeData();
 				return true;
 			}

@@ -538,32 +538,6 @@ namespace fdv
             data = NULL;
         }
     }
-
-
-
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Message_ACK
-    
-    // base for ACK messages 
-    struct Message_ACK
-    {
-        static uint16_t const SIZE = 1;
-        
-        uint8_t& ackID;
-        
-        // used to decode message
-        Message_ACK(SerialBinary::Message* msg)
-            : ackID(msg->data[0])
-        {
-        }
-        // used to encode message
-        Message_ACK(SerialBinary::Message* msg, uint8_t ackID_)
-            : ackID(msg->data[0])
-        {
-            ackID = ackID_;
-        }
-    };		
 			           
        
 
@@ -710,10 +684,8 @@ namespace fdv
     // send ACK without parameters
     void MTD_FLASHMEM SerialBinary::sendNoParamsACK(uint8_t ackID)
     {
-        Message msgContainer(getNextID(), CMD_ACK, Message_ACK::SIZE);
-        Message_ACK msgACK(&msgContainer, ackID);
-        send(msgContainer);
-        msgContainer.freeData();			
+        uint8_t data[1] = {ackID};
+        send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
     }
     
     
@@ -725,8 +697,8 @@ namespace fdv
         {
             if (m_recvACKQueue.receive(&msgContainer, GETACK_TIMEOUT))
             {
-                Message_ACK msgACK(&msgContainer);
-                if (msgACK.ackID == ackID)
+                uint8_t msgAckID = msgContainer.data[0];
+                if (msgAckID == ackID)
                     return msgContainer;
                 msgContainer.freeData();	// discard this ACK
             }
@@ -801,14 +773,9 @@ namespace fdv
         m_mutex.unlock();
         
         // send ACK with parameters
-        uint8_t data[Message_ACK::SIZE + 12];
-        uint8_t* wpos = data + Message_ACK::SIZE;
-        *wpos++ = PROTOCOL_VERSION;
-        *wpos++ = PLATFORM_THIS;
-        f_strcpy((char*)wpos, STR_BINPRORDY);
-        Message msgContainer(getNextID(), CMD_ACK, data, sizeof(data));
-        Message_ACK msgCMDACK(&msgContainer, msg->ID);
-        send(msgContainer);
+        uint8_t data[13] = {msg->ID, PROTOCOL_VERSION, PLATFORM_THIS};
+        f_strcpy((char*)data + 3, STR_BINPRORDY);
+        send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
     }
     
     
@@ -847,11 +814,8 @@ namespace fdv
         bool state = GPIOX(pin).read();
         
         // send ACK with parameters
-        uint8_t data[Message_ACK::SIZE + 1];
-        data[Message_ACK::SIZE + 0] = state;
-        Message msgContainer(getNextID(), CMD_ACK, data, sizeof(data));
-        Message_ACK msgCMDACK(&msgContainer, msg->ID);
-        send(msgContainer);
+        uint8_t data[2] = {msg->ID, state};
+        send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
     }
     
     
@@ -882,9 +846,9 @@ namespace fdv
             if (msgContainer.valid)
             {
                 MutexLock lock(&m_mutex);
-                uint8_t protocolVersion = msgContainer.data[Message_ACK::SIZE + 0];
-                m_platform = msgContainer.data[Message_ACK::SIZE + 1];
-                char const* magicString = (char const*)msgContainer.data + Message_ACK::SIZE + 2;
+                uint8_t protocolVersion = msgContainer.data[1];
+                m_platform = msgContainer.data[2];
+                char const* magicString = (char const*)msgContainer.data + 3;
                 m_isReady = (protocolVersion == PROTOCOL_VERSION && f_strcmp(magicString, STR_BINPRORDY) == 0);
                 msgContainer.freeData();
                 return true;
@@ -951,7 +915,7 @@ namespace fdv
                 Message msgContainer = waitACK(msgID);
                 if (msgContainer.valid)
                 {
-                    *state = msgContainer.data[Message_ACK::SIZE + 0];
+                    *state = msgContainer.data[1];
                     msgContainer.freeData();
                     return true;
                 }
@@ -1006,8 +970,7 @@ namespace fdv
                 msgContainer = waitACK(msgID);
                 if (msgContainer.valid)
                 {
-                    uint8_t const* rpos = msgContainer.data + Message_ACK::SIZE;
-                    *state = *rpos + (*(rpos + 1) << 8);
+                    *state = msgContainer.data[1] + (msgContainer.data[2] << 8);
                     msgContainer.freeData();
                     return true;
                 }
@@ -1035,7 +998,7 @@ namespace fdv
                 msgContainer = waitACK(msgID);
                 if (msgContainer.valid)
                 {
-                    uint8_t const* rpos = msgContainer.data + Message_ACK::SIZE;
+                    uint8_t const* rpos = msgContainer.data + 1;
                     uint8_t itemsCount = *rpos++;
                     for (uint8_t j = 0; j != itemsCount; ++j)
                     {
@@ -1124,7 +1087,7 @@ namespace fdv
                 msgContainer = waitACK(msgID);
                 if (msgContainer.valid)
                 {
-                    uint8_t const* rpos = msgContainer.data + Message_ACK::SIZE;
+                    uint8_t const* rpos = msgContainer.data + 1;
                     
                     // read status and initialize response object
                     uint8_t status = *rpos++;
