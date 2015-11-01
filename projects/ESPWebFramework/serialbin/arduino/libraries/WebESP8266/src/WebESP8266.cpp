@@ -505,31 +505,6 @@ struct Message_CMD_READY_ACK : Message_ACK
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-// Message_CMD_IOGET
-
-struct Message_CMD_IOGET
-{
-    static uint16_t const SIZE = 1;
-    
-    uint8_t& pin;
-    
-    // used to decode message
-    Message_CMD_IOGET(WebESP8266::Message* msg)
-        : pin(msg->data[0])
-    {
-    }
-    // used to encode message
-    Message_CMD_IOGET(WebESP8266::Message* msg, uint8_t pin_)
-        : pin(msg->data[0])
-    {
-        pin   = pin_;
-    }			
-};
-
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
 // Message_CMD_IOGET_ACK
 
 struct Message_CMD_IOGET_ACK : Message_ACK
@@ -550,32 +525,6 @@ struct Message_CMD_IOGET_ACK : Message_ACK
           state(msg->data[Message_ACK::SIZE + 0])
     {
         state = state_;
-    }			
-};
-
-
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// Message_CMD_IOAGET
-
-struct Message_CMD_IOAGET
-{
-    static uint16_t const SIZE = 1;
-    
-    uint8_t& pin;
-    
-    // used to decode message
-    Message_CMD_IOAGET(WebESP8266::Message* msg)
-        : pin(msg->data[0])
-    {
-    }
-    // used to encode message
-    Message_CMD_IOAGET(WebESP8266::Message* msg, uint8_t pin_)
-        : pin(msg->data[0])
-    {
-        pin   = pin_;
     }			
 };
 
@@ -901,8 +850,8 @@ void WebESP8266::handle_CMD_IOSET(Message* msg)
 void WebESP8266::handle_CMD_IOGET(Message* msg)
 {
 	// process message
-	Message_CMD_IOGET msgIOGET(msg);
-	bool state = digitalRead(msgIOGET.pin);
+	uint8_t pin = msg->data[0];
+	bool state = digitalRead(pin);
 	
 	// send ACK with parameters
 	Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOGET_ACK::SIZE);
@@ -928,8 +877,8 @@ void WebESP8266::handle_CMD_IOASET(Message* msg)
 void WebESP8266::handle_CMD_IOAGET(Message* msg)
 {
 	// process message
-	Message_CMD_IOAGET msgIOAGET(msg);
-	uint16_t state = analogRead(msgIOAGET.pin);
+    uint8_t pin = msg->data[0];
+	uint16_t state = analogRead(pin);
 	
 	// send ACK with parameters
 	Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOAGET_ACK::SIZE);
@@ -947,7 +896,7 @@ void WebESP8266::handle_CMD_GETHTTPHANDLEDPAGES(Message* msg)
         msgSize += strlen_P(_webRoutes[i].page) + 1;
     
     // send ACK with parameters
-    Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOAGET_ACK::SIZE + msgSize);
+    Message msgContainer(getNextID(), CMD_ACK, Message_ACK::SIZE + msgSize);
     Message_ACK msgACK(&msgContainer, msg->ID);
     uint8_t* wpos = msgContainer.data + Message_ACK::SIZE;
     *wpos++ = _webRoutesCount;
@@ -1112,14 +1061,12 @@ bool WebESP8266::send_CMD_IOGET(uint8_t pin, uint8_t* state)
 		for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
 		{
 			// send message
-			uint8_t msgID = getNextID();
-			Message msgContainer(msgID, CMD_IOGET, Message_CMD_IOGET::SIZE);
-			Message_CMD_IOGET msgCMDIOGET(&msgContainer, pin);
-			send(msgContainer);
-			msgContainer.freeData();
+            uint8_t data[1] = {pin};
+            uint8_t msgID = getNextID();
+            send(Message(msgID, CMD_IOGET, data, sizeof(data)));
 			
 			// wait for ACK
-			msgContainer = waitACK(msgID);
+			Message msgContainer = waitACK(msgID);
 			if (msgContainer.valid)
 			{
 				Message_CMD_IOGET_ACK msgCMDIOGETACK(&msgContainer);
@@ -1167,14 +1114,12 @@ bool WebESP8266::send_CMD_IOAGET(uint8_t pin, uint16_t* state)
 		for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
 		{
 			// send message
+            uint8_t data[1] = {pin};
 			uint8_t msgID = getNextID();
-			Message msgContainer(msgID, CMD_IOAGET, Message_CMD_IOAGET::SIZE);
-			Message_CMD_IOAGET msgCMDIOAGET(&msgContainer, pin);
-			send(msgContainer);
-			msgContainer.freeData();
+			send(Message(msgID, CMD_IOAGET, data, sizeof(data)));
 			
 			// wait for ACK
-			msgContainer = waitACK(msgID);
+			Message msgContainer = waitACK(msgID);
 			if (msgContainer.valid)
 			{
 				Message_CMD_IOAGET_ACK msgCMDIOAGETACK(&msgContainer);

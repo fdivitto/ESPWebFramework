@@ -599,32 +599,7 @@ namespace fdv
             f_strcpy(magicString, magicString_);
         }			
     };
-
     
-    
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	// Message_CMD_IOGET        
-    
-    struct Message_CMD_IOGET
-    {
-        static uint16_t const SIZE = 1;
-        
-        uint8_t& pin;
-        
-        // used to decode message
-        Message_CMD_IOGET(SerialBinary::Message* msg)
-            : pin(msg->data[0])
-        {
-        }
-        // used to encode message
-        Message_CMD_IOGET(SerialBinary::Message* msg, uint8_t pin_)
-            : pin(msg->data[0])
-        {
-            pin   = pin_;
-        }			
-    };
-
 
     
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -926,8 +901,8 @@ namespace fdv
     void MTD_FLASHMEM SerialBinary::handle_CMD_IOGET(Message* msg)
     {
         // process message
-        Message_CMD_IOGET msgIOGET(msg);
-        bool state = GPIOX(msgIOGET.pin).read();
+        uint8_t pin = msg->data[0];
+        bool state = GPIOX(pin).read();
         
         // send ACK with parameters
         Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOGET_ACK::SIZE);
@@ -1024,14 +999,12 @@ namespace fdv
             for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
             {
                 // send message
+                uint8_t data[1] = {pin};
                 uint8_t msgID = getNextID();
-                Message msgContainer(msgID, CMD_IOGET, Message_CMD_IOGET::SIZE);
-                Message_CMD_IOGET msgCMDIOGET(&msgContainer, pin);
-                send(msgContainer);
-                msgContainer.freeData();
+                send(Message(msgID, CMD_IOGET, data, sizeof(data)));
                 
                 // wait for ACK
-                msgContainer = waitACK(msgID);
+                Message msgContainer = waitACK(msgID);
                 if (msgContainer.valid)
                 {
                     Message_CMD_IOGET_ACK msgCMDIOGETACK(&msgContainer);
