@@ -467,33 +467,6 @@ struct Message_ACK
 };
 
 
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// Message_CMD_IOAGET_ACK
-
-struct Message_CMD_IOAGET_ACK : Message_ACK
-{
-    static uint16_t const SIZE = Message_ACK::SIZE + 2;
-    
-    uint16_t& state;
-    
-    // used to decode message
-    Message_CMD_IOAGET_ACK(WebESP8266::Message* msg)
-        : Message_ACK(msg), 
-          state(*(uint16_t*)(msg->data + Message_ACK::SIZE + 0))
-    {
-    }
-    // used to encode message
-    Message_CMD_IOAGET_ACK(WebESP8266::Message* msg, uint8_t ackID_, uint16_t state_)
-        : Message_ACK(msg, ackID_), 
-          state(*(uint16_t*)(msg->data + Message_ACK::SIZE + 0))
-    {
-        state = state_;
-    }			
-};
-
-
     
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -824,10 +797,12 @@ void WebESP8266::handle_CMD_IOAGET(Message* msg)
 	uint16_t state = analogRead(pin);
 	
 	// send ACK with parameters
-	Message msgContainer(getNextID(), CMD_ACK, Message_CMD_IOAGET_ACK::SIZE);
-	Message_CMD_IOAGET_ACK msgCMDIOGETACK(&msgContainer, msg->ID, state);
+    uint8_t data[Message_ACK::SIZE + 2];
+    data[Message_ACK::SIZE + 0] = state & 0xFF;
+    data[Message_ACK::SIZE + 1] = state >> 8;    
+	Message msgContainer(getNextID(), CMD_ACK, data, sizeof(data));
+	Message_ACK msgCMDACK(&msgContainer, msg->ID);
 	send(msgContainer);
-	msgContainer.freeData();
 }		
 
 
@@ -1065,8 +1040,8 @@ bool WebESP8266::send_CMD_IOAGET(uint8_t pin, uint16_t* state)
 			Message msgContainer = waitACK(msgID);
 			if (msgContainer.valid)
 			{
-				Message_CMD_IOAGET_ACK msgCMDIOAGETACK(&msgContainer);
-				*state = msgCMDIOAGETACK.state;
+                uint8_t const* rpos = msgContainer.data + Message_ACK::SIZE;
+                *state = *rpos + (*(rpos + 1) << 8);
 				msgContainer.freeData();
 				return true;
 			}
