@@ -59,7 +59,8 @@ namespace fdv
 		void setStackDepth(uint16_t stackDepth);		
 		void suspend();		
 		void terminate();		
-		void resume();		
+		void resume();
+        bool suspended();
 		static void delay(uint32_t ms);
 		static uint32_t getMinFreeStack();
 		static uint32_t getFreeHeap();
@@ -77,6 +78,7 @@ namespace fdv
 		uint16_t    m_stackDepth;
 		uint32_t    m_priority;
 		xTaskHandle m_handle;
+        bool        m_suspended;
 		
 	};
 

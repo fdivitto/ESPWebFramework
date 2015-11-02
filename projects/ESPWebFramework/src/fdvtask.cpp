@@ -42,7 +42,7 @@ namespace fdv
     // Task
 
     MTD_FLASHMEM Task::Task(bool suspended, uint16_t stackDepth, uint32_t priority)
-        : m_stackDepth(stackDepth), m_priority(priority), m_handle(NULL)
+        : m_stackDepth(stackDepth), m_priority(priority), m_handle(NULL), m_suspended(true)
     {
         if (!suspended)
             resume();			
@@ -58,9 +58,17 @@ namespace fdv
     
     void MTD_FLASHMEM Task::suspend()
     {
+        m_suspended = true;
         vTaskSuspend(m_handle);
     }
     
+    
+    // may be not in synch with Task::suspend() or Task::resume(). Unfortunately we don't have eTaskGetState!
+    bool MTD_FLASHMEM Task::suspended()
+    {
+        return m_suspended;
+    }
+            
     
     void MTD_FLASHMEM Task::terminate()
     {
@@ -74,6 +82,7 @@ namespace fdv
             vTaskResume(m_handle);
         else
             xTaskCreate(entry, (const signed char*)"", m_stackDepth, this, m_priority, &m_handle);			
+        m_suspended = false;
     }
     
         
