@@ -580,7 +580,7 @@ namespace fdv
 	// HTTPResponse
 	
     MTD_FLASHMEM HTTPResponse::HTTPResponse(HTTPHandler* httpHandler, char const* status, char const* content)
-        : m_httpHandler(httpHandler), m_status(status)
+        : m_httpHandler(httpHandler), m_status(status), m_headersFlushed(false)
     {
         // content (if present, otherwise use addContent())
         if (content)
@@ -625,25 +625,38 @@ namespace fdv
         m_content.addChunks(src);
     }
             
+            
+    void MTD_FLASHMEM HTTPResponse::flushHeaders(uint32_t contentLength)
+    {
+        if (!m_headersFlushed)
+        {
+            // status line
+            m_httpHandler->getSocket()->writeFmt(FSTR("HTTP/1.1 %s\r\n"), m_status);
+
+            // HTTPResponse headers
+            addHeader(FSTR("Connection"), FSTR("close"));			
+
+            // user headers
+            for (uint32_t i = 0; i != m_headers.getItemsCount(); ++i)
+            {
+                Fields::Item* item = m_headers[i];
+                m_httpHandler->getSocket()->writeFmt(FSTR("%s: %s\r\n"), APtr<char>(t_strdup(item->key)).get(), APtr<char>(t_strdup(item->value)).get());
+            }
+
+            // content length header
+            m_httpHandler->getSocket()->writeFmt(FSTR("%s: %d\r\n\r\n"), STR_Content_Length, contentLength);
+
+            m_headersFlushed = true;
+        }
+    }
+    
+            
     // should be called only after setStatus, addHeader and addContent
     void MTD_FLASHMEM HTTPResponse::flush()
     {
-        // status line
-        m_httpHandler->getSocket()->writeFmt(FSTR("HTTP/1.1 %s\r\n"), m_status);
-
-        // HTTPResponse headers
-        addHeader(FSTR("Connection"), FSTR("close"));			
-
-        // user headers
-        for (uint32_t i = 0; i != m_headers.getItemsCount(); ++i)
-        {
-            Fields::Item* item = m_headers[i];
-            m_httpHandler->getSocket()->writeFmt(FSTR("%s: %s\r\n"), APtr<char>(t_strdup(item->key)).get(), APtr<char>(t_strdup(item->value)).get());
-        }
-
-        // content length header
-        m_httpHandler->getSocket()->writeFmt(FSTR("%s: %d\r\n\r\n"), STR_Content_Length, m_content.getItemsCount());
-
+        // headers
+        flushHeaders(m_content.getItemsCount());
+        
         // actual content
         if (m_content.getItemsCount() > 0)
         {			

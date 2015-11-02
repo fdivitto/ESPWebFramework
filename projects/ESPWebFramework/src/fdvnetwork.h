@@ -792,7 +792,11 @@ namespace fdv
 		// WARN: src content is not copied! Just data pointers are stored
 		void addContent(LinkedCharChunks* src);
 				
+        // should be called only after setStatus, addHeader
+        virtual void flushHeaders(uint32_t contentLength);
+                
 		// should be called only after setStatus, addHeader and addContent
+        // If not already called, this calls also flushHeaders()
 		virtual void flush();
 		
 	private:
@@ -800,6 +804,7 @@ namespace fdv
 		char const*      m_status;		
 		Fields           m_headers;
 		LinkedCharChunks m_content;
+        bool             m_headersFlushed;
 	};
 
 
