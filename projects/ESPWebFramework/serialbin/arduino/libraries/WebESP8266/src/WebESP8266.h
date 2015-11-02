@@ -32,6 +32,13 @@ https://github.com/fdivitto/ESPWebFramework
 #include <avr/pgmspace.h>
 
 
+/******************************************************************************
+* Configuration
+******************************************************************************/
+
+#define WEBESP8266_DEBUG 0
+
+
 
 /******************************************************************************
 * Definitions
@@ -46,12 +53,12 @@ public:
     
     void reset(char const* data, uint8_t itemsCount);
     
-    uint8_t itemsCount();
-    char const* getkey(uint8_t index);
-    char const* operator[](uint8_t index);
-    char const* operator[](char const* key);
+    uint8_t itemsCount() const;
+    char const* getkey(uint8_t index) const;
+    char const* operator[](uint8_t index) const;
+    char const* operator[](char const* key) const;
     
-    uint16_t calcBufferSize();
+    uint16_t calcBufferSize() const;
     
 private:
     char const* m_data;
@@ -113,6 +120,7 @@ public:
     void addContent_P(PGM_P data, uint16_t length);
     void addContent(uint32_t value);
     void addContent(float value, int8_t width, uint8_t prec);  // todo: evaluate impact on code size!!
+    void addContentFmt_P(char const* fmt, ...);
     
     uint8_t calcHeadersFieldsCount();
     uint16_t calcHeadersBufferSize();

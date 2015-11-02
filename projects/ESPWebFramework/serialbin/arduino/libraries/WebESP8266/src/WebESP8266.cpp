@@ -79,6 +79,65 @@ inline uint32_t millisDiff(uint32_t time1, uint32_t time2)
 }
 
 
+#if (WEBESP8266_DEBUG == 1)
+// For debug purposes only
+// MemoryFree library based on code posted here:
+// http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1213583720/15
+// Extended by Matthew Murdoch to include walking of the free list.
+
+extern "C"
+{
+    extern unsigned int __heap_start;
+    extern void *__brkval;
+    extern struct __freelist *__flp;
+}
+
+struct __freelist
+{
+  size_t sz;
+  struct __freelist *nx;
+};
+
+
+class MemoryDebug
+{
+public:
+
+    static int freeMemory()
+    {
+      int free_memory;
+      if ((int)__brkval == 0)
+      {
+        free_memory = ((int)&free_memory) - ((int)&__heap_start);
+      }
+      else
+      {
+        free_memory = ((int)&free_memory) - ((int)__brkval);
+        free_memory += freeListSize();
+      }
+      return free_memory;
+    }
+    
+private:
+       
+    static int freeListSize()
+    {
+      struct __freelist* current;
+      int total = 0;
+      for (current = __flp; current; current = current->nx)
+      {
+        total += 2; /* Add two bytes for the memory block's header  */
+        total += (int) current->sz;
+      }
+
+      return total;
+    }    
+};
+
+
+#endif
+
+
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 // SoftTimeOut
@@ -134,14 +193,14 @@ void HTTPFields::reset(char const* data, uint8_t itemsCount)
 }
 
     
-uint8_t HTTPFields::itemsCount()
+uint8_t HTTPFields::itemsCount() const
 {
     return m_itemsCount;
 }
 
 
 // note: doesn't validate index
-char const* HTTPFields::getkey(uint8_t index)
+char const* HTTPFields::getkey(uint8_t index) const
 {
     char const* key = m_data;
     for (uint8_t i = 0; i != index; ++i)
@@ -151,7 +210,7 @@ char const* HTTPFields::getkey(uint8_t index)
 
 
 // get value at specified index
-char const* HTTPFields::operator[](uint8_t index)
+char const* HTTPFields::operator[](uint8_t index) const
 {
     char const* value = strchrnul(m_data, 0) + 1;
     for (uint8_t i = 0; i != index; ++i)
@@ -161,7 +220,7 @@ char const* HTTPFields::operator[](uint8_t index)
 
 
 // get value for specified key or NULL if not found
-char const* HTTPFields::operator[](char const* key)
+char const* HTTPFields::operator[](char const* key) const
 {
     char const* curkey = m_data;
     for (uint8_t i = 0; i != m_itemsCount; ++i)
@@ -175,7 +234,7 @@ char const* HTTPFields::operator[](char const* key)
 
 
 // ret. required size (in bytes) to contain all fields (included ending zeroes)
-uint16_t HTTPFields::calcBufferSize()
+uint16_t HTTPFields::calcBufferSize() const
 {
     char const* key = m_data;
     for (uint8_t i = 0; i != m_itemsCount; ++i)
@@ -297,6 +356,24 @@ void HTTPResponse::addContent(char const* string, bool copy)
                                     copy? strdup(string) : string,
                                     strlen(string) + 1)
                   );
+}
+
+
+void HTTPResponse::addContentFmt_P(char const* fmt, ...)
+{
+    va_list args;
+    
+    va_start(args, fmt);
+    int sz = vsnprintf_P(NULL, 0, fmt, args) + 1;
+    va_end(args);
+    
+    char buf[sz];
+    
+    va_start(args, fmt);
+    vsnprintf_P(buf, sz , fmt, args);
+    va_end(args);
+    
+    addContent(buf, true);
 }
 
 
