@@ -146,6 +146,30 @@ namespace fdv
         if (m_acquired)
             m_mutex->unlockFromISR();
     }
+
+    
+ 
+	/////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	// SoftTimeOut class
+
+    MTD_FLASHMEM SoftTimeOut::SoftTimeOut(uint32_t time)
+        : m_timeOut(time), m_startTime(millis())
+    {
+    }
+
+    
+    MTD_FLASHMEM SoftTimeOut::operator bool()
+    {
+        return millisDiff(m_startTime, millis()) > m_timeOut;
+    }
     
     
+    void MTD_FLASHMEM SoftTimeOut::reset(uint32_t time)
+    {
+        m_timeOut   = time;
+        m_startTime = millis();				
+    }
+    
+ 
 }

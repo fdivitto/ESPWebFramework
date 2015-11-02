@@ -236,21 +236,9 @@ namespace fdv
 	class SoftTimeOut
 	{
 		public:
-			SoftTimeOut(uint32_t time)
-				: m_timeOut(time), m_startTime(millis())
-			{
-			}
-
-			MTD_FLASHMEM operator bool()
-			{
-				return millisDiff(m_startTime, millis()) > m_timeOut;
-			}
-			
-			void MTD_FLASHMEM reset(uint32_t time)
-			{
-				m_timeOut   = time;
-				m_startTime = millis();				
-			}
+			SoftTimeOut(uint32_t time);
+			operator bool();
+			void reset(uint32_t time);
 
 		private:
 			uint32_t m_timeOut;
