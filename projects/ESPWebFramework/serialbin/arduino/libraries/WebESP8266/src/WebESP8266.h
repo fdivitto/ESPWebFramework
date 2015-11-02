@@ -44,128 +44,12 @@ https://github.com/fdivitto/ESPWebFramework
 * Definitions
 ******************************************************************************/
 
-
-class HTTPFields
-{
-public:
-    HTTPFields();
-    HTTPFields(char const* data, uint8_t itemsCount);
-    
-    void reset(char const* data, uint8_t itemsCount);
-    
-    uint8_t itemsCount() const;
-    char const* getkey(uint8_t index) const;
-    char const* operator[](uint8_t index) const;
-    char const* operator[](char const* key) const;
-    
-    uint16_t calcBufferSize() const;
-    
-private:
-    char const* m_data;
-    uint8_t     m_itemsCount;
-};
-
-
-struct HTTPRequest
-{
-    enum Method {Unsupported, Get, Post, Head};
-    
-    Method      method;
-    uint8_t     pageIndex;
-    char const* page;
-    HTTPFields  headers;
-    HTTPFields  query;
-    HTTPFields  form;
-};
-
-
-class HTTPResponse
-{
-public:
-
-    // status
-    static uint8_t const HTTPSTATUS_200 = 0;    // 200 OK (DEFAULT)
-    static uint8_t const HTTPSTATUS_301 = 1;    // 301 Moved Permanently
-    static uint8_t const HTTPSTATUS_302 = 2;    // 302 Found
-    static uint8_t const HTTPSTATUS_400 = 3;    // 400 Bad Request
-    static uint8_t const HTTPSTATUS_401 = 4;    // 401 Unauthorized
-    static uint8_t const HTTPSTATUS_403 = 5;    // 403 Forbidden
-    static uint8_t const HTTPSTATUS_404 = 6;    // 404 Not Found
-    
-    // preset content types
-    static uint8_t const HTTPCONTENTTYPE_UNSPECIFIED   = 0;  // header not added. User can still add content-type using addHeader methods.
-    static uint8_t const HTTPCONTENTTYPE_TEXTHTML      = 1;  // text/html (DEFAULT)
-    static uint8_t const HTTPCONTENTTYPE_TEXTHTML_UTF8 = 2;  // text/html; charset=utf-8
-    static uint8_t const HTTPCONTENTTYPE_APPJSON       = 3;  // application/json
-    static uint8_t const HTTPCONTENTTYPE_TEXTPLAIN     = 4;  // text/plain
-    static uint8_t const HTTPCONTENTTYPE_TEXTXML       = 5;  // text/xml
-
-
-public:
-    HTTPResponse();
-    ~HTTPResponse();
-    
-    void setStatus(uint8_t status); // one of HTTPResponse::HTTPSTATUS_xxx constants
-    uint8_t getStatus();
-    
-    void setContentType(uint8_t contentType);  // one of HTTPResponse::HTTPCONTENTTYPE_xxx constants
-    uint8_t getContentType();
-    
-    void addHeader(PGM_P key, char const* value, bool copy = false);
-    void addHeader_P(PGM_P key, PGM_P value);
-    
-    void addContent(char const* string, bool copy = false);
-    void addContent_P(PGM_P string);
-    void addContent_P(PGM_P data, uint16_t length);
-    void addContent(float value, int8_t width, uint8_t prec);  // todo: evaluate impact on code size!!
-    void addContentFmt_P(char const* fmt, ...);
-    
-    uint8_t calcHeadersFieldsCount();
-    uint16_t calcHeadersBufferSize();
-    uint8_t* copyHeadersToBuffer(uint8_t* dest);
-    
-    uint16_t calcContentBufferSize();    
-    uint8_t* copyContentToBuffer(uint8_t* dest);
-    
-public:
-    enum Storage {Heap, HeapToFree, Flash};
-
-    struct ContentItem
-    {
-        ContentItem* next; // NULL = end of list
-        Storage      storage;
-        void const*  data;
-        uint16_t     dataLength;
-        ContentItem(ContentItem* next_, Storage storage_, void const* data_, uint16_t dataLength_)
-            : next(next_), storage(storage_), data(data_), dataLength(dataLength_)
-        {
-        }
-    };
-    
-    struct HeaderItem
-    {
-        HeaderItem* next; // NULL = end of list
-        Storage     storage;
-        PGM_P       key;
-        void const* data;   // aka "value"
-        HeaderItem(HeaderItem* next_, Storage storage_, PGM_P key_, void const* data_)
-            : next(next_), storage(storage_), key(key_), data(data_)
-        {
-        }
-    };
-    
-private:
-    void addHeaderItem(HeaderItem* item);
-    void addContentItem(ContentItem* item);
-
-    ContentItem* m_contentItems;
-    HeaderItem*  m_headerItems;
-    uint8_t      m_status;
-    uint8_t      m_contentType;
-};
+class HTTPRequest;
+class HTTPResponse;
 
 
 typedef void (*WebHandler)(HTTPRequest const& request, HTTPResponse& response);
+
 
 
 struct WebRoute
@@ -175,8 +59,10 @@ struct WebRoute
 };
 
 
+
 class WebESP8266
 {
+    friend class HTTPResponse;
 	
 public:
 
@@ -256,7 +142,7 @@ public:
 	bool send_CMD_IOSET(uint8_t pin, uint8_t state);
 	bool send_CMD_IOGET(uint8_t pin, uint8_t* state);
 	bool send_CMD_IOASET(uint8_t pin, uint16_t state);
-	bool send_CMD_IOAGET(uint8_t pin, uint16_t* state);
+	bool send_CMD_IOAGET(uint8_t pin, uint16_t* state);    
 	    
 private:
 
@@ -272,6 +158,8 @@ private:
 	Message waitACK(uint8_t ackID);
 	void sendNoParamsACK(uint8_t ackID);
 	bool waitNoParamsACK(uint8_t ackID);
+    bool send_CMD_STREAMSTART();
+    Stream* getStream();
     
 	void handle_CMD_READY(Message* msg);
 	void handle_CMD_IOCONF(Message* msg);
@@ -281,6 +169,7 @@ private:
 	void handle_CMD_IOAGET(Message* msg);
     void handle_CMD_GETHTTPHANDLEDPAGES(Message* msg);
     void handle_CMD_HTTPREQUEST(Message* msg);
+    void handle_CMD_HTTPREQUEST_sendACK(Message* msg, HTTPResponse const& response);
 	
 private:
 
@@ -294,6 +183,119 @@ private:
     WebRoute* _webRoutes;
     uint8_t   _webRoutesCount;
 };
+
+
+
+
+
+class HTTPFields
+{
+public:
+    HTTPFields();
+    HTTPFields(char const* data, uint8_t itemsCount);
+    
+    void reset(char const* data, uint8_t itemsCount);
+    
+    uint8_t itemsCount() const;
+    char const* getkey(uint8_t index) const;
+    char const* operator[](uint8_t index) const;
+    char const* operator[](char const* key) const;
+    
+    uint16_t calcBufferSize() const;
+    
+private:
+    char const* m_data;
+    uint8_t     m_itemsCount;
+};
+
+
+struct HTTPRequest
+{
+    enum Method {Unsupported, Get, Post, Head};
+    
+    Method      method;
+    uint8_t     pageIndex;
+    char const* page;
+    HTTPFields  headers;
+    HTTPFields  query;
+    HTTPFields  form;
+};
+
+
+
+class HTTPResponse
+{
+    friend class WebESP8266;
+    
+public:
+
+    // status
+    static uint8_t const HTTPSTATUS_200 = 0;    // 200 OK (DEFAULT)
+    static uint8_t const HTTPSTATUS_301 = 1;    // 301 Moved Permanently
+    static uint8_t const HTTPSTATUS_302 = 2;    // 302 Found
+    static uint8_t const HTTPSTATUS_400 = 3;    // 400 Bad Request
+    static uint8_t const HTTPSTATUS_401 = 4;    // 401 Unauthorized
+    static uint8_t const HTTPSTATUS_403 = 5;    // 403 Forbidden
+    static uint8_t const HTTPSTATUS_404 = 6;    // 404 Not Found
+    
+    // preset content types
+    static uint8_t const HTTPCONTENTTYPE_UNSPECIFIED   = 0;  // header not added. User can still add content-type using addHeader methods.
+    static uint8_t const HTTPCONTENTTYPE_TEXTHTML      = 1;  // text/html (DEFAULT)
+    static uint8_t const HTTPCONTENTTYPE_TEXTHTML_UTF8 = 2;  // text/html; charset=utf-8
+    static uint8_t const HTTPCONTENTTYPE_APPJSON       = 3;  // application/json
+    static uint8_t const HTTPCONTENTTYPE_TEXTPLAIN     = 4;  // text/plain
+    static uint8_t const HTTPCONTENTTYPE_TEXTXML       = 5;  // text/xml
+
+public:
+    HTTPResponse(WebESP8266& webesp);
+    ~HTTPResponse();
+    
+    void setStatus(uint8_t status); // one of HTTPResponse::HTTPSTATUS_xxx constants
+    uint8_t getStatus() const;
+    
+    void setContentType(uint8_t contentType);  // one of HTTPResponse::HTTPCONTENTTYPE_xxx constants
+    uint8_t getContentType() const;
+    
+    void addHeader(PGM_P key, char const* value, bool copy = false);
+    void addHeader_P(PGM_P key, PGM_P value);
+    
+    void addContent(char const* string);
+    void addContent_P(PGM_P string);
+    void addContentFmt_P(char const* fmt, ...);
+    
+    uint8_t calcHeadersFieldsCount() const;
+    uint16_t calcHeadersBufferSize() const;
+    uint8_t* copyHeadersToBuffer(uint8_t* dest) const;
+    
+public:
+    enum Storage {Heap, HeapToFree, Flash};
+
+    struct HeaderItem
+    {
+        HeaderItem* next; // NULL = end of list
+        Storage     storage;
+        PGM_P       key;
+        void const* data;   // aka "value"
+        HeaderItem(HeaderItem* next_, Storage storage_, PGM_P key_, void const* data_)
+            : next(next_), storage(storage_), key(key_), data(data_)
+        {
+        }
+    };
+    
+private:
+    void addHeaderItem(HeaderItem* item);
+    void flushHeaders();
+    void setHTTPRequestMessage(WebESP8266::Message* msg);
+
+    WebESP8266&          m_webesp;
+    HeaderItem*          m_headerItems;
+    uint8_t              m_status;
+    uint8_t              m_contentType;
+    bool                 m_headersFlushed;
+    WebESP8266::Message* m_HTTPRequestMsg;  // used to call handle_CMD_HTTPREQUEST_sendACK
+};
+
+
 
 
 

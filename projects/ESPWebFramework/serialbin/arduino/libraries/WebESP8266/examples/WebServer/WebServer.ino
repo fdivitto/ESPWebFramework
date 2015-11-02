@@ -60,6 +60,12 @@ void handle_page0(HTTPRequest const& request, HTTPResponse& response)
   response.addContent_P(PSTR("<html><head></head><body>"));  
   response.addContent_P(PSTR("<h1>This is page ZERO from Arduino!</h1>"));
 
+  response.addContent_P(PSTR("<h2>Headers fields<h2>"));
+  response.addContent_P(PSTR("<table style='width:100%' border='1'>"));
+  for (uint8_t i = 0; i != request.headers.itemsCount(); ++i)
+    response.addContentFmt_P(PSTR("<tr><td>%s</td><td>%s</td></tr>"), request.headers.getkey(i), request.headers[i]);
+  response.addContent_P(PSTR("</table>"));
+
   response.addContent_P(PSTR("<h2>Query fields<h2>"));
   response.addContent_P(PSTR("<table style='width:100%' border='1'>"));
   for (uint8_t i = 0; i != request.query.itemsCount(); ++i)

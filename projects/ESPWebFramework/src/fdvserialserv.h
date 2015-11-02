@@ -137,74 +137,74 @@ namespace fdv
 	// Message structure:
 	//   1 uint8_t  : Incremental ID. Each part maintain an incremental ID, which identifies a message. Replies include the same ID.
 	//   1 uint8_t  : Command
-	//   1 uint16_t : Data size. This is 0x0000 if there isn't data
+	//   1 uint16_t : Data size.  This is 0x0000 if there isn't data. 
     //   for n times [
 	//     1 uint8_t  : Optional command parameters (See CMD Parameters below)
     //   ]
 	//
 	// Commands:
 	//
-	//   CMD_ACK (0x00)
+	//   CMD_ACK
 	//     Description:
 	//       Acknowledge of a message
 	//     Parameters:
 	//       1 uint8_t : ID of acknowledged message (different than this ACK message ID!)
 	//       ? uint8_t : Optional ACK parameters (See ACK Parameters below)
-	//
+    //
 	//   CMD_READY
 	//     Description:
 	//        Communicates this device is ready
 	//     CMD Parameters:
-	//       1  uint8_t : protocol version
-	//       1  uint8_t : platform (see PLATFORM_XXX values)
-	//       10 uint8_t : magic string "BINPRORDY\x00"
-	//     ACK Parameters (added to CMD_ACK parameters):
-	//       1  uint8_t : protocol version
-	//       1  uint8_t : platform (see PLATFORM_XXX values)
-	//       10 uint8_t : magic string "BINPRORDY\x00"
+	//       1  uint8_t : Protocol version
+	//       1  uint8_t : Platform (see PLATFORM_XXX values)
+	//       10 uint8_t : Magic string "BINPRORDY\x00"
+	//     ACK Parameters:
+	//       1  uint8_t : Protocol version
+	//       1  uint8_t : Platform (see PLATFORM_XXX values)
+	//       10 uint8_t : Magic string "BINPRORDY\x00"
 	//
 	//   CMD_IOCONF
 	//     Description:
 	//       Configure input/output pins
 	//     CMD Parameters:
-	//       1  uint8_t : pin identifier (see PIN_IDENTIFIER_XX values)
-	//       1  uint8_t : flags (see PIN_CONF_XXX values)
-	//     ACK Parameters (added to CMD_ACK parameters):
+	//       1  uint8_t : Pin identifier (see PIN_IDENTIFIER_XX values)
+	//       1  uint8_t : Flags (see PIN_CONF_XXX values)
+	//     ACK Parameters:
 	//       none
 	//
 	//   CMD_IOSET
 	//     Description:
 	//       Set output state of digital pin (low/high)
 	//     CMD Parameters:
-	//       1  uint8_t : pin identifier (see PIN_IDENTIFIER_XX values)
-	//       1  uint8_t : output state (0 = low, 1 = high)
-	//     ACK Parameters (added to CMD_ACK parameters):
+	//       1  uint8_t : Pin identifier (see PIN_IDENTIFIER_XX values)
+	//       1  uint8_t : Output state (0 = low, 1 = high)
+	//     ACK Parameters:
 	//        none
 	//
 	//   CMD_IOGET
 	//     Description:
 	//       Get input state of digital pin (low/high)
 	//     CMD Parameters:
-	//       1  uint8_t : pin identifier (see PIN_IDENTIFIER_XX values)
-	//     ACK Parameters (added to CMD_ACK parameters):
-	//       1  uint8_t : input state (0 = low, 1 = high)  
+	//       1  uint8_t : Pin identifier (see PIN_IDENTIFIER_XX values)
+	//     ACK Parameters:
+	//       1  uint8_t : Input state (0 = low, 1 = high)  
 	//
 	//   CMD_IOASET
 	//     Description:
 	//       Set output state of analog pin (0..1023, as PWM output)
 	//     CMD Parameters:
-	//       1  uint8_t  : pin identifier (see PIN_IDENTIFIER_XX values)
-	//       1  uint16_t : output state (0..1023)
-	//     ACK Parameters (added to CMD_ACK parameters):
+	//       1  uint8_t  : Pin identifier (see PIN_IDENTIFIER_XX values)
+	//       1  uint16_t : Output state (0..1023)
+	//     ACK Parameters:
 	//        none
 	//
 	//   CMD_IOAGET
 	//     Description:
 	//       Get input state of analog pin (0..1023)
 	//     CMD Parameters:
-	//       1  uint8_t  : pin identifier (see PIN_IDENTIFIER_XX values)
-	//     ACK Parameters (added to CMD_ACK parameters):
-	//       1  uint16_t : input state (0..1023)
+	//       1  uint8_t  : Pin identifier (see PIN_IDENTIFIER_XX values)
+	//     ACK Parameters:
+	//       1  uint16_t : Input state (0..1023)
     //
     //   CMD_GETHTTPHANDLEDPAGES
     //     Description:
@@ -212,43 +212,61 @@ namespace fdv
     //     CMD Parameters:
     //       none
     //     ACK Parameters:
-    //       1 uint8_t : number of pages in the list (max 255)
+    //       1 uint8_t : Number of pages in the list (max 255)
     //       for n times [
-    //         ? char : page (zero terminated string)
+    //         ? char : Page (zero terminated string)
     //       ]
     //
     //   CMD_HTTPREQUEST
     //     Description:
     //       Request a page
+    //       The ACK may be composed by a standard message plus a content of unknown size terminated by 0x00.
     //     CMD Parameters:
-    //       1 uint8_t : method (see HTTPSENDMETHOD_xxx constants)
-    //       1 uint8_t : page index (registered using CMD_GETHTTPHANDLEDPAGES)
-    //       ? char    : page (zero terminated string) (i.e. "/", "/data")
-    //       1 uint8_t : number of headers fields
+    //       1 uint8_t : Method (see HTTPSENDMETHOD_xxx constants)
+    //       1 uint8_t : Page index (registered using CMD_GETHTTPHANDLEDPAGES)
+    //       ? char    : Page (zero terminated string) (i.e. "/", "/data")
+    //       1 uint8_t : Number of headers fields
     //       for n times [
-    //         ? char : header field key (zero terminated string)
-    //         ? char : header field value (zero terminated string)
+    //         ? char : Header field key (zero terminated string)
+    //         ? char : Header field value (zero terminated string)
     //       ]    
-    //       1 uint8_t : number of query fields (/page?field1=xx&field2=yy, has two fields "field1" and "field2")
+    //       1 uint8_t : Number of query fields (/page?field1=xx&field2=yy, has two fields "field1" and "field2")
     //       for n times [
-    //         ? char : query field key (zero terminated string)
-    //         ? char : query field value (zero terminated string)
+    //         ? char : Query field key (zero terminated string)
+    //         ? char : Query field value (zero terminated string)
     //       ]
-    //       1 uint8_t : number of form fields
+    //       1 uint8_t : Number of form fields
     //       for n times [
-    //         ? char : form field key (zero terminated string)
-    //         ? char : form field value (zero terminated string)
+    //         ? char : Form field key (zero terminated string)
+    //         ? char : Form field value (zero terminated string)
     //       ]
-    //     ACK Parameters
-    //       1 uint8_t : status (see HTTPSTATUS_xxx constants)
-    //       1 uint8_t : number of headers fields
+    //     ACK Parameters:
+    //       1 uint8_t : Status (see HTTPSTATUS_xxx constants)
+    //       1 uint8_t : Number of headers fields
     //       for n times [
-    //         ? char : header field key (zero terminated string)
-    //         ? char : header field value (zero terminated string)
+    //         ? char : Header field key (zero terminated string)
+    //         ? char : Header field value (zero terminated string)
     //       ]
-    //       1 uint8_t  : content type header (see HTTPCONTENTTYPE_xxx constants)
-    //       1 uint16_t : content length
-    //       ? uint8_t  : content
+    //       1 uint8_t  : Content type header (see HTTPCONTENTTYPE_xxx constants)
+    //       1 uint8_t  : Content delivery mode
+    //                       0 = Embedded in the ACK message: will follow a content length field plus 
+    //                           actual content data.
+    //                       1 = Not embedded in the ACK, known size: will follow a content length field. 
+    //                           Actual data will follow but not embedded in the ACK message.
+    //                       2 = Not embedded in the ACK, unknown size: will follow only actual content
+    //                           data with a terminating 0x00.
+    //       [1 uint16_t] : Optional content length 
+    //       for n or unknown times [
+    //         ? uint8_t  : Content. May or not may be embedded in the ACK message
+    //       ]
+    //
+    //   CMD_STREAMSTART
+    //     Description:
+    //       This is a special message that prefix a free stream of data (used for example by the ACK of CMD_HTTPREQUEST)
+    //     Parameters:
+    //       none
+    //     ACK Parameters:
+    //       none
     
 	
 	class SerialBinary
@@ -273,6 +291,7 @@ namespace fdv
 		static uint8_t const CMD_IOAGET              = 6;
         static uint8_t const CMD_GETHTTPHANDLEDPAGES = 7;
         static uint8_t const CMD_HTTPREQUEST         = 8;
+        static uint8_t const CMD_STREAMSTART         = 9;
 		
         // CMD_HTTPREQUEST - method
         static uint8_t const HTTPSENDMETHOD_UNSUPPORTED = 0;
@@ -398,6 +417,7 @@ namespace fdv
 		void handle_CMD_IOGET(Message* msg);
 		void handle_CMD_IOASET(Message* msg);
 		void handle_CMD_IOAGET(Message* msg);
+        void handle_CMD_STREAMSTART(Message* msg);
 
      private:
     

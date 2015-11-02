@@ -55,6 +55,7 @@ static uint8_t const CMD_IOASET              = 5;
 static uint8_t const CMD_IOAGET              = 6;
 static uint8_t const CMD_GETHTTPHANDLEDPAGES = 7;
 static uint8_t const CMD_HTTPREQUEST         = 8;
+static uint8_t const CMD_STREAMSTART         = 9;
 
 // CMD_HTTPREQUEST - method
 static uint8_t const HTTPSENDMETHOD_UNSUPPORTED = 0;
@@ -249,11 +250,12 @@ uint16_t HTTPFields::calcBufferSize() const
 ///////////////////////////////////////////////////////////////////////////
 // HTTPResponse
 
-HTTPResponse::HTTPResponse()
-    : m_contentItems(NULL), 
+HTTPResponse::HTTPResponse(WebESP8266& webesp)
+    : m_webesp(webesp),
       m_headerItems(NULL), 
       m_status(HTTPSTATUS_200),
-      m_contentType(HTTPCONTENTTYPE_TEXTHTML)
+      m_contentType(HTTPCONTENTTYPE_TEXTHTML),
+      m_headersFlushed(false)
 {
 }
 
@@ -273,7 +275,6 @@ void freelist(T* item)
 
 HTTPResponse::~HTTPResponse()
 {
-    freelist(m_contentItems);
     freelist(m_headerItems);
 }
 
@@ -285,7 +286,7 @@ void HTTPResponse::setStatus(uint8_t status)
 }
 
 
-uint8_t HTTPResponse::getStatus()
+uint8_t HTTPResponse::getStatus() const
 {
     return m_status;
 }
@@ -300,7 +301,7 @@ void HTTPResponse::setContentType(uint8_t contentType)
 }
 
 
-uint8_t HTTPResponse::getContentType()
+uint8_t HTTPResponse::getContentType() const
 {
     return m_contentType;
 }
@@ -340,27 +341,17 @@ void HTTPResponse::addHeader_P(PGM_P key, PGM_P value)
 }
 
 
-void HTTPResponse::addContentItem(ContentItem* item)
+void HTTPResponse::addContent(char const* string)
 {
-    if (!m_contentItems)
-        m_contentItems = item;
-    else
-        getLast(m_contentItems)->next = item;
-}
-
-
-void HTTPResponse::addContent(char const* string, bool copy)
-{
-    addContentItem( new ContentItem(NULL,
-                                    copy? HTTPResponse::HeapToFree : HTTPResponse::Heap,
-                                    copy? strdup(string) : string,
-                                    strlen(string) + 1)
-                  );
+    flushHeaders();
+    m_webesp.getStream()->write(string);
 }
 
 
 void HTTPResponse::addContentFmt_P(char const* fmt, ...)
 {
+    flushHeaders();
+    
     va_list args;
     
     va_start(args, fmt);
@@ -373,39 +364,21 @@ void HTTPResponse::addContentFmt_P(char const* fmt, ...)
     vsnprintf_P(buf, sz , fmt, args);
     va_end(args);
     
-    addContent(buf, true);
+    m_webesp.getStream()->write(buf);
 }
 
 
 void HTTPResponse::addContent_P(PGM_P string)
 {
-    addContentItem( new ContentItem(NULL, HTTPResponse::Flash, string, strlen_P(string) + 1) );
+    flushHeaders();
+    
+    char buf[strlen_P(string) + 1];
+    strcpy_P(buf, string);
+    m_webesp.getStream()->write(buf);
 }
 
 
-// not memory checked!
-void* memdup(void const* src, uint32_t len)
-{
-    void* dst = malloc(len);
-    memcpy(dst, src, len);
-    return dst;
-}
-
-
-void HTTPResponse::addContent_P(PGM_P data, uint16_t length)
-{
-    addContentItem( new ContentItem(NULL, HTTPResponse::Flash, data, length) );
-}
-
-
-void HTTPResponse::addContent(float value, int8_t width, uint8_t prec)
-{
-    char str[abs(width) + prec + 3];    // todo: verify buf size formula!
-    addContent(dtostrf(value, width, prec, str), true);
-}
-
-
-uint8_t HTTPResponse::calcHeadersFieldsCount()
+uint8_t HTTPResponse::calcHeadersFieldsCount() const
 {
     uint8_t count = 0;
     for (HeaderItem* item = m_headerItems; item; item = item->next)
@@ -414,7 +387,7 @@ uint8_t HTTPResponse::calcHeadersFieldsCount()
 }
 
 
-uint16_t HTTPResponse::calcHeadersBufferSize()
+uint16_t HTTPResponse::calcHeadersBufferSize() const
 {
     uint16_t len = 0;
     for (HeaderItem* item = m_headerItems; item; item = item->next)
@@ -423,7 +396,7 @@ uint16_t HTTPResponse::calcHeadersBufferSize()
 }
 
 
-uint8_t* HTTPResponse::copyHeadersToBuffer(uint8_t* dest)
+uint8_t* HTTPResponse::copyHeadersToBuffer(uint8_t* dest) const
 {
     for (HeaderItem* item = m_headerItems; item; item = item->next)
     {
@@ -444,28 +417,20 @@ uint8_t* HTTPResponse::copyHeadersToBuffer(uint8_t* dest)
 }
 
 
-uint16_t HTTPResponse::calcContentBufferSize()
+void HTTPResponse::setHTTPRequestMessage(WebESP8266::Message* msg)
 {
-    uint16_t len = 0;
-    for (ContentItem* item = m_contentItems; item; item = item->next)
-        len += item->dataLength - 1;
-    return len;
+    m_HTTPRequestMsg = msg;
 }
 
 
-uint8_t* HTTPResponse::copyContentToBuffer(uint8_t* dest)
+void HTTPResponse::flushHeaders()
 {
-    for (ContentItem* item = m_contentItems; item; item = item->next)
+    if (!m_headersFlushed)
     {
-        if (item->storage == HTTPResponse::Flash)
-            memcpy_P(dest, item->data, item->dataLength - 1);
-        else
-            memcpy(dest, item->data, item->dataLength - 1);
-        dest += item->dataLength - 1;
+        m_webesp.handle_CMD_HTTPREQUEST_sendACK(m_HTTPRequestMsg, *this);
+        m_headersFlushed = true;
     }
-    return dest;
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -521,6 +486,12 @@ void WebESP8266::begin(Stream& stream)
 {
 	_stream = &stream;
 	send_CMD_READY();
+}
+
+
+Stream* WebESP8266::getStream()
+{
+    return _stream;
 }
 
 
@@ -883,44 +854,52 @@ void WebESP8266::handle_CMD_HTTPREQUEST(Message* msg)
     
     // form key->value
     request.form.reset((char const*)rpos, formCount);
-    rpos += request.form.calcBufferSize();
     
     // call the handler and send ACK with parameters
     if (request.pageIndex < _webRoutesCount)
     {
-        HTTPResponse response;
+        HTTPResponse response(*this);
+        // the handler will call handle_CMD_HTTPREQUEST_sendACK to complete message handling
+        response.setHTTPRequestMessage(msg);        
         _webRoutes[request.pageIndex].handler(request, response);
-        uint16_t headersBufferSize = response.calcHeadersBufferSize();
-        uint16_t contentBufferSize = response.calcContentBufferSize();
-        uint16_t msgSize = 1 + 1 + 1 + 2 + headersBufferSize + contentBufferSize;   // +1 = status, +1 = headers fields count, +1 = content type, +2 = content length
-        uint8_t data[1 + msgSize];    
-        uint8_t* wpos = data;
-        
-        // ACK - ID
-        *wpos++ = msg->ID;
-        
-        // status
-        *wpos++ = response.getStatus();
-        
-        // header fields count
-        *wpos++ = response.calcHeadersFieldsCount();
-        
-        // header fields
-        wpos = response.copyHeadersToBuffer(wpos);
-
-        // content-type header
-        *wpos++ = response.getContentType();
-            
-        // content length
-        *wpos++ = contentBufferSize & 0xFF;
-        *wpos++ = contentBufferSize >> 8;
-        response.copyContentToBuffer(wpos);
-        
-        // send ACK
-        send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
-    }    
-    
+        uint8_t b = 0;
+        _stream->write(&b, 1);
+    }        
 }
+
+
+void WebESP8266::handle_CMD_HTTPREQUEST_sendACK(Message* msg, HTTPResponse const& response)
+{
+    uint16_t headersBufferSize = response.calcHeadersBufferSize();
+    uint16_t msgSize = 1 + 1 + 1 + 1 + headersBufferSize;   // +1 = status, +1 = headers fields count, +1 = content type, +1 = content mode
+    uint8_t data[1 + msgSize];    
+    uint8_t* wpos = data;
+    
+    // ACK - ID
+    *wpos++ = msg->ID;
+    
+    // status
+    *wpos++ = response.getStatus();
+    
+    // header fields count
+    *wpos++ = response.calcHeadersFieldsCount();
+    
+    // header fields
+    wpos = response.copyHeadersToBuffer(wpos);
+
+    // content-type header
+    *wpos++ = response.getContentType();
+    
+    // content mode
+    *wpos++ = 2;
+        
+    // send ACK
+    send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
+    
+    // begin to send content (not embedded in the ACK message)
+    send_CMD_STREAMSTART();        
+}
+
 
 
 bool WebESP8266::send_CMD_READY()
@@ -947,6 +926,22 @@ bool WebESP8266::send_CMD_READY()
 		}
 	}
 	return false;
+}
+
+
+bool WebESP8266::send_CMD_STREAMSTART()
+{
+    // this is a special message. Don't check ready state.
+    for (uint32_t i = 0; i != MAX_RESEND_COUNT; ++i)
+    {
+        uint8_t msgID = getNextID();
+        send(Message(msgID, CMD_STREAMSTART, NULL, 0));
+
+        // wait for ACK
+        if (waitNoParamsACK(msgID))
+            return true;
+    }
+    return false;
 }
 
 

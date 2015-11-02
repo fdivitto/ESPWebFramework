@@ -757,6 +757,9 @@ namespace fdv
             case CMD_IOASET:
                 handle_CMD_IOASET(msg);
                 break;
+            case CMD_STREAMSTART:
+                handle_CMD_STREAMSTART(msg);
+                break;
         }			
         msg->freeData();
     }
@@ -776,6 +779,17 @@ namespace fdv
         uint8_t data[13] = {msg->ID, PROTOCOL_VERSION, PLATFORM_THIS};
         f_strcpy((char*)data + 3, STR_BINPRORDY);
         send(Message(getNextID(), CMD_ACK, data, sizeof(data)));
+    }
+    
+    
+    void MTD_FLASHMEM SerialBinary::handle_CMD_STREAMSTART(Message* msg)
+    {
+        // send simple ACK
+        sendNoParamsACK(msg->ID);
+        // this is the main action of this message: suspend receive task.
+        // The receive task (actually THIS task) must be activate manually when
+        // all the stream has been received.
+        m_receiveTask.suspend();        
     }
     
     
@@ -1137,13 +1151,83 @@ namespace fdv
                             break;
                     }
                     
-                    // content length and content data
-                    uint16_t contentLen = *rpos + (*(rpos + 1) << 8);
-                    rpos += 2;
-                    response.addContent(rpos, contentLen);
+                    uint8_t contentMode = *rpos++;
                     
-                    // flush http
-                    response.flush();
+                    switch (contentMode)
+                    {
+                        case 0:
+                        {
+                            ///// Content embedded in the ACK message
+                            
+                            // Content length and content data
+                            uint16_t contentLen = *rpos + (*(rpos + 1) << 8);
+                            rpos += 2;
+                            response.addContent(rpos, contentLen);
+                            
+                            // flush headers and content
+                            response.flush();
+                            break;
+                        }
+                            
+                        case 1:
+                        {
+                            ///// Content not embedded in the ACK, known size
+                                                                           
+                            // flush headers only
+                            uint16_t contentLen = *rpos + (*(rpos + 1) << 8);
+                            response.flushHeaders(contentLen);
+                            
+                            // wait for CMD_STREAMSTART
+                            SoftTimeOut timeout(WAIT_MSG_TIMEOUT);
+                            while (!timeout && !m_receiveTask.suspended())
+                                Task::delay(5);
+                            if (m_receiveTask.suspended())
+                            {
+                                // receiver task correctly suspended, now process content stream
+                                MutexLock lock(&m_mutex);                            
+                                
+                                // get content from serial and put into the socket                            
+                                // todo: transfer using blocks instead of byte by byte
+                                for (uint16_t i = 0; i != contentLen; ++i)
+                                {
+                                    int16_t r = m_serial->read(INTRA_MSG_TIMEOUT);
+                                    if (r < 0)
+                                        break;
+                                    uint8_t b = r;
+                                    handler->getSocket()->write(&b, 1);
+                                }
+                                m_receiveTask.resume();
+                            }
+                            break;
+                        }
+                            
+                        case 2:
+                        {
+                            ///// Content not embedded in the ACK, unknown size
+                            // wait for CMD_STREAMSTART
+                            SoftTimeOut timeout(WAIT_MSG_TIMEOUT);
+                            while (!timeout && !m_receiveTask.suspended())
+                                Task::delay(5);
+                            if (m_receiveTask.suspended())
+                            {
+                                // receiver task correctly suspended, now process content stream
+                                MutexLock lock(&m_mutex);                            
+                                
+                                LinkedCharChunks chunks;
+                                while (true)
+                                {
+                                    int16_t r = m_serial->read(INTRA_MSG_TIMEOUT);
+                                    if (r <= 0) // -1 or 0x00 interrupt
+                                        break;
+                                    chunks.append((char)r, 32); // todo: increase?
+                                }
+                                m_receiveTask.resume();
+                                response.addContent(&chunks);
+                                response.flush();                                
+                            }
+                            break;
+                        }
+                    }
                     
                     msg.freeData();
                     return true;
