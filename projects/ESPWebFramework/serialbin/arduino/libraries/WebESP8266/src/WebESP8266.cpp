@@ -392,26 +392,9 @@ void* memdup(void const* src, uint32_t len)
 }
 
 
-void HTTPResponse::addContent(void const* data, uint16_t length, bool copy)
-{
-    addContentItem( new ContentItem(NULL,
-                                    copy? HTTPResponse::HeapToFree : HTTPResponse::Heap,
-                                    copy? memdup(data, length) : data,
-                                    length)
-                  );
-}
-
-
 void HTTPResponse::addContent_P(PGM_P data, uint16_t length)
 {
     addContentItem( new ContentItem(NULL, HTTPResponse::Flash, data, length) );
-}
-
-
-void HTTPResponse::addContent(uint32_t value)
-{
-    char str[12];
-    addContent(ultoa(value, str, 10), true);    
 }
 
 
@@ -465,7 +448,7 @@ uint16_t HTTPResponse::calcContentBufferSize()
 {
     uint16_t len = 0;
     for (ContentItem* item = m_contentItems; item; item = item->next)
-        len += item->dataLength;
+        len += item->dataLength - 1;
     return len;
 }
 
@@ -475,10 +458,10 @@ uint8_t* HTTPResponse::copyContentToBuffer(uint8_t* dest)
     for (ContentItem* item = m_contentItems; item; item = item->next)
     {
         if (item->storage == HTTPResponse::Flash)
-            memcpy_P(dest, item->data, item->dataLength);
+            memcpy_P(dest, item->data, item->dataLength - 1);
         else
-            memcpy(dest, item->data, item->dataLength);
-        dest += item->dataLength;
+            memcpy(dest, item->data, item->dataLength - 1);
+        dest += item->dataLength - 1;
     }
     return dest;
 }

@@ -116,9 +116,7 @@ public:
     
     void addContent(char const* string, bool copy = false);
     void addContent_P(PGM_P string);
-    void addContent(void const* data, uint16_t length, bool copy = false);
     void addContent_P(PGM_P data, uint16_t length);
-    void addContent(uint32_t value);
     void addContent(float value, int8_t width, uint8_t prec);  // todo: evaluate impact on code size!!
     void addContentFmt_P(char const* fmt, ...);
     
