@@ -60,16 +60,25 @@ void handle_page0(HTTPRequest const& request, HTTPResponse& response)
   response.addContent_P(PSTR("<html><head></head><body>"));  
   response.addContent_P(PSTR("<h1>This is page ZERO from Arduino!</h1>"));
 
+  // show headers
   response.addContent_P(PSTR("<h2>Headers fields<h2>"));
   response.addContent_P(PSTR("<table style='width:100%' border='1'>"));
   for (uint8_t i = 0; i != request.headers.itemsCount(); ++i)
     response.addContentFmt_P(PSTR("<tr><td>%s</td><td>%s</td></tr>"), request.headers.getkey(i), request.headers[i]);
   response.addContent_P(PSTR("</table>"));
 
+  // show query fields (when GET or POST has been used)
   response.addContent_P(PSTR("<h2>Query fields<h2>"));
   response.addContent_P(PSTR("<table style='width:100%' border='1'>"));
   for (uint8_t i = 0; i != request.query.itemsCount(); ++i)
     response.addContentFmt_P(PSTR("<tr><td>%s</td><td>%s</td></tr>"), request.query.getkey(i), request.query[i]);
+  response.addContent_P(PSTR("</table>"));
+
+  // show form fields (when POST has been used)
+  response.addContent_P(PSTR("<h2>Form fields<h2>"));
+  response.addContent_P(PSTR("<table style='width:100%' border='1'>"));
+  for (uint8_t i = 0; i != request.form.itemsCount(); ++i)
+    response.addContentFmt_P(PSTR("<tr><td>%s</td><td>%s</td></tr>"), request.form.getkey(i), request.form[i]);
   response.addContent_P(PSTR("</table>"));
 
   response.addContent_P(PSTR("</body></html>"));  
