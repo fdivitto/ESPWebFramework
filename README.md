@@ -9,7 +9,7 @@ Download following files:
 
 - [app.out-0x00000.bin](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/app.out-0x00000.bin)
 
-- [app.out-0x40000.bin](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/app.out-0x40000.bin)
+- [app.out-0x11000.bin](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/app.out-0x11000.bin)
 
 - [webcontent.bin](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/webcontent.bin)
 
@@ -17,7 +17,7 @@ Download following files:
 
 Now run (change COM7 if necessary):
 ```
-   python esptool.py --port COM7 write_flash 0x40000 app.out-0x40000.bin 0x00000 app.out-0x00000.bin 0x17000 webcontent.bin
+   python esptool.py --port COM7 write_flash 0x11000 app.out-0x11000.bin 0x00000 app.out-0x00000.bin 0x6C000 webcontent.bin
 ```
 
 ####First configuration
