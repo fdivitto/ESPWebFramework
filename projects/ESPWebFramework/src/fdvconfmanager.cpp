@@ -384,9 +384,9 @@ namespace fdv
     
     void STC_FLASHMEM ConfigurationManager::getUARTParams(uint32_t* baudRate, bool* enableSystemOutput, SerialService* serialService)
     {
-        *baudRate           = FlashDictionary::getInt(STR_BAUD, 115200);
+        *baudRate           = FlashDictionary::getInt(STR_BAUD, 9600);
         *enableSystemOutput = FlashDictionary::getBool(STR_SYSOUT, false);
-        *serialService      = (SerialService)FlashDictionary::getInt(STR_UARTSRV, (int32_t)SerialService_Console);
+        *serialService      = (SerialService)FlashDictionary::getInt(STR_UARTSRV, (int32_t)SerialService_BinaryProtocol);
     }
     
     
