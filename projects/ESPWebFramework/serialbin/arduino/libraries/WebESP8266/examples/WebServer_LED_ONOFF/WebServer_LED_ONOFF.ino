@@ -1,6 +1,9 @@
 /*
   WebESP8266 Web Server example
   This example demostrates how Arduino can handle HTTP requests from ESP8266
+  switching ON/OFF del LED (digital 13).
+  
+  Just open the page "http://xxx.xxx.xxx.xxx/led"
 
   Set ESP8266 UART speed to 9600 using web interface.
   
