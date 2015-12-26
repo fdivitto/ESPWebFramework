@@ -554,6 +554,7 @@ namespace fdv
           m_platform(PLATFORM_BASELINE),
           m_HTTPRoutes(NULL)
     {
+        checkReady();
     }
     
     

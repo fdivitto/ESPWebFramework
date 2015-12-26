@@ -668,7 +668,8 @@ namespace fdv
         
         virtual void MTD_FLASHMEM dispatch()
         {
-            if (ConfigurationManager::getSerialBinary())
+#if (FDV_INCLUDE_SERIALBINARY == 1)            
+            if (ConfigurationManager::getSerialBinary() && ConfigurationManager::getSerialBinary()->isReady())
             {
                 StringList* routes = ConfigurationManager::getSerialBinary()->getHTTPRoutes();
                 if (routes)
@@ -683,7 +684,7 @@ namespace fdv
                     }
                 }
             }
-            
+#endif            
             HTTPHandler::dispatch();
         }
         
