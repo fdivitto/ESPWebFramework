@@ -26,8 +26,8 @@
 
 extern "C"
 {
-	#include "esp8266\pin_mux_register.h"
-	#include "esp8266\eagle_soc.h"
+	#include "esp8266/pin_mux_register.h"
+	#include "esp8266/eagle_soc.h"
 }
 
 

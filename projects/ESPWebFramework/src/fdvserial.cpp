@@ -24,8 +24,8 @@
 
 extern "C" 
 {
-	#include "ESP8266/uart_register.h"
-	#include "ESP8266/gpio_register.h"
+	#include "esp8266/uart_register.h"
+	#include "esp8266/gpio_register.h"
 }
 
 
