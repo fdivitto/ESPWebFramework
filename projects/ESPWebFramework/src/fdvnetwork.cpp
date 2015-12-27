@@ -482,12 +482,12 @@ namespace fdv
             {
                 uint32_t bytesToSend = min(MAXCHUNKSIZE, length - bytesSent);
                 f_memcpy(rambuf, src, bytesToSend);
-                uint32_t chunkBytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, rambuf, bytesToSend, 0) :
-                                                                        lwip_sendto(m_socket, rambuf, bytesToSend, 0, (sockaddr*)&m_remoteAddress, sizeof(m_remoteAddress));
-                if (chunkBytesSent == 0)
+                int32_t chunkBytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, rambuf, bytesToSend, 0) :
+                                                                       lwip_sendto(m_socket, rambuf, bytesToSend, 0, (sockaddr*)&m_remoteAddress, sizeof(m_remoteAddress));
+                if (chunkBytesSent <= 0)
                 {
                     // error
-                    bytesSent = 0;
+                    bytesSent = chunkBytesSent; // chunkBytesSent can be -1 or 0
                     break;
                 }
                 bytesSent += chunkBytesSent;
