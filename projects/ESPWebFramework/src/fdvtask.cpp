@@ -56,16 +56,20 @@ namespace fdv
     }
     
     
-    void MTD_FLASHMEM Task::suspend()
+    void  Task::suspend()
     {
         m_suspended = true;
         vTaskSuspend(m_handle);
     }
     
+    xTaskHandle MTD_FLASHMEM Task::getCurrentTaskHandle()
+    {
+        return xTaskGetCurrentTaskHandle();
+    }
     
     // may be not in synch with Task::suspend() or Task::resume(). Unfortunately we don't have eTaskGetState!
     bool MTD_FLASHMEM Task::suspended()
-    {
+    {        
         return m_suspended;
     }
             

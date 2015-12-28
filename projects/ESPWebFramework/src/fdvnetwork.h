@@ -511,6 +511,7 @@ namespace fdv
 	{
 	
 		static uint32_t const CHUNK_CAPACITY = 32;
+        static uint32_t const TIMEOUT        = 3000;
 	
 	public:
 	
@@ -547,10 +548,14 @@ namespace fdv
 		// implements TCPConnectionHandler
 		void MTD_FLASHMEM connectionHandler()
 		{			
+            getSocket()->setTimeOut(TIMEOUT);
 			while (getSocket()->isConnected())
 			{
 				CharChunkBase* chunk = m_receivedData.addChunk(CHUNK_CAPACITY);
-				chunk->setItems(getSocket()->read(chunk->data, CHUNK_CAPACITY));
+                int32_t bytesRecv = getSocket()->read(chunk->data, CHUNK_CAPACITY);
+                if (bytesRecv <= 0)
+                    break;
+				chunk->setItems(bytesRecv);
 				if (processRequest())
 					break;
 			}
@@ -634,8 +639,8 @@ namespace fdv
 						extractURLEncodedFields(contentStart, CharChunksIterator(), &m_request.form);
 					}
 				}
-				
-				dispatch();
+
+				dispatch();                
 				
 				return true;
 			}

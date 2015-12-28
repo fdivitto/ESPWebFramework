@@ -64,6 +64,7 @@ namespace fdv
 		static void delay(uint32_t ms);
 		static uint32_t getMinFreeStack();
 		static uint32_t getFreeHeap();
+        static xTaskHandle getCurrentTaskHandle();
 		
 	public:
 	

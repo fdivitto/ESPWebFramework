@@ -484,10 +484,10 @@ namespace fdv
                 f_memcpy(rambuf, src, bytesToSend);
                 int32_t chunkBytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, rambuf, bytesToSend, 0) :
                                                                        lwip_sendto(m_socket, rambuf, bytesToSend, 0, (sockaddr*)&m_remoteAddress, sizeof(m_remoteAddress));
-                if (chunkBytesSent <= 0)
+                if (chunkBytesSent < 0)
                 {
                     // error
-                    bytesSent = chunkBytesSent; // chunkBytesSent can be -1 or 0
+                    bytesSent = -1;
                     break;
                 }
                 bytesSent += chunkBytesSent;
@@ -538,9 +538,14 @@ namespace fdv
     
     
     void MTD_FLASHMEM Socket::close()
-    {
+    {        
         if (m_socket > 0)
         {
+            linger so_linger;
+            so_linger.l_onoff = 1;
+            so_linger.l_linger = 3;
+            lwip_setsockopt(m_socket, SOL_SOCKET, SO_LINGER, (void *)&so_linger, sizeof(so_linger));
+            
             lwip_close(m_socket);
             m_socket = 0;
         }
@@ -571,6 +576,7 @@ namespace fdv
     void MTD_FLASHMEM Socket::setTimeOut(uint32_t timeOut)
     {
         lwip_setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, (void *)&timeOut, sizeof(timeOut));
+        lwip_setsockopt(m_socket, SOL_SOCKET, SO_SNDTIMEO, (void *)&timeOut, sizeof(timeOut));
     }
     
     
@@ -664,7 +670,8 @@ namespace fdv
             CharChunkBase* chunk = iter.getCurrentChunk();
             while (chunk)
             {
-                m_httpHandler->getSocket()->write((uint8_t const*)chunk->data, chunk->getItems());
+                if (m_httpHandler->getSocket()->write((uint8_t const*)chunk->data, chunk->getItems()) < 0)
+                    break;
                 chunk = iter.moveToNextChunk();
             }
             m_content.clear();
@@ -860,7 +867,7 @@ namespace fdv
     
     
     void MTD_FLASHMEM HTTPTemplateResponse::flush()
-    {
+    {        
         // {{now}} predefined parameter : display date/time
         char datetimeStr[34];
         DateTime::now().format(datetimeStr, FSTR("%c"));
