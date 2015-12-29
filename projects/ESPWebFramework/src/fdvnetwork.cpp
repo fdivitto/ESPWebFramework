@@ -457,12 +457,22 @@ namespace fdv
     }
     
     // ret -1 = error, ret 0 = disconnected
-    int32_t MTD_FLASHMEM Socket::peek(void* buffer, uint32_t maxLength)
+    int32_t MTD_FLASHMEM Socket::peek(void* buffer, uint32_t maxLength, bool nowait)
     {
-        int32_t bytesRecv = lwip_recv(m_socket, buffer, maxLength, MSG_PEEK);
-        if (maxLength > 0)
+        int32_t flags = MSG_PEEK | (nowait? MSG_DONTWAIT : 0);
+        int32_t bytesRecv = lwip_recv(m_socket, buffer, maxLength, flags);
+        if (maxLength > 0 && !nowait)
             m_connected = (bytesRecv > 0);
         return bytesRecv;
+    }
+    
+    
+    bool MTD_FLASHMEM Socket::checkConnection()
+    {
+        uint8_t b;
+        peek(&b, 1, true);
+        int32_t lr = getLastError();
+        return (lr == 0 || lr == EAGAIN) && isConnected();
     }
     
     
@@ -471,6 +481,9 @@ namespace fdv
     int32_t MTD_FLASHMEM Socket::write(void const* buffer, uint32_t length)
     {
         static uint32_t const MAXCHUNKSIZE = 128;
+        
+        if (!checkConnection())
+            return -1;
         
         int32_t bytesSent = 0;
         if (isStoredInFlash(buffer))
@@ -482,9 +495,10 @@ namespace fdv
             {
                 uint32_t bytesToSend = min(MAXCHUNKSIZE, length - bytesSent);
                 f_memcpy(rambuf, src, bytesToSend);
-                int32_t chunkBytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, rambuf, bytesToSend, 0) :
+                int32_t chunkBytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, rambuf, bytesToSend, MSG_MORE) :
                                                                        lwip_sendto(m_socket, rambuf, bytesToSend, 0, (sockaddr*)&m_remoteAddress, sizeof(m_remoteAddress));
-                if (chunkBytesSent < 0)
+                
+                if (chunkBytesSent < 0 || getLastError() != 0)
                 {
                     // error
                     bytesSent = -1;
@@ -541,11 +555,6 @@ namespace fdv
     {        
         if (m_socket > 0)
         {
-            linger so_linger;
-            so_linger.l_onoff = 1;
-            so_linger.l_linger = 3;
-            lwip_setsockopt(m_socket, SOL_SOCKET, SO_LINGER, (void *)&so_linger, sizeof(so_linger));
-            
             lwip_close(m_socket);
             m_socket = 0;
         }
@@ -576,7 +585,15 @@ namespace fdv
     void MTD_FLASHMEM Socket::setTimeOut(uint32_t timeOut)
     {
         lwip_setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, (void *)&timeOut, sizeof(timeOut));
-        lwip_setsockopt(m_socket, SOL_SOCKET, SO_SNDTIMEO, (void *)&timeOut, sizeof(timeOut));
+    }
+    
+    
+    int32_t MTD_FLASHMEM Socket::getLastError()
+    {
+        int32_t r = 0;
+        socklen_t l = sizeof(int32_t);
+        lwip_getsockopt(m_socket, SOL_SOCKET, SO_ERROR, (void *)&r, &l);
+        return r;
     }
     
     

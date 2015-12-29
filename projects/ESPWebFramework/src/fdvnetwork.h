@@ -312,7 +312,7 @@ namespace fdv
         int32_t read(void* buffer, uint32_t maxLength, IPAddress* sourceAddress, uint16_t* sourcePort);
 		
 		// ret -1 = error, ret 0 = disconnected
-		int32_t peek(void* buffer, uint32_t maxLength);
+		int32_t peek(void* buffer, uint32_t maxLength, bool nowait = false);
 		
 		// buffer can stay in RAM of Flash
 		// ret -1 = error, ret 0 = disconnected
@@ -347,6 +347,10 @@ namespace fdv
         
         // timeOut in ms (0 = no timeout)
         void setTimeOut(uint32_t timeOut);
+        
+        int32_t getLastError();
+        
+        bool checkConnection();
         
 
     private:
@@ -548,7 +552,7 @@ namespace fdv
 		// implements TCPConnectionHandler
 		void MTD_FLASHMEM connectionHandler()
 		{			
-            getSocket()->setTimeOut(TIMEOUT);
+            //getSocket()->setTimeOut(TIMEOUT);
 			while (getSocket()->isConnected())
 			{
 				CharChunkBase* chunk = m_receivedData.addChunk(CHUNK_CAPACITY);
