@@ -647,7 +647,7 @@ namespace fdv
 						extractURLEncodedFields(contentStart, CharChunksIterator(), &m_request.form);
 					}
 				}
-
+                
 				dispatch();                
 				
 				return true;
@@ -793,13 +793,11 @@ namespace fdv
 		void addHeader(char const* key, char const* value);
 		
 		// accept RAM or Flash data
-		// WARN: data is not copied! Just a pointer is stored
-		void addContent(void const* data, uint32_t length);
+		void addContent(void const* data, uint32_t length, bool freeOnDestroy = false);
 		
 		// accept RAM or Flash strings
-		// WARN: data is not copied! Just a pointer is stored
 		// can be called many times
-		void addContent(char const* str);
+		void addContent(char const* str, bool freeOnDestroy = false);
 				
 		// can be called many times
 		// WARN: src content is not copied! Just data pointers are stored

@@ -625,19 +625,18 @@ namespace fdv
     
     
     // accept RAM or Flash data
-    // WARN: data is not copied! Just a pointer is stored
-    void MTD_FLASHMEM HTTPResponse::addContent(void const* data, uint32_t length)
+    void MTD_FLASHMEM HTTPResponse::addContent(void const* data, uint32_t length, bool freeOnDestroy)
     {
-        m_content.addChunk((char*)data, length, false);
+        m_content.addChunk((char*)data, length, freeOnDestroy);
     }
     
     
     // accept RAM or Flash strings
     // WARN: data is not copied! Just a pointer is stored
     // can be called many times
-    void MTD_FLASHMEM HTTPResponse::addContent(char const* str)
+    void MTD_FLASHMEM HTTPResponse::addContent(char const* str, bool freeOnDestroy)
     {
-        addContent(str, f_strlen(str));
+        addContent(str, f_strlen(str), freeOnDestroy);
     }
       
       
