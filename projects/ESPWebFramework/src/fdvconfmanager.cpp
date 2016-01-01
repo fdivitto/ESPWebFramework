@@ -1068,6 +1068,12 @@ namespace fdv
             
             // set Routing
             HTTPHelperConfiguration::setRouting(this);                
+            
+            // reboot
+            HTTPTemplateResponse response(getHttpHandler(), FSTR("reboot.html"));
+            reboot(3000);	// reboot in 3s
+            response.flush();
+            return;
         }
                 
         // get WiFi mode
