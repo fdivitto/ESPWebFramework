@@ -8,8 +8,8 @@ Network Configuration
 
 <script type="text/javascript">
   function enableFields() {
-    document.getElementById('staticip_fields').disabled = !document.getElementById("RadioStcIP").checked;
-	document.getElementById('dhcpd_fields').disabled = !document.getElementById("ch_dhcpd").checked;
+    document.getElementById('staticip_fields').style.display = document.getElementById("RadioStcIP").checked? '' : 'none';
+	document.getElementById('dhcpd_fields').style.display = document.getElementById("ch_dhcpd").checked? '' : 'none';
   }
 
   window.onload = enableFields;
@@ -23,7 +23,7 @@ Network Configuration
     <div id="subcontent">
       <input type='radio' id='RadioDynIP' name='CLIPMOD' value='dynIP' onclick="enableFields()" {{dynIP}}> Dynamic IP (use DHCP) <br>
       <input type='radio' id='RadioStcIP' name='CLIPMOD' value='stcIP' onclick="enableFields()" {{stcIP}}> Static IP <br>      
-      <fieldset id="staticip_fields">
+      <fieldset id="staticip_fields" style="display:none">
 	    IP: <input type='text' name='CLIP' value='{{CLIP}}'> <br>
 		Netmask: <input type='text' name='CLMSK' value='{{CLMSK}}'> <br>
 		Gateway: <input type='text' name='CLGTW' value='{{CLGTW}}'> <br>
@@ -40,11 +40,11 @@ Network Configuration
     </div>
   </fieldset>
   
-  <fieldset {{DISP_DHCPD}}
+  <fieldset {{DISP_DHCPD}}>
     <p><h3>DHCP Server Configuration</h3></p>
     <div id="subcontent">
 	  <input id="ch_dhcpd" type='checkbox' name='DHCPD' value='1' {{DHCPD}} onclick="enableFields()"> Enable DHCP Server <br>	
-	  <fieldset id="dhcpd_fields">
+	  <fieldset id="dhcpd_fields" style="display:none">
 	    Start IP: <input type='text' name='startIP' value='{{startIP}}'> <br>
 	    End IP: <input type='text' name='endIP' value='{{endIP}}'> <br>
 	  </fieldset>

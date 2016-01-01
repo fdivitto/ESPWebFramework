@@ -82,7 +82,7 @@ Configuration Wizard
 				currentVisible = currentSteps[currentStepIdx];
 				document.getElementById(currentVisible).style.display = '';
 				var isLast = (currentStepIdx == currentSteps.length - 1 && upSteps.length == 1);
-				document.getElementById('ButtonApply').disabled = isLast? "" : "disabled";
+				document.getElementById('ButtonApply').style.display = isLast? "" : "none";
 				document.getElementById('ButtonNext').disabled = isLast? "disabled" : "";
 				var isFirst = (currentStepIdx == 0 && upSteps.length == 0);
 				document.getElementById('ButtonPrevious').disabled = isFirst? "disabled" : "";
@@ -123,6 +123,11 @@ Configuration Wizard
 			document.getElementById('dhcpd_fields').style.display = document.getElementById("DHCPD").checked? '' : 'none';
 		}
 
+        function SelSSID(el)
+        {
+            document.getElementById('CLSSID').value = el.value;
+        }        
+        
 		window.onload = function() 
 		{
 			CLIPMOD_onclick();
@@ -136,7 +141,7 @@ Configuration Wizard
                     document.getElementById('TAB_scan').innerHTML = xmlhttp.responseText;
                 }
             };
-            xmlhttp.open("GET", "/wifiscan2", true);
+            xmlhttp.open("GET", "/wifiscan", true);
             xmlhttp.send();            
 		}
 
@@ -167,7 +172,7 @@ Configuration Wizard
    <p><h2>Client Mode WiFi</h2></p>
    
    <div id="subcontent">
-  	  SSID: <input type='text' name='CLSSID' value='{{CLSSID}}'> <br>
+  	  SSID: <input type='text' id='CLSSID' name='CLSSID' value='{{CLSSID}}'> <br>
 	  Password: <input type='text' name='CLPSW' value='{{CLPSW}}'> <br>
    </div>      
 	
@@ -361,7 +366,7 @@ Configuration Wizard
 		</td>
 
         <td>
-            <input id="ButtonApply" type="submit" value="Apply" disabled="disabled" />
+            <input id="ButtonApply" type="submit" value="Apply" style="display:none"/>
 		</td>
     </tr>
 

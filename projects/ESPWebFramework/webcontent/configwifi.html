@@ -7,12 +7,33 @@ WiFi Configuration
 
 
 <script type="text/javascript">
-  function enableFields() {
-    document.getElementById('clientmode_fields').disabled = !(document.getElementById("RadioClientMode").checked || document.getElementById("RadioBoths").checked);
-    document.getElementById('apmode_fields').disabled = !(document.getElementById("RadioAPMode").checked || document.getElementById("RadioBoths").checked);
-  }
+    function enableFields()
+    {
+        document.getElementById('clientmode_fields').style.display = (document.getElementById("RadioClientMode").checked || document.getElementById("RadioBoths").checked)? '' : 'none';
+        document.getElementById('apmode_fields').style.display = (document.getElementById("RadioAPMode").checked || document.getElementById("RadioBoths").checked)? '' : 'none';
+    }
 
-  window.onload = enableFields;
+    function SelSSID(el)
+    {
+        document.getElementById('CLSSID').value = el.value;
+    }
+    
+    window.onload = function() 
+    {
+        enableFields();
+        
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function()
+        {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+            {
+                document.getElementById('TAB_scan').innerHTML = xmlhttp.responseText;
+            }
+        };
+        xmlhttp.open("GET", "/wifiscan", true);
+        xmlhttp.send();            
+    }
+      
 </script>
 
 
@@ -25,15 +46,19 @@ WiFi Configuration
     <input type='radio' id='RadioBoths' name='Mode' value='bothsmode' {{bothsmode}} onclick="enableFields()"> Client and Access Point Mode <br>
   </div>
 
-  <fieldset id="clientmode_fields">
+  <fieldset id="clientmode_fields" style="display:none">
     <p><h3>Client Mode WiFi Configuration</h3></p>
     <div id="subcontent">			
-  	  SSID: <input type='text' name='CLSSID' value='{{CLSSID}}'> <a href="wifiscan" class='spaced'>Scan</a> <br>
+  	  SSID: <input type='text' id='CLSSID' name='CLSSID' value='{{CLSSID}}'> <br>
 	  Password: <input type='text' name='CLPSW' value='{{CLPSW}}'> <br>
+    </div>
+    <div id="subcontent">
+       <table id="TAB_scan" class="tg">      
+       </table>
     </div>
   </fieldset>
   
-  <fieldset id="apmode_fields">
+  <fieldset id="apmode_fields" style="display:none">
     <p><h3>Access Point Mode WiFi Configuration</h3></p>
     <div id="subcontent">			
   	  SSID: <input type='text' name='APSSID' value='{{APSSID}}'> <br>

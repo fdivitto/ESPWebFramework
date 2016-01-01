@@ -529,14 +529,10 @@ namespace fdv
     
     void MTD_FLASHMEM HTTPHelperConfiguration::getClientModeWiFiParams(HTTPTemplateResponse* response)
     {
-        char const* SSID = response->getRequest().query[FSTR("AP")]; // get SSID from last scan?
+        char const* SSID;
         char const* securityKey;
-        if (!SSID)
-        {				
-            // get from configuration among the password
-            ConfigurationManager::getClientParams(&SSID, &securityKey);
-            response->addParamStr(FSTR("CLPSW"), securityKey);
-        }
+        ConfigurationManager::getClientParams(&SSID, &securityKey);
+        response->addParamStr(FSTR("CLPSW"), securityKey);
         response->addParamStr(FSTR("CLSSID"), SSID);
     }
     
@@ -832,15 +828,15 @@ namespace fdv
         // get client mode IP configuration
         HTTPHelperConfiguration::getClientModeIP(this);
         WiFi::Mode mode = ConfigurationManager::getWiFiMode();
-        addParamStr(STR_DISP_CLIPCONF, mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint? STR_ : STR_disabled);
+        addParamStr(STR_DISP_CLIPCONF, mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint? STR_ : STR_style_display_none);
         
         // get access point IP configuration
         HTTPHelperConfiguration::getAPModeIP(this);
-        addParamStr(STR_DISP_APIPCONF, mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? STR_ : STR_disabled);
+        addParamStr(STR_DISP_APIPCONF, mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? STR_ : STR_style_display_none);
         
         // get DHCP server configuration
         HTTPHelperConfiguration::getDHCPServer(this);
-        addParamStr(FSTR("DISP_DHCPD"), mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? STR_ : STR_disabled);
+        addParamStr(FSTR("DISP_DHCPD"), mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint? STR_ : STR_style_display_none);
         
         // get DNS server configuration
         IPAddress::IPAddressStr DNS1str, DNS2str;
@@ -891,38 +887,6 @@ namespace fdv
     
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-	// HTTPWiFiScanResponse
-
-    MTD_FLASHMEM HTTPWiFiScanResponse::HTTPWiFiScanResponse(HTTPHandler* httpHandler, char const* filename)
-        : HTTPTemplateResponse(httpHandler, filename)
-    {
-    }
-    
-    void MTD_FLASHMEM HTTPWiFiScanResponse::flush()
-    {
-        uint32_t count = 0;
-        WiFi::APInfo* infos = WiFi::getAPList(&count, true);
-
-        LinkedCharChunks* linkedChunks = addParamCharChunks(FSTR("APS"));
-        for (uint32_t i = 0; i != count; ++i)
-        {
-            linkedChunks->addChunk(f_printf(FSTR("<tr> <td><a href='confwifi?AP=%s'>%s</a></td> <td>%02X:%02X:%02X:%02X:%02X:%02X</td> <td>%d</td> <td>%d</td> <td>%s</td> </tr>"), 
-                                            infos[i].SSID,
-                                            infos[i].SSID,
-                                            infos[i].BSSID[0], infos[i].BSSID[1], infos[i].BSSID[2], infos[i].BSSID[3], infos[i].BSSID[4], infos[i].BSSID[5],
-                                            infos[i].Channel,
-                                            infos[i].RSSI,
-                                            WiFi::convSecurityProtocolToString(infos[i].AuthMode)),
-                                   true);
-        }						
-
-        HTTPTemplateResponse::flush();
-    }
-
-    
-    
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
 	// HTTPWiFiScanResponseHTMLRows
     // Helper for HTTPWizardConfigurationResponse
 
@@ -942,7 +906,8 @@ namespace fdv
         addContent(FSTR("<tr> <th>SSID</th> <th>Address</th> <th>Channel</th> <th>RSSI</th> <th>Security</th> </tr>"));
         for (uint32_t i = 0; i != count; ++i)
         {
-            addContent(f_printf(FSTR("<tr> <td>%s</td> <td>%02X:%02X:%02X:%02X:%02X:%02X</td> <td>%d</td> <td>%d</td> <td>%s</td> </tr>"), 
+            addContent(f_printf(FSTR("<tr> <td><input type='radio' name='selssid' value='%s' onclick='SelSSID(this)'>%s</td> <td>%02X:%02X:%02X:%02X:%02X:%02X</td> <td>%d</td> <td>%d</td> <td>%s</td> </tr>"), 
+                                infos[i].SSID,
                                 infos[i].SSID,
                                 infos[i].BSSID[0], infos[i].BSSID[1], infos[i].BSSID[2], infos[i].BSSID[3], infos[i].BSSID[4], infos[i].BSSID[5],
                                 infos[i].Channel,

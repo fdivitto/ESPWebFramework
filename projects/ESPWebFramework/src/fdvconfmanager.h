@@ -306,18 +306,6 @@ namespace fdv
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-	// HTTPWiFiScanResponse
-
-	struct HTTPWiFiScanResponse : public HTTPTemplateResponse
-	{
-		HTTPWiFiScanResponse(HTTPHandler* httpHandler, char const* filename);
-		
-		virtual void flush();
-	};
-
-    
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
 	// HTTPWiFiScanResponseHTMLRows
     // Helper for HTTPWizardConfigurationResponse
 
@@ -390,7 +378,6 @@ namespace fdv
                 {FSTR("/conftime"),   (PageHandler)&DefaultHTTPHandler::get_conftime},
                 {FSTR("/reboot"),     (PageHandler)&DefaultHTTPHandler::get_reboot},
                 {FSTR("/restore"),    (PageHandler)&DefaultHTTPHandler::get_restore},
-                {FSTR("/wifiscan2"),  (PageHandler)&DefaultHTTPHandler::get_wifiscan2},
                 {FSTR("*"),           (PageHandler)&DefaultHTTPHandler::get_all},
             };
             setRoutes(routes, sizeof(routes) / sizeof(Route));
@@ -431,12 +418,6 @@ namespace fdv
         }
 
         void MTD_FLASHMEM get_wifiscan()
-        {
-            HTTPWiFiScanResponse response(this, FSTR("wifiscan.html"));
-            response.flush();
-        }
-
-        void MTD_FLASHMEM get_wifiscan2()
         {
             HTTPWiFiScanResponseHTMLRows response(this);
             response.flush();
