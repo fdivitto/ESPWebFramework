@@ -8,8 +8,8 @@ WiFi Configuration
 
 <script type="text/javascript">
   function enableFields() {
-    document.getElementById('clientmode_fields').disabled = !document.getElementById("ch_clientmode").checked;
-    document.getElementById('apmode_fields').disabled = !document.getElementById("ch_apmode").checked;
+    document.getElementById('clientmode_fields').disabled = !(document.getElementById("RadioClientMode").checked || document.getElementById("RadioBoths").checked);
+    document.getElementById('apmode_fields').disabled = !(document.getElementById("RadioAPMode").checked || document.getElementById("RadioBoths").checked);
   }
 
   window.onload = enableFields;
@@ -20,8 +20,9 @@ WiFi Configuration
 
   <p><h3>WiFi Mode</h3></p>
   <div id="subcontent">			
-	<input id="ch_clientmode" type='checkbox' name='clientmode' value='1' {{clientmode}} onclick="enableFields()"> Client Mode <br>
-	<input id="ch_apmode" type='checkbox' name='apmode' value='1' {{apmode}} onclick="enableFields()"> Access Point Mode <br>
+    <input type='radio' id='RadioClientMode' name='Mode' value='clientmode' {{clientmode}} onclick="enableFields()"> Client Mode <br>
+    <input type='radio' id='RadioAPMode' name='Mode' value='apmode' {{apmode}} onclick="enableFields()"> Access Point Mode <br>
+    <input type='radio' id='RadioBoths' name='Mode' value='bothsmode' {{bothsmode}} onclick="enableFields()"> Client and Access Point Mode <br>
   </div>
 
   <fieldset id="clientmode_fields">

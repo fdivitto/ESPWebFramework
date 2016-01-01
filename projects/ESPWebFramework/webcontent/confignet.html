@@ -8,7 +8,7 @@ Network Configuration
 
 <script type="text/javascript">
   function enableFields() {
-    document.getElementById('staticip_fields').disabled = !document.getElementById("ch_staticip").checked;
+    document.getElementById('staticip_fields').disabled = !document.getElementById("RadioStcIP").checked;
 	document.getElementById('dhcpd_fields').disabled = !document.getElementById("ch_dhcpd").checked;
   }
 
@@ -21,8 +21,9 @@ Network Configuration
   <fieldset {{DISP_CLIPCONF}}>
     <p><h3>Client Mode IP Configuration</h3></p>
     <div id="subcontent">
-      <input id="ch_staticip" type='checkbox' name='staticIP' value='1' {{staticIP}} onclick="enableFields()"> Static IP <br>	
-	  <fieldset id="staticip_fields">
+      <input type='radio' id='RadioDynIP' name='CLIPMOD' value='dynIP' onclick="enableFields()" {{dynIP}}> Dynamic IP (use DHCP) <br>
+      <input type='radio' id='RadioStcIP' name='CLIPMOD' value='stcIP' onclick="enableFields()" {{stcIP}}> Static IP <br>      
+      <fieldset id="staticip_fields">
 	    IP: <input type='text' name='CLIP' value='{{CLIP}}'> <br>
 		Netmask: <input type='text' name='CLMSK' value='{{CLMSK}}'> <br>
 		Gateway: <input type='text' name='CLGTW' value='{{CLGTW}}'> <br>
@@ -52,8 +53,8 @@ Network Configuration
   
   <p><h3>Domain Name Server (DNS) Address</h3></p>
   <div id="subcontent">
-    Primary DNS: <input type='test' name='DNS1' value='{{DNS1}}'> <br>
-    Secondary DNS: <input type='test' name='DNS2' value='{{DNS2}}'> <br>
+    Primary DNS: <input type='text' name='DNS1' value='{{DNS1}}'> <br>
+    Secondary DNS: <input type='text' name='DNS2' value='{{DNS2}}'> <br>
   </div>
 
   <p><h3>Routing</h3></p>
