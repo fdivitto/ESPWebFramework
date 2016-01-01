@@ -629,8 +629,12 @@ namespace fdv
 					int32_t missingBytes = headerEnd.getPosition() + contentLength - m_receivedData.getItemsCount();
 					while (getSocket()->isConnected() && missingBytes > 0)
 					{
-						CharChunkBase* chunk = m_receivedData.addChunk(missingBytes);
-						chunk->setItems(getSocket()->read(chunk->data, missingBytes));
+                        int32_t bytesToRead = (CHUNK_CAPACITY < missingBytes? CHUNK_CAPACITY : missingBytes);
+						CharChunkBase* chunk = m_receivedData.addChunk(bytesToRead);
+                        int32_t bytesRecv = getSocket()->read(chunk->data, bytesToRead);
+                        if (bytesRecv <= 0)
+                            break;
+						chunk->setItems(bytesRecv);
 						missingBytes -= chunk->getItems();
 					}
 					m_receivedData.append(0);	// add additional terminating "0"
