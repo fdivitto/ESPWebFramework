@@ -3,7 +3,7 @@ WebESP8266.h
 Binary Bidirectional Protocol for ESP8266
 
 Created by Fabrizio Di Vittorio (fdivitto2013@gmail.com)
-Copyright (c) 2015 Fabrizio Di Vittorio.
+Copyright (c) 2015/2016 Fabrizio Di Vittorio.
 All rights reserved.
 
 This library is free software; you can redistribute it and/or

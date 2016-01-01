@@ -1,6 +1,6 @@
 /*
 # Created by Fabrizio Di Vittorio (fdivitto2013@gmail.com)
-# Copyright (c) 2015 Fabrizio Di Vittorio.
+# Copyright (c) 2015/2016 Fabrizio Di Vittorio.
 # All rights reserved.
 
 # GNU GPL LICENSE
