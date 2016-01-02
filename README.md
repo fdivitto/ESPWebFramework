@@ -54,17 +54,14 @@ make flash PORT=COM7
 
 ####Here is some screenshots:
 
-WiFi configuration:
-![ss1](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/wificonf.jpg)
+WiFi configuration (Client Mode):
+![ss1](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/wificonf2.jpg)
 
-WiFi configuration - access points scan:
-![ss2](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/wifiscan.jpg)
+WiFi configuration - Access Points:
+![ss2](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/wificonf1.jpg)
 
-Network configuration (1/2):
-![ss3](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/netconf1.jpg)
-
-Network configuration (2/2):
-![ss3](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/netconf2.jpg)
+Network configuration:
+![ss3](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/netconf.jpg)
 
 Web server, UART and services configuration:
 ![ss4](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/confserv.jpg)
@@ -74,3 +71,6 @@ Date and Time configuration:
 
 GPIO configuration and control:
 ![ss6](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/confgpio.jpg)
+
+Setup Wizard (first page):
+![ss6](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/wizard.jpg)
