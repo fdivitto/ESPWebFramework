@@ -247,6 +247,11 @@ namespace fdv
         }
         APInfo* infos;
         getAPInfo(&infos, count);
+        if (*count == 0)
+        {
+            // retry
+            return getAPList(count, true);
+        }
         return infos;
     }
 
