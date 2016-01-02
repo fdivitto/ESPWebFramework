@@ -407,6 +407,12 @@ namespace fdv
         
         void MTD_FLASHMEM get_home()
         {
+            if (FlashDictionary::getInt(STR_wizdone, 0) == 0)
+            {
+                // execute setup wizard instead of the home page
+                get_confwizard();
+                return;
+            }
             HTTPTemplateResponse response(this, FSTR("home.html"));
             response.flush();
         }

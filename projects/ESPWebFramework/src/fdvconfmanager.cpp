@@ -1068,6 +1068,9 @@ namespace fdv
             
             // set Routing
             HTTPHelperConfiguration::setRouting(this);                
+
+            // set the wizard done flag
+            FlashDictionary::setInt(STR_wizdone, 1);
             
             // reboot
             HTTPTemplateResponse response(getHttpHandler(), FSTR("reboot.html"));
