@@ -57,7 +57,7 @@ make flash PORT=COM7
 WiFi configuration (Client Mode):
 ![ss1](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/wificonf2.jpg)
 
-WiFi configuration - Access Points:
+WiFi configuration (Access Point):
 ![ss2](https://github.com/fdivitto/ESPWebFramework/raw/master/projects/ESPWebFramework/docs/images/wificonf1.jpg)
 
 Network configuration:
