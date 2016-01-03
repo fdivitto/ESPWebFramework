@@ -552,7 +552,7 @@ namespace fdv
 		// implements TCPConnectionHandler
 		void MTD_FLASHMEM connectionHandler()
 		{			
-            //getSocket()->setTimeOut(TIMEOUT);
+            getSocket()->setTimeOut(TIMEOUT);
 			while (getSocket()->isConnected())
 			{
 				CharChunkBase* chunk = m_receivedData.addChunk(CHUNK_CAPACITY);

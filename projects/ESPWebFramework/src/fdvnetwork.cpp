@@ -491,33 +491,28 @@ namespace fdv
             return -1;
         
         int32_t bytesSent = 0;
-        if (isStoredInFlash(buffer))
+        // send in chunks of up to MAXCHUNKSIZE bytes
+        uint8_t rambuf[min(length, MAXCHUNKSIZE)];
+        uint8_t const* src = (uint8_t const*)buffer;
+        while (bytesSent < length)
         {
-            // copy from Flash, send in chunks of up to MAXCHUNKSIZE bytes
-            uint8_t rambuf[min(length, MAXCHUNKSIZE)];
-            uint8_t const* src = (uint8_t const*)buffer;
-            while (bytesSent < length)
+            uint32_t bytesToSend = min(MAXCHUNKSIZE, length - bytesSent);
+            f_memcpy(rambuf, src, bytesToSend);
+            int32_t chunkBytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, rambuf, bytesToSend, MSG_DONTWAIT) :
+                                                                   lwip_sendto(m_socket, rambuf, bytesToSend, 0, (sockaddr*)&m_remoteAddress, sizeof(m_remoteAddress));
+            int32_t lasterr = getLastError();                
+            if (lasterr == EAGAIN || lasterr == EWOULDBLOCK)
             {
-                uint32_t bytesToSend = min(MAXCHUNKSIZE, length - bytesSent);
-                f_memcpy(rambuf, src, bytesToSend);
-                int32_t chunkBytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, rambuf, bytesToSend, MSG_MORE) :
-                                                                       lwip_sendto(m_socket, rambuf, bytesToSend, 0, (sockaddr*)&m_remoteAddress, sizeof(m_remoteAddress));
-                
-                if (chunkBytesSent < 0 || getLastError() != 0)
-                {
-                    // error
-                    bytesSent = -1;
-                    break;
-                }
-                bytesSent += chunkBytesSent;
-                src += chunkBytesSent;
+                chunkBytesSent = 0;
             }
-        }
-        else
-        {
-            // just send as is
-            bytesSent = m_remoteAddress.sin_len == 0? lwip_send(m_socket, buffer, length, 0) :
-                                                      lwip_sendto(m_socket, buffer, length, 0, (sockaddr*)&m_remoteAddress, sizeof(m_remoteAddress));
+            else if (chunkBytesSent <= 0 || lasterr != 0)
+            {
+                // error
+                bytesSent = -1;
+                break;
+            }
+            bytesSent += chunkBytesSent;
+            src += chunkBytesSent;
         }
         if (length > 0)
             m_connected = (bytesSent > 0);
@@ -559,7 +554,8 @@ namespace fdv
     void MTD_FLASHMEM Socket::close()
     {        
         if (m_socket > 0)
-        {
+        {            
+            lwip_shutdown(m_socket, SHUT_RDWR);
             lwip_close(m_socket);
             m_socket = 0;
         }
