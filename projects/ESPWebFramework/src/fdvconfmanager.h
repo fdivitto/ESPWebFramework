@@ -364,128 +364,21 @@ namespace fdv
         
     public:
         
-        DefaultHTTPHandler()
-        {
-            static const Route routes[] =
-            {
-                {FSTR("/"),	          (PageHandler)&DefaultHTTPHandler::get_home},
-                {FSTR("/confwizard"), (PageHandler)&DefaultHTTPHandler::get_confwizard},
-                {FSTR("/confwifi"),   (PageHandler)&DefaultHTTPHandler::get_confwifi},
-                {FSTR("/wifiscan"),   (PageHandler)&DefaultHTTPHandler::get_wifiscan},
-                {FSTR("/confnet"),    (PageHandler)&DefaultHTTPHandler::get_confnet},
-                {FSTR("/confserv"),   (PageHandler)&DefaultHTTPHandler::get_confserv},
-                {FSTR("/confgpio"),   (PageHandler)&DefaultHTTPHandler::get_confgpio},
-                {FSTR("/conftime"),   (PageHandler)&DefaultHTTPHandler::get_conftime},
-                {FSTR("/reboot"),     (PageHandler)&DefaultHTTPHandler::get_reboot},
-                {FSTR("/restore"),    (PageHandler)&DefaultHTTPHandler::get_restore},
-                {FSTR("*"),           (PageHandler)&DefaultHTTPHandler::get_all},
-            };
-            setRoutes(routes, sizeof(routes) / sizeof(Route));
-        } 
+        DefaultHTTPHandler();
         
-        virtual void MTD_FLASHMEM dispatch()
-        {
-#if (FDV_INCLUDE_SERIALBINARY == 1)            
-            if (ConfigurationManager::getSerialBinary() && ConfigurationManager::getSerialBinary()->isReady())
-            {
-                StringList* routes = ConfigurationManager::getSerialBinary()->getHTTPRoutes();
-                if (routes)
-                {                
-                    for (uint32_t i = 0; i != routes->size(); ++i)
-                    {
-                        if (f_strcmp(FSTR("*"), routes->getItem(i)) == 0 || t_strcmp(getRequest().requestedPage, CharIterator(routes->getItem(i))) == 0)
-                        {
-                            ConfigurationManager::getSerialBinary()->send_CMD_HTTPREQUEST(i, this);
-                            return;
-                        }
-                    }
-                }
-            }
-#endif            
-            HTTPHandler::dispatch();
-        }
+        virtual void dispatch();
         
-        void MTD_FLASHMEM get_home()
-        {
-            if (FlashDictionary::getInt(STR_wizdone, 0) == 0)
-            {
-                // execute setup wizard instead of the home page
-                get_confwizard();
-                return;
-            }
-            HTTPTemplateResponse response(this, FSTR("home.html"));
-            response.flush();
-        }
-
-        void MTD_FLASHMEM get_confwifi()
-        {
-            HTTPWifiConfigurationResponse response(this, FSTR("configwifi.html"));
-            response.flush();
-        }
-
-        void MTD_FLASHMEM get_wifiscan()
-        {
-            HTTPWiFiScanResponseHTMLRows response(this);
-            response.flush();
-        }
-
-        void MTD_FLASHMEM get_confnet()
-        {
-            HTTPNetworkConfigurationResponse response(this, FSTR("confignet.html"));
-            response.flush();
-        }
-
-        void MTD_FLASHMEM get_confserv()
-        {
-            HTTPServicesConfigurationResponse response(this, FSTR("confserv.html"));
-            response.flush();
-        }
-
-        void MTD_FLASHMEM get_confgpio()
-        {
-            HTTPGPIOConfigurationResponse response(this, FSTR("confgpio.html"));
-            response.flush();
-        }
-
-        void MTD_FLASHMEM get_conftime()
-        {
-            HTTPTimeConfigurationResponse response(this, FSTR("conftime.html"));
-            response.flush();
-        }
-        
-        void MTD_FLASHMEM get_reboot()
-        {
-            HTTPTemplateResponse response(this, FSTR("reboot.html"));
-            reboot(3000);	// reboot in 3s
-            response.flush();
-        }
-
-        void MTD_FLASHMEM get_restore()
-        {
-            if (getRequest().method == HTTPHandler::Get)
-            {
-                HTTPTemplateResponse response(this, FSTR("restore.html"));
-                response.flush();
-            }
-            else
-            {
-                ConfigurationManager::restore();
-                get_reboot();
-            }
-        }
-        
-        void MTD_FLASHMEM get_confwizard()
-        {
-            HTTPWizardConfigurationResponse response(this, FSTR("confwizard.html"));
-            response.flush();
-        }
-        
-        void MTD_FLASHMEM get_all()
-        {
-            HTTPStaticFileResponse response(this, getRequest().requestedPage);
-            response.flush();
-        }		
-
+        void get_home();
+        void get_confwifi();
+        void get_wifiscan();
+        void get_confnet();
+        void get_confserv();
+        void get_confgpio();
+        void get_conftime();
+        void get_reboot();
+        void get_restore();
+        void get_confwizard();
+        void get_all();
     };
 	
 	

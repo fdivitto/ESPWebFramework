@@ -1217,6 +1217,252 @@ namespace fdv
     
     
     
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// TCPConnectionHandler
+    
+    void MTD_FLASHMEM TCPConnectionHandler::exec()
+    {
+        while (true)
+        {
+            if (m_socketQueue->receive(&m_socket))
+            {
+                connectionHandler();
+                m_socket.close();
+            }
+        }
+    }
+    
+    
+    
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// HTTPHandler
+    
+    void MTD_FLASHMEM HTTPHandler::connectionHandler()
+    {			
+        getSocket()->setTimeOut(TIMEOUT);
+        while (getSocket()->isConnected())
+        {
+            CharChunkBase* chunk = m_receivedData.addChunk(CHUNK_CAPACITY);
+            int32_t bytesRecv = getSocket()->read(chunk->data, CHUNK_CAPACITY);
+            if (bytesRecv <= 0)
+                break;
+            chunk->setItems(bytesRecv);
+            if (processRequest())
+                break;
+        }
+        m_receivedData.clear();
+        m_request.query.clear();
+        m_request.headers.clear();
+        m_request.form.clear();
+    }
+    
+    
+    bool MTD_FLASHMEM HTTPHandler::processRequest()
+    {			
+        // look for 0x0D 0x0A 0x0D 0x0A
+        CharChunksIterator headerEnd = t_strstr(m_receivedData.getIterator(), CharChunksIterator(), CharIterator(FSTR("\x0D\x0A\x0D\x0A")));
+        if (headerEnd.isValid())
+        {
+            // move header end after CRLFCRLF
+            headerEnd += 4;
+            
+            CharChunksIterator curc = m_receivedData.getIterator();
+            
+            // extract method (GET, POST, etc..)				
+            CharChunksIterator method = curc;
+            while (curc != headerEnd && *curc != ' ')
+                ++curc;
+            *curc++ = 0;	// ends method
+            if (t_strcmp(method, CharIterator(FSTR("GET"))) == 0)
+                m_request.method = Get;
+            else if (t_strcmp(method, CharIterator(FSTR("POST"))) == 0)
+                m_request.method = Post;
+            else if (t_strcmp(method, CharIterator(FSTR("HEAD"))) == 0)
+                m_request.method = Head;
+            else
+                m_request.method = Unsupported;
+            
+            // extract requested page and query parameters
+            m_request.requestedPage = curc;
+            while (curc != headerEnd)
+            {
+                if (*curc == '?')
+                {
+                    *curc++ = 0;	// ends requestedPage
+                    curc = extractURLEncodedFields(curc, headerEnd, &m_request.query);
+                    break;
+                }
+                else if (*curc == ' ')
+                {
+                    *curc++ = 0;	// ends requestedPage
+                    break;
+                }
+                ++curc;
+            }					
+            
+            // bypass HTTP version
+            while (curc != headerEnd && *curc != 0x0D)
+                ++curc;
+                            
+            // extract headers
+            curc = extractHeaders(curc, headerEnd, &m_request.headers);
+            
+            // look for data (maybe POST data)
+            char const* contentLengthStr = m_request.headers[STR_Content_Length];
+            if (contentLengthStr)
+            {
+                // download additional content
+                int32_t contentLength = strtol(contentLengthStr, NULL, 10);
+                int32_t missingBytes = headerEnd.getPosition() + contentLength - m_receivedData.getItemsCount();
+                while (getSocket()->isConnected() && missingBytes > 0)
+                {
+                    int32_t bytesToRead = (CHUNK_CAPACITY < missingBytes? CHUNK_CAPACITY : missingBytes);
+                    CharChunkBase* chunk = m_receivedData.addChunk(bytesToRead);
+                    int32_t bytesRecv = getSocket()->read(chunk->data, bytesToRead);
+                    if (bytesRecv <= 0)
+                        break;
+                    chunk->setItems(bytesRecv);
+                    missingBytes -= chunk->getItems();
+                }
+                m_receivedData.append(0);	// add additional terminating "0"
+                // check content type
+                char const* contentType = m_request.headers[STR_Content_Type];
+                if (contentType && f_strstr(contentType, FSTR("application/x-www-form-urlencoded")))
+                {
+                    CharChunksIterator contentStart = m_receivedData.getIterator();	// cannot use directly headerEnd because added data
+                    contentStart += headerEnd.getPosition();
+                    extractURLEncodedFields(contentStart, CharChunksIterator(), &m_request.form);
+                }
+            }
+            
+            dispatch();                
+            
+            return true;
+        }
+        else
+        {
+            // header is not complete
+            return false;
+        }
+    }
+
+    
+    CharChunksIterator MTD_FLASHMEM HTTPHandler::extractURLEncodedFields(CharChunksIterator begin, CharChunksIterator end, Fields* fields)
+    {
+        fields->setUrlDecode(true);
+        CharChunksIterator curc = begin;
+        CharChunksIterator key = curc;
+        CharChunksIterator value;
+        while (curc != end)
+        {
+            if (*curc == '=')
+            {
+                *curc = 0;	// ends key
+                value = curc;
+                ++value;	// bypass '='
+            }
+            else if (*curc == '&' || *curc == ' ' || curc.isLast())
+            {
+                bool endLoop = (*curc == ' ' || curc.isLast());
+                *curc++ = 0; // zero-ends value
+                if (key.isValid() && value.isValid())
+                {		
+                    fields->add(key, value);	        // store parameter
+                    key = value = CharChunksIterator(); // reset
+                }
+                if (endLoop)
+                    break;
+                key = curc;
+            }
+            else
+                ++curc;
+        }
+        return curc;
+    }
+    
+    
+    CharChunksIterator MTD_FLASHMEM HTTPHandler::extractHeaders(CharChunksIterator begin, CharChunksIterator end, Fields* fields)
+    {		
+        CharChunksIterator curc = begin;
+        CharChunksIterator key;
+        CharChunksIterator value;
+        while (curc != end)
+        {
+            if (*curc == 0x0D && key.isValid() && value.isValid())  // CR?
+            {
+                *curc = 0;	// ends key
+                // store header
+                fields->add(key, value);
+                key = value = CharChunksIterator(); // reset
+            }					
+            else if (!isspace(*curc) && !key.isValid())
+            {
+                // bookmark "key"
+                key = curc;
+            }
+            else if (!value.isValid() && *curc == ':')
+            {
+                *curc++ = 0;	// ends value
+                // bypass spaces
+                while (curc != end && isspace(*curc))
+                    ++curc;
+                // bookmark value
+                value = curc;
+            }
+            ++curc;					
+        }
+        return curc;
+    }
+    
+    
+    void MTD_FLASHMEM HTTPHandler::dispatch()
+    {
+        for (uint32_t i = 0; i != m_routesCount; ++i)
+        {
+            if (f_strcmp(FSTR("*"), m_routes[i].page) == 0 || t_strcmp(m_request.requestedPage, CharIterator(m_routes[i].page)) == 0)
+            {
+                (this->*m_routes[i].pageHandler)();
+                return;
+            }
+        }
+        // not found (routes should always have route "*" to handle 404 not found)
+    }
+    
+    
+    void MTD_FLASHMEM HTTPHandler::setRoutes(Route const* routes, uint32_t routesCount)
+    {
+        m_routes      = routes;
+        m_routesCount = routesCount;
+    }
+    
+    
+    
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// HTTPStaticFileResponse
+    
+    void MTD_FLASHMEM HTTPStaticFileResponse::flush()
+    {
+        char const* mimetype;
+        void const* data;
+        uint16_t dataLength;
+        if (FlashFileSystem::find(m_filename.get(), &mimetype, &data, &dataLength))
+        {
+            // found				
+            setStatus(STR_200_OK);
+            addHeader(STR_Content_Type, mimetype);
+            addContent(data, dataLength);
+        }
+        else
+        {
+            // not found
+            setStatus(STR_404_Not_Found);
+        }
+        HTTPResponse::flush();
+    }
+    
 	
 }	// fdv namespace
 
