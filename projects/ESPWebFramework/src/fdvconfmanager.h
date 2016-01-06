@@ -265,6 +265,9 @@ namespace fdv
 
         static void getRouting(HTTPTemplateResponse* response);
         static void setRouting(HTTPTemplateResponse* response);
+        
+        static void GPIOSetValue(HTTPResponse* response);
+        static void GPIOConf(HTTPResponse* response);
     };
     
 
@@ -353,6 +356,46 @@ namespace fdv
 		virtual void flush();
 	};
     
+    
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// HTTPGPIOResponseHTML
+    // Just allows to read write gpio values or to configure gpio port
+    //
+    // Query string:
+    //   cmd   = get/set/conf (if not present, "get" is assumed)
+    // If cmd="get":
+    //   gpio  = 0..16
+    // If cmd="set":
+    //   gpio  = 0..16
+    //   val   = 0..1
+    //   store = 0..1 (0=not store in flash, 1= store in flash) (if not present is like "not store")
+    // If cmd="conf":
+    //   gpio  = 0..16
+    //   mode  = "in".."out"
+    //   pullup = 0..1 (if not present is like "no pullup")
+    //   store = 0..1 (0=not store in flash, 1= store in flash) (if not present is like "not store")
+    // Always returns current state (or new state when cmd=set)
+    //
+    // Example: configures GPIO2 as input
+    //   http://192.168.4.1/gpio?cmd=conf&gpio=2&mode=in
+    // Example: reads current value of GPIO2
+    //   http://192.168.4.1/gpio?cmd=get&gpio=2
+    // Example: configures GPIO2 as output
+    //   http://192.168.4.1/gpio?cmd=conf&gpio=2&mode=out
+    // Example: writes 1 to GPIO2 (without storing current value into the flash)
+    //   http://192.168.4.1/gpio?cmd=set&gpio=2&val=1
+    // Example: writes 0 to GPIO2 (without storing current value into the flash)
+    //   http://192.168.4.1/gpio?cmd=set&gpio=2&val=0
+
+	struct HTTPGPIOResponseHTML : public HTTPResponse
+	{
+		HTTPGPIOResponseHTML(HTTPHandler* httpHandler);
+		
+		virtual void flush();
+	};
+    
+    
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -374,6 +417,7 @@ namespace fdv
         void get_confnet();
         void get_confserv();
         void get_confgpio();
+        void get_gpio();
         void get_conftime();
         void get_reboot();
         void get_restore();

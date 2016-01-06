@@ -25,6 +25,25 @@ Default configuration creates an Open (without password and not encrypted) WiFi 
 Now open the page "http://192.168.4.1" and configure your device.
 
 
+####GPIO configuration and control using http gets examples
+
+- configure GPIO2 as input
+http://192.168.4.1/gpio?cmd=conf&gpio=2&mode=in
+
+- read current value of GPIO2
+http://192.168.4.1/gpio?cmd=get&gpio=2
+
+- configure GPIO2 as output
+http://192.168.4.1/gpio?cmd=conf&gpio=2&mode=out
+
+- write 1 to GPIO2 (without storing current value into the flash)
+http://192.168.4.1/gpio?cmd=set&gpio=2&val=1
+
+- write 0 to GPIO2 (without storing current value into the flash)
+http://192.168.4.1/gpio?cmd=set&gpio=2&val=0
+
+
+
 ####To build from scratch
 You need:
 - Windows 64 bit

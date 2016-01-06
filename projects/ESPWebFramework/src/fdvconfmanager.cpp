@@ -753,6 +753,61 @@ namespace fdv
     {
         ConfigurationManager::setRouting(response->getRequest().form[STR_ROUTING] != NULL);
     }
+    
+    // looks for "gpio" (0..16), "val" (0..1) and "store" (0..1) parameters in the http query
+    // if "store=1" then the gpio value is stored in flash
+    // "store" is optional
+    void MTD_FLASHMEM HTTPHelperConfiguration::GPIOSetValue(HTTPResponse* response)
+    {
+        char const* gpio = response->getRequest().query[STR_gpio];
+        char const* val  = response->getRequest().query[FSTR("val")];
+        char const* storestr = response->getRequest().query[STR_store];
+        bool store = storestr && f_strcmp(storestr, STR_1) == 0;
+        if (gpio && val)
+        {
+            uint8_t gpion = strtol(gpio, NULL, 10);
+            bool newvalue = *val - '0';
+            if (store)
+            {
+                bool configured, isOutput, pullUp, oldvalue;
+                ConfigurationManager::getGPIOParams(gpion, &configured, &isOutput, &pullUp, &oldvalue);
+                ConfigurationManager::setGPIOParams(gpion, configured, isOutput, pullUp, newvalue);                
+            }
+            GPIO(gpion).write(newvalue);
+        }
+    }
+        
+    // looks for "gpio" (0..16), "mode" (in..out), "pullup" (0..1), "store" (0..1) parameters in the http query
+    // if "store=1" then the gpio configuration is stored in flash
+    // "store" and "pullup" are optionals
+    void MTD_FLASHMEM HTTPHelperConfiguration::GPIOConf(HTTPResponse* response)
+    {
+        char const* gpiostr = response->getRequest().query[STR_gpio];        
+        char const* modestr = response->getRequest().query[STR_mode];        
+        char const* pullupstr = response->getRequest().query[STR_pullup];
+        bool pullup = pullupstr && f_strcmp(pullupstr, STR_1) == 0;
+        char const* storestr = response->getRequest().query[STR_store];
+        bool store = storestr && f_strcmp(storestr, STR_1) == 0;
+        if (gpiostr && modestr)
+        {
+            uint8_t gpio = strtol(gpiostr, NULL, 10);
+            bool mode = f_strcmp(modestr, STR_out) == 0;
+            if (store)
+            {
+                ConfigurationManager::setGPIOParams(gpio, 
+                                                    true, 
+                                                    mode, 
+                                                    pullup, 
+                                                    false);
+            }
+            GPIO g(gpio);
+            if (mode)
+                g.modeOutput();
+            else
+                g.modeInput();
+            g.enablePullUp(pullup);                            
+        }
+    }
 
     
 
@@ -898,7 +953,7 @@ namespace fdv
     void MTD_FLASHMEM HTTPWiFiScanResponseHTMLRows::flush()
     {
         setStatus(STR_200_OK);
-        addHeader(STR_Content_Type, FSTR("text/html"));            
+        addHeader(STR_Content_Type, STR_TEXTHTML);
         
         uint32_t count = 0;
         WiFi::APInfo* infos = WiFi::getAPList(&count, true);
@@ -936,31 +991,22 @@ namespace fdv
         {
             char const* gpio = getRequest().form[FSTR("GPIO")];
             if (getRequest().form[FSTR("configured")])
-            {					
-                char const* mode     = getRequest().form[FSTR("mode")];
-                char const* pullUp   = getRequest().form[FSTR("pullup")];
-                ConfigurationManager::setGPIOParams(strtol(gpio, NULL, 10), true, f_strcmp(mode, FSTR("out")) == 0, pullUp != NULL, false);
+            {		
+                // gpio enabled
+                char const* mode     = getRequest().form[STR_mode];
+                char const* pullUp   = getRequest().form[STR_pullup];
+                ConfigurationManager::setGPIOParams(strtol(gpio, NULL, 10), true, f_strcmp(mode, STR_out) == 0, pullUp != NULL, false);
                 ConfigurationManager::applyGPIO();
             }
             else if (gpio)
             {
+                // gpio disabled (not configured)
                 ConfigurationManager::setGPIOParams(strtol(gpio, NULL, 10), false, false, false, false);
             }
         }
         
-        bool configured, isOutput, pullUp, value;
+        HTTPHelperConfiguration::GPIOSetValue(this);
         
-        char const* gpio = getRequest().query[FSTR("gpio")];
-        char const* val  = getRequest().query[FSTR("val")];
-        if (gpio && val)
-        {
-            uint8_t gpion = strtol(gpio, NULL, 10);
-            ConfigurationManager::getGPIOParams(gpion, &configured, &isOutput, &pullUp, &value);
-            value = *val - '0';
-            ConfigurationManager::setGPIOParams(gpion, configured, isOutput, pullUp, value);
-            GPIO(gpion).write(value);
-        }
-            
         LinkedCharChunks* linkedChunks = addParamCharChunks(FSTR("GPIOS"));
         for (uint32_t i = 0; i != 16; ++i)
         {
@@ -983,7 +1029,7 @@ namespace fdv
                 {
                     if (isOutput)
                     {
-                        linkedChunks->addChunk(f_printf(FSTR("<td><a href='confgpio?gpio=%d&val=%d' class='link_button2'>%s</a></td> </tr>"), i, !value, value? STR_HI:STR_LO), true);
+                        linkedChunks->addChunk(f_printf(FSTR("<td><a href='confgpio?gpio=%d&val=%d&store=1' class='link_button2'>%s</a></td> </tr>"), i, !value, value? STR_HI:STR_LO), true);
                     }
                     else
                     {
@@ -1001,7 +1047,45 @@ namespace fdv
     }
 	
 
+    
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// HTTPGPIOResponseHTML
 
+    MTD_FLASHMEM HTTPGPIOResponseHTML::HTTPGPIOResponseHTML(HTTPHandler* httpHandler)
+        : HTTPResponse(httpHandler, NULL)
+    {
+    }
+    
+    void MTD_FLASHMEM HTTPGPIOResponseHTML::flush()
+    {
+        setStatus(STR_200_OK);
+        addHeader(STR_Content_Type, STR_TEXTHTML);
+
+        char const* cmd = getRequest().query[FSTR("cmd")];
+        if (cmd && f_strcmp(cmd, FSTR("set")) == 0)
+        {
+            // set gpio
+            HTTPHelperConfiguration::GPIOSetValue(this);
+        }
+        else if (cmd && f_strcmp(cmd, FSTR("conf")) == 0)
+        {
+            // conf gpio
+            HTTPHelperConfiguration::GPIOConf(this);
+        }
+        
+        char const* gpio = getRequest().query[STR_gpio];
+        if (gpio)
+        {
+            uint8_t gpion = strtol(gpio, NULL, 10);
+            addContent(GPIO(gpion).read()? STR_1 : STR_0);
+        }
+        
+        HTTPResponse::flush();
+    }
+
+    
+    
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	// HTTPTimeConfigurationResponse
@@ -1133,6 +1217,7 @@ namespace fdv
             {FSTR("/confnet"),    (PageHandler)&DefaultHTTPHandler::get_confnet},
             {FSTR("/confserv"),   (PageHandler)&DefaultHTTPHandler::get_confserv},
             {FSTR("/confgpio"),   (PageHandler)&DefaultHTTPHandler::get_confgpio},
+            {FSTR("/gpio"),       (PageHandler)&DefaultHTTPHandler::get_gpio},
             {FSTR("/conftime"),   (PageHandler)&DefaultHTTPHandler::get_conftime},
             {FSTR("/reboot"),     (PageHandler)&DefaultHTTPHandler::get_reboot},
             {FSTR("/restore"),    (PageHandler)&DefaultHTTPHandler::get_restore},
@@ -1209,6 +1294,13 @@ namespace fdv
     void MTD_FLASHMEM DefaultHTTPHandler::get_confgpio()
     {
         HTTPGPIOConfigurationResponse response(this, FSTR("confgpio.html"));
+        response.flush();
+    }
+
+
+    void MTD_FLASHMEM DefaultHTTPHandler::get_gpio()
+    {
+        HTTPGPIOResponseHTML response(this);
         response.flush();
     }
 
