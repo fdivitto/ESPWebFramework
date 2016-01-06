@@ -40,6 +40,14 @@ namespace fdv
 	// GPIO
 
     
+    // gpioNum : 0..15
+    MTD_FLASHMEM GPIO::GPIO(uint32_t gpioNum)
+        : m_gpioNum(gpioNum)
+    {
+        init();
+    }
+    
+    
     void MTD_FLASHMEM GPIO::init()
     {
         static uint32_t pinReg[16] = {PERIPHS_IO_MUX_GPIO0_U, PERIPHS_IO_MUX_U0TXD_U, PERIPHS_IO_MUX_GPIO2_U, PERIPHS_IO_MUX_U0RXD_U, 
@@ -57,6 +65,33 @@ namespace fdv
     {
         PIN_FUNC_SELECT(m_pinReg, m_pinFunc);
         enablePullUp(false);
+    }
+    
+    
+    void MTD_FLASHMEM GPIO::modeInput()
+    {
+        setupAsGPIO();
+        GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 0);
+        GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 0);
+        GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 0);
+        GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 1 << m_gpioNum);
+    }
+    
+    void MTD_FLASHMEM GPIO::modeOutput()
+    {
+        setupAsGPIO();
+        GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 0);
+        GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 0);
+        GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 1 << m_gpioNum);
+        GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 0);
+    }
+    
+    void MTD_FLASHMEM GPIO::enablePullUp(bool value)
+    {
+        if (value)
+            PIN_PULLUP_EN(m_pinReg);
+        else
+            PIN_PULLUP_DIS(m_pinReg);
     }
     
     

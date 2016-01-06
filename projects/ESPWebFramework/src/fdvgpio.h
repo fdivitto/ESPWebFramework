@@ -95,40 +95,14 @@ namespace fdv
 	{
     
 	public:
-		// gpioNum : 0..15
-		GPIO(uint32_t gpioNum)
-			: m_gpioNum(gpioNum)
-		{
-            init();
-		}
+		GPIO(uint32_t gpioNum);
         		
-		void MTD_FLASHMEM modeInput()
-		{
-			setupAsGPIO();
-			GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 0);
-			GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 0);
-			GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 0);
-			GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 1 << m_gpioNum);
-		}
+		void modeInput();
+		void modeOutput();
 		
-		void MTD_FLASHMEM modeOutput()
-		{
-			setupAsGPIO();
-			GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 0);
-			GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 0);
-			GPIO_REG_WRITE(GPIO_ENABLE_W1TS_ADDRESS, 1 << m_gpioNum);
-			GPIO_REG_WRITE(GPIO_ENABLE_W1TC_ADDRESS, 0);
-		}
+		void enablePullUp(bool value);
 		
-		void MTD_FLASHMEM enablePullUp(bool value)
-		{
-			if (value)
-				PIN_PULLUP_EN(m_pinReg);
-			else
-				PIN_PULLUP_DIS(m_pinReg);
-		}
-		
-		void MTD_FLASHMEM write(bool value)
+		void write(bool value)
 		{
 			if (value)
 				GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 1 << m_gpioNum);
@@ -136,17 +110,17 @@ namespace fdv
 				GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 1 << m_gpioNum);
 		}
 		
-		void MTD_FLASHMEM writeLow()
+		void writeLow()
 		{
 			GPIO_REG_WRITE(GPIO_OUT_W1TC_ADDRESS, 1 << m_gpioNum);
 		}
 		
-		void MTD_FLASHMEM writeHigh()
+		void writeHigh()
 		{
 			GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, 1 << m_gpioNum);
 		}
 		
-		bool MTD_FLASHMEM read()
+		bool read()
 		{
 			return (bool)((GPIO_REG_READ(GPIO_IN_ADDRESS) >> m_gpioNum) & 1);
 		}
