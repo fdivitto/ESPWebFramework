@@ -68,6 +68,8 @@ namespace fdv
 	static char const STR_baud[] FLASHMEM           = "baud";
 	static char const STR_debugout[] FLASHMEM       = "debugout";
     static char const STR_Mode[] FLASHMEM           = "Mode";
+    static char const STR_mode[] FLASHMEM           = "mode";
+    static char const STR_pullup[] FLASHMEM         = "pullup";
 	static char const STR_clientmode[] FLASHMEM     = "clientmode";
 	static char const STR_apmode[] FLASHMEM         = "apmode";
     static char const STR_bothsmode[] FLASHMEM      = "bothsmode";
@@ -102,6 +104,11 @@ namespace fdv
     static char const STR_srv1[] FLASHMEM           = "srv1";
     static char const STR_srv2[] FLASHMEM           = "srv2";
     static char const STR_wizdone[] FLASHMEM        = "wizdone";
+    static char const STR_gpio[] FLASHMEM           = "gpio";
+    static char const STR_0[] FLASHMEM              = "0";
+    static char const STR_1[] FLASHMEM              = "1";
+    static char const STR_store[] FLASHMEM          = "store";
+    static char const STR_out[] FLASHMEM            = "out";
     static char const STR_style_display_none[] FLASHMEM = "style='display:none'";
 	static char const STR_200_OK[] FLASHMEM                = "200 OK";
 	static char const STR_404_Not_Found[] FLASHMEM         = "404 Not Found";
