@@ -138,7 +138,15 @@ namespace fdv
              FSTR("Enable/disable routing between networks"),
              &SerialConsole::cmd_router},
              
-            {FSTR("test"),       
+             // example:
+             //   ls
+             //   ls -l
+            {STR_ls,
+             FSTR("[-l]"), 
+             FSTR("List flash directory contents"), 
+             &SerialConsole::cmd_ls},
+
+             {FSTR("test"),       
              FSTR(""), FSTR(""), 
              &SerialConsole::cmd_test},
         };
@@ -486,6 +494,29 @@ namespace fdv
         }
     }
 
+            
+    void MTD_FLASHMEM SerialConsole::cmd_ls()
+    {
+        bool longlist = (m_paramsCount == 2 && hasParameter(1, FSTR("-l")));
+        FlashFileSystem::Item item;
+        int16_t count = 0;
+        while (FlashFileSystem::getNext(&item))
+        {
+            ++count;
+            if (longlist)
+            {
+                m_serial->printf(FSTR("%5d %10s  %s\r\n"), item.datalength, item.mimetype, item.filename);
+            }
+            else
+            {
+                m_serial->printf(FSTR("%20s"), item.filename);
+                if (count % 4 == 0)
+                    m_serial->writeNewLine();
+            }            
+        }
+        m_serial->writeNewLine();
+    }
+            
             
     void MTD_FLASHMEM SerialConsole::cmd_test()
     {

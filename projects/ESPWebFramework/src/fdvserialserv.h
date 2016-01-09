@@ -84,8 +84,9 @@ namespace fdv
 		void cmd_nslookup();        
         void cmd_uptime();
         void cmd_ping();
-        void cmd_router();        
-		void cmd_test();		
+        void cmd_router();
+        void cmd_ls();
+		void cmd_test();		        
 		
 	private:
 		Serial*                 m_serial;

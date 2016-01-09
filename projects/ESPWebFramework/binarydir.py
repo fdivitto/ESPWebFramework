@@ -28,15 +28,22 @@
 # Following formats are further processed removing unquoted controls characters (spaces, CR, LF, etc..):
 #   tpl, html, htm, xml, css
 #
-# At the top of the bin a directory of the existing files is inserted. It has following structure:
+# At the top of files flash memory there is following magick:
 #   uint32_t: MAGIC = 0x93841A03
+# Each file has following structure:
 #   file entries:
-#     uint8_t:  filename length including terminating zero (0 = End of Files)
+#     uint8_t:  flags
+#         bit 0: 1 = end of files
+#         bit 1: 1 = deleted
+#  If file exists (bit1=0):
+#     uint8_t:  filename length including terminating zero
 #     uint8_t:  mime type length including terminating zero
 #     uint16_t: file content length
 #     x-bytes:  filename data + zero
 #     x-bytes:  mime type data + zero
 #     x-bytes:  raw file data
+#  If deleted (bit1=1):
+#     uint32_t: free block size (including this length field, not including flags field)
 # All values are little-endian ("<" in the struct.pack calls)
 #
 # To optimize html, css, js this script can use "slimmer". Just install it with:
@@ -54,16 +61,16 @@ from pkgutil import iter_modules
 def module_exists(module_name):
     return module_name in [tuple_[1] for tuple_ in iter_modules()]
 
-	
+    
 do_slimmer = module_exists("slimmer")
 if do_slimmer:
-	import slimmer
+    import slimmer
 
 
 if len(sys.argv) != 4:
-	print "usage:"
-	print "  binarydir.py dirpath outfilename maxsize"
-	exit()
+    print "usage:"
+    print "  binarydir.py dirpath outfilename maxsize"
+    exit()
 
 dirpath = sys.argv[1]
 files = glob.glob(os.path.join(dirpath, "*.*"))
@@ -72,78 +79,81 @@ dirname = os.path.basename(dirpath)
 outfilename = sys.argv[2]
 
 with open(outfilename, "wb") as fw:
-	# magic
-	fw.write(struct.pack("<I", 0x93841A03))
-	# loop among files
-	for filepath in files:
-		filename = os.path.basename(filepath)
-		mimetype = mimetypes.guess_type(filepath, strict = False)[0].encode('ascii','ignore')
-		fileext = os.path.splitext(filename)[1].lower()		
-		if not mimetype:
-			# try to handle additional types unknown to mimetypes.guess_type()			
-			if fileext == ".tpl":
-				mimetype = "text/html"
-			else:
-				mimetype = "application/octet-stream"
-				
-		# get raw file data
-		with open(filepath, "rb") as fr:
-			filedata = fr.read()
-		
-		oldfilesize = len(filedata)
-		
-		# can I remove CR, LF, Tabs?
-		if do_slimmer:			
-			if fileext in [".tpl", ".html", ".htm"]:
-				filedata = slimmer.html_slimmer(filedata)
-			elif fileext in [".css"]:
-				filedata = slimmer.css_slimmer(filedata)
-			elif fileext in [".js"]:
-				filedata = slimmer.js_slimmer(filedata)			
+    # magic
+    fw.write(struct.pack("<I", 0x93841A03))
+    # loop among files
+    for filepath in files:
+        filename = os.path.basename(filepath)
+        mimetype = mimetypes.guess_type(filepath, strict = False)[0].encode('ascii','ignore')
+        fileext = os.path.splitext(filename)[1].lower()     
+        if not mimetype:
+            # try to handle additional types unknown to mimetypes.guess_type()          
+            if fileext == ".tpl":
+                mimetype = "text/html"
+            else:
+                mimetype = "application/octet-stream"
+                
+        # get raw file data
+        with open(filepath, "rb") as fr:
+            filedata = fr.read()
+        
+        oldfilesize = len(filedata)
+        
+        # can I remove CR, LF, Tabs?
+        if do_slimmer:          
+            if fileext in [".tpl", ".html", ".htm"]:
+                filedata = slimmer.html_slimmer(filedata)
+            elif fileext in [".css"]:
+                filedata = slimmer.css_slimmer(filedata)
+            elif fileext in [".js"]:
+                filedata = slimmer.js_slimmer(filedata)         
 
-		print "Adding {} mimetype = ({}) size = {}  reduced size = {}".format(filename, mimetype, oldfilesize, len(filedata))
-				
-		# filename length, mime tpye length, file content length
-		fw.write(struct.pack("<BBH", len(filename) + 1, len(mimetype) + 1, len(filedata)))
-				
-		# filename data
-		fw.write(struct.pack(str(len(filename)) + "sB", filename, 0x00))
-		
-		# mime type data
-		fw.write(struct.pack(str(len(mimetype)) + "sB", mimetype, 0x00))
-		
-		# file data
-		fw.write(filedata)
-		
-	# filename length = 0 -> end of files
-	fw.write(struct.pack("B", 0))
-	
+        print "Adding {} mimetype = ({}) size = {}  reduced size = {}".format(filename, mimetype, oldfilesize, len(filedata))
+                
+        # flags
+        fw.write(struct.pack("B", 0))
+                
+        # filename length, mime tpye length, file content length
+        fw.write(struct.pack("<BBH", len(filename) + 1, len(mimetype) + 1, len(filedata)))
+                
+        # filename data
+        fw.write(struct.pack(str(len(filename)) + "sB", filename, 0x00))
+        
+        # mime type data
+        fw.write(struct.pack(str(len(mimetype)) + "sB", mimetype, 0x00))
+        
+        # file data
+        fw.write(filedata)
+        
+    # end of files flags
+    fw.write(struct.pack("B", 1))
+    
 outsize = os.path.getsize(outfilename)
 maxsize = int(sys.argv[3])
 print "out = {} bytes   max = {} bytes".format(outsize, maxsize)
 print ""
 if outsize > maxsize:
-	print "Error! exceeded max file size."
-	sys.exit(1)
+    print "Error! exceeded max file size."
+    sys.exit(1)
 
 
-		
-		
-	
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+        
+        
+    
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

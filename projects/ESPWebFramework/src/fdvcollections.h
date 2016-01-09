@@ -771,12 +771,58 @@ struct FlashDictionary
 //   python ../esptool.py --port COM7 write_flash 0x6C000 webcontent.bin
 // Then you can use FlashFileSystem static methods to get actual files content
 // Maximum content size is 56K bytes and starts from FLASHFILESYSTEM_POS of the flash memory
+//
+// At the top of files flash memory there is following magick:
+//   uint32_t: MAGIC = 0x93841A03
+// Each file has following structure:
+//   file entries:
+//     uint8_t:  flags
+//         bit 0: 1 = end of files
+//         bit 1: 1 = deleted
+//  If file exists (bit1=0):
+//     uint8_t:  filename length including terminating zero
+//     uint8_t:  mime type length including terminating zero
+//     uint16_t: file content length
+//     x-bytes:  filename data + zero
+//     x-bytes:  mime type data + zero
+//     x-bytes:  raw file data
+//  If deleted (bit1=1):
+//     uint32_t: free block size (including this length field, not including flags field)
+// All values are little-endian
 
-struct FlashFileSystem
+
+class FlashFileSystem
 {	
-	static uint32_t const MAGIC = 0x93841A03;
-		
-	static bool find(char const* filename, char const** mimetype, void const** data, uint16_t* dataLength);
+    public:        
+
+        struct Item
+        {
+            char const* position;
+            bool        deleted;
+            uint32_t    blocksize;
+            char const* filename;
+            char const* mimetype;
+            uint16_t    datalength;
+            void const* data;
+            
+            Item()
+                : position(NULL)
+            {
+            }
+            void reset()
+            {
+                position = NULL;
+            }
+        };
+        
+        static bool getNext(Item* item);
+        static bool find(char const* filename, Item* item);
+            
+    private:
+        static uint32_t const MAGIC = 0x93841A03;
+    
+        static char const* getBase();
+        
 };
 
 
@@ -784,7 +830,8 @@ struct FlashFileSystem
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 // StringList
-// A list zero terminated strings
+// A list of zero terminated strings
+// If storage is Heap then the string is allocated into the heap
 
 class StringList
 {

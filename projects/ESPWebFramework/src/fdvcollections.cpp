@@ -568,41 +568,73 @@ void MTD_FLASHMEM LinkedCharChunks::operator=(LinkedCharChunks& c)
 // FlashFileSystem
 
 
-// filename can stay in Ram or Flash
-bool MTD_FLASHMEM FlashFileSystem::find(char const* filename, char const** mimetype, void const** data, uint16_t* dataLength)
+char const* MTD_FLASHMEM FlashFileSystem::getBase()
 {
 	char const* curc = (char const*)(FLASH_MAP_START + FLASHFILESYSTEM_POS);
 	
 	// check magic
 	if (MAGIC != *((uint32_t const*)curc))
-		return false;	// not found
-	curc += 4;
-	
-	// find file
-	while (true)
-	{
-		// filename length
-		uint8_t filenamelen = getByte(curc);
-		curc += 1;
-		uint8_t mimetypelen = getByte(curc);
-		curc += 1;
-		uint16_t filecontentlen = getWord(curc); 
-		curc += 2;
-		if (filenamelen == 0)
-			return false;	// not found
-		// check filename
-		if (f_strcmp(filename, curc) == 0)
-		{
-			// found
-			*mimetype   = curc + filenamelen;
-			*data       = (void*)(*mimetype + mimetypelen);
-			*dataLength = filecontentlen;
-			return true;
-		}
-		// bypass this file
-		curc += filenamelen + mimetypelen + filecontentlen;			
-	}
+		return NULL;	// not found
+
+    return curc + 4;
 }
+
+
+// item->position=NULL -> to get the first item
+bool MTD_FLASHMEM FlashFileSystem::getNext(Item* item)
+{
+    // first item?
+    if (item->position == NULL)
+        item->position = getBase();
+
+    if (item->position == NULL)
+        return false;   // file system not formatted
+    
+    // flags
+    uint8_t flags = getByte(item->position);
+    if (flags && 0x01)
+        return false;   // ending flag
+    item->position += 1;    
+    
+    item->deleted = flags && 0x02;    
+    
+    if (item->deleted)
+    {
+        // deleted flag, by pass data
+        item->blocksize = getDWord(item->position);
+        item->position += item->blocksize;
+    }
+    else
+    {
+        // save position to calculate blocksize (which doesn't include flags)
+        char const* spos = item->position;  
+        // get lengths
+        uint8_t filenamelen = getByte(item->position);
+        item->position += 1;
+        uint8_t mimetypelen = getByte(item->position);
+        item->position += 1;
+        item->datalength = getWord(item->position); 
+        item->position += 2;
+        // calc pointers
+        item->filename   = item->position;
+        item->mimetype   = item->position + filenamelen;
+        item->data       = (void*)(item->mimetype + mimetypelen);
+        // move to next file
+        item->position += filenamelen + mimetypelen + item->datalength;			
+        item->blocksize = spos - item->position;
+    }
+}
+
+
+// filename can stay in Ram or Flash
+bool MTD_FLASHMEM FlashFileSystem::find(char const* filename, Item* item)
+{	
+	while (getNext(item))
+        if (!item->deleted && f_strcmp(filename, item->filename) == 0)
+            return true;    // found
+    return false;   // not found
+}
+
 
 
 

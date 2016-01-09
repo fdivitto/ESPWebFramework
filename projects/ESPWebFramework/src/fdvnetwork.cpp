@@ -902,27 +902,26 @@ namespace fdv
 
     void MTD_FLASHMEM HTTPTemplateResponse::processFileRequest()
     {
-        char const* mimetype;
-        void const* data;
-        uint16_t dataLength;
-        if (m_filename && FlashFileSystem::find(m_filename, &mimetype, &data, &dataLength))
+        FlashFileSystem::Item file;
+        if (m_filename && FlashFileSystem::find(m_filename, &file))
         {
             // found
             setStatus(STR_200_OK);
             addHeader(STR_Content_Type, FSTR("text/html"));
             
             // replace parameters
-            m_replacer.start((char const*)data, (char const*)data + dataLength, &m_params, NULL);
+            m_replacer.start((char const*)file.data, (char const*)file.data + file.datalength, &m_params, NULL);
             
             // is this a specialized file (contains {%..%} blocks)?
             if (m_replacer.getBlocks()->getItemsCount() > 0 && m_replacer.getTemplateFilename() != NULL)
             {
                 // this is a specialized file
                 // load template file
-                if (FlashFileSystem::find(m_replacer.getTemplateFilename(), &mimetype, &data, &dataLength))
+                file.reset();
+                if (FlashFileSystem::find(m_replacer.getTemplateFilename(), &file))
                 {
                     // replace parameters and blocks of template file
-                    m_templateReplacer.start((char const*)data, (char const*)data + dataLength, &m_params, m_replacer.getBlocks());
+                    m_templateReplacer.start((char const*)file.data, (char const*)file.data + file.datalength, &m_params, m_replacer.getBlocks());
                     // flush resulting content
                     addContent(m_templateReplacer.getResult());
                     return;
@@ -1445,15 +1444,13 @@ namespace fdv
     
     void MTD_FLASHMEM HTTPStaticFileResponse::flush()
     {
-        char const* mimetype;
-        void const* data;
-        uint16_t dataLength;
-        if (FlashFileSystem::find(m_filename.get(), &mimetype, &data, &dataLength))
+        FlashFileSystem::Item file;
+        if (FlashFileSystem::find(m_filename.get(), &file))
         {
             // found				
             setStatus(STR_200_OK);
-            addHeader(STR_Content_Type, mimetype);
-            addContent(data, dataLength);
+            addHeader(STR_Content_Type, file.mimetype);
+            addContent(file.data, file.datalength);
         }
         else
         {
