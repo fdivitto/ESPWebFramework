@@ -148,8 +148,8 @@ namespace fdv
 	//////////////////////////////////////////////////////////////////////
     // FlashWriter
     
-    MTD_FLASHMEM FlashWriter::FlashWriter(void* dest)
-        : m_currentPage(NULL)
+    MTD_FLASHMEM FlashWriter::FlashWriter(void* dest, uint32_t maxPosition)
+        : m_currentPage(NULL), m_maxPosition((uint8_t*)(FLASH_MAP_START + maxPosition))
     {
         m_dest = (uint8_t*)dest;
         m_pageBuffer = new uint8_t[SPI_FLASH_SEC_SIZE];
@@ -191,13 +191,16 @@ namespace fdv
         }
     }
     
-    void MTD_FLASHMEM FlashWriter::write(void const* source, uint32_t size)
+    bool MTD_FLASHMEM FlashWriter::write(void const* source, uint32_t size)
     {
         for (uint8_t const* bSrc = (uint8_t const*)source; size > 0; --size, ++m_dest)
         {
+            if (m_dest >= m_maxPosition)
+                return false;
             loadPage();
             *m_writePtr = getByte(bSrc++);
         }
+        return true;
     }
     
 

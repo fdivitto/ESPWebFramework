@@ -37,7 +37,8 @@
 static uint32_t const FLASH_MAP_START      = 0x40200000;    // based on the CPU address space
 
 // Flash address space
-static uint32_t const FLASHFILESYSTEM_POS  = 0x6C000;       
+static uint32_t const FLASHFILESYSTEM_POS  = 0x6C000;
+static uint32_t const FLASHFILESYSTEM_END  = FLASHFILESYSTEM_POS + 0x10000;
 static uint32_t const FLASH_DICTIONARY_POS = 0x7A000;
 
 
@@ -119,10 +120,21 @@ namespace fdv
     class FlashWriter
     {
         public:
-            FlashWriter(void* dest);
+            FlashWriter(void* dest = NULL, uint32_t maxPosition = FLASHFILESYSTEM_END);
             ~FlashWriter();
             
-            void write(void const* source, uint32_t size);
+            bool write(void const* source, uint32_t size);
+            
+            void seek(void* newDestination)
+            {
+                m_dest = (uint8_t*)newDestination;        
+            }
+            
+            void const* getCurrentPos()
+            {
+                return m_dest;
+            }
+
             
         private:
             void loadPage();
@@ -132,6 +144,7 @@ namespace fdv
             uint8_t* m_pageBuffer;
             uint8_t* m_currentPage;
             uint8_t* m_writePtr;
+            uint8_t* m_maxPosition;
     };
     
 	
