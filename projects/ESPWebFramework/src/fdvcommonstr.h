@@ -110,6 +110,7 @@ namespace fdv
     static char const STR_store[] FLASHMEM          = "store";
     static char const STR_out[] FLASHMEM            = "out";
     static char const STR_ls[] FLASHMEM             = "ls";
+    static char const STR_rm[] FLASHMEM             = "rm";
     static char const STR_style_display_none[] FLASHMEM = "style='display:none'";
 	static char const STR_200_OK[] FLASHMEM                = "200 OK";
 	static char const STR_404_Not_Found[] FLASHMEM         = "404 Not Found";

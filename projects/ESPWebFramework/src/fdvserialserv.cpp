@@ -146,6 +146,13 @@ namespace fdv
              FSTR("List flash directory contents"), 
              &SerialConsole::cmd_ls},
 
+             // example:
+             //   rm test.html
+            {STR_rm,
+             FSTR("FILENAME"), 
+             FSTR("Remove a file"), 
+             &SerialConsole::cmd_rm},             
+             
              {FSTR("test"),       
              FSTR(""), FSTR(""), 
              &SerialConsole::cmd_test},
@@ -516,7 +523,18 @@ namespace fdv
         }
         m_serial->writeNewLine();
     }
-            
+
+
+    void MTD_FLASHMEM SerialConsole::cmd_rm()
+    {
+        if (m_paramsCount == 2)
+        {
+            APtr<char> filename( t_strdup(m_params[1]) );
+            if (!FlashFileSystem::remove(filename.get()))
+                m_serial->writeln(FSTR("File not found"));
+        }
+    }
+
             
     void MTD_FLASHMEM SerialConsole::cmd_test()
     {

@@ -86,6 +86,7 @@ namespace fdv
         void cmd_ping();
         void cmd_router();
         void cmd_ls();
+        void cmd_rm();
 		void cmd_test();		        
 		
 	private:
