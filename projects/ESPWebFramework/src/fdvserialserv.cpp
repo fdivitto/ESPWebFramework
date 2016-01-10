@@ -152,6 +152,13 @@ namespace fdv
              FSTR("FILENAME"), 
              FSTR("Remove a file"), 
              &SerialConsole::cmd_rm},             
+
+             // example:
+             //   cat test.html
+            {STR_cat,
+             FSTR("FILENAME"), 
+             FSTR("Print a file"), 
+             &SerialConsole::cmd_cat},             
              
              {FSTR("test"),       
              FSTR(""), FSTR(""), 
@@ -531,13 +538,36 @@ namespace fdv
         {
             APtr<char> filename( t_strdup(m_params[1]) );
             if (!FlashFileSystem::remove(filename.get()))
-                m_serial->writeln(FSTR("File not found"));
+                m_serial->writeln(STR_File_not_found);
+        }
+    }
+    
+    
+    void MTD_FLASHMEM SerialConsole::cmd_cat()
+    {
+        if (m_paramsCount == 2)
+        {
+            APtr<char> filename( t_strdup(m_params[1]) );
+            FlashFileSystem::Item item;
+            if (FlashFileSystem::find(filename.get(), &item))
+            {
+                m_serial->write((uint8_t const*)item.data, item.datalength);
+                m_serial->writeNewLine();
+            }
+            else
+                m_serial->writeln(STR_File_not_found);
         }
     }
 
             
     void MTD_FLASHMEM SerialConsole::cmd_test()
     {
+        /*
+        FlashFile file(FSTR("test.txt"), STR_TEXTPLAIN);
+        file.write(FSTR("This is a test file\r\n"));
+        file.write(FSTR("Second line\r\n"));
+        file.write(FSTR("Ending line\r\n"));
+        */
     }
 
         

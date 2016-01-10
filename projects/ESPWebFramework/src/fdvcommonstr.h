@@ -111,6 +111,7 @@ namespace fdv
     static char const STR_out[] FLASHMEM            = "out";
     static char const STR_ls[] FLASHMEM             = "ls";
     static char const STR_rm[] FLASHMEM             = "rm";
+    static char const STR_cat[] FLASHMEM            = "cat";
     static char const STR_style_display_none[] FLASHMEM = "style='display:none'";
 	static char const STR_200_OK[] FLASHMEM                = "200 OK";
 	static char const STR_404_Not_Found[] FLASHMEM         = "404 Not Found";
@@ -124,6 +125,7 @@ namespace fdv
     static char const STR_APPJSON[] FLASHMEM        = "application/json";
     static char const STR_TEXTPLAIN[] FLASHMEM      = "text/plain";
     static char const STR_TEXTXML[] FLASHMEM        = "text/xml";
+    static char const STR_File_not_found[] FLASHMEM = "File not found";
 }
 
 #endif
