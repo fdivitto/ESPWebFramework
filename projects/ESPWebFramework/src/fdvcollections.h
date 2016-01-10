@@ -788,6 +788,8 @@ struct FlashDictionary
 // All values are little-endian
 
 
+class FlashFile;
+
 class FlashFileSystem
 {	
     public:        
@@ -814,11 +816,44 @@ class FlashFileSystem
         static bool getNext(Item* item);
         static bool find(char const* filename, Item* item);
         static bool remove(char const* filename);
-            
+        
     private:
         static uint32_t const MAGIC = 0x93841A03;
     
         static char const* getBase();
+};
+
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+// FlashFile
+//
+// Example:
+//
+// FlashFile file(FSTR("test.txt"), STR_TEXTPLAIN);
+// file.write(FSTR("This is a test file\r\n"));
+// file.write(FSTR("Second line\r\n"));
+// file.write(FSTR("Ending line\r\n"));
+// file.close();    // not really necessary if FlashFile destructor has been called
+// Now you can open http://192.168.4.1/test.txt
+
+
+class FlashFile
+{
+    public:
+
+        FlashFile(char const* filename, char const* mimetype);
+        ~FlashFile();
+        bool write(void const* data, uint16_t size);
+        bool write(char const* string);
+        void close();
+        
+    private:
+    
+        char*       m_startPosition;
+        uint16_t    m_headerLength;
+        FlashWriter m_writer;
 };
 
 

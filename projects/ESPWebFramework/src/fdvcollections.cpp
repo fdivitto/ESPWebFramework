@@ -648,6 +648,96 @@ bool MTD_FLASHMEM FlashFileSystem::remove(char const* filename)
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
+// FlashFile
+
+MTD_FLASHMEM FlashFile::FlashFile(char const* filename, char const* mimetype)
+{
+    // remove the file if already exists
+    FlashFileSystem::remove(filename);
+    
+    // find the end of files
+    FlashFileSystem::Item item;
+    while (FlashFileSystem::getNext(&item))
+        ;
+    m_startPosition = (char*)item.thispos;
+    
+    m_writer.seek(m_startPosition);
+    
+    // write flags
+    uint8_t flags = 0x01;   // bit0 = 1 (end of files), until the file has been closed
+    m_writer.write(&flags, sizeof(flags));
+    
+    // filename length
+    uint8_t filenamelen = f_strlen(filename) + 1;
+    m_writer.write(&filenamelen, sizeof(filenamelen));
+    
+    // mimetype length
+    uint8_t mimetypelen = f_strlen(mimetype) + 1;
+    m_writer.write(&mimetypelen, sizeof(mimetypelen));
+    
+    // dummy file content length
+    uint16_t filelen = 0;
+    m_writer.write(&filelen, sizeof(filelen));
+    
+    // filename string + zero
+    m_writer.write(filename, filenamelen);
+    
+    // mimetype string + zero
+    m_writer.write(mimetype, mimetypelen);
+
+    // update currnet position
+    m_headerLength = sizeof(flags) + sizeof(filenamelen) + sizeof(mimetypelen) + sizeof(filelen) + filenamelen + mimetypelen;
+}
+
+
+MTD_FLASHMEM FlashFile::~FlashFile()
+{
+    close();
+}
+
+
+bool MTD_FLASHMEM FlashFile::write(void const* data, uint16_t size)
+{
+    return m_writer.write(data, size);
+}
+
+
+bool MTD_FLASHMEM FlashFile::write(char const* string)
+{
+    return m_writer.write(string, f_strlen(string));
+}
+
+
+void MTD_FLASHMEM FlashFile::close()
+{
+    if (m_startPosition)
+    {
+        char* currentPos = (char*)m_writer.getCurrentPos();
+        
+        // write end of files flag
+        uint8_t flags = 0x01;
+        m_writer.write(&flags, sizeof(flags));
+        
+        // calculate and write file length        
+        m_writer.seek(m_startPosition + 3);
+        uint16_t filelength = currentPos - m_startPosition - m_headerLength;
+        m_writer.write(&filelength, sizeof(filelength));
+        
+        // write flags
+        m_writer.seek(m_startPosition);
+        flags = 0x00;
+        m_writer.write(&flags, sizeof(flags));
+        
+        // file closed
+        m_startPosition = NULL;    
+    }
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 // FlashDictionary
 
 // clear the entire available space and write MAGIC at the beginning of the dictionary
