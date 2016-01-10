@@ -102,6 +102,18 @@ namespace fdv
 	// buffer can be unaligned
 	// read as little-endian
 	uint32_t getDWord(void const* buffer);
+
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+    // Copy memory between two areas of flash memory or RAM
+    // Destination must be flash memory
+    // Take care of flash pages
+    // Buffers can overlaps
+    // Buffers can be unaligned
+    // Requires 4096 bytes of free heap
+    // should be executed into a "Critical" section
+    void flashCopyMemory(void* dst, void const* src, uint32_t size);
 	
 	
 	//////////////////////////////////////////////////////////////////////

@@ -144,6 +144,40 @@ namespace fdv
 	}
 
 
+	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+
+    // should be executed into a "Critical" section
+    void flashCopyMemory(void* dst, void const* src, uint32_t size)
+    {
+        uint8_t* bDst = (uint8_t*)dst;
+        uint8_t const* bSrc = (uint8_t const*)src;
+        
+        uint8_t* page = new uint8_t[SPI_FLASH_SEC_SIZE];
+
+        while (size > 0)
+        {        
+            // alignedDest is aligned to the start of flash page (a page is SPI_FLASH_SEC_SIZE bytes)
+            uint8_t* alignedDest = (uint8_t*)((uint32_t)bDst & ~(SPI_FLASH_SEC_SIZE - 1));
+            uint32_t offset = bDst - alignedDest;
+            
+            // load page from flash
+            memcpy(page, alignedDest, SPI_FLASH_SEC_SIZE);
+            
+            // to optimize: copy byte by byte because we don't know if "src" is on RAM or Flash
+            for (; size > 0 && offset < SPI_FLASH_SEC_SIZE; --size, ++bDst)
+                page[offset++] = getByte(bSrc++);
+            
+            // write back to flash
+            Critical critical;
+            uint32_t flashAddr = (uint32_t)alignedDest - FLASH_MAP_START;
+            spi_flash_erase_sector(flashAddr / SPI_FLASH_SEC_SIZE);
+            spi_flash_write(flashAddr, (uint32*)page, SPI_FLASH_SEC_SIZE);            
+        }
+        
+        delete[] page;        
+    }
+    
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
