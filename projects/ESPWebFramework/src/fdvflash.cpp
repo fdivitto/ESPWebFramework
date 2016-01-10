@@ -143,42 +143,65 @@ namespace fdv
 		return (uint8_t)getChar(pc) | ((uint8_t)getChar(pc + 1) << 8) | ((uint8_t)getChar(pc + 2) << 16) | ((uint8_t)getChar(pc + 3) << 24);
 	}
 
-
-	///////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////
-
-    // should be executed into a "Critical" section
-    void flashCopyMemory(void* dst, void const* src, uint32_t size)
+    
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+    // FlashWriter
+    
+    MTD_FLASHMEM FlashWriter::FlashWriter(void* dest)
+        : m_currentPage(NULL)
     {
-        uint8_t* bDst = (uint8_t*)dst;
-        uint8_t const* bSrc = (uint8_t const*)src;
-        
-        uint8_t* page = new uint8_t[SPI_FLASH_SEC_SIZE];
-
-        while (size > 0)
-        {        
-            // alignedDest is aligned to the start of flash page (a page is SPI_FLASH_SEC_SIZE bytes)
-            uint8_t* alignedDest = (uint8_t*)((uint32_t)bDst & ~(SPI_FLASH_SEC_SIZE - 1));
-            uint32_t offset = bDst - alignedDest;
-            
+        m_dest = (uint8_t*)dest;
+        m_pageBuffer = new uint8_t[SPI_FLASH_SEC_SIZE];
+    }
+    
+    MTD_FLASHMEM FlashWriter::~FlashWriter()
+    {
+        savePage();
+        delete[] m_pageBuffer;
+    }
+    
+    void MTD_FLASHMEM FlashWriter::loadPage()
+    {
+        // alignedDest is aligned to the start of flash page (a page is SPI_FLASH_SEC_SIZE bytes)
+        uint8_t* alignedDest = (uint8_t*)((uint32_t)m_dest & ~(SPI_FLASH_SEC_SIZE - 1));
+        if (alignedDest != m_currentPage)
+        {
+            // save current page if necessary
+            savePage();
+                        
             // load page from flash
-            memcpy(page, alignedDest, SPI_FLASH_SEC_SIZE);
-            
-            // to optimize: copy byte by byte because we don't know if "src" is on RAM or Flash
-            for (; size > 0 && offset < SPI_FLASH_SEC_SIZE; --size, ++bDst)
-                page[offset++] = getByte(bSrc++);
-            
-            // write back to flash
-            Critical critical;
-            uint32_t flashAddr = (uint32_t)alignedDest - FLASH_MAP_START;
-            spi_flash_erase_sector(flashAddr / SPI_FLASH_SEC_SIZE);
-            spi_flash_write(flashAddr, (uint32*)page, SPI_FLASH_SEC_SIZE);            
+            m_currentPage = alignedDest;
+            memcpy(m_pageBuffer, m_currentPage, SPI_FLASH_SEC_SIZE);
         }
-        
-        delete[] page;        
+        m_writePtr = &m_pageBuffer[m_dest - m_currentPage];
+    }
+    
+    void MTD_FLASHMEM FlashWriter::savePage()
+    {
+        if (m_currentPage)
+        {
+            // write current page back to flash
+            Critical critical;
+            uint32_t flashAddr = (uint32_t)m_currentPage - FLASH_MAP_START;
+            spi_flash_erase_sector(flashAddr / SPI_FLASH_SEC_SIZE);
+            spi_flash_write(flashAddr, (uint32*)m_pageBuffer, SPI_FLASH_SEC_SIZE);            
+            
+            m_currentPage = NULL;
+        }
+    }
+    
+    void MTD_FLASHMEM FlashWriter::write(void const* source, uint32_t size)
+    {
+        for (uint8_t const* bSrc = (uint8_t const*)source; size > 0; --size, ++m_dest)
+        {
+            loadPage();
+            *m_writePtr = getByte(bSrc++);
+        }
     }
     
 
+    
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	// CharIterator

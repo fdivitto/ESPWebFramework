@@ -628,6 +628,7 @@ bool MTD_FLASHMEM FlashFileSystem::find(char const* filename, Item* item)
 }
 
 
+// Other threads should not call any FlashFileSystem method while one thread is inside "remove"
 bool MTD_FLASHMEM FlashFileSystem::remove(char const* filename)
 {
     Item item;
@@ -637,7 +638,7 @@ bool MTD_FLASHMEM FlashFileSystem::remove(char const* filename)
         char const* nextPos = item.nextpos;
         while (getNext(&item))
             ;
-        flashCopyMemory((void*)pos, nextPos, item.thispos - nextPos + 1);
+        FlashWriter((void*)pos).write(nextPos, item.thispos - nextPos + 1);
         return true;
     }
     return false;

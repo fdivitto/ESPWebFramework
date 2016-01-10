@@ -104,17 +104,36 @@ namespace fdv
 	uint32_t getDWord(void const* buffer);
 
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+    // FlashWriter
+    //
     // Copy memory between two areas of flash memory or RAM
     // Destination must be flash memory
     // Take care of flash pages
     // Buffers can overlaps
     // Buffers can be unaligned
     // Requires 4096 bytes of free heap
-    // should be executed into a "Critical" section
-    void flashCopyMemory(void* dst, void const* src, uint32_t size);
-	
+    // Multiple calls to "write" may not re-read/re-write flash
+    
+    class FlashWriter
+    {
+        public:
+            FlashWriter(void* dest);
+            ~FlashWriter();
+            
+            void write(void const* source, uint32_t size);
+            
+        private:
+            void loadPage();
+            void savePage();
+        
+            uint8_t* m_dest;
+            uint8_t* m_pageBuffer;
+            uint8_t* m_currentPage;
+            uint8_t* m_writePtr;
+    };
+    
 	
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
