@@ -34,16 +34,13 @@
 #   file entries:
 #     uint8_t:  flags
 #         bit 0: 1 = end of files
-#         bit 1: 1 = deleted
-#  If file exists (bit1=0):
+#  If file exists (bit0 = 0):
 #     uint8_t:  filename length including terminating zero
 #     uint8_t:  mime type length including terminating zero
 #     uint16_t: file content length
 #     x-bytes:  filename data + zero
 #     x-bytes:  mime type data + zero
 #     x-bytes:  raw file data
-#  If deleted (bit1=1):
-#     uint32_t: free block size (including this length field, not including flags field)
 # All values are little-endian ("<" in the struct.pack calls)
 #
 # To optimize html, css, js this script can use "slimmer". Just install it with:

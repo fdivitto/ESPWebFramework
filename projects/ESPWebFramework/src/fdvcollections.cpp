@@ -580,49 +580,41 @@ char const* MTD_FLASHMEM FlashFileSystem::getBase()
 }
 
 
-// item->position=NULL -> to get the first item
+// item->nextpos=NULL -> get the first item
 bool MTD_FLASHMEM FlashFileSystem::getNext(Item* item)
 {
     // first item?
-    if (item->position == NULL)
-        item->position = getBase();
+    if (item->nextpos == NULL)
+        item->nextpos = getBase();
 
-    if (item->position == NULL)
+    if (item->nextpos == NULL)
         return false;   // file system not formatted
     
+    item->thispos = item->nextpos;
+    
     // flags
-    uint8_t flags = getByte(item->position);
+    uint8_t flags = getByte(item->nextpos);
     if (flags && 0x01)
         return false;   // ending flag
-    item->position += 1;    
+    item->nextpos += 1;    
     
-    item->deleted = flags && 0x02;    
+    // save position to calculate blocksize (which doesn't include flags)
+    char const* spos = item->nextpos;  
+    // get lengths
+    uint8_t filenamelen = getByte(item->nextpos);
+    item->nextpos += 1;
+    uint8_t mimetypelen = getByte(item->nextpos);
+    item->nextpos += 1;
+    item->datalength = getWord(item->nextpos); 
+    item->nextpos += 2;
+    // calc pointers
+    item->filename   = item->nextpos;
+    item->mimetype   = item->nextpos + filenamelen;
+    item->data       = (void*)(item->mimetype + mimetypelen);
+    // move to next file
+    item->nextpos += filenamelen + mimetypelen + item->datalength;
     
-    if (item->deleted)
-    {
-        // deleted flag, by pass data
-        item->blocksize = getDWord(item->position);
-        item->position += item->blocksize;
-    }
-    else
-    {
-        // save position to calculate blocksize (which doesn't include flags)
-        char const* spos = item->position;  
-        // get lengths
-        uint8_t filenamelen = getByte(item->position);
-        item->position += 1;
-        uint8_t mimetypelen = getByte(item->position);
-        item->position += 1;
-        item->datalength = getWord(item->position); 
-        item->position += 2;
-        // calc pointers
-        item->filename   = item->position;
-        item->mimetype   = item->position + filenamelen;
-        item->data       = (void*)(item->mimetype + mimetypelen);
-        // move to next file
-        item->position += filenamelen + mimetypelen + item->datalength;			
-        item->blocksize = spos - item->position;
-    }
+    return true;
 }
 
 
@@ -630,11 +622,26 @@ bool MTD_FLASHMEM FlashFileSystem::getNext(Item* item)
 bool MTD_FLASHMEM FlashFileSystem::find(char const* filename, Item* item)
 {	
 	while (getNext(item))
-        if (!item->deleted && f_strcmp(filename, item->filename) == 0)
+        if (f_strcmp(filename, item->filename) == 0)
             return true;    // found
     return false;   // not found
 }
 
+
+bool MTD_FLASHMEM FlashFileSystem::remove(char const* filename)
+{
+    Item item;
+    if (find(filename, &item))
+    {
+        char const* pos = item.thispos;
+        char const* nextPos = item.nextpos;
+        while (getNext(&item))
+            ;
+        flashCopyMemory((void*)pos, nextPos, item.thispos - nextPos + 1);
+        return true;
+    }
+    return false;
+}
 
 
 

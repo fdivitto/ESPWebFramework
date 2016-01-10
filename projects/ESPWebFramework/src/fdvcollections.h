@@ -778,16 +778,13 @@ struct FlashDictionary
 //   file entries:
 //     uint8_t:  flags
 //         bit 0: 1 = end of files
-//         bit 1: 1 = deleted
-//  If file exists (bit1=0):
+//  If file exists (bit0 = 0):
 //     uint8_t:  filename length including terminating zero
 //     uint8_t:  mime type length including terminating zero
 //     uint16_t: file content length
 //     x-bytes:  filename data + zero
 //     x-bytes:  mime type data + zero
 //     x-bytes:  raw file data
-//  If deleted (bit1=1):
-//     uint32_t: free block size (including this length field, not including flags field)
 // All values are little-endian
 
 
@@ -797,32 +794,31 @@ class FlashFileSystem
 
         struct Item
         {
-            char const* position;
-            bool        deleted;
-            uint32_t    blocksize;
+            char const* thispos;
+            char const* nextpos;
             char const* filename;
             char const* mimetype;
             uint16_t    datalength;
             void const* data;
             
             Item()
-                : position(NULL)
+                : nextpos(NULL)
             {
             }
             void reset()
             {
-                position = NULL;
+                nextpos = NULL;
             }
         };
         
         static bool getNext(Item* item);
         static bool find(char const* filename, Item* item);
+        static bool remove(char const* filename);
             
     private:
         static uint32_t const MAGIC = 0x93841A03;
     
         static char const* getBase();
-        
 };
 
 
