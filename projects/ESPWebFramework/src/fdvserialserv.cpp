@@ -562,12 +562,6 @@ namespace fdv
             
     void MTD_FLASHMEM SerialConsole::cmd_test()
     {
-        /*
-        FlashFile file(FSTR("test.txt"), STR_TEXTPLAIN);
-        file.write(FSTR("This is a test file\r\n"));
-        file.write(FSTR("Second line\r\n"));
-        file.write(FSTR("Ending line\r\n"));
-        */
     }
 
         
