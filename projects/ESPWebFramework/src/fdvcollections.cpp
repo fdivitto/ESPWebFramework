@@ -650,7 +650,12 @@ bool MTD_FLASHMEM FlashFileSystem::remove(char const* filename)
 //////////////////////////////////////////////////////////////////////
 // FlashFile
 
-MTD_FLASHMEM FlashFile::FlashFile(char const* filename, char const* mimetype)
+MTD_FLASHMEM FlashFile::FlashFile()
+    : m_startPosition(NULL)
+{
+}
+
+MTD_FLASHMEM void FlashFile::create(char const* filename, char const* mimetype)
 {
     // remove the file if already exists
     FlashFileSystem::remove(filename);
@@ -729,7 +734,7 @@ void MTD_FLASHMEM FlashFile::close()
         m_writer.write(&flags, sizeof(flags));
         
         // file closed
-        m_startPosition = NULL;    
+        m_startPosition = NULL;  
     }
 }
 

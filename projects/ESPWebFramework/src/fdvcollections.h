@@ -831,7 +831,8 @@ class FlashFileSystem
 //
 // Example:
 //
-// FlashFile file(FSTR("test.txt"), STR_TEXTPLAIN);
+// FlashFile file;
+// file.create(FSTR("test.txt"), STR_TEXTPLAIN);
 // file.write(FSTR("This is a test file\r\n"));
 // file.write(FSTR("Second line\r\n"));
 // file.write(FSTR("Ending line\r\n"));
@@ -843,8 +844,9 @@ class FlashFile
 {
     public:
 
-        FlashFile(char const* filename, char const* mimetype);
+        FlashFile();
         ~FlashFile();
+        void create(char const* filename, char const* mimetype);
         bool write(void const* data, uint16_t size);
         bool write(char const* string);
         void close();
