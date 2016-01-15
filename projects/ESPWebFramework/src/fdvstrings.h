@@ -291,6 +291,7 @@ char const* f_strstr(char const* str, char const* strEnd, char const* substr);
 bool isspace(char c);
 bool isalpha(char c);
 bool isdigit(char c);
+bool isalnum(char c);
 bool isxdigit(char c);
 bool isupper(char c);
 bool islower(char c);
