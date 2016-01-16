@@ -1233,6 +1233,264 @@ namespace fdv
     }
     
     
+
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+    // MultipartFormDataProcessor
+    
+    class MultipartFormDataProcessor
+    {
+        public:
+            // Sequence is: WaitingForFirstBoundary -> {BoundaryFound -> DecodingHeaders -> (GettingValue | GettingFile)} -> EndOfContent
+            enum States {WaitingForFirstBoundary, BoundaryFound, DecodingHeaders, GettingValue, GettingFile, EndOfContent};
+            
+            static uint32_t const HEADERS_CHUNK_SIZE = 16;
+            static uint32_t const FORM_CHUNK_SIZE    = 16;
+            
+            char const*            boundary;
+            int32_t                boundarylen;
+            States                 state;
+            int32_t                substate;
+            LinkedCharChunks*      headers;
+            HTTPHandler::Fields*   formfields;    
+            LinkedCharChunks*      valueStorage;
+            CharChunksIterator     nameBegin, nameEnd;
+            FlashFile              file;
+            List<LinkedCharChunks> chunksFactory;   // handles creation and destruction of "headers" and "valueStorage" multiple instances
+            
+            MultipartFormDataProcessor(char const* boundary_, HTTPHandler::Fields* formfields_);
+            void push(char c);
+            
+        private:
+            void handle_WaitingForFirstBoundary(char c);
+            void handle_BoundaryFound(char c);
+            void handle_DecodingHeaders(char c);
+            void handle_GettingFile_GettingValue(char c);
+            bool extractParameter(char const* name, CharChunksIterator curpos, CharChunksIterator* nameBegin, CharChunksIterator* begin, CharChunksIterator* end);
+            CharChunksIterator getFilename(CharChunksIterator fullpathBegin, CharChunksIterator fullpathEnd);
+    };
+        
+    MTD_FLASHMEM MultipartFormDataProcessor::MultipartFormDataProcessor(char const* boundary_, HTTPHandler::Fields* formfields_)
+        : boundary(boundary_), boundarylen(f_strlen(boundary)), state(WaitingForFirstBoundary), substate(0), formfields(formfields_)
+    {
+    }
+    
+    MTD_FLASHMEM bool MultipartFormDataProcessor::extractParameter(char const* name, CharChunksIterator curpos, CharChunksIterator* nameBegin, CharChunksIterator* begin, CharChunksIterator* end)
+    {
+        *nameBegin = t_strstr(curpos, CharIterator(name));
+        if (*nameBegin != CharChunksIterator())
+        {
+            // bypass "name"
+            CharChunksIterator it = *nameBegin + f_strlen(name);    
+            
+            // bypass spaces and a quote
+            bool hasQuote = false;
+            for (; it != CharChunksIterator() && (isspace(*it) || *it == '"'); ++it)
+                if (*it == '"')
+                    hasQuote = true;
+            *begin = it;
+            
+            // look for spaces or a quote
+            while (it != CharChunksIterator() && ((!hasQuote && !isspace(*it)) || (hasQuote && *it != '"')))
+                ++it;
+            *end = it;
+
+            return true;
+        }
+        return false;
+    }
+    
+    // returns filename, bypassing the file path
+    CharChunksIterator MTD_FLASHMEM MultipartFormDataProcessor::getFilename(CharChunksIterator fullpathBegin, CharChunksIterator fullpathEnd)
+    {
+        CharChunksIterator filenameBegin = fullpathBegin;
+        while (fullpathBegin != fullpathEnd)
+        {
+            if (*fullpathBegin == '\\' | *fullpathBegin == '/')
+                filenameBegin = fullpathBegin + 1;
+            ++fullpathBegin;
+        }
+        return filenameBegin;
+    }
+    
+    void MTD_FLASHMEM MultipartFormDataProcessor::handle_WaitingForFirstBoundary(char c)
+    {
+        if (substate < 2)
+        {
+            // bypass first "--"
+            ++substate;
+        }
+        else if (c == boundary[substate - 2])
+        {
+            ++substate;
+            if (substate - 2 == boundarylen)
+            {
+                // found initial boundary
+                state = BoundaryFound;
+                substate = 0;
+            }
+        }
+        else
+        {
+            // reset boundary matching (this should not happen)
+            substate = 0;
+        }
+    }
+    
+    void MTD_FLASHMEM MultipartFormDataProcessor::handle_BoundaryFound(char c)
+    {
+        static char const EOL[2] = {0x0D, 0x0A};
+        static char const EOE[4] = {'-', '-', 0x0D, 0x0A};  // end of content (just after the ending boundary)
+        if (c == EOL[substate])
+        {
+            ++substate;
+            if (substate == 2)
+            {
+                // found \r\n after boundary
+                state = DecodingHeaders;
+                substate = 0;
+                headers = chunksFactory.add();
+            }
+        }
+        else if (c == EOE[substate])
+        {
+            ++substate;
+            if (substate == 4)
+            {
+                // found "--\r\n" after boundary
+                state = EndOfContent;
+                substate = 0;
+            }
+        }
+    }
+    
+    void MTD_FLASHMEM MultipartFormDataProcessor::handle_DecodingHeaders(char c)
+    {
+        static char const EOH[4] = {0x0D, 0x0A, 0x0D, 0x0A};
+        if (c == EOH[substate])
+        {
+            ++substate;
+            if (substate == 2)
+            {
+                // useful if this is not an EOH to separate headers
+                headers->append(0x0D, 1);
+            }
+            else if (substate == 4)
+            {
+                // end of headers
+                headers->append(0, 1);   // add string terminating zero
+                
+                // look for "name" parameter
+                CharChunksIterator keyBegin;
+                extractParameter(FSTR(" name="), headers->getIterator(), &keyBegin, &nameBegin, &nameEnd);
+                
+                // look for "filename" parameter
+                CharChunksIterator filenameBegin, filenameEnd;
+                
+                if (extractParameter(FSTR(" filename="), headers->getIterator(), &keyBegin, &filenameBegin, &filenameEnd))
+                {
+                    //// this is a file
+                    
+                    // add "filename" to form fields
+                    filenameBegin = getFilename(filenameBegin, filenameEnd);    // some browsers send a full path instead of a simple file name (IE)
+                    formfields->add(keyBegin + 1, keyBegin + 9, filenameBegin, filenameEnd);
+                    
+                    // extract Content-Type parameter
+                    CharChunksIterator contentTypeBegin, contentTypeEnd;
+                    extractParameter(FSTR("Content-Type:"), filenameEnd, &keyBegin, &contentTypeBegin, &contentTypeEnd);                    
+                    
+                    // add "Content-Type" to form fields
+                    formfields->add(keyBegin, keyBegin + 12, contentTypeBegin, contentTypeEnd);
+
+                    // create file
+                    file.create(APtr<char>(t_strdup(filenameBegin, filenameEnd)).get(), APtr<char>(t_strdup(contentTypeBegin, contentTypeEnd)).get());
+                    
+                    state = GettingFile;                    
+                }
+                else
+                {
+                    //// this is a normal field
+                    valueStorage = chunksFactory.add();
+                    state = GettingValue;
+                }
+                substate = 0;
+            }
+        }
+        else
+        {
+            // add to headers buffer
+            headers->append(c, HEADERS_CHUNK_SIZE);
+            substate = 0;
+        }
+    }
+    
+    void MTD_FLASHMEM MultipartFormDataProcessor::handle_GettingFile_GettingValue(char c)
+    {
+        static char const BOB[4] = {0x0D, 0x0A, '-', '-'};  // begin of boundary (just before every boundary)
+        if (substate < 4 && c == BOB[substate])
+        {
+            ++substate;
+        }
+        else if (substate >= 4 && c == boundary[substate - 4])
+        {
+            ++substate;
+            if (substate - 4 == boundarylen)
+            {
+                // found boundary, end file or value
+                if (state == GettingFile)
+                    file.close();
+                else
+                    formfields->add(nameBegin, nameEnd, valueStorage->getIterator(), CharChunksIterator());
+                state = BoundaryFound;
+                substate = 0;
+            }
+        }
+        else
+        {
+            if (substate > 0)
+            {
+                // first "substate" bytes seemed the BOB or Boundary, but they were not!
+                int32_t cnt = substate;
+                substate = 0;
+                if (state == GettingFile)
+                    file.write(BOB, 1);
+                else
+                    valueStorage->append(BOB[0], FORM_CHUNK_SIZE);
+                for (int32_t i = 1; i != cnt; ++i)
+                    push( i < 4? BOB[i] : boundary[i - 4] );
+                push(c);
+            }
+            else
+            {
+                if (state == GettingFile)
+                    file.write(&c, 1);
+                else
+                    valueStorage->append(c, FORM_CHUNK_SIZE);
+            }
+        }
+    }
+    
+    void MTD_FLASHMEM MultipartFormDataProcessor::push(char c)
+    {                
+        switch (state)
+        {
+            case WaitingForFirstBoundary:
+                handle_WaitingForFirstBoundary(c);
+                break;
+            case BoundaryFound:
+                handle_BoundaryFound(c);
+                break;
+            case DecodingHeaders:
+                handle_DecodingHeaders(c);
+                break;
+            case GettingFile:
+            case GettingValue:
+                handle_GettingFile_GettingValue(c);
+                break;
+        }
+    }
+    
+
     
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1308,35 +1566,22 @@ namespace fdv
             // extract headers
             curc = extractHeaders(curc, headerEnd, &m_request.headers);
             
-            // look for data (maybe POST data)
+            // get content length (may be NULL)
             char const* contentLengthStr = m_request.headers[STR_Content_Length];
-            if (contentLengthStr)
-            {
-                // download additional content
-                int32_t contentLength = strtol(contentLengthStr, NULL, 10);
-                int32_t missingBytes = headerEnd.getPosition() + contentLength - m_receivedData.getItemsCount();
-                while (getSocket()->isConnected() && missingBytes > 0)
-                {
-                    int32_t bytesToRead = (CHUNK_CAPACITY < missingBytes? CHUNK_CAPACITY : missingBytes);
-                    CharChunkBase* chunk = m_receivedData.addChunk(bytesToRead);
-                    int32_t bytesRecv = getSocket()->read(chunk->data, bytesToRead);
-                    if (bytesRecv <= 0)
-                        break;
-                    chunk->setItems(bytesRecv);
-                    missingBytes -= chunk->getItems();
-                }
-                m_receivedData.append(0);	// add additional terminating "0"
-                // check content type
-                char const* contentType = m_request.headers[STR_Content_Type];
-                if (contentType && f_strstr(contentType, FSTR("application/x-www-form-urlencoded")))
-                {
-                    CharChunksIterator contentStart = m_receivedData.getIterator();	// cannot use directly headerEnd because added data
-                    contentStart += headerEnd.getPosition();
-                    extractURLEncodedFields(contentStart, CharChunksIterator(), &m_request.form);
-                }
-            }
+            int32_t contentLength = contentLengthStr? strtol(contentLengthStr, NULL, 10) : 0;
             
-            dispatch();                
+            // check content type
+            char const* contentType = m_request.headers[STR_Content_Type];
+            if (contentType && f_strstr(contentType, FSTR("multipart/form-data")))
+            {
+                //// content type is multipart/form-data
+                processMultipartFormData(headerEnd, contentLength, contentType);
+            }            
+            else if (contentType == NULL || (contentType && f_strstr(contentType, FSTR("application/x-www-form-urlencoded"))))
+            {
+                //// content type is application/x-www-form-urlencoded
+                processXWWWFormUrlEncoded(headerEnd, contentLength);
+            }
             
             return true;
         }
@@ -1346,7 +1591,65 @@ namespace fdv
             return false;
         }
     }
+    
+    
+    void MTD_FLASHMEM HTTPHandler::processMultipartFormData(CharChunksIterator headerEnd, int32_t contentLength, char const* contentType)
+    {
+        char const* boundary = f_strstr(contentType, FSTR("boundary="));
+        if (boundary)
+        {
+            // go to begin of boundary string
+            boundary += 9;
+            
+            MultipartFormDataProcessor proc(boundary, &m_request.form);
+            
+            // consume already received data
+            CharChunksIterator contentStart = headerEnd;
+            while (contentStart != CharChunksIterator())
+                proc.push(*contentStart++);
 
+            // consume new data
+            while (getSocket()->isConnected() && proc.state != MultipartFormDataProcessor::EndOfContent)
+            {
+                char c;
+                int32_t bytesRecv = getSocket()->read(&c, 1);
+                if (bytesRecv <= 0)
+                    break;
+                proc.push(c);
+            }
+            
+            dispatch();
+        }
+    }
+    
+    
+    void MTD_FLASHMEM HTTPHandler::processXWWWFormUrlEncoded(CharChunksIterator headerEnd, int32_t contentLength)
+    {
+        // look for data (maybe POST data)                
+        if (contentLength > 0)
+        {
+            // download additional content                    
+            int32_t missingBytes = headerEnd.getPosition() + contentLength - m_receivedData.getItemsCount();
+            while (getSocket()->isConnected() && missingBytes > 0)
+            {
+                int32_t bytesToRead = (CHUNK_CAPACITY < missingBytes? CHUNK_CAPACITY : missingBytes);
+                CharChunkBase* chunk = m_receivedData.addChunk(bytesToRead);
+                int32_t bytesRecv = getSocket()->read(chunk->data, bytesToRead);
+                if (bytesRecv <= 0)
+                    break;
+                chunk->setItems(bytesRecv);
+                missingBytes -= chunk->getItems();
+            }
+            m_receivedData.append(0);	// add additional terminating "0"
+
+            CharChunksIterator contentStart = m_receivedData.getIterator();	// cannot use directly headerEnd because added data
+            contentStart += headerEnd.getPosition();
+            extractURLEncodedFields(contentStart, CharChunksIterator(), &m_request.form);
+        }
+        
+        dispatch();                
+    }
+    
     
     CharChunksIterator MTD_FLASHMEM HTTPHandler::extractURLEncodedFields(CharChunksIterator begin, CharChunksIterator end, Fields* fields)
     {

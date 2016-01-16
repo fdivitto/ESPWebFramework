@@ -544,8 +544,10 @@ namespace fdv
 		
 		bool processRequest();
 		
+        void processXWWWFormUrlEncoded(CharChunksIterator headerEnd, int32_t contentLength);
+        void processMultipartFormData(CharChunksIterator headerEnd, int32_t contentLength, char const* contentType);
+        
 		CharChunksIterator extractURLEncodedFields(CharChunksIterator begin, CharChunksIterator end, Fields* fields);
-
 		CharChunksIterator extractHeaders(CharChunksIterator begin, CharChunksIterator end, Fields* fields);
 			
 
