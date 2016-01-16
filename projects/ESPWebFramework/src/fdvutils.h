@@ -28,6 +28,9 @@
 #include "fdv.h"
 
 
+// placement-new requires to be declared
+void* operator new(size_t size, void* ptr);
+
 
 
 namespace fdv

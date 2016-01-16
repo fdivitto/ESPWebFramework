@@ -34,8 +34,6 @@ extern "C"
 
 void*__dso_handle;
 
-// placement-new requires to be declared
-void* operator new(size_t size, void* ptr);
 
 
 /////////////////////////////////////////////////////////////////////////
