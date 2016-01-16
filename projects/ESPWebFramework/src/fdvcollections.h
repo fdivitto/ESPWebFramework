@@ -167,6 +167,116 @@ private:
 
 
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+// Generic list
+
+template <typename T>
+class List
+{
+public:
+    List()
+        : m_first(NULL)
+    {
+    }
+    
+    ~List()
+    {
+        clear();
+    }
+    
+    void clear()
+    {
+        Item* next;
+        for (Item* cur = m_first; cur; cur = next)
+        {
+            next = cur->next;
+            reinterpret_cast<T*>(cur->value)->~T();   // destruct value
+            delete cur;
+        }
+        m_first = NULL;
+    }
+    
+    T* add()
+    {
+        Item* item = new Item;
+        item->next = NULL;
+        *getPtrOfLastNext() = item;
+        return new(&item->value[0]) T;  // placement new into value[] array
+    }
+        
+private:
+    struct Item
+    {
+        Item*   next;
+        uint8_t value[sizeof(T)];
+    };
+    
+public:
+
+    struct Iterator
+    {
+        Iterator(Item* current)
+            : m_current(current)
+        {
+        }
+        Iterator(Iterator const& c)
+        {
+            m_current = c.m_current;
+        }
+        Iterator()
+            : m_current(NULL)
+        {
+        }
+        T& operator*()
+        {
+            return *reinterpret_cast<T*>(m_current->value);
+        }
+        Iterator operator++(int)
+        {
+            Iterator c = *this;
+            next();
+            return c;
+        }
+        Iterator& operator++()
+        {
+            next();
+            return *this;
+        }
+        void next()
+        {
+            m_current = m_current->next;
+        }
+        bool operator!=(Iterator const& rhs)
+        {
+            return m_current != rhs.m_current;
+        }
+        bool operator==(Iterator const& rhs)
+        {
+            return m_current == rhs.m_current;
+        }
+    private:
+        Item* m_current;
+    };
+    
+    Iterator getIterator()
+    {
+        return Iterator(m_first);
+    }
+
+private:
+    
+    Item** getPtrOfLastNext()
+    {
+        Item* cur = m_first;
+        while (cur && cur->next)
+            cur = cur->next;
+        return cur? &cur->next : &m_first;
+    }
+    
+    Item* m_first;
+};
+
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -449,7 +559,7 @@ public:
 	{
 		add(CharIterator(key), CharIterator(value));
 	}
-	
+    
 	uint32_t TMTD_FLASHMEM getItemsCount()
 	{
 		return m_itemsCount;
@@ -516,13 +626,13 @@ public:
 			Item* item = getItem(i);			
 			for (KeyIterator k = item->key; k != item->keyEnd; ++k)
 				debug(*k);
-			debug(FSTR(" = "));
+			debug(" = ");
 			for (KeyIterator v = item->value; v!= item->valueEnd; ++v)
 				debug(*v);
-			debug(FSTR("\r\n"));			
+			debug("\r\n");			
 		}
 	}	
-    */	
+    //*/	
 	
 private:
 	
