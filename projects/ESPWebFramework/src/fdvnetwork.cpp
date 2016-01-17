@@ -903,11 +903,11 @@ namespace fdv
     void MTD_FLASHMEM HTTPTemplateResponse::processFileRequest()
     {
         FlashFileSystem::Item file;
-        if (m_filename && FlashFileSystem::find(m_filename, &file))
+        if (m_filename && FlashFileSystem::find(m_filename, &file))            
         {
             // found
             setStatus(STR_200_OK);
-            addHeader(STR_Content_Type, FSTR("text/html"));
+            addHeader(STR_Content_Type, FSTR("text/html; charset=UTF-8"));
             
             // replace parameters
             m_replacer.start((char const*)file.data, (char const*)file.data + file.datalength, &m_params, NULL);
@@ -1570,18 +1570,23 @@ namespace fdv
             char const* contentLengthStr = m_request.headers[STR_Content_Length];
             int32_t contentLength = contentLengthStr? strtol(contentLengthStr, NULL, 10) : 0;
             
-            // check content type
-            char const* contentType = m_request.headers[STR_Content_Type];
-            if (contentType && f_strstr(contentType, FSTR("multipart/form-data")))
+            if (m_request.method == Post)
             {
-                //// content type is multipart/form-data
-                processMultipartFormData(headerEnd, contentLength, contentType);
-            }            
-            else if (contentType == NULL || (contentType && f_strstr(contentType, FSTR("application/x-www-form-urlencoded"))))
-            {
-                //// content type is application/x-www-form-urlencoded
-                processXWWWFormUrlEncoded(headerEnd, contentLength);
+                // check content type (POST)
+                char const* contentType = m_request.headers[STR_Content_Type];
+                if (contentType && f_strstr(contentType, FSTR("multipart/form-data")))
+                {
+                    //// content type is multipart/form-data
+                    processMultipartFormData(headerEnd, contentLength, contentType);
+                }            
+                else if (contentType == NULL || (contentType && f_strstr(contentType, FSTR("application/x-www-form-urlencoded"))))
+                {
+                    //// content type is application/x-www-form-urlencoded
+                    processXWWWFormUrlEncoded(headerEnd, contentLength);
+                }
             }
+            else
+                dispatch();
             
             return true;
         }
@@ -1618,8 +1623,11 @@ namespace fdv
                 proc.push(c);
             }
             
+            // dispatch must be inside this block, to have MultipartFormDataProcessor content available
             dispatch();
         }
+        else
+            dispatch();
     }
     
     
