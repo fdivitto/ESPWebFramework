@@ -134,11 +134,12 @@ namespace fdv
             {
                 return m_dest;
             }
+            
+            void flush();
 
             
         private:
-            void loadPage();
-            void savePage();
+            void loadPage();            
         
             uint8_t* m_dest;
             uint8_t* m_pageBuffer;

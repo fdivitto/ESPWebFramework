@@ -588,7 +588,7 @@ bool MTD_FLASHMEM FlashFileSystem::getNext(Item* item)
         item->nextpos = getBase();
 
     if (item->nextpos == NULL)
-        return false;   // file system not formatted
+        return false;   // file system not formatted or empty
     
     item->thispos = item->nextpos;
     
@@ -598,8 +598,6 @@ bool MTD_FLASHMEM FlashFileSystem::getNext(Item* item)
         return false;   // ending flag
     item->nextpos += 1;    
     
-    // save position to calculate blocksize (which doesn't include flags)
-    char const* spos = item->nextpos;  
     // get lengths
     uint8_t filenamelen = getByte(item->nextpos);
     item->nextpos += 1;
@@ -732,6 +730,9 @@ void MTD_FLASHMEM FlashFile::close()
         m_writer.seek(m_startPosition);
         flags = 0x00;
         m_writer.write(&flags, sizeof(flags));
+        
+        // make sure all data are physically written
+        m_writer.flush();
         
         // file closed
         m_startPosition = NULL;  

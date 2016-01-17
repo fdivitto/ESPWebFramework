@@ -157,7 +157,7 @@ namespace fdv
     
     MTD_FLASHMEM FlashWriter::~FlashWriter()
     {
-        savePage();
+        flush();
         delete[] m_pageBuffer;
     }
     
@@ -168,7 +168,7 @@ namespace fdv
         if (alignedDest != m_currentPage)
         {
             // save current page if necessary
-            savePage();
+            flush();
                         
             // load page from flash
             m_currentPage = alignedDest;
@@ -177,7 +177,7 @@ namespace fdv
         m_writePtr = &m_pageBuffer[m_dest - m_currentPage];
     }
     
-    void MTD_FLASHMEM FlashWriter::savePage()
+    void MTD_FLASHMEM FlashWriter::flush()
     {
         if (m_currentPage)
         {
