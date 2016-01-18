@@ -1277,25 +1277,28 @@ namespace fdv
     
     MTD_FLASHMEM bool MultipartFormDataProcessor::extractParameter(char const* name, CharChunksIterator curpos, CharChunksIterator* nameBegin, CharChunksIterator* begin, CharChunksIterator* end)
     {
-        *nameBegin = t_strstr(curpos, CharIterator(name));
-        if (*nameBegin != CharChunksIterator())
+        if (curpos != CharChunksIterator())
         {
-            // bypass "name"
-            CharChunksIterator it = *nameBegin + f_strlen(name);    
-            
-            // bypass spaces and a quote
-            bool hasQuote = false;
-            for (; it != CharChunksIterator() && (isspace(*it) || *it == '"'); ++it)
-                if (*it == '"')
-                    hasQuote = true;
-            *begin = it;
-            
-            // look for spaces or a quote
-            while (it != CharChunksIterator() && ((!hasQuote && !isspace(*it)) || (hasQuote && *it != '"')))
-                ++it;
-            *end = it;
+            *nameBegin = t_strstr(curpos, CharIterator(name));
+            if (*nameBegin != CharChunksIterator())
+            {
+                // bypass "name"
+                CharChunksIterator it = *nameBegin + f_strlen(name);    
+                
+                // bypass spaces and a quote
+                bool hasQuote = false;
+                for (; it != CharChunksIterator() && (isspace(*it) || *it == '"'); ++it)
+                    if (*it == '"')
+                        hasQuote = true;
+                *begin = it;
+                
+                // look for spaces or a quote
+                while (it != CharChunksIterator() && ((!hasQuote && !isspace(*it)) || (hasQuote && *it != '"')))
+                    ++it;
+                *end = it;
 
-            return true;
+                return true;
+            }
         }
         return false;
     }
@@ -1390,22 +1393,27 @@ namespace fdv
                 if (extractParameter(FSTR(" filename="), headers->getIterator(), &keyBegin, &filenameBegin, &filenameEnd))
                 {
                     //// this is a file
-                    
                     // add "filename" to form fields
                     filenameBegin = getFilename(filenameBegin, filenameEnd);    // some browsers send a full path instead of a simple file name (IE)
                     formfields->add(keyBegin + 1, keyBegin + 9, filenameBegin, filenameEnd);
                     
                     // extract Content-Type parameter
                     CharChunksIterator contentTypeBegin, contentTypeEnd;
-                    extractParameter(FSTR("Content-Type:"), filenameEnd, &keyBegin, &contentTypeBegin, &contentTypeEnd);                    
-                    
-                    // add "Content-Type" to form fields
-                    formfields->add(keyBegin, keyBegin + 12, contentTypeBegin, contentTypeEnd);
+                    if (extractParameter(FSTR("Content-Type:"), filenameEnd, &keyBegin, &contentTypeBegin, &contentTypeEnd))
+                    {                    
+                        // add "Content-Type" to form fields
+                        formfields->add(keyBegin, keyBegin + 12, contentTypeBegin, contentTypeEnd);
 
-                    // create file
-                    file.create(APtr<char>(t_strdup(filenameBegin, filenameEnd)).get(), APtr<char>(t_strdup(contentTypeBegin, contentTypeEnd)).get());
-                    
-                    state = GettingFile;                    
+                        // create file
+                        file.create(APtr<char>(t_strdup(filenameBegin, filenameEnd)).get(), APtr<char>(t_strdup(contentTypeBegin, contentTypeEnd)).get());
+                        
+                        state = GettingFile;
+                    }
+                    else
+                    {
+                        // missing content-type, cannot get as file!
+                        state = GettingValue;
+                    }
                 }
                 else
                 {
