@@ -1222,8 +1222,10 @@ namespace fdv
             }
         }
         
-        LinkedCharChunks* linkedChunks = addParamCharChunks(FSTR("FILES"));
+        addParamInt(FSTR("FREESPC"), FlashFileSystem::getFreeSpace());
+        addParamInt(FSTR("TOTSPC"), FlashFileSystem::getTotalSpace());
         
+        LinkedCharChunks* linkedChunks = addParamCharChunks(FSTR("FILES"));        
         FlashFileSystem::Item item;
         for (int32_t i = 0; FlashFileSystem::getNext(&item); ++i)
         {            
