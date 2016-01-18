@@ -902,6 +902,8 @@ class FlashFile;
 
 class FlashFileSystem
 {	
+    friend class FlashFile;
+
     public:        
 
         struct Item
@@ -926,7 +928,16 @@ class FlashFileSystem
         static bool getNext(Item* item);
         static bool find(char const* filename, Item* item);
         static bool remove(char const* filename);
-        
+        static uint32_t getFreeSpace();
+
+        static uint32_t getTotalSpace()
+        {
+            return FLASHFILESYSTEM_END - FLASHFILESYSTEM_POS;
+        }
+    
+    protected:
+        static char* getFreePos();
+    
     private:
         static uint32_t const MAGIC = 0x93841A03;
     

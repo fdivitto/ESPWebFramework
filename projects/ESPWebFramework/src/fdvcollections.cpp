@@ -643,6 +643,24 @@ bool MTD_FLASHMEM FlashFileSystem::remove(char const* filename)
 }
 
 
+// find the end of files and return the ending flag position
+char* MTD_FLASHMEM FlashFileSystem::getFreePos()
+{
+    FlashFileSystem::Item item;
+    while (FlashFileSystem::getNext(&item))
+        ;
+    return (char*)item.thispos;
+}
+
+
+// return free space in bytes
+uint32_t MTD_FLASHMEM FlashFileSystem::getFreeSpace()
+{
+    char const* lastPos = getFreePos();
+    return FLASHFILESYSTEM_END - ((uint32_t)lastPos - FLASH_MAP_START);
+}
+
+
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -657,13 +675,9 @@ MTD_FLASHMEM void FlashFile::create(char const* filename, char const* mimetype)
 {
     // remove the file if already exists
     FlashFileSystem::remove(filename);
-    
-    // find the end of files
-    FlashFileSystem::Item item;
-    while (FlashFileSystem::getNext(&item))
-        ;
-    m_startPosition = (char*)item.thispos;
-    
+
+    // position of the end of files (ending flag)
+    m_startPosition = FlashFileSystem::getFreePos();    
     m_writer.seek(m_startPosition);
     
     // write flags
