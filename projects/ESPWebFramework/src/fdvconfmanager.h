@@ -397,6 +397,18 @@ namespace fdv
     
     
 
+    //////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// HTTPFileSystemBrowserResponse
+
+	struct HTTPFileSystemBrowserResponse : public HTTPTemplateResponse
+	{
+		HTTPFileSystemBrowserResponse(HTTPHandler* httpHandler, char const* filename);
+		
+		virtual void flush();		
+	};
+
+
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
     // DefaultHTTPHandler
@@ -422,6 +434,7 @@ namespace fdv
         void get_reboot();
         void get_restore();
         void get_confwizard();
+        void get_fsbrowser();
         void get_all();
     };
 	

@@ -196,7 +196,7 @@ h6 { font-size: .75em; }
     margin: 10px;
 }
 
-input[type=submit]{
+input[type=submit], .button{
 	-webkit-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
 	-moz-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
 	box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
@@ -220,3 +220,42 @@ input[type=submit]{
 .tg td{padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#787878;color:#FFFFFF;background-color:#B3B3B3;border-top-width:1px;border-bottom-width:1px;}
 
 
+/* support for simple dialog box */
+.hide {
+    display: none;
+}
+.popup-wrapper {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px #aaa;
+    overflow: hidden;
+}
+.popup-title {
+    padding: 10px 15px;
+    background-color: #f4f4f4;
+    border-bottom: 1px solid #f0f0f0;
+}
+.popup-title h3 {
+    margin: 0;
+    line-height: 1.5em;
+    color: #333;
+}
+.popup-body {
+    padding: 10px 15px;
+    color: #555;
+}
+.popup-close {
+    float: right;
+    margin-top: 2px;
+    padding: 0;
+    font-size: 24px;
+    line-height: 1;
+    border: 0;
+    background: transparent;
+    color: #aaa;
+    cursor: pointer;
+}
+.popup-close:hover {
+    color: #333;
+}

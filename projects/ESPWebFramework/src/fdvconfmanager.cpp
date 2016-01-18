@@ -1200,6 +1200,50 @@ namespace fdv
     }
 		
     
+    
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	// HTTPFileSystemBrowserResponse
+
+    MTD_FLASHMEM HTTPFileSystemBrowserResponse::HTTPFileSystemBrowserResponse(HTTPHandler* httpHandler, char const* filename)
+        : HTTPTemplateResponse(httpHandler, filename)
+    {
+    }
+    
+    void MTD_FLASHMEM HTTPFileSystemBrowserResponse::flush()
+    {
+        if (getRequest().method == HTTPHandler::Post)
+        {
+            char const* CMD = getRequest().form[FSTR("CMD")];
+            char const* filename = getRequest().form[FSTR("fname")];
+            if (filename && CMD && f_strcmp(CMD, FSTR("Delete")) == 0)
+            {       
+                FlashFileSystem::remove(filename);
+            }
+        }
+        
+        LinkedCharChunks* linkedChunks = addParamCharChunks(FSTR("FILES"));
+        
+        FlashFileSystem::Item item;
+        for (int32_t i = 0; FlashFileSystem::getNext(&item); ++i)
+        {            
+            linkedChunks->addChunk(f_printf(FSTR("<tr> <td>%s</td> <td>%d</td> <td>%s</td> "
+                                                 "<td> "
+                                                   "<button type='button' onclick='xdelfile(\"%s\")'>Delete</button>"
+                                                   "<button type='button' onclick='openfile(\"%s\")'>Open</button>"
+                                                 "</td></tr>"), 
+                                            item.filename, 
+                                            item.datalength, 
+                                            item.mimetype, 
+                                            item.filename,
+                                            item.filename), 
+                                   true);
+        }
+                   
+        HTTPTemplateResponse::flush();        
+    }
+
+    
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1212,6 +1256,7 @@ namespace fdv
         {
             {FSTR("/"),	          (PageHandler)&DefaultHTTPHandler::get_home},
             {FSTR("/confwizard"), (PageHandler)&DefaultHTTPHandler::get_confwizard},
+            {FSTR("/fsbrowser"),  (PageHandler)&DefaultHTTPHandler::get_fsbrowser},
             {FSTR("/confwifi"),   (PageHandler)&DefaultHTTPHandler::get_confwifi},
             {FSTR("/wifiscan"),   (PageHandler)&DefaultHTTPHandler::get_wifiscan},
             {FSTR("/confnet"),    (PageHandler)&DefaultHTTPHandler::get_confnet},
@@ -1340,7 +1385,14 @@ namespace fdv
         HTTPWizardConfigurationResponse response(this, FSTR("confwizard.html"));
         response.flush();
     }
-    
+
+
+    void MTD_FLASHMEM DefaultHTTPHandler::get_fsbrowser()
+    {
+        HTTPFileSystemBrowserResponse response(this, FSTR("fsbrowser.html"));
+        response.flush();
+    }
+
     
     void MTD_FLASHMEM DefaultHTTPHandler::get_all()
     {
