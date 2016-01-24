@@ -387,13 +387,13 @@ namespace fdv
         *baudRate           = FlashDictionary::getInt(STR_BAUD, 9600);
         *enableSystemOutput = FlashDictionary::getBool(STR_SYSOUT, false);
 
-#if (FDV_INCLUDE_SERIALBINARY == 1)     
-        *serialService = (SerialService)FlashDictionary::getInt(STR_UARTSRV, (int32_t)SerialService_BinaryProtocol);
-#elif (FDV_INCLUDE_SERIALCONSOLE == 1)
+#if (FDV_INCLUDE_SERIALCONSOLE == 1)     
         *serialService = (SerialService)FlashDictionary::getInt(STR_UARTSRV, (int32_t)SerialService_Console);
+#elif (FDV_INCLUDE_SERIALBINARY == 1)
+        *serialService = (SerialService)FlashDictionary::getInt(STR_UARTSRV, (int32_t)SerialService_BinaryProtocol);
 #else
         *serialService = (SerialService)FlashDictionary::getInt(STR_UARTSRV, (int32_t)SerialService_None);
-#endif    
+#endif
     }
     
     
