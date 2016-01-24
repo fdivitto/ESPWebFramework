@@ -24,6 +24,12 @@
 #include "fdv.h"
 
 
+extern "C"
+{
+    void Cache_Read_Enable(uint32 odd_even, uint32 mb_count, uint32 unk);
+}
+
+
 namespace fdv
 {
 	
@@ -34,22 +40,80 @@ namespace fdv
 	// size in Bytes
 	uint32_t FUNC_FLASHMEM getFlashSize()
 	{
-		uint32_t flags = *((uint32_t volatile*)0x40200000);
+		uint32_t flags = *((uint32_t volatile*)FLASH_MAP_START);
 		switch(flags >> 24 & 0xF0)
 		{
-			case 0:
-				return 0x080000;	// 512K
-			case 1:
-				return 0x040000;	// 256K
-			case 2:
-				return 0x100000;	// 1MB
-			case 3:
-				return 0x200000;	// 2MB
-			case 4:
-				return 0x400000;	// 4MB				
+			case 0x00:
+				return 0x080000;	// 512K - 4mbit
+			case 0x10:
+				return 0x040000;	// 256K - 2mbit
+			case 0x20:
+				return 0x100000;	// 1MB  - 8mbit
+			case 0x30:
+				return 0x200000;	// 2MB  - 16mbit
+			case 0x40:
+				return 0x400000;	// 4MB  - 32mbit
+            case 0x50:
+                return 0x200000;    // 2MB  - 16mbit
+            case 0x60:
+            case 0x70:
+                return 0x400000;    // 4MB  - 32mbit
+                
 		}
 		return 0;	// unknown
 	}
+    
+    
+    // Bank 0..3 (each bank maps 1MB bank to FLASH_MAP_START
+    void ICACHE_FLASH_ATTR selectFlashBank(uint32_t bank)
+    {
+        Cache_Read_Enable(bank & 1, (bank & 2) >> 1, 1);
+    }
+    
+    
+    uint32_t ICACHE_FLASH_ATTR getActualFlashSize()
+    {
+        static uint32_t const COMPSIZE = 128;
+        void* startOfFlash = (void*)(FLASH_MAP_START);
+                
+        selectFlashBank(3);
+        if (f_memcmp(startOfFlash, (void*)(FLASH_MAP_START), COMPSIZE) != 0)
+        {
+            // does not overlap at 0x0 of bank 2, should be 4MB (32mbit)
+            selectFlashBank(0);
+            return 0x400000;
+        }
+
+        selectFlashBank(1);
+        if (f_memcmp(startOfFlash, (void*)(FLASH_MAP_START), COMPSIZE) != 0)
+        {
+            // does not overlap at 0x0 of bank 1, should be 2MB (16mbit)
+            selectFlashBank(0);
+            return 0x200000;
+        }
+        
+        selectFlashBank(0);
+        if (f_memcmp(startOfFlash, (void*)(FLASH_MAP_START + 0x80000), COMPSIZE) != 0)
+        {
+            // does not overlap at 0x80000 of bank 0, should be 1MB (8mbit)
+            selectFlashBank(0);
+            return 0x100000;
+        }        
+                
+        // should be 512K (4mbit)
+        selectFlashBank(0);
+        return 0x80000;
+
+        /*
+        FlashWriter fw(NULL, FLASH_MAP_START + 0x400000);        
+        uint32_t v = getDWord((void*)(FLASH_MAP_START + 0x00000000));
+        fw.seek((void*)(FLASH_MAP_START + 0x00000000));
+        v = v & 0x0FFFFFFF | (0x40 << 24);
+        fw.write(&v, 4);
+        fw.flush();
+        */        
+    }
+    
 
 	// size in MHz
 	uint32_t FUNC_FLASHMEM getFlashSpeed()
@@ -85,7 +149,7 @@ namespace fdv
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	char FUNC_FLASHMEM getChar(char const* str, uint32_t index)
+	char ICACHE_FLASH_ATTR getChar(char const* str, uint32_t index)
 	{
 		if (isStoredInFlash(str))
 		{
@@ -100,7 +164,7 @@ namespace fdv
   	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	uint8_t FUNC_FLASHMEM getByte(void const* buffer)
+	uint8_t ICACHE_FLASH_ATTR getByte(void const* buffer)
 	{
 		return (uint8_t)getChar((char const*)buffer);
 	}
@@ -109,7 +173,7 @@ namespace fdv
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	char FUNC_FLASHMEM getChar(char const* str)
+	char ICACHE_FLASH_ATTR getChar(char const* str)
 	{
 		if (isStoredInFlash(str))
 		{
@@ -127,7 +191,7 @@ namespace fdv
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	uint16_t FUNC_FLASHMEM getWord(void const* buffer)
+	uint16_t ICACHE_FLASH_ATTR getWord(void const* buffer)
 	{
 		char const* pc = (char const*)buffer;
 		return (uint8_t)getChar(pc) | ((uint8_t)getChar(pc + 1) << 8);
@@ -137,7 +201,7 @@ namespace fdv
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	uint32_t FUNC_FLASHMEM getDWord(void const* buffer)
+	uint32_t ICACHE_FLASH_ATTR getDWord(void const* buffer)
 	{
 		char const* pc = (char const*)buffer;
 		return (uint8_t)getChar(pc) | ((uint8_t)getChar(pc + 1) << 8) | ((uint8_t)getChar(pc + 2) << 16) | ((uint8_t)getChar(pc + 3) << 24);
