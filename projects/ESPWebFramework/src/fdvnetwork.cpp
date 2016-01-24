@@ -236,7 +236,7 @@ namespace fdv
     
     
     // returns access point list
-    WiFi::APInfo* STC_FLASHMEM WiFi::getAPList(uint32_t* count, bool rescan)
+    WiFi::APInfo* STC_FLASHMEM WiFi::getAPList(uint32_t* count, bool rescan, bool canRetry)
     {
         if (rescan)
         {
@@ -247,10 +247,10 @@ namespace fdv
         }
         APInfo* infos;
         getAPInfo(&infos, count);
-        if (*count == 0)
+        if (*count == 0 && canRetry)
         {
             // retry
-            return getAPList(count, true);
+            return getAPList(count, true, false);   // canRetry = false, no more retry to avoid infinite recursive calls
         }
         return infos;
     }

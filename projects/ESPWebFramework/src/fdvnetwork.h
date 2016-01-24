@@ -210,7 +210,7 @@ namespace fdv
 		static ClientConnectionStatus getClientConnectionStatus();
 		
 		// returns access point list
-		static APInfo* getAPList(uint32_t* count, bool rescan);
+		static APInfo* getAPList(uint32_t* count, bool rescan, bool canRetry = true);
 
 		static void scanDoneCB(void* arg, STATUS status);
 		
