@@ -323,11 +323,12 @@ namespace fdv
         uint32_t const flashDictUsedSpace = FlashDictionary::getUsedSpace();
         uint32_t const fileSystemFree = FlashFileSystem::getFreeSpace();
         uint32_t const fileSystemTot  = FlashFileSystem::getTotalSpace();
-        m_serial->printf(FSTR("                   Size      Used    Avail   Use%\r\n"));
-        m_serial->printf(FSTR("Heap           : %7d  %7d  %7d  %3d%%\r\n"), totHeap, totHeap - freeHeap, freeHeap, (totHeap - freeHeap) * 100 / totHeap);
-        m_serial->printf(FSTR("Flash          : %7d\r\n"), getFlashSize());
-        m_serial->printf(FSTR("Flash Settings : %7d  %7d  %7d  %3d%%\r\n"), 4096, flashDictUsedSpace, 4096 - flashDictUsedSpace, flashDictUsedSpace * 100 / 4096);
-        m_serial->printf(FSTR("File System    : %7d  %7d  %7d  %3d%%\r\n"), fileSystemTot, fileSystemTot - fileSystemFree, fileSystemFree, (fileSystemTot - fileSystemFree) * 100 / fileSystemTot);
+        m_serial->printf(FSTR("                     Size      Used    Avail   Use%\r\n"));
+        m_serial->printf(FSTR("Heap             : %7d  %7d  %7d  %3d%%\r\n"), totHeap, totHeap - freeHeap, freeHeap, (totHeap - freeHeap) * 100 / totHeap);
+        m_serial->printf(FSTR("Flash Settings   : %7d  %7d  %7d  %3d%%\r\n"), 4096, flashDictUsedSpace, 4096 - flashDictUsedSpace, flashDictUsedSpace * 100 / 4096);
+        m_serial->printf(FSTR("File System      : %7d  %7d  %7d  %3d%%\r\n"), fileSystemTot, fileSystemTot - fileSystemFree, fileSystemFree, (fileSystemTot - fileSystemFree) * 100 / fileSystemTot);
+        m_serial->printf(FSTR("Flash            : %7d\r\n"), getFlashSize());
+        m_serial->printf(FSTR("Flash (detected) : %7d\r\n"), getActualFlashSize());        
     }
 
 

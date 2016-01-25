@@ -24,16 +24,29 @@
 #include "fdv.h"
 
 
-extern "C"
-{
-    void Cache_Read_Enable(uint32 odd_even, uint32 mb_count, uint32 unk);
-}
 
 
 namespace fdv
 {
 	
 
+	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+
+    
+    void ICACHE_FLASH_ATTR selectFlashBank(uint32_t bank)
+    {
+        Cache_Read_Enable(bank & 1, (bank & 2) >> 1, 1);
+    }
+
+    
+    void ICACHE_FLASH_ATTR selectFlashBankSafe(uint32_t bank)
+    {
+        enterCritical();
+        Cache_Read_Enable(bank & 1, (bank & 2) >> 1, 1);
+        exitCritical();
+    }
+    
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 	
@@ -63,45 +76,32 @@ namespace fdv
 		return 0;	// unknown
 	}
     
+        
     
-    // Bank 0..3 (each bank maps 1MB bank to FLASH_MAP_START
-    void ICACHE_FLASH_ATTR selectFlashBank(uint32_t bank)
-    {
-        Cache_Read_Enable(bank & 1, (bank & 2) >> 1, 1);
-    }
-    
-    
-    uint32_t ICACHE_FLASH_ATTR getActualFlashSize()
+    uint32_t FUNC_FLASHMEM getActualFlashSize()
     {
         static uint32_t const COMPSIZE = 128;
         void* startOfFlash = (void*)(FLASH_MAP_START);
                 
-        selectFlashBank(3);
-        if (f_memcmp(startOfFlash, (void*)(FLASH_MAP_START), COMPSIZE) != 0)
+        if (f_memcmp(startOfFlash, (void*)(FLASH_MAP_START + 0x500000), COMPSIZE) != 0)
         {
-            // does not overlap at 0x0 of bank 2, should be 4MB (32mbit)
-            selectFlashBank(0);
+            // does not overlap at 0x0, should be 4MB (32mbit)
             return 0x400000;
         }
 
-        selectFlashBank(1);
-        if (f_memcmp(startOfFlash, (void*)(FLASH_MAP_START), COMPSIZE) != 0)
+        if (f_memcmp(startOfFlash, (void*)(FLASH_MAP_START + 0x300000), COMPSIZE) != 0)
         {
-            // does not overlap at 0x0 of bank 1, should be 2MB (16mbit)
-            selectFlashBank(0);
+            // does not overlap at 0x0, should be 2MB (16mbit)
             return 0x200000;
         }
         
-        selectFlashBank(0);
         if (f_memcmp(startOfFlash, (void*)(FLASH_MAP_START + 0x80000), COMPSIZE) != 0)
         {
-            // does not overlap at 0x80000 of bank 0, should be 1MB (8mbit)
-            selectFlashBank(0);
+            // does not overlap at 0x80000, should be 1MB (8mbit)
             return 0x100000;
         }        
                 
         // should be 512K (4mbit)
-        selectFlashBank(0);
         return 0x80000;
 
         /*
@@ -135,76 +135,100 @@ namespace fdv
 	
 
     
+
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
     
+    // Actually flash memory can be mapped a 1MB a the time starting from FLASH_MAP_START
+    // This function creates a "virtual" allocation from FLASH_MAP_START up to the actual size of the flash memory,
+    // switching the right bank and restoring it at the end.
+    uint32_t ICACHE_FLASH_ATTR getFlashAlignedDWord(uint32_t const* ptr)
+    {
+        // Following assuming FLASH_MAP_START = 0x40200000:
+        //   select bank 0 (for 0x40200000 - 0x402FFFFF)
+        //   select bank 1 (for 0x40300000 - 0x403FFFFF)
+        //   select bank 2 (for 0x40400000 - 0x404FFFFF)
+        //   select bank 3 (for 0x40500000 - 0x405FFFFF)
+        uint32_t bank = ((uint32_t)ptr >> 20 & 0xF) - 2;
+        if (bank > 0)
+        {
+            enterCritical();
+            selectFlashBank(bank);
+        }
+        
+        // calculate actual address (only first megabyte is directly addressable)
+        uint32_t addr = (uint32_t)ptr & 0xFFFFF + FLASH_MAP_START;
+        
+        // get aligned dword
+        uint32_t result = *((uint32_t const*)addr);
+        
+        if (bank > 0)
+        {
+            // restore bank 0 for code execution
+            selectFlashBank(0);
+            exitCritical();
+        }
+        
+        return result;        
+    }
     
-	bool FUNC_FLASHMEM isStoredInFlash(void const* ptr)
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+
+	uint8_t FUNC_FLASHMEM getByte(void const* address)
 	{
-		return (uint32_t)ptr >= FLASH_MAP_START;
-	}
-    
-    
-
-	///////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////
-
-	char ICACHE_FLASH_ATTR getChar(char const* str, uint32_t index)
-	{
-		if (isStoredInFlash(str))
-		{
-			uint32_t u32 = ((uint32_t const*)str)[index >> 2];
-			return ((char const*)&u32)[index & 0x3];
-		}
-		else
-			return str[index];
+        if (isStoredInFlash(address))
+        {
+            // align address to 32 bit
+            uint32_t const* alignedAddress = (uint32_t const*)((uint32_t)address & 0xFFFFFFFC);  
+            // get content from flash taking care about right bank
+            uint32_t result32 = getFlashAlignedDWord(alignedAddress);
+            // return required by inside the dword
+            return ((uint8_t const*)&result32)[(uint32_t)address & 0x3];
+        }
+        else
+        {
+            return *((uint8_t const*)address);
+        }
 	}
 
-    
+
   	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	uint8_t ICACHE_FLASH_ATTR getByte(void const* buffer)
+	char FUNC_FLASHMEM getChar(char const* str, uint32_t index)
 	{
-		return (uint8_t)getChar((char const*)buffer);
+        return isStoredInFlash(str)? (char)getByte(str + index) : str[index];
 	}
 
-	
+    	
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	char ICACHE_FLASH_ATTR getChar(char const* str)
+	char FUNC_FLASHMEM getChar(char const* str)
 	{
-		if (isStoredInFlash(str))
-		{
-			uint32_t index = (uint32_t)str & 0x3;
-			str = (char const*)((uint32_t)str & 0xFFFFFFFC);  // align str
-			uint32_t u32 = *((uint32_t const*)str);
-			return ((char const*)&u32)[index];
-		}
-		else
-			return *str;
+        return isStoredInFlash(str)? (char)getByte(str) : *str;
 	}		
-	
-	
+		
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	uint16_t ICACHE_FLASH_ATTR getWord(void const* buffer)
+	uint16_t FUNC_FLASHMEM getWord(void const* buffer)
 	{
-		char const* pc = (char const*)buffer;
-		return (uint8_t)getChar(pc) | ((uint8_t)getChar(pc + 1) << 8);
+		uint8_t const* pc = (uint8_t const*)buffer;
+		return getByte(pc) | (getByte(pc + 1) << 8);
 	}
 	
 	
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 
-	uint32_t ICACHE_FLASH_ATTR getDWord(void const* buffer)
+	uint32_t FUNC_FLASHMEM getDWord(void const* buffer)
 	{
-		char const* pc = (char const*)buffer;
-		return (uint8_t)getChar(pc) | ((uint8_t)getChar(pc + 1) << 8) | ((uint8_t)getChar(pc + 2) << 16) | ((uint8_t)getChar(pc + 3) << 24);
+		uint8_t const* pc = (uint8_t const*)buffer;
+		return getByte(pc) | (getByte(pc + 1) << 8) | (getByte(pc + 2) << 16) | (getByte(pc + 3) << 24);
 	}
 
     
