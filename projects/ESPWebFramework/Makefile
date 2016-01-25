@@ -50,7 +50,7 @@ OBJ += fdvnetwork.o fdvcollections.o fdvconfmanager.o fdvdatetime.o fdvserialser
 
 SRCDIR = ./src/
 WEBDIR = ./webcontent/
-WEBCONTENTADDRS = 0x6C000
+WEBCONTENTADDRS = 0x6D000
 MAXWEBCONTENT = 57344
 
 TARGET_OUT = app.out
