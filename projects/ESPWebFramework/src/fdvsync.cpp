@@ -38,13 +38,13 @@ namespace fdv
 
 	
     
-	void FUNC_FLASHMEM enterCritical()
+	void ICACHE_FLASH_ATTR enterCritical()
 	{
 		taskENTER_CRITICAL();
 	}
 	
     
-	void FUNC_FLASHMEM exitCritical()
+	void ICACHE_FLASH_ATTR exitCritical()
 	{
 		taskEXIT_CRITICAL();
 	}

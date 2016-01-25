@@ -105,7 +105,7 @@ namespace fdv
         // can be re-applied
         static void applyDateTime();
 		
-		static void MTD_FLASHMEM restore();
+		static void restore();
 		
 		
 		//// WiFi settings
