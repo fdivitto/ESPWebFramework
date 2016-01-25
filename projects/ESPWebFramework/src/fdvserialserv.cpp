@@ -91,6 +91,14 @@ namespace fdv
              FSTR("[static IP NETMASK GATEWAY] | [dhcp] | [ap IP NETMASK GATEWAY] | [dns DNS1 DNS2]"), 
              FSTR("No params: Display network info\r\n\tstatic: Set Client Mode static IP\r\n\tdhcp: Set Client Mode DHCP\r\n\tap: Set Access Point static IP\r\n\tdns: Set primary and seconday DNS server"), 
              &SerialConsole::cmd_ifconfig},
+
+             // example:
+             //  iwconfig
+             //  iwconfig client myroutername 123456
+            {FSTR("iwconfig"),
+             FSTR("[client SSID PASSWORD] | [accpoint SSID PASSWORD CHANNEL]"),
+             FSTR("No params: Display wifi info\r\nclient: Setup Client Mode\r\naccpoint: Setup Access Point Mode\r\n"),
+             &SerialConsole::cmd_iwconfig},
              
              // example:
              //   iwlist
@@ -407,6 +415,57 @@ namespace fdv
             }
             m_serial->printf(FSTR("DNS1 %s DNS2 %s\r\n"), (char const*)NSLookup::getDNSServer(0).get_str(), 
                                                           (char const*)NSLookup::getDNSServer(1).get_str());
+        }
+    }
+    
+    
+    void MTD_FLASHMEM SerialConsole::cmd_iwconfig()
+    {
+        if (m_paramsCount == 4 && hasParameter(1, FSTR("client")))
+        {
+            // setup Client Mode
+            APtr<char> strSSID( t_strdup(m_params[2]) );
+            APtr<char> strPSW( t_strdup(m_params[3]) );
+            ConfigurationManager::setWiFiMode(WiFi::Client);
+            ConfigurationManager::setClientParams(strSSID.get(), strPSW.get());
+        }
+        else if (m_paramsCount == 5 && hasParameter(1, FSTR("accpoint")))
+        {
+            // setup Access Point
+            APtr<char> strSSID( t_strdup(m_params[2]) );
+            APtr<char> strPSW( t_strdup(m_params[3]) );
+            uint8_t intCHANNEL = t_strtol(m_params[4], 10);
+            ConfigurationManager::setWiFiMode(WiFi::AccessPoint);
+            ConfigurationManager::setAccessPointParams(strSSID.get(), strPSW.get(), intCHANNEL, WiFi::WPA2_PSK, false);
+        }
+        else
+        {
+            // show info
+            WiFi::Mode mode = ConfigurationManager::getWiFiMode();
+            if (mode == WiFi::Client || mode == WiFi::ClientAndAccessPoint)
+            {
+                m_serial->printf(FSTR("Client Mode:\r\n"));
+                char const* SSID;
+                char const* psw;
+                ConfigurationManager::getClientParams(&SSID, &psw);
+                m_serial->printf(FSTR("   SSID: %s\r\n"), SSID);
+                m_serial->printf(FSTR("   PSW:  %s\r\n"), psw);
+            }
+            if (mode == WiFi::AccessPoint || mode == WiFi::ClientAndAccessPoint)
+            {
+                m_serial->printf(FSTR("Access Point Mode:\r\n"));
+                char const* SSID;
+                char const* psw;
+                uint8_t channel;
+                WiFi::SecurityProtocol securityProtocol;
+                bool hiddenSSID;
+                ConfigurationManager::getAccessPointParams(&SSID, &psw, &channel, &securityProtocol, &hiddenSSID);
+                m_serial->printf(FSTR("   SSID: %s\r\n"), SSID);
+                m_serial->printf(FSTR("   PSW : %s\r\n"), psw);
+                m_serial->printf(FSTR("   Ch  : %d\r\n"), channel);
+                m_serial->printf(FSTR("   Sec : %s\r\n"), WiFi::convSecurityProtocolToString(securityProtocol));
+                m_serial->printf(FSTR("   Hid : %s\r\n"), hiddenSSID? FSTR("Yes") : FSTR("No"));
+            }
         }
     }
 
