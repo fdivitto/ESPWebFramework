@@ -1,3 +1,6 @@
+
+SPEED = 230400 ## vs. 115200
+
 # this directory
 ROOT_DIR :=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))) 
 
@@ -6,19 +9,19 @@ SDKBASE := $(shell dirname $(shell dirname $(ROOT_DIR)))/SDK/
 
 # homebrew installs the toolchain, but neglects to put it in your $PATH
 ifeq ($(shell uname), Darwin)
-	SHELL 			:= $(shell which zsh)
-	PORT 				:= $(lastword $(wildcard /dev/tty.*))
-	BIN_EXEC 		:= /opt/xtensa-lx106-elf/bin/
-	export PATH := $(BIN_EXEC)subst:$(PATH)
+SHELL 		 := $(shell which zsh)
+PORT 			 := $(lastword $(wildcard /dev/tty.*))
+BIN_EXEC 	 := /opt/xtensa-lx106-elf/bin/
+export PATH := $(BIN_EXEC)subst:$(PATH)
 else
-	PORT 				:= COM7
-	# get SDK path from environment variable ESP8266SDK
-	SDKBASE  		:= $(subst \,/,$(ESP8266SDK))
+PORT 			 := COM7
+# get SDK path from environment variable ESP8266SDK
+SDKBASE  	 := $(subst \,/,$(ESP8266SDK))
 endif
 
 XELF 			 := xtensa-lx106-elf
 
-AR          = $(BIN_EXEC)$(XELF)-ar
+AR         := $(BIN_EXEC)$(XELF)-ar
 CC          = $(BIN_EXEC)$(XELF)-g++
 CPP         = $(BIN_EXEC)$(XELF)-g++
 LD          = $(BIN_EXEC)$(XELF)-g++
@@ -30,7 +33,7 @@ ESPTOOL     = python $(SDKBASE)esptool.py
 
 RTOS       := esp_iot_rtos_sdk-master
 INCLUDES   := -I $(SDKBASE)$(RTOS)/include            \
-              -I $(SDKBASE)$(RTOS)/include/espressif  \
+	            -I $(SDKBASE)$(RTOS)/include/espressif  \
               -I $(SDKBASE)$(RTOS)/extra_include      \
               -I $(SDKBASE)$(RTOS)/include/lwip       \
               -I $(SDKBASE)$(RTOS)/include/lwip/lwip  \
@@ -65,18 +68,25 @@ WWW_DIR			= ./webcontent/
 WWW_ADDRS		= 0x6D000
 WWW_MAXSIZE	= 57344
 
-TARGET_OUT 			= app.out
+TARGET_OUT := app.out
 
-.PHONY: all flash clean flashweb flashdump flasherase
+BINS       := $(TARGET_OUT)-0x00000.bin $(TARGET_OUT)-0x11000.bin
 
-all: $(TARGET_OUT)
+.PHONY: all flash clean flashweb flashdump flasherase fresh
+
+all: $(BINS)
 
 $(TARGET_OUT): libuser.a
-	$(LD) $(ELF_LIBDIR) $(SDK_LIBDIR) -T$(SDK_LDDIR)/$(LD_SCRIPT) -Wl,-M >out.map $(LDFLAGS) -Wl,--start-group $(LIBS) libuser.a -Wl,--end-group -o $@
+	$(LD) $(ELF_LIBDIR) $(SDK_LIBDIR) -T$(SDK_LDDIR)/$(LD_SCRIPT) \
+	      -Wl,-M >out.map $(LDFLAGS) 															\
+	      -Wl,--start-group $(LIBS) libuser.a 										\
+	      -Wl,--end-group -o $@
 	$(OD) -h -j .data -j .rodata -j .bss -j .text -j .irom0.text $@
 	$(OD) -t -j .text $@ >_text_content.map
 	$(OD) -t -j .irom0.text $@ >_irom0_text_content.map
-	$(ESPTOOL) elf2image $@
+
+$(BINS): $(TARGET_OUT)
+	$(ESPTOOL) elf2image $^
 
 libuser.a: $(OBJ)
 	$(AR) cru $@ $^
@@ -87,15 +97,17 @@ libuser.a: $(OBJ)
 %.o: $(SRCDIR)%.cpp $(wildcard $(SRCDIR)*.h)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-flash:  $(TARGET_OUT)-0x00000.bin $(TARGET_OUT)-0x11000.bin flashweb
-	-$(ESPTOOL) --port $(PORT) write_flash 0x11000 $(TARGET_OUT)-0x11000.bin 0x00000 $(TARGET_OUT)-0x00000.bin
+ESP_CMD := $(ESPTOOL) --port $(PORT) --baud $(SPEED)
+
+flash: flashweb
+	-$(ESP_CMD) write_flash 0x11000 $(TARGET_OUT)-0x11000.bin 0x00000 $(TARGET_OUT)-0x00000.bin
 
 flashweb:
 	python binarydir.py $(WWW_DIR) webcontent.bin $(WWW_MAXSIZE)
-	-$(ESPTOOL) --port $(PORT) write_flash $(WWW_ADDRS) webcontent.bin
+	-$(ESP_CMD) write_flash $(WWW_ADDRS) webcontent.bin
 
 flashdump:
-	-$(ESPTOOL) --port $(PORT) read_flash 0x0000 0x80000 flash.dump
+	-$(ESP_CMD) read_flash 0x0000 0x80000 flash.dump
 	xxd flash.dump > flash.hex
 
 flasherase:
@@ -103,5 +115,5 @@ flasherase:
 	
 clean:
 	-rm -f *.(a|o|out|bin|ii|s|expand|map|dump|hex)
-	
 
+fresh: clean $(BINS) flash
