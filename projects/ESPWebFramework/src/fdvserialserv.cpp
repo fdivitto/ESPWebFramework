@@ -167,6 +167,13 @@ namespace fdv
              FSTR("FILENAME"), 
              FSTR("Print a file"), 
              &SerialConsole::cmd_cat},             
+
+             // example:
+             //   fixflash
+            {FSTR("fixflash"),
+             STR_,
+             FSTR("Fixes flash size to the detected value"), 
+             &SerialConsole::cmd_fixflash},             
              
              {FSTR("test"),       
              FSTR(""), FSTR(""), 
@@ -622,9 +629,18 @@ namespace fdv
         }
     }
 
+    
+    void MTD_FLASHMEM SerialConsole::cmd_fixflash()
+    {
+        fixActualFlashSize();
+        m_serial->printf("Flash fixed, reboot required\r\n");
+    }
+    
             
     void MTD_FLASHMEM SerialConsole::cmd_test()
     {
+        debug("id = %x\r\n", spi_flash_get_id());
+        debug("actual size = %d\r\n", getActualFlashSize());
     }
 
         

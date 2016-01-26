@@ -89,6 +89,7 @@ namespace fdv
         void cmd_ls();
         void cmd_rm();
         void cmd_cat();
+        void cmd_fixflash();
 		void cmd_test();		        
 		
 	private:
