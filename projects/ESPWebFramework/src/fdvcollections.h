@@ -880,7 +880,6 @@ struct FlashDictionary
 //   python binarydir.py webcontent webcontent.bin 57344
 //   python ../esptool.py --port COM7 write_flash 0x6C000 webcontent.bin
 // Then you can use FlashFileSystem static methods to get actual files content
-// Maximum content size is 56K bytes and starts from FLASHFILESYSTEM_POS of the flash memory
 //
 // At the top of files flash memory there is following magick:
 //   uint32_t: MAGIC = 0x93841A03
@@ -891,7 +890,7 @@ struct FlashDictionary
 //  If file exists (bit0 = 0):
 //     uint8_t:  filename length including terminating zero
 //     uint8_t:  mime type length including terminating zero
-//     uint16_t: file content length
+//     uint32_t: file content length
 //     x-bytes:  filename data + zero
 //     x-bytes:  mime type data + zero
 //     x-bytes:  raw file data
@@ -912,7 +911,7 @@ class FlashFileSystem
             char const* nextpos;
             char const* filename;
             char const* mimetype;
-            uint16_t    datalength;
+            uint32_t    datalength;
             void const* data;
             
             Item()
@@ -936,7 +935,7 @@ class FlashFileSystem
         }
     
     protected:
-        static char* getFreePos();
+        static char const* getFreePos();
     
     private:
         static uint32_t const MAGIC = 0x93841A03;
@@ -968,14 +967,14 @@ class FlashFile
         FlashFile();
         ~FlashFile();
         void create(char const* filename, char const* mimetype);
-        bool write(void const* data, uint16_t size);
+        bool write(void const* data, uint32_t size);
         bool write(char const* string);
         void close();
         
     private:
     
-        char*       m_startPosition;
-        uint16_t    m_headerLength;
+        char const* m_startPosition;
+        uint32_t    m_headerLength;
         FlashWriter m_writer;
 };
 

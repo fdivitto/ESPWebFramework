@@ -37,7 +37,7 @@
 #  If file exists (bit0 = 0):
 #     uint8_t:  filename length including terminating zero
 #     uint8_t:  mime type length including terminating zero
-#     uint16_t: file content length
+#     uint32_t: file content length
 #     x-bytes:  filename data + zero
 #     x-bytes:  mime type data + zero
 #     x-bytes:  raw file data
@@ -111,7 +111,7 @@ with open(outfilename, "wb") as fw:
         fw.write(struct.pack("B", 0))
                 
         # filename length, mime tpye length, file content length
-        fw.write(struct.pack("<BBH", len(filename) + 1, len(mimetype) + 1, len(filedata)))
+        fw.write(struct.pack("<BBI", len(filename) + 1, len(mimetype) + 1, len(filedata)))
                 
         # filename data
         fw.write(struct.pack(str(len(filename)) + "sB", filename, 0x00))

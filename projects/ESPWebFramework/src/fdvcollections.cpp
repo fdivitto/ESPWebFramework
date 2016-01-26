@@ -600,17 +600,17 @@ bool MTD_FLASHMEM FlashFileSystem::getNext(Item* item)
     
     // get lengths
     uint8_t filenamelen = getByte(item->nextpos);
-    item->nextpos += 1;
+    item->nextpos += sizeof(filenamelen);
     uint8_t mimetypelen = getByte(item->nextpos);
-    item->nextpos += 1;
-    item->datalength = getWord(item->nextpos); 
-    item->nextpos += 2;
+    item->nextpos += sizeof(mimetypelen);
+    item->datalength = getDWord(item->nextpos); 
+    item->nextpos += sizeof(item->datalength);
     // calc pointers
     item->filename   = item->nextpos;
     item->mimetype   = item->nextpos + filenamelen;
-    item->data       = (void*)(item->mimetype + mimetypelen);
+    item->data       = (void const*)(item->mimetype + mimetypelen);
     // move to next file
-    item->nextpos += filenamelen + mimetypelen + item->datalength;
+    item->nextpos += item->datalength + filenamelen + mimetypelen;
     
     return true;
 }
@@ -644,12 +644,12 @@ bool MTD_FLASHMEM FlashFileSystem::remove(char const* filename)
 
 
 // find the end of files and return the ending flag position
-char* MTD_FLASHMEM FlashFileSystem::getFreePos()
+char const* MTD_FLASHMEM FlashFileSystem::getFreePos()
 {
     FlashFileSystem::Item item;
     while (FlashFileSystem::getNext(&item))
         ;
-    return (char*)item.thispos;
+    return item.thispos;
 }
 
 
@@ -692,7 +692,7 @@ MTD_FLASHMEM void FlashFile::create(char const* filename, char const* mimetype)
     m_writer.write(&mimetypelen, sizeof(mimetypelen));
     
     // dummy file content length
-    uint16_t filelen = 0;
+    uint32_t filelen = 0;
     m_writer.write(&filelen, sizeof(filelen));
     
     // filename string + zero
@@ -712,7 +712,7 @@ MTD_FLASHMEM FlashFile::~FlashFile()
 }
 
 
-bool MTD_FLASHMEM FlashFile::write(void const* data, uint16_t size)
+bool MTD_FLASHMEM FlashFile::write(void const* data, uint32_t size)
 {
     return m_writer.write(data, size);
 }
@@ -736,7 +736,7 @@ void MTD_FLASHMEM FlashFile::close()
         
         // calculate and write file length        
         m_writer.seek(m_startPosition + 3);
-        uint16_t filelength = currentPos - m_startPosition - m_headerLength;
+        uint32_t filelength = currentPos - m_startPosition - m_headerLength;
         m_writer.write(&filelength, sizeof(filelength));
         
         // write flags

@@ -66,7 +66,26 @@ namespace fdv
     
     // automatically surrounded by enterCritical/exitCritical
     void selectFlashBankSafe(uint32_t bank);
-        
+
+
+    
+	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+    // SafeBankSelector
+    // Automatically call selectFlashBank (if necessary)
+    // Also call enterCritical in the constructor and exitCritical in the destructor (if necessary)
+    
+    class SafeBankSelector
+    {
+    public:
+        SafeBankSelector(void const* address);
+        ~SafeBankSelector();
+    
+    private:
+        uint32_t m_bank;
+    };
+    
+    
     
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////

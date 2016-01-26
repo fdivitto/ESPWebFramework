@@ -156,33 +156,49 @@ namespace fdv
     // switching the right bank and restoring it at the end.
     uint32_t ICACHE_FLASH_ATTR getFlashAlignedDWord(uint32_t const* ptr)
     {
+        // calculate actual address (only first megabyte is directly addressable)
+        void const* addr = FLASH_MAP_START_PTR + ((uint32_t)ptr & 0xFFFFF);
+        
+        // this call selectFlashBank and enter in critical section if necessary
+        SafeBankSelector bankSelector(ptr);
+        
+        // get aligned dword
+        uint32_t result = *((uint32_t volatile*)addr);
+                
+        return result;        
+    }
+
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+    // SafeBankSelector
+    
+    
+    ICACHE_FLASH_ATTR SafeBankSelector::SafeBankSelector(void const* address)
+    {
         // Following assuming FLASH_MAP_START = 0x40200000:
         //   select bank 0 (for 0x40200000 - 0x402FFFFF)
         //   select bank 1 (for 0x40300000 - 0x403FFFFF)
         //   select bank 2 (for 0x40400000 - 0x404FFFFF)
         //   select bank 3 (for 0x40500000 - 0x405FFFFF)
-        uint32_t bank = ((uint32_t)ptr >> 20 & 0xF) - 2;
-        if (bank > 0)
+        m_bank = ((uint32_t)address >> 20 & 0xF) - 2;        
+        if (m_bank > 0)
         {
             enterCritical();
-            selectFlashBank(bank);
+            selectFlashBank(m_bank);
         }
+    }
         
-        // calculate actual address (only first megabyte is directly addressable)
-        uint32_t addr = (uint32_t)ptr & 0xFFFFF + FLASH_MAP_START;
-        
-        // get aligned dword
-        uint32_t result = *((uint32_t volatile*)addr);
-        
-        if (bank > 0)
+    ICACHE_FLASH_ATTR SafeBankSelector::~SafeBankSelector()
+    {
+        if (m_bank > 0)
         {
             // restore bank 0 for code execution
             selectFlashBank(0);
             exitCritical();
         }
-        
-        return result;        
     }
+    
     
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -261,7 +277,7 @@ namespace fdv
         delete[] m_pageBuffer;
     }
     
-    void MTD_FLASHMEM FlashWriter::loadPage()
+    void ICACHE_FLASH_ATTR FlashWriter::loadPage()
     {
         // alignedDest is aligned to the start of flash page (a page is SPI_FLASH_SEC_SIZE bytes)
         uint8_t const* alignedDest = (uint8_t const*)((uint32_t)m_dest & ~(SPI_FLASH_SEC_SIZE - 1));
@@ -272,7 +288,10 @@ namespace fdv
                         
             // load page from flash
             m_currentPage = alignedDest;
-            memcpy(m_pageBuffer, m_currentPage, SPI_FLASH_SEC_SIZE);
+            
+            SafeBankSelector bankSelector(m_currentPage);
+            void const* addr = FLASH_MAP_START_PTR + ((uint32_t)m_currentPage & 0xFFFFF); // calculate actual address (only first megabyte is directly addressable)
+            memcpy(m_pageBuffer, addr, SPI_FLASH_SEC_SIZE);
         }
         m_writePtr = &m_pageBuffer[m_dest - m_currentPage];
     }
