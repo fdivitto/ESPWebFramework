@@ -656,8 +656,7 @@ char* MTD_FLASHMEM FlashFileSystem::getFreePos()
 // return free space in bytes
 uint32_t MTD_FLASHMEM FlashFileSystem::getFreeSpace()
 {
-    char const* lastPos = getFreePos();
-    return FLASHFILESYSTEM_END - ((uint32_t)lastPos - FLASH_MAP_START);
+    return getBeginOfSDKSettings() - (uint8_t const*)getFreePos();
 }
 
 

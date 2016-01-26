@@ -47,6 +47,7 @@ namespace fdv
         exitCritical();
     }
     
+    
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 	
@@ -81,21 +82,20 @@ namespace fdv
     uint32_t FUNC_FLASHMEM getActualFlashSize()
     {
         static uint32_t const COMPSIZE = 128;
-        void* startOfFlash = (void*)(FLASH_MAP_START);
                 
-        if (f_memcmp(startOfFlash, (void*)(FLASH_MAP_START + 0x500000), COMPSIZE) != 0)
+        if (f_memcmp(FLASH_MAP_START_PTR, FLASH_MAP_START_PTR + 0x500000, COMPSIZE) != 0)
         {
             // does not overlap at 0x0, should be 4MB (32mbit)
             return 0x400000;
         }
 
-        if (f_memcmp(startOfFlash, (void*)(FLASH_MAP_START + 0x300000), COMPSIZE) != 0)
+        if (f_memcmp(FLASH_MAP_START_PTR, FLASH_MAP_START_PTR + 0x300000, COMPSIZE) != 0)
         {
             // does not overlap at 0x0, should be 2MB (16mbit)
             return 0x200000;
         }
         
-        if (f_memcmp(startOfFlash, (void*)(FLASH_MAP_START + 0x80000), COMPSIZE) != 0)
+        if (f_memcmp(FLASH_MAP_START_PTR, FLASH_MAP_START_PTR + 0x80000, COMPSIZE) != 0)
         {
             // does not overlap at 0x80000, should be 1MB (8mbit)
             return 0x100000;
@@ -103,22 +103,34 @@ namespace fdv
                 
         // should be 512K (4mbit)
         return 0x80000;
-
-        /*
-        FlashWriter fw(NULL, FLASH_MAP_START + 0x400000);        
-        uint32_t v = getDWord((void*)(FLASH_MAP_START + 0x00000000));
-        fw.seek((void*)(FLASH_MAP_START + 0x00000000));
-        v = v & 0x0FFFFFFF | (0x40 << 24);
+    }
+    
+    
+    void FUNC_FLASHMEM fixActualFlashSize()
+    {
+        uint8_t szflag = 0x00;  // default 512K
+        switch (getActualFlashSize())
+        {
+            case 0x100000:  // 1MB?
+                szflag = 0x20;
+                break;
+            case 0x200000:  // 2MB?
+                szflag = 0x30;
+                break;
+            case 0x400000:  // 4MB?
+                szflag = 0x40;
+                break;
+        }
+        FlashWriter fw(FLASH_MAP_START_PTR);
+        uint32_t v = getDWord(FLASH_MAP_START_PTR) & 0x0FFFFFFF | (szflag << 24);
         fw.write(&v, 4);
-        fw.flush();
-        */        
     }
     
 
 	// size in MHz
 	uint32_t FUNC_FLASHMEM getFlashSpeed()
 	{
-		uint32_t flags = *((uint32_t volatile*)0x40200000);
+		uint32_t flags = *((uint32_t volatile*)FLASH_MAP_START_PTR);
 		switch(flags >> 24 & 0x0F)
 		{
 			case 0:
@@ -160,7 +172,7 @@ namespace fdv
         uint32_t addr = (uint32_t)ptr & 0xFFFFF + FLASH_MAP_START;
         
         // get aligned dword
-        uint32_t result = *((uint32_t const*)addr);
+        uint32_t result = *((uint32_t volatile*)addr);
         
         if (bank > 0)
         {
@@ -236,10 +248,10 @@ namespace fdv
 	//////////////////////////////////////////////////////////////////////
     // FlashWriter
     
-    MTD_FLASHMEM FlashWriter::FlashWriter(void* dest, uint32_t maxPosition)
-        : m_currentPage(NULL), m_maxPosition((uint8_t*)(FLASH_MAP_START + maxPosition))
+    MTD_FLASHMEM FlashWriter::FlashWriter(void const* dest)
+        : m_currentPage(NULL), m_maxPosition(getBeginOfSDKSettings())
     {
-        m_dest = (uint8_t*)dest;
+        m_dest = (uint8_t const*)dest;
         m_pageBuffer = new uint8_t[SPI_FLASH_SEC_SIZE];
     }
     
@@ -252,7 +264,7 @@ namespace fdv
     void MTD_FLASHMEM FlashWriter::loadPage()
     {
         // alignedDest is aligned to the start of flash page (a page is SPI_FLASH_SEC_SIZE bytes)
-        uint8_t* alignedDest = (uint8_t*)((uint32_t)m_dest & ~(SPI_FLASH_SEC_SIZE - 1));
+        uint8_t const* alignedDest = (uint8_t const*)((uint32_t)m_dest & ~(SPI_FLASH_SEC_SIZE - 1));
         if (alignedDest != m_currentPage)
         {
             // save current page if necessary

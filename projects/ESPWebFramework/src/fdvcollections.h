@@ -932,7 +932,7 @@ class FlashFileSystem
 
         static uint32_t getTotalSpace()
         {
-            return FLASHFILESYSTEM_END - FLASHFILESYSTEM_POS;
+            return getBeginOfSDKSettings() - FLASHFILESYSTEM_PTR;
         }
     
     protected:

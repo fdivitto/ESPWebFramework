@@ -35,10 +35,13 @@
 // Flash from 0x6D000 to 0x7B000 mapped at 0x4026D000, len = 0xE000  (56KBytes)      -> FlashFileSystem content
 
 static uint32_t const FLASH_MAP_START      = 0x40200000;    // based on the CPU address space
+static uint8_t const* FLASH_MAP_START_PTR  = (uint8_t const*)FLASH_MAP_START;
+
+static uint32_t const SDKFLASHSETTINGSZE   = 0x5000;    // info from look at "eagle.app.v6.ld". Used in getBeginOfSDKSettings()
 
 // Flash address space
 static uint32_t const FLASHFILESYSTEM_POS  = 0x6D000;
-static uint32_t const FLASHFILESYSTEM_END  = FLASHFILESYSTEM_POS + 0xE000;
+static uint8_t const* FLASHFILESYSTEM_PTR  = FLASH_MAP_START_PTR + FLASHFILESYSTEM_POS;
 static uint32_t const FLASH_DICTIONARY_POS = 0x6C000;
 
 
@@ -63,8 +66,8 @@ namespace fdv
     
     // automatically surrounded by enterCritical/exitCritical
     void selectFlashBankSafe(uint32_t bank);
+        
     
-
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
 	// getFlashSize
@@ -74,6 +77,23 @@ namespace fdv
 	uint32_t getFlashSpeed();
     uint32_t getActualFlashSize();
 
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+    // fixActualFlashSize
+    
+    void fixActualFlashSize();
+    
+    
+	///////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////
+    // getBeginOfSDKSettings
+    
+    inline uint8_t const* getBeginOfSDKSettings()
+    {
+        return FLASH_MAP_START_PTR + (getFlashSize() - SDKFLASHSETTINGSZE);
+    }
+    
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -145,12 +165,12 @@ namespace fdv
     class FlashWriter
     {
         public:
-            FlashWriter(void* dest = NULL, uint32_t maxPosition = FLASHFILESYSTEM_END);
+            FlashWriter(void const* dest = NULL);
             ~FlashWriter();
             
             bool write(void const* source, uint32_t size);
             
-            void seek(void* newDestination)
+            void seek(void const* newDestination)
             {
                 m_dest = (uint8_t*)newDestination;        
             }
@@ -166,11 +186,11 @@ namespace fdv
         private:
             void loadPage();            
         
-            uint8_t* m_dest;
-            uint8_t* m_pageBuffer;
-            uint8_t* m_currentPage;
-            uint8_t* m_writePtr;
-            uint8_t* m_maxPosition;
+            uint8_t const* m_dest;
+            uint8_t*       m_pageBuffer;
+            uint8_t const* m_currentPage;
+            uint8_t*       m_writePtr;
+            uint8_t const* m_maxPosition;
     };
     
 	
