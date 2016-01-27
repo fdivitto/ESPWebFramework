@@ -2,7 +2,7 @@
 SPEED 			= 230400 ## vs. 115200
 BUILD_DIR 	= build
 SRCDIR 			= ./src/
-WWW_DIR			= ./webcontent.alt/
+WWW_DIR			= ./webcontent/
 WWW_BIN     = webcontent.bin
 WWW_MAXSIZE	= 57344
 
@@ -24,7 +24,7 @@ ifeq ($(shell uname), Darwin)
 	BIN_EXEC 	 	:= /opt/xtensa-lx106-elf/bin/
 	export PATH := $(BIN_EXEC)subst:$(PATH)
 else
-	PORT 			 	:= COM7
+	PORT 			 	:= COM4
 	# get SDK path from environment variable ESP8266SDK
 	SDKBASE  	 	?= $(subst \,/,$(ESP8266SDK))
 endif
@@ -48,7 +48,7 @@ INCLUDES   += -I $(SDKBASE)$(RTOS)/extra_include
 INCLUDES   += -I $(SDKBASE)$(XELF)/xtensa-lx106-elf/include
 
 # don't change -Os (or add other -O options) otherwise FLASHMEM and FSTR data will be duplicated in RAM
-CFLAGS      = -g -save-temps -Os -Wpointer-arith -Wundef -Werror -Wl,-EL 	\
+CFLAGS      = -g -Os -Wpointer-arith -Wundef -Werror -Wl,-EL 	\
               -nostdlib -mlongcalls -mtext-section-literals 							\
               -fno-exceptions -fno-rtti -fno-inline-functions             \
               -fno-threadsafe-statics -fno-use-cxa-atexit                 \
@@ -80,7 +80,7 @@ mkdirs:
 
 $(TARGET_OUT): $(BUILD_DIR)/libuser.a
 	$(LD) $(ELF_LIBDIR) $(SDK_LIBDIR) -T$(SDK_LDDIR)/$(LD_SCRIPT) \
-	      -Wl,-M >out.map $(LDFLAGS) 															\
+	      -Wl,-M >$(BUILD_DIR)/out.map $(LDFLAGS) 															\
 	      -Wl,--start-group $(LIBS) $^				 										\
 	      -Wl,--end-group -o $@
 	$(OD) -h -j .data -j .rodata -j .bss -j .text -j .irom0.text $@
@@ -118,8 +118,7 @@ flasherase: needs_port
 	$(ESPTOOL) --port $(PORT) erase_flash
 	
 clean:
-	# -rm -f *.(a|o|out|bin|ii|s|expand|map|dump|hex) 
-	-rm -rf $(BUILD_DIR)
+	-rm -rf $(BUILD_DIR)/*
 
 fresh: clean $(BINS) flash
 
