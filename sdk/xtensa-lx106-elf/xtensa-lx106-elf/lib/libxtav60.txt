@@ -1,0 +1,177 @@
+In archive libxtav60.a:
+
+xtav60-board.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 xtav60-board.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l     O .bss	00000004 _clock_freq_hz_27
+00000004 l     O .bss	00000004 _clock_period_ps_28
+00000000 l    d  .rodata.str1.4	00000000 .rodata.str1.4
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000041 xtbsp_board_init
+00000000         *UND*	00000000 __udivsi3
+00000000         *UND*	00000000 xtbsp_uart_init
+00000000         *UND*	00000000 xtbsp_display_init
+00000044 g     F .text	00000005 xtbsp_board_name
+0000004c g     F .text	0000000e xtbsp_board_reset
+0000005c g     F .text	00000007 xtbsp_clock_freq_hz
+00000064 g     F .text	00000007 xtbsp_clock_period_ps
+0000006c g     F .text	00000039 xtbsp_delay_cycles
+00000000         *UND*	00000000 xthal_get_ccount
+000000a8 g     F .text	00000027 xtbsp_delay_ns
+
+
+
+xtav60-display.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 xtav60-display.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l     O .data	00000004 lcd_29
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000004 xtbsp_display_exists
+00000004 g     F .text	0000001d xtbsp_display_init
+00000000         *UND*	00000000 splc780d_init
+00000024 g     F .text	0000001b xtbsp_display_char
+00000000         *UND*	00000000 splc780d_write_char
+00000040 g     F .text	00000019 xtbsp_display_string
+00000000         *UND*	00000000 splc780d_write_string
+0000005c g     F .text	00000017 xtbsp_display_blank
+00000000         *UND*	00000000 splc780d_blank
+
+
+
+lcd-splc780d.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 lcd-splc780d.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .rodata.str1.4	00000000 .rodata.str1.4
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000071 splc780d_init
+00000000         *UND*	00000000 xtbsp_delay_ns
+00000074 g     F .text	00000047 splc780d_write_char
+000000bc g     F .text	00000071 splc780d_write_string
+00000130 g     F .text	00000013 splc780d_blank
+
+
+
+xtbsp-gloss-uart.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 xtbsp-gloss-uart.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000013 board_init
+00000000         *UND*	00000000 xtbsp_board_init
+00000014 g     F .text	00000013 inbyte
+00000000         *UND*	00000000 xtbsp_uart_getchar
+00000028 g     F .text	00000015 outbyte
+00000000         *UND*	00000000 xtbsp_uart_putchar
+
+
+
+xtbsp-uart-16550.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 xtbsp-uart-16550.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .rodata	00000000 .rodata
+00000000 l     O .rodata	00000004 uart_29
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	00000004 xtbsp_uart_exists
+00000004 g     F .text	00000025 xtbsp_uart_init
+00000000         *UND*	00000000 uart16550_init
+0000002c g     F .text	00000017 xtbsp_uart_getchar
+00000000         *UND*	00000000 uart16550_in
+00000044 g     F .text	00000019 xtbsp_uart_putchar
+00000000         *UND*	00000000 uart16550_out
+00000060 g     F .text	0000000f xtbsp_uart_get_isready
+00000070 g     F .text	00000016 xtbsp_uart_put_isready
+00000088 g     F .text	0000001c xtbsp_uart_int_enable_status
+000000a4 g     F .text	00000024 xtbsp_uart_int_enable
+000000c8 g     F .text	0000002d xtbsp_uart_int_disable
+000000f8 g     F .text	0000000c xtbsp_uart_int_number
+
+
+
+uart-16550.o:     file format elf32-xtensa-le
+
+SYMBOL TABLE:
+00000000 l    df *ABS*	00000000 uart-16550.c
+00000000 l    d  .text	00000000 .text
+00000000 l    d  .data	00000000 .data
+00000000 l    d  .bss	00000000 .bss
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_pubnames	00000000 .debug_pubnames
+00000000 l    d  .literal	00000000 .literal
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .xtensa.info	00000000 .xtensa.info
+00000000 l    d  .xt.lit	00000000 .xt.lit
+00000000 l    d  .xt.prop	00000000 .xt.prop
+00000000 g     F .text	000000a1 uart16550_init
+00000000         *UND*	00000000 xtbsp_clock_freq_hz
+00000000         *UND*	00000000 __udivsi3
+000000a4 g     F .text	0000001b uart16550_out
+000000c0 g     F .text	0000001a uart16550_in
+
+
