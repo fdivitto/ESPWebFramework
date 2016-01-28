@@ -121,9 +121,13 @@ namespace fdv
                 szflag = 0x40;
                 break;
         }
-        FlashWriter fw(FLASH_MAP_START_PTR);
-        uint32_t v = getDWord(FLASH_MAP_START_PTR) & 0x0FFFFFFF | (szflag << 24);
-        fw.write(&v, 4);
+        uint32_t curFlags = getDWord(FLASH_MAP_START_PTR);
+        uint32_t newFlags = curFlags & 0x0FFFFFFF | (szflag << 24);
+        if (curFlags != newFlags)
+        {
+            FlashWriter fw(FLASH_MAP_START_PTR);
+            fw.write(&newFlags, 4);
+        }
     }
     
 

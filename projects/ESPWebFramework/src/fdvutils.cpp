@@ -105,7 +105,6 @@ void FUNC_FLASHMEM __cxa_deleted_virtual(void)
 }
 
 
-
 namespace fdv
 {
 
@@ -125,7 +124,6 @@ void MTD_FLASHMEM RebootTask::exec()
 {
     delay(m_time);
     taskENTER_CRITICAL();
-    taskDISABLE_INTERRUPTS();
     while(1);	// reset using watchdog
 }
     

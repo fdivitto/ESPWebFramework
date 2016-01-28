@@ -1,5 +1,5 @@
 
-SPEED 			= 230400 ## vs. 115200
+SPEED 			= 115200
 BUILD_DIR 	= build
 SRCDIR 			= ./src/
 WWW_DIR			= ./webcontent/
