@@ -1,8 +1,2 @@
-*.map
-*.ii
-*.o
-*.s
-*.ii
-libuser.a
-app.out
 
+build/debug
