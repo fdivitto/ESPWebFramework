@@ -2,7 +2,7 @@
 SPEED 		= 115200
 BUILD_DIR 	= build
 SRCDIR 		= ./src/
-SDKBASE  	= ./sdk/
+SDKBASE  	= ./SDK/
 SCRIPT      = ./script/
 WWW_DIR		= ./www/
 WWW_BIN     = webcontent.bin
