@@ -1,8 +1,10 @@
 
-SPEED 			= 115200
+SPEED 		= 115200
 BUILD_DIR 	= build
-SRCDIR 			= ./src/
-WWW_DIR			= ./webcontent/
+SRCDIR 		= ./src/
+SDKBASE  	= ./sdk/
+SCRIPT      = ./script/
+WWW_DIR		= ./www/
 WWW_BIN     = webcontent.bin
 WWW_MAXSIZE	= 57344
 
@@ -15,21 +17,20 @@ LIBS        = -lminic -lm -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lmain -lfreer
 ROOT_DIR :=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))) 
 
 # let's assume the SDK is up there.
-SDKBASE := $(shell dirname $(shell dirname $(ROOT_DIR)))/SDK/
+
 
 # homebrew installs the toolchain, but neglects to put it in your $PATH
 ifeq ($(shell uname), Darwin)
 	SHELL 		 	:= $(shell which zsh)
-	PORT 			 	:= $(lastword $(wildcard /dev/tty.*))
+	PORT 			:= $(lastword $(wildcard /dev/tty.*))
 	BIN_EXEC 	 	:= /opt/xtensa-lx106-elf/bin/
 	export PATH := $(BIN_EXEC)subst:$(PATH)
 else
-	PORT 			 	:= COM4
-	# get SDK path from environment variable ESP8266SDK
-	SDKBASE  	 	?= $(subst \,/,$(ESP8266SDK))
+	PORT 		    := COM7
 endif
 
-XELF 			 := xtensa-lx106-elf
+
+XELF 	   := xtensa-lx106-elf
 AR         := $(BIN_EXEC)$(XELF)-ar
 CC         := $(BIN_EXEC)$(XELF)-g++
 CPP        := $(CC)
@@ -38,7 +39,7 @@ NM         := $(BIN_EXEC)xt-nm
 OBJCOPY    := $(BIN_EXEC)$(XELF)-objcopy
 OD         := $(BIN_EXEC)$(XELF)-objdump
 
-ESPTOOL    := python $(SDKBASE)esptool.py
+ESPTOOL    := python $(SCRIPT)esptool.py
 
 RTOS       := esp_iot_rtos_sdk-master
 RTOS_BASE  := $(SDKBASE)$(RTOS)/include
@@ -105,7 +106,7 @@ flash: needs_port flashweb
 	-$(ESP_CMD) write_flash 0x11000 $(TARGET_OUT)-0x11000.bin 0x00000 $(TARGET_OUT)-0x00000.bin
 
 $(WWW_CONTENT):
-	python binarydir.py $(WWW_DIR) $@ $(WWW_MAXSIZE)
+	python $(SCRIPT)binarydir.py $(WWW_DIR) $@ $(WWW_MAXSIZE)
 
 flashweb: $(WWW_CONTENT)
 	-$(ESP_CMD) write_flash $(WWW_ADDRS) $^

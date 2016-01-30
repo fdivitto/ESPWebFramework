@@ -876,8 +876,8 @@ struct FlashDictionary
 // FlashFileSystem
 // It is just a files extractor from the flash.
 // You can write files into the flash using "binarydir.py" (to prepare) and "esptool.py" (to flash) tools.
-// For example, having some files in webcontent subdirectory you can do:
-//   python binarydir.py webcontent webcontent.bin 57344
+// For example, having some files in "www" subdirectory you can do:
+//   python binarydir.py www webcontent.bin 57344
 //   python ../esptool.py --port COM7 write_flash 0x6C000 webcontent.bin
 // Then you can use FlashFileSystem static methods to get actual files content
 //
