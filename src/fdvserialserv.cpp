@@ -498,13 +498,16 @@ void MTD_FLASHMEM SerialConsole::cmd_test() {
 //////////////////////////////////////////////////////////////////////////////////////////////
 // SerialBinary::Message
 
-MTD_FLASHMEM SerialBinary::Message::Message() : valid(false), ID(0), command(0), dataSize(0), data(NULL) {}
+MTD_FLASHMEM SerialBinary::Message::Message() : valid(false), ID(0), command(0), dataSize(0), data(NULL) {  
+}
 
 MTD_FLASHMEM SerialBinary::Message::Message(uint8_t ID_, uint8_t command_, uint16_t dataSize_)
-    : valid(true), ID(ID_), command(command_), dataSize(dataSize_), data(dataSize_ ? new uint8_t[dataSize_] : NULL) {}
+    : valid(true), ID(ID_), command(command_), dataSize(dataSize_), data(dataSize_ ? new uint8_t[dataSize_] : NULL) {      
+}
 
 MTD_FLASHMEM SerialBinary::Message::Message(uint8_t ID_, uint8_t command_, uint8_t *data_, uint16_t dataSize_)
-    : valid(true), ID(ID_), command(command_), data(data_), dataSize(dataSize_) {}
+    : valid(true), ID(ID_), command(command_), data(data_), dataSize(dataSize_) {
+}
 
 void MTD_FLASHMEM SerialBinary::Message::freeData() {
   if (data != NULL) {

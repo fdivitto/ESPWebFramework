@@ -27,7 +27,9 @@ namespace fdv {
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void ICACHE_FLASH_ATTR selectFlashBank(uint32_t bank) { Cache_Read_Enable(bank & 1, (bank & 2) >> 1, 1); }
+void ICACHE_FLASH_ATTR selectFlashBank(uint32_t bank) {
+  Cache_Read_Enable(bank & 1, (bank & 2) >> 1, 1); 
+}
 
 void ICACHE_FLASH_ATTR selectFlashBankSafe(uint32_t bank) {
   enterCritical();
@@ -83,7 +85,7 @@ uint32_t FUNC_FLASHMEM getActualFlashSize() {
   return 0x80000;
 }
 
-void FUNC_FLASHMEM fixActualFlashSize() {
+bool FUNC_FLASHMEM fixActualFlashSize() {
   uint8_t szflag = 0x00; // default 512K
   switch (getActualFlashSize()) {
   case 0x100000: // 1MB?
@@ -101,7 +103,9 @@ void FUNC_FLASHMEM fixActualFlashSize() {
   if (curFlags != newFlags) {
     FlashWriter fw(FLASH_MAP_START_PTR);
     fw.write(&newFlags, 4);
+    return true;
   }
+  return false;
 }
 
 // size in MHz
@@ -267,9 +271,13 @@ bool MTD_FLASHMEM FlashWriter::write(void const *source, uint32_t size) {
 //////////////////////////////////////////////////////////////////////
 // CharIterator
 
-char const *MTD_FLASHMEM CharIterator::get() { return m_str; }
+char const *MTD_FLASHMEM CharIterator::get() {
+  return m_str; 
+}
 
-char MTD_FLASHMEM CharIterator::operator*() { return getChar(m_str); }
+char MTD_FLASHMEM CharIterator::operator*() { 
+  return getChar(m_str); 
+}
 
 CharIterator MTD_FLASHMEM CharIterator::operator++(int) {
   CharIterator p = *this;
@@ -282,15 +290,28 @@ CharIterator MTD_FLASHMEM CharIterator::operator++() {
   return *this;
 }
 
-CharIterator MTD_FLASHMEM CharIterator::operator+(int32_t rhs) { return m_str + rhs; }
+CharIterator MTD_FLASHMEM CharIterator::operator+(int32_t rhs) {
+  return m_str + rhs; 
+}
 
-int32_t MTD_FLASHMEM CharIterator::operator-(CharIterator const &rhs) { return m_str - rhs.m_str; }
+int32_t MTD_FLASHMEM CharIterator::operator-(CharIterator const &rhs) {
+  return m_str - rhs.m_str; 
+}
 
-bool MTD_FLASHMEM CharIterator::operator==(char const *rhs) { return getChar(m_str) == *rhs; }
+bool MTD_FLASHMEM CharIterator::operator==(char const *rhs) { 
+  return getChar(m_str) == *rhs; 
+}
 
-bool MTD_FLASHMEM CharIterator::operator==(CharIterator const &rhs) { return m_str == rhs.m_str; }
+bool MTD_FLASHMEM CharIterator::operator==(CharIterator const &rhs) {
+  return m_str == rhs.m_str; 
+}
 
-bool MTD_FLASHMEM CharIterator::operator!=(char const *rhs) { return getChar(m_str) != *rhs; }
+bool MTD_FLASHMEM CharIterator::operator!=(char const *rhs) {
+  return getChar(m_str) != *rhs; 
+}
 
-bool MTD_FLASHMEM CharIterator::operator!=(CharIterator const &rhs) { return m_str != rhs.m_str; }
+bool MTD_FLASHMEM CharIterator::operator!=(CharIterator const &rhs) {
+  return m_str != rhs.m_str; 
+}
+
 }

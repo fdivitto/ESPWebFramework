@@ -332,14 +332,18 @@ IPAddress MTD_FLASHMEM NSLookup::lookup(char const *hostname) {
   return IPAddress(0, 0, 0, 0); // fail!
 }
 
-IPAddress MTD_FLASHMEM NSLookup::get() { return m_ipaddr; }
+IPAddress MTD_FLASHMEM NSLookup::get() {
+  return m_ipaddr; 
+}
 
 void MTD_FLASHMEM NSLookup::setDNSServer(uint32_t num, IPAddress server) {
   ip_addr_t a = server.get_ip_addr_t();
   dns_setserver(num, &a);
 }
 
-IPAddress MTD_FLASHMEM NSLookup::getDNSServer(uint32_t num) { return IPAddress(dns_getserver(num)); }
+IPAddress MTD_FLASHMEM NSLookup::getDNSServer(uint32_t num) {
+  return IPAddress(dns_getserver(num)); 
+}
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -487,10 +491,14 @@ MTD_FLASHMEM HTTPResponse::HTTPResponse(HTTPHandler *httpHandler, char const *st
     addContent(content);
 }
 
-HTTPHandler::Request &MTD_FLASHMEM HTTPResponse::getRequest() { return m_httpHandler->getRequest(); }
+HTTPHandler::Request &MTD_FLASHMEM HTTPResponse::getRequest() {
+  return m_httpHandler->getRequest(); 
+}
 
 // accept RAM or Flash strings
-void MTD_FLASHMEM HTTPResponse::addHeader(char const *key, char const *value) { m_headers.add(key, value); }
+void MTD_FLASHMEM HTTPResponse::addHeader(char const *key, char const *value) {
+  m_headers.add(key, value); 
+}
 
 // accept RAM or Flash data
 void MTD_FLASHMEM HTTPResponse::addContent(void const *data, uint32_t length, bool freeOnDestroy) {
@@ -506,7 +514,9 @@ void MTD_FLASHMEM HTTPResponse::addContent(char const *str, bool freeOnDestroy) 
 
 // can be called many times
 // WARN: src content is not copied! Just data pointers are stored
-void MTD_FLASHMEM HTTPResponse::addContent(LinkedCharChunks *src) { m_content.addChunks(src); }
+void MTD_FLASHMEM HTTPResponse::addContent(LinkedCharChunks *src) {
+  m_content.addChunks(src); 
+}
 
 void MTD_FLASHMEM HTTPResponse::flushHeaders(uint32_t contentLength) {
   if (!m_headersFlushed) {
@@ -562,8 +572,7 @@ MTD_FLASHMEM ParameterReplacer::~ParameterReplacer() {
     delete m_results[i];
 }
 
-void MTD_FLASHMEM
-    ParameterReplacer::start(char const *strStart, char const *strEnd, Params *params, BlockParams *blockParams) {
+void MTD_FLASHMEM ParameterReplacer::start(char const *strStart, char const *strEnd, Params *params, BlockParams *blockParams) {
   m_params = params;
   m_blockParams = blockParams;
   m_strStart = strStart;
@@ -660,7 +669,8 @@ char const *MTD_FLASHMEM ParameterReplacer::extractTagStr(char const *curc, char
 // HTTPTemplateResponse
 
 MTD_FLASHMEM HTTPTemplateResponse::HTTPTemplateResponse(HTTPHandler *httpHandler, char const *filename)
-    : HTTPResponse(httpHandler, NULL), m_filename(filename) {}
+    : HTTPResponse(httpHandler, NULL), m_filename(filename) {  
+}
 
 void MTD_FLASHMEM HTTPTemplateResponse::addParamStr(char const *key, char const *value) {
   LinkedCharChunks *linkedCharChunks = m_params.add(key);
@@ -687,9 +697,13 @@ void MTD_FLASHMEM HTTPTemplateResponse::addParamFmt(char const *key, char const 
   linkedCharChunks->addChunk(buf, len, true); // true = need to free
 }
 
-LinkedCharChunks *MTD_FLASHMEM HTTPTemplateResponse::addParamCharChunks(char const *key) { return m_params.add(key); }
+LinkedCharChunks *MTD_FLASHMEM HTTPTemplateResponse::addParamCharChunks(char const *key) {
+  return m_params.add(key); 
+}
 
-HTTPTemplateResponse::Params *MTD_FLASHMEM HTTPTemplateResponse::getParams() { return &m_params; }
+HTTPTemplateResponse::Params *MTD_FLASHMEM HTTPTemplateResponse::getParams() {
+  return &m_params; 
+}
 
 void MTD_FLASHMEM HTTPTemplateResponse::flush() {
   // {{now}} predefined parameter : display date/time
@@ -743,9 +757,13 @@ void MTD_FLASHMEM HTTPTemplateResponse::processFileRequest() {
 //////////////////////////////////////////////////////////////////////
 // UDPClient
 
-MTD_FLASHMEM UDPClient::UDPClient(IPAddress remoteAddress, uint16_t remotePort) { init(remoteAddress, remotePort); }
+MTD_FLASHMEM UDPClient::UDPClient(IPAddress remoteAddress, uint16_t remotePort) {
+  init(remoteAddress, remotePort); 
+}
 
-MTD_FLASHMEM UDPClient::~UDPClient() { m_socket.close(); }
+MTD_FLASHMEM UDPClient::~UDPClient() {
+  m_socket.close(); 
+}
 
 void MTD_FLASHMEM UDPClient::init(IPAddress remoteAddress, uint16_t remotePort) {
   m_socket = lwip_socket(AF_INET, SOCK_DGRAM, 0);
@@ -771,7 +789,8 @@ uint16_t MTD_FLASHMEM UDPClient::getUDPPort() {
 // SNTPClient
 
 // serverIP is a uint8_t[4] IP address or NULL
-MTD_FLASHMEM SNTPClient::SNTPClient(IPAddress serverIP, uint16_t port) : m_server(serverIP), m_port(port) {}
+MTD_FLASHMEM SNTPClient::SNTPClient(IPAddress serverIP, uint16_t port) : m_server(serverIP), m_port(port) {
+}
 
 bool MTD_FLASHMEM SNTPClient::query(uint64_t *outValue) const {
   // send req (mode 3), unicast, version 4
@@ -802,7 +821,8 @@ bool MTD_FLASHMEM SNTPClient::query(uint64_t *outValue) const {
 ////////////////////////////////////////////////////////////////////////////////////////
 // ICMP
 
-MTD_FLASHMEM ICMP::ICMP() : m_waitingID(rand() & 0xFFFF), m_waitingSeq(0), m_queue(1) {}
+MTD_FLASHMEM ICMP::ICMP() : m_waitingID(rand() & 0xFFFF), m_waitingSeq(0), m_queue(1) {
+}
 
 int32_t MTD_FLASHMEM ICMP::ping(IPAddress const &dest) {
   static uint32_t const TIMEOUT = 4000;

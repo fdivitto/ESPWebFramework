@@ -29,13 +29,21 @@ extern "C" void ets_intr_unlock();
 
 namespace fdv {
 
-void ICACHE_FLASH_ATTR enterCritical() { taskENTER_CRITICAL(); }
+void ICACHE_FLASH_ATTR enterCritical() {
+  taskENTER_CRITICAL(); 
+}
 
-void ICACHE_FLASH_ATTR exitCritical() { taskEXIT_CRITICAL(); }
+void ICACHE_FLASH_ATTR exitCritical() {
+  taskEXIT_CRITICAL(); 
+}
 
-uint32_t FUNC_FLASHMEM millisISR() { return xTaskGetTickCountFromISR() * portTICK_RATE_MS; }
+uint32_t FUNC_FLASHMEM millisISR() {
+  return xTaskGetTickCountFromISR() * portTICK_RATE_MS; 
+}
 
-uint32_t FUNC_FLASHMEM millis() { return xTaskGetTickCount() * portTICK_RATE_MS; }
+uint32_t FUNC_FLASHMEM millis() {
+  return xTaskGetTickCount() * portTICK_RATE_MS; 
+}
 
 // calculates time difference in milliseconds, taking into consideration the time overflow
 // note: time1 must be less than time2 (time1 < time2)
@@ -47,24 +55,34 @@ uint32_t FUNC_FLASHMEM millisDiff(uint32_t time1, uint32_t time2) {
     return time2 - time1;
 }
 
-uint32_t FUNC_FLASHMEM micros() { return system_get_time(); }
+uint32_t FUNC_FLASHMEM micros() {
+  return system_get_time(); 
+}
 
 /////////////////////////////////////////////////////////////////////+
 /////////////////////////////////////////////////////////////////////+
 // Mutex
 
-MTD_FLASHMEM Mutex::Mutex() : m_handle(NULL) { vSemaphoreCreateBinary(m_handle); }
+MTD_FLASHMEM Mutex::Mutex() : m_handle(NULL) {
+  vSemaphoreCreateBinary(m_handle); 
+}
 
-MTD_FLASHMEM Mutex::~Mutex() { vSemaphoreDelete(m_handle); }
+MTD_FLASHMEM Mutex::~Mutex() {
+  vSemaphoreDelete(m_handle); 
+}
 
-bool MTD_FLASHMEM Mutex::lock(uint32_t msTimeOut) { return xSemaphoreTake(m_handle, msTimeOut / portTICK_RATE_MS); }
+bool MTD_FLASHMEM Mutex::lock(uint32_t msTimeOut) {
+  return xSemaphoreTake(m_handle, msTimeOut / portTICK_RATE_MS); 
+}
 
 bool MTD_FLASHMEM Mutex::lockFromISR() {
   signed portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
   return xSemaphoreTakeFromISR(m_handle, &xHigherPriorityTaskWoken);
 }
 
-void MTD_FLASHMEM Mutex::unlock() { xSemaphoreGive(m_handle); }
+void MTD_FLASHMEM Mutex::unlock() {
+  xSemaphoreGive(m_handle); 
+}
 
 void MTD_FLASHMEM Mutex::unlockFromISR() {
   signed portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
@@ -95,9 +113,12 @@ MTD_FLASHMEM MutexLockFromISR::~MutexLockFromISR() {
 /////////////////////////////////////////////////////////////////////
 // SoftTimeOut class
 
-MTD_FLASHMEM SoftTimeOut::SoftTimeOut(uint32_t time) : m_timeOut(time), m_startTime(millis()) {}
+MTD_FLASHMEM SoftTimeOut::SoftTimeOut(uint32_t time) : m_timeOut(time), m_startTime(millis()) {  
+}
 
-MTD_FLASHMEM SoftTimeOut::operator bool() { return millisDiff(m_startTime, millis()) > m_timeOut; }
+MTD_FLASHMEM SoftTimeOut::operator bool() {
+  return millisDiff(m_startTime, millis()) > m_timeOut;
+}
 
 void MTD_FLASHMEM SoftTimeOut::reset(uint32_t time) {
   m_timeOut = time;

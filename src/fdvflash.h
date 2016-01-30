@@ -34,15 +34,17 @@
 static uint32_t const FLASH_MAP_START = 0x40200000; // based on the CPU address space
 static uint8_t const *FLASH_MAP_START_PTR = (uint8_t const *)FLASH_MAP_START;
 
-static uint32_t const SDKFLASHSETTINGSZE =
-    0x5000; // info from look at "eagle.app.v6.ld". Used in getBeginOfSDKSettings()
+// info from look at "eagle.app.v6.ld". Used in getBeginOfSDKSettings()
+static uint32_t const SDKFLASHSETTINGSZE = 0x5000; 
 
 // Flash address space
 static uint32_t const FLASHFILESYSTEM_POS = 0x6D000;
 static uint8_t const *FLASHFILESYSTEM_PTR = FLASH_MAP_START_PTR + FLASHFILESYSTEM_POS;
 static uint32_t const FLASH_DICTIONARY_POS = 0x6C000;
 
-extern "C" { void Cache_Read_Enable(uint32 odd_even, uint32 mb_count, uint32 unk); }
+extern "C" {
+void Cache_Read_Enable(uint32 odd_even, uint32 mb_count, uint32 unk); 
+}
 
 namespace fdv {
 
@@ -85,19 +87,23 @@ uint32_t getActualFlashSize();
 ///////////////////////////////////////////////////////////////////////////////////////
 // fixActualFlashSize
 
-void fixActualFlashSize();
+bool fixActualFlashSize();
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 // getBeginOfSDKSettings
 
-inline uint8_t const *getBeginOfSDKSettings() { return FLASH_MAP_START_PTR + (getFlashSize() - SDKFLASHSETTINGSZE); }
+inline uint8_t const *getBeginOfSDKSettings() {
+  return FLASH_MAP_START_PTR + (getFlashSize() - SDKFLASHSETTINGSZE); 
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 // isStoredInFlash
 
-inline bool isStoredInFlash(void const *ptr) { return (uint32_t)ptr >= FLASH_MAP_START; }
+inline bool isStoredInFlash(void const *ptr) {
+  return (uint32_t)ptr >= FLASH_MAP_START; 
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -227,6 +233,8 @@ struct ByteIterator {
 private:
   uint8_t const *m_buf;
 };
+
+
 }
 
 #endif

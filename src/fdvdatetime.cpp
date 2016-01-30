@@ -47,9 +47,13 @@ void MTD_FLASHMEM DateTime::setCurrentDateTime(DateTime const &dateTime) {
 }
 
 // 0=sunday...6=saturday
-uint8_t MTD_FLASHMEM DateTime::dayOfWeek() const { return (date2days(year, month, day) + 6) % 7; }
+uint8_t MTD_FLASHMEM DateTime::dayOfWeek() const {
+  return (date2days(year, month, day) + 6) % 7; 
+}
 
-uint16_t MTD_FLASHMEM DateTime::dayOfYear() const { return date2days(year, month, day) - date2days(year, 1, 1) + 1; }
+uint16_t MTD_FLASHMEM DateTime::dayOfYear() const {
+  return date2days(year, month, day) - date2days(year, 1, 1) + 1; 
+}
 
 DateTime &MTD_FLASHMEM DateTime::setUnixDateTime(uint32_t unixTime) {
   unixTime -= SECONDS_FROM_1970_TO_2000;

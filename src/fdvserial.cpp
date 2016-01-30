@@ -36,9 +36,12 @@ extern "C" void uart_div_modify(int no, unsigned int freq);
 
 namespace fdv {
 
-void FUNC_FLASHMEM dummy_write_char(char c) {}
+void FUNC_FLASHMEM dummy_write_char(char c) {  
+}
 
-void FUNC_FLASHMEM DisableStdOut() { os_install_putc1(dummy_write_char); }
+void FUNC_FLASHMEM DisableStdOut() {
+  os_install_putc1(dummy_write_char); 
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -159,9 +162,13 @@ int16_t MTD_FLASHMEM HardwareSerial::read(uint32_t timeOutMs) {
   return -1;
 }
 
-uint16_t MTD_FLASHMEM HardwareSerial::available() { return m_queue.available(); }
+uint16_t MTD_FLASHMEM HardwareSerial::available() {
+  return m_queue.available(); 
+}
 
-void MTD_FLASHMEM HardwareSerial::flush() { m_queue.clear(); }
+void MTD_FLASHMEM HardwareSerial::flush() {
+  m_queue.clear(); 
+}
 
 bool MTD_FLASHMEM HardwareSerial::waitForData(uint32_t timeOutMs) {
   uint8_t b;

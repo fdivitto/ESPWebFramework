@@ -379,7 +379,9 @@ public:
   // automatically embeds key and value into CharIterator, so key and value can stay in RAM or Flash
   // key and value must terminate with a Zero
   // Applies only when KeyIterator == ValueIterator == CharIterator
-  void TMTD_FLASHMEM add(char const *key, char const *value) { add(CharIterator(key), CharIterator(value)); }
+  void TMTD_FLASHMEM add(char const *key, char const *value) {
+    add(CharIterator(key), CharIterator(value)); 
+  }
 
   uint32_t TMTD_FLASHMEM getItemsCount() { return m_itemsCount; }
 

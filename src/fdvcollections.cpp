@@ -28,11 +28,17 @@ namespace fdv {
 //////////////////////////////////////////////////////////////////////
 // VectorBase
 
-MTD_FLASHMEM VectorBase::VectorBase(uint16_t itemSize) : m_itemSize(itemSize), m_data(NULL) { clear(); }
+MTD_FLASHMEM VectorBase::VectorBase(uint16_t itemSize) : m_itemSize(itemSize), m_data(NULL) { 
+  clear(); 
+}
 
-MTD_FLASHMEM VectorBase::VectorBase(VectorBase const &c) : m_itemSize(c.m_itemSize), m_data(NULL) { *this = c; }
+MTD_FLASHMEM VectorBase::VectorBase(VectorBase const &c) : m_itemSize(c.m_itemSize), m_data(NULL) { 
+  *this = c; 
+}
 
-MTD_FLASHMEM VectorBase::~VectorBase() { clear(); }
+MTD_FLASHMEM VectorBase::~VectorBase() {
+  clear(); 
+}
 
 void MTD_FLASHMEM VectorBase::operator=(VectorBase const &c) {
   clear();
@@ -52,9 +58,13 @@ void MTD_FLASHMEM VectorBase::allocate(uint32_t itemsCount) {
   m_itemsAllocated = itemsCount;
 }
 
-void *MTD_FLASHMEM VectorBase::getItem(uint32_t position) { return (uint8_t *)m_data + m_itemSize * position; }
+void *MTD_FLASHMEM VectorBase::getItem(uint32_t position) {
+  return (uint8_t *)m_data + m_itemSize * position; 
+}
 
-void MTD_FLASHMEM VectorBase::add(void const *item) { insert(m_itemsCount, item); }
+void MTD_FLASHMEM VectorBase::add(void const *item) {
+  insert(m_itemsCount, item); 
+}
 
 void MTD_FLASHMEM VectorBase::insert(uint32_t position, void const *item) {
   if (m_itemsCount == m_itemsAllocated)
@@ -85,7 +95,9 @@ void MTD_FLASHMEM VectorBase::clear() {
   m_itemsAllocated = 0;
 }
 
-uint32_t MTD_FLASHMEM VectorBase::size() { return m_itemsCount; }
+uint32_t MTD_FLASHMEM VectorBase::size() {
+  return m_itemsCount; 
+}
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -247,7 +259,9 @@ CharChunksIterator &MTD_FLASHMEM CharChunksIterator::operator=(CharChunksIterato
   return *this;
 }
 
-char &MTD_FLASHMEM CharChunksIterator::operator*() { return m_chunk->data[m_pos]; }
+char &MTD_FLASHMEM CharChunksIterator::operator*() {
+  return m_chunk->data[m_pos]; 
+}
 
 CharChunksIterator MTD_FLASHMEM CharChunksIterator::operator++(int) {
   CharChunksIterator c = *this;
@@ -288,14 +302,18 @@ bool MTD_FLASHMEM CharChunksIterator::operator!=(CharChunksIterator const &rhs) 
   return m_chunk != rhs.m_chunk || m_pos != rhs.m_pos;
 }
 
-uint32_t MTD_FLASHMEM CharChunksIterator::getPosition() { return m_absPos; }
+uint32_t MTD_FLASHMEM CharChunksIterator::getPosition() {
+  return m_absPos; 
+}
 
 bool MTD_FLASHMEM CharChunksIterator::isLast() {
   return m_chunk->next == NULL && m_pos + 1 >= m_chunk->getItems() &&
          (m_linkedNext.size() == 0 || m_linkedNext[0] == NULL);
 }
 
-bool MTD_FLASHMEM CharChunksIterator::isValid() { return m_chunk != NULL; }
+bool MTD_FLASHMEM CharChunksIterator::isValid() {
+  return m_chunk != NULL; 
+}
 
 void MTD_FLASHMEM CharChunksIterator::next() {
   ++m_absPos;
@@ -324,7 +342,9 @@ CharChunkBase *MTD_FLASHMEM CharChunksIterator::moveToNextChunk() {
   return m_chunk;
 }
 
-CharChunkBase *MTD_FLASHMEM CharChunksIterator::getCurrentChunk() { return m_chunk; }
+CharChunkBase *MTD_FLASHMEM CharChunksIterator::getCurrentChunk() {
+  return m_chunk; 
+}
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -388,9 +408,13 @@ void MTD_FLASHMEM LinkedCharChunks::append(char value, uint32_t newChunkSize) {
   }
 }
 
-CharChunkBase *MTD_FLASHMEM LinkedCharChunks::getFirstChunk() { return m_chunks; }
+CharChunkBase *MTD_FLASHMEM LinkedCharChunks::getFirstChunk() {
+  return m_chunks; 
+}
 
-CharChunksIterator MTD_FLASHMEM LinkedCharChunks::getIterator() { return CharChunksIterator(m_chunks); }
+CharChunksIterator MTD_FLASHMEM LinkedCharChunks::getIterator() {
+  return CharChunksIterator(m_chunks); 
+}
 
 uint32_t MTD_FLASHMEM LinkedCharChunks::getItemsCount() const {
   uint32_t len = 0;
@@ -518,7 +542,8 @@ uint32_t MTD_FLASHMEM FlashFileSystem::getFreeSpace() {
 //////////////////////////////////////////////////////////////////////
 // FlashFile
 
-MTD_FLASHMEM FlashFile::FlashFile() : m_startPosition(NULL) {}
+MTD_FLASHMEM FlashFile::FlashFile() : m_startPosition(NULL) {  
+}
 
 MTD_FLASHMEM void FlashFile::create(char const *filename, char const *mimetype) {
   // remove the file if already exists
@@ -555,11 +580,17 @@ MTD_FLASHMEM void FlashFile::create(char const *filename, char const *mimetype) 
       sizeof(flags) + sizeof(filenamelen) + sizeof(mimetypelen) + sizeof(filelen) + filenamelen + mimetypelen;
 }
 
-MTD_FLASHMEM FlashFile::~FlashFile() { close(); }
+MTD_FLASHMEM FlashFile::~FlashFile() {
+  close(); 
+}
 
-bool MTD_FLASHMEM FlashFile::write(void const *data, uint32_t size) { return m_writer.write(data, size); }
+bool MTD_FLASHMEM FlashFile::write(void const *data, uint32_t size) {
+  return m_writer.write(data, size); 
+}
 
-bool MTD_FLASHMEM FlashFile::write(char const *string) { return m_writer.write(string, f_strlen(string)); }
+bool MTD_FLASHMEM FlashFile::write(char const *string) {
+  return m_writer.write(string, f_strlen(string)); 
+}
 
 void MTD_FLASHMEM FlashFile::close() {
   if (m_startPosition) {
@@ -682,7 +713,9 @@ char const *STC_FLASHMEM FlashDictionary::getString(char const *key, char const 
   return value ? value : defaultValue;
 }
 
-void STC_FLASHMEM FlashDictionary::setInt(char const *key, int32_t value) { setValue(key, &value, sizeof(value)); }
+void STC_FLASHMEM FlashDictionary::setInt(char const *key, int32_t value) {
+  setValue(key, &value, sizeof(value)); 
+}
 
 int32_t STC_FLASHMEM FlashDictionary::getInt(char const *key, int32_t defaultValue) {
   void const *value = (void const *)getValue(key);
@@ -735,9 +768,12 @@ uint32_t MTD_FLASHMEM FlashDictionary::getUsedSpace() {
 // StringList
 // A list zero terminated strings
 
-MTD_FLASHMEM StringList::StringList() {}
+MTD_FLASHMEM StringList::StringList() {  
+}
 
-MTD_FLASHMEM StringList::~StringList() { clear(); }
+MTD_FLASHMEM StringList::~StringList() {
+  clear(); 
+}
 
 void MTD_FLASHMEM StringList::freeItem(uint32_t position) {
   if (m_items[position].storage == Heap)
@@ -771,7 +807,12 @@ void MTD_FLASHMEM StringList::clear() {
   m_items.clear();
 }
 
-uint32_t MTD_FLASHMEM StringList::size() { return m_items.size(); }
+uint32_t MTD_FLASHMEM StringList::size() {
+  return m_items.size(); 
+}
 
-char const *MTD_FLASHMEM StringList::getItem(uint32_t position) { return m_items[position].ptr; }
+char const *MTD_FLASHMEM StringList::getItem(uint32_t position) {
+  return m_items[position].ptr; 
+}
+
 }

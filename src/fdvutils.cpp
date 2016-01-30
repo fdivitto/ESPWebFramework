@@ -35,26 +35,38 @@ void *__dso_handle;
 
 namespace fdv {
 
-void *STC_FLASHMEM Memory::malloc(uint32_t size) { return pvPortMalloc(size); }
+void *STC_FLASHMEM Memory::malloc(uint32_t size) {
+  return pvPortMalloc(size);
+}
 
-void STC_FLASHMEM Memory::free(void *ptr) { vPortFree(ptr); }
+void STC_FLASHMEM Memory::free(void *ptr) {
+  vPortFree(ptr);
+}
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
-void *FUNC_FLASHMEM operator new(size_t size) { return fdv::Memory::malloc(size); }
+void *FUNC_FLASHMEM operator new(size_t size) {
+  return fdv::Memory::malloc(size);
+}
 
-void *FUNC_FLASHMEM operator new(size_t size, void *ptr) { return ptr; }
+void *FUNC_FLASHMEM operator new(size_t size, void *ptr) {
+  return ptr;
+}
 
-void *FUNC_FLASHMEM operator new [](size_t size) { return fdv::Memory::malloc(size); }
+void *FUNC_FLASHMEM operator new [](size_t size) {
+  return fdv::Memory::malloc(size);
+}
 
-void FUNC_FLASHMEM
-operator delete(void *ptr) {
+void FUNC_FLASHMEM operator delete(void *ptr) {
   fdv::Memory::free(ptr);
 }
 
-void FUNC_FLASHMEM operator delete [](void *ptr) { fdv::Memory::free(ptr); }
+void FUNC_FLASHMEM operator delete [](void *ptr) {
+  fdv::Memory::free(ptr);
+}
 
 extern "C" void __cxa_pure_virtual(void) __attribute__((__noreturn__));
 
@@ -65,9 +77,13 @@ extern "C" void FUNC_FLASHMEM abort() {
     ; // enter an infinite loop and get reset by the WDT
 }
 
-void FUNC_FLASHMEM __cxa_pure_virtual(void) { abort(); }
+void FUNC_FLASHMEM __cxa_pure_virtual(void) {
+  abort();
+}
 
-void FUNC_FLASHMEM __cxa_deleted_virtual(void) { abort(); }
+void FUNC_FLASHMEM __cxa_deleted_virtual(void) {
+  abort();
+}
 
 namespace fdv {
 
@@ -76,7 +92,8 @@ namespace fdv {
 // reboot
 // creates a task and reboot after specified time (ms)
 
-RebootTask::RebootTask(uint32_t time) : Task(false, 400), m_time(time) {}
+RebootTask::RebootTask(uint32_t time) : Task(false, 400), m_time(time) {  
+}
 
 void MTD_FLASHMEM RebootTask::exec() {
   delay(m_time);
@@ -85,7 +102,9 @@ void MTD_FLASHMEM RebootTask::exec() {
     ; // reset using watchdog
 }
 
-void FUNC_FLASHMEM reboot(uint32_t time) { new RebootTask(time); }
+void FUNC_FLASHMEM reboot(uint32_t time) {
+  new RebootTask(time);
+}
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
