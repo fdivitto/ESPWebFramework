@@ -48,7 +48,7 @@ public:
   template <typename HTTPCustomServer_T> static void MTD_FLASHMEM applyAll() {
     applyUARTServices();
     applyWiFi();
-    asyncExec<applyDelayed<HTTPCustomServer_T>>(512);
+    asyncExec< applyDelayed<HTTPCustomServer_T> >(512);
   }
 
   // can be re-applied
