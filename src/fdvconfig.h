@@ -25,7 +25,6 @@
 
 ///// Include / esclude features
 
-
 // Include SerialConsole class and related functionalities
 #define FDV_INCLUDE_SERIALCONSOLE 1
 

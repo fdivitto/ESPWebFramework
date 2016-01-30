@@ -20,122 +20,72 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 */
 
-
 #include "fdv.h"
 
-extern "C"
-{
-	#include "freertos/semphr.h"
-	#include "lwip/mem.h"
+extern "C" {
+#include "freertos/semphr.h"
+#include "lwip/mem.h"
 }
 
-
-
-
-void*__dso_handle;
-
-
+void *__dso_handle;
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 // Memory
 
-namespace fdv
-{
-    
-    
-	void* STC_FLASHMEM Memory::malloc(uint32_t size)
-	{
-		return pvPortMalloc(size);
-	}
+namespace fdv {
 
-    
-	void STC_FLASHMEM Memory::free(void* ptr)
-	{        
-        vPortFree(ptr);
-	}
+void *STC_FLASHMEM Memory::malloc(uint32_t size) { return pvPortMalloc(size); }
 
+void STC_FLASHMEM Memory::free(void *ptr) { vPortFree(ptr); }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
-void* FUNC_FLASHMEM operator new(size_t size)
-{
-    return fdv::Memory::malloc(size);
+void *FUNC_FLASHMEM operator new(size_t size) { return fdv::Memory::malloc(size); }
+
+void *FUNC_FLASHMEM operator new(size_t size, void *ptr) { return ptr; }
+
+void *FUNC_FLASHMEM operator new [](size_t size) { return fdv::Memory::malloc(size); }
+
+void FUNC_FLASHMEM
+operator delete(void *ptr) {
+  fdv::Memory::free(ptr);
 }
 
-void* FUNC_FLASHMEM operator new(size_t size, void* ptr)
-{
-    return ptr;
+void FUNC_FLASHMEM operator delete [](void *ptr) { fdv::Memory::free(ptr); }
+
+extern "C" void __cxa_pure_virtual(void) __attribute__((__noreturn__));
+
+extern "C" void __cxa_deleted_virtual(void) __attribute__((__noreturn__));
+
+extern "C" void FUNC_FLASHMEM abort() {
+  while (true)
+    ; // enter an infinite loop and get reset by the WDT
 }
 
-void* FUNC_FLASHMEM operator new[](size_t size) 
-{
-    return fdv::Memory::malloc(size);
-}
+void FUNC_FLASHMEM __cxa_pure_virtual(void) { abort(); }
 
-void FUNC_FLASHMEM operator delete(void* ptr) 
-{
-    fdv::Memory::free(ptr);
-}
+void FUNC_FLASHMEM __cxa_deleted_virtual(void) { abort(); }
 
-void FUNC_FLASHMEM operator delete[](void* ptr) 
-{
-    fdv::Memory::free(ptr);
-}
-
-extern "C" void __cxa_pure_virtual(void) __attribute__ ((__noreturn__));
-
-extern "C" void __cxa_deleted_virtual(void) __attribute__ ((__noreturn__));
-
-extern "C" void FUNC_FLASHMEM abort() 
-{
-  while(true); // enter an infinite loop and get reset by the WDT
-}
-
-void FUNC_FLASHMEM __cxa_pure_virtual(void) 
-{
-  abort();
-}
-
-void FUNC_FLASHMEM __cxa_deleted_virtual(void) 
-{
-  abort();
-}
-
-
-namespace fdv
-{
-
+namespace fdv {
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 // reboot
 // creates a task and reboot after specified time (ms)
 
-RebootTask::RebootTask(uint32_t time) 
-    : Task(false, 400), m_time(time)
-{
+RebootTask::RebootTask(uint32_t time) : Task(false, 400), m_time(time) {}
+
+void MTD_FLASHMEM RebootTask::exec() {
+  delay(m_time);
+  taskENTER_CRITICAL();
+  while (1)
+    ; // reset using watchdog
 }
 
-
-void MTD_FLASHMEM RebootTask::exec()
-{
-    delay(m_time);
-    taskENTER_CRITICAL();
-    while(1);	// reset using watchdog
-}
-    
-
-void FUNC_FLASHMEM reboot(uint32_t time)
-{	
-    new RebootTask(time);
-}
-
-
-
-
+void FUNC_FLASHMEM reboot(uint32_t time) { new RebootTask(time); }
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -144,127 +94,97 @@ void FUNC_FLASHMEM reboot(uint32_t time)
 #if (FDV_INCLUDE_MEMPOOL == 1)
 
 // bufferLength should be a multiple of MemPoolBlock size
-MTD_FLASHMEM MemPool::MemPool(void* buffer, SIZE_T bufferLength)
-    : m_blocks((MemPoolBlock*)buffer)
-{
-    // make sure bufferLength is a multiple of sizeof(MemPoolBlock)
-    bufferLength -= bufferLength % sizeof(MemPoolBlock);
-    
-    // creates a unique free block having the same size of main buffer
-    m_blocks->next  = NULL;
-    m_blocks->alloc = 0;
-    m_blocks->size  = bufferLength - sizeof(MemPoolBlock);
+MTD_FLASHMEM MemPool::MemPool(void *buffer, SIZE_T bufferLength) : m_blocks((MemPoolBlock *)buffer) {
+  // make sure bufferLength is a multiple of sizeof(MemPoolBlock)
+  bufferLength -= bufferLength % sizeof(MemPoolBlock);
+
+  // creates a unique free block having the same size of main buffer
+  m_blocks->next = NULL;
+  m_blocks->alloc = 0;
+  m_blocks->size = bufferLength - sizeof(MemPoolBlock);
 }
 
+MemPool::MemPoolBlock *MTD_FLASHMEM MemPool::findFreeBlock(SIZE_T minsize) {
+  for (MemPoolBlock *curblk = m_blocks; curblk; curblk = curblk->next)
+    if ((curblk->alloc == 0) && curblk->size >= minsize)
+      return curblk;
+  return NULL;
+}
 
-MemPool::MemPoolBlock* MTD_FLASHMEM MemPool::findFreeBlock(SIZE_T minsize)
-{
-    for (MemPoolBlock* curblk = m_blocks; curblk; curblk = curblk->next)
-        if ((curblk->alloc == 0) && curblk->size >= minsize)
-            return curblk;
+MemPool::MemPoolBlock *MTD_FLASHMEM MemPool::findBlockFromPtr(void const *ptr) {
+  for (MemPoolBlock *curblk = m_blocks; curblk; curblk = curblk->next)
+    if (ptr == curblk + 1)
+      return curblk;
+  return NULL;
+}
+
+void *MTD_FLASHMEM MemPool::malloc(SIZE_T size) {
+  // make size a multiple of MemPoolBlock size
+  if (size % sizeof(MemPoolBlock) != 0)
+    size += sizeof(MemPoolBlock) - size % sizeof(MemPoolBlock);
+
+  MemPoolBlock *freeblk = findFreeBlock(size);
+  if (freeblk) {
+    // found a free block
+    uint8_t *ptr = (uint8_t *)(freeblk + 1); // ptr aligned to MemPoolBlock size (hence should be to CPU word size)
+    if (freeblk->size > size + sizeof(MemPoolBlock)) // is there space for another free block?
+    {
+      // split this block
+      MemPoolBlock *newblk = freeblk + 1 + size / sizeof(MemPoolBlock);
+      newblk->next = freeblk->next;
+      newblk->alloc = 0;
+      newblk->size = freeblk->size - size - sizeof(MemPoolBlock);
+      freeblk->next = newblk;
+      freeblk->size = size;
+    }
+    freeblk->alloc = 1;
+
+    return ptr;
+  } else
     return NULL;
 }
 
-
-MemPool::MemPoolBlock* MTD_FLASHMEM MemPool::findBlockFromPtr(void const* ptr)
-{
-    for (MemPoolBlock* curblk = m_blocks; curblk; curblk = curblk->next)
-        if (ptr == curblk + 1)
-            return curblk;
-    return NULL;
-}
-
-
-void* MTD_FLASHMEM MemPool::malloc(SIZE_T size)
-{
-    // make size a multiple of MemPoolBlock size
-    if (size % sizeof(MemPoolBlock) != 0)
-        size += sizeof(MemPoolBlock) - size % sizeof(MemPoolBlock);
-    
-    MemPoolBlock* freeblk = findFreeBlock(size);
-    if (freeblk)
-    {
-        // found a free block
-        uint8_t* ptr = (uint8_t*)(freeblk + 1); // ptr aligned to MemPoolBlock size (hence should be to CPU word size)
-        if (freeblk->size > size + sizeof(MemPoolBlock))    // is there space for another free block?
-        {
-            // split this block
-            MemPoolBlock* newblk = freeblk + 1 + size / sizeof(MemPoolBlock);
-            newblk->next  = freeblk->next;
-            newblk->alloc = 0;
-            newblk->size  = freeblk->size - size - sizeof(MemPoolBlock);
-            freeblk->next = newblk;
-            freeblk->size = size;
-        }
-        freeblk->alloc = 1;
-        
-        return ptr;
+void MTD_FLASHMEM MemPool::free(void const *ptr) {
+  if (ptr) {
+    MemPoolBlock *blk = findBlockFromPtr(ptr);
+    if (blk) {
+      blk->alloc = 0;
+      mergeFreeBlocks();
     }
-    else
-        return NULL;
+  }
 }
 
-
-void MTD_FLASHMEM MemPool::free(void const* ptr)
-{
-    if (ptr)
-    {
-        MemPoolBlock* blk = findBlockFromPtr(ptr);
-        if (blk)
-        {
-            blk->alloc = 0;
-            mergeFreeBlocks();
-        }
+void MTD_FLASHMEM MemPool::mergeFreeBlocks() {
+  MemPoolBlock *curblk = m_blocks;
+  while (curblk->next) {
+    if (curblk->alloc == 0 && curblk->next->alloc == 0) {
+      // merge this and next block
+      curblk->size += curblk->next->size + sizeof(MemPoolBlock);
+      curblk->next = curblk->next->next;
+    } else {
+      curblk = curblk->next;
     }
+  }
 }
 
-
-void MTD_FLASHMEM MemPool::mergeFreeBlocks()
-{
-    MemPoolBlock* curblk = m_blocks;
-    while (curblk->next)
-    {
-        if (curblk->alloc == 0 && curblk->next->alloc == 0)
-        {
-            // merge this and next block
-            curblk->size += curblk->next->size + sizeof(MemPoolBlock);
-            curblk->next = curblk->next->next;
-        }
-        else
-        {
-            curblk = curblk->next;
-        }
+void MTD_FLASHMEM MemPool::getStats(SIZE_T *largestFreeBlock, SIZE_T *totalFreeSize) {
+  *largestFreeBlock = 0;
+  *totalFreeSize = 0;
+  for (MemPoolBlock *blk = m_blocks; blk; blk = blk->next) {
+    if (blk->alloc == 0) {
+      *totalFreeSize += blk->size;
+      if (blk->size > *largestFreeBlock)
+        *largestFreeBlock = blk->size;
     }
+  }
 }
 
-
-void MTD_FLASHMEM MemPool::getStats(SIZE_T* largestFreeBlock, SIZE_T* totalFreeSize)
-{
-    *largestFreeBlock = 0;
-    *totalFreeSize    = 0;
-    for (MemPoolBlock* blk = m_blocks; blk; blk = blk->next)
-    {
-        if (blk->alloc == 0)
-        {
-            *totalFreeSize += blk->size;
-            if (blk->size > *largestFreeBlock)
-                *largestFreeBlock = blk->size;
-        }
-    }
-}
-
-
-MemPool::SIZE_T MTD_FLASHMEM MemPool::getLargestFreeBlock()
-{
-    SIZE_T largestFreeBlock, totalFreeSize;
-    getStats(&largestFreeBlock, &totalFreeSize);
-    return largestFreeBlock;
+MemPool::SIZE_T MTD_FLASHMEM MemPool::getLargestFreeBlock() {
+  SIZE_T largestFreeBlock, totalFreeSize;
+  getStats(&largestFreeBlock, &totalFreeSize);
+  return largestFreeBlock;
 }
 
 #endif
 
-
-
-}   // end of namespace
-
-
+} // end of namespace

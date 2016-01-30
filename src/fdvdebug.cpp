@@ -20,62 +20,48 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 */
 
-
 #include "fdv.h"
 
-extern "C"
-{
-	#include <stdarg.h>
+extern "C" {
+#include <stdarg.h>
 }
-
-
-
 
 // fmt can be in RAM or in Flash
-void FUNC_FLASHMEM debug(char const *fmt, ...)
-{
-	va_list args;
-	
-	va_start(args, fmt);
-	uint16_t len = fdv::vsprintf(NULL, fmt, args);
-	va_end(args);
+void FUNC_FLASHMEM debug(char const *fmt, ...) {
+  va_list args;
 
-	char buf[len + 1];
-	
-	va_start(args, fmt);
-	fdv::vsprintf(buf, fmt, args);
-	va_end(args);
-	
-	fdv::enterCritical();
-	fdv::HardwareSerial::getSerial(0)->write(buf);
-	fdv::exitCritical();
+  va_start(args, fmt);
+  uint16_t len = fdv::vsprintf(NULL, fmt, args);
+  va_end(args);
+
+  char buf[len + 1];
+
+  va_start(args, fmt);
+  fdv::vsprintf(buf, fmt, args);
+  va_end(args);
+
+  fdv::enterCritical();
+  fdv::HardwareSerial::getSerial(0)->write(buf);
+  fdv::exitCritical();
 }
-
 
 // str can be in RAM or in Flash
-void debugstr(char const* str)
-{
-    fdv::enterCritical();
-    fdv::HardwareSerial::getSerial(0)->write(str);
-    fdv::exitCritical();
+void debugstr(char const *str) {
+  fdv::enterCritical();
+  fdv::HardwareSerial::getSerial(0)->write(str);
+  fdv::exitCritical();
 }
-
 
 // str can be in RAM or in Flash
-void FUNC_FLASHMEM debugstrn(char const* str, uint32_t len)
-{
-	fdv::enterCritical();
-	while (len--)
-		fdv::HardwareSerial::getSerial(0)->write(fdv::getChar(str++));
-	fdv::exitCritical();
+void FUNC_FLASHMEM debugstrn(char const *str, uint32_t len) {
+  fdv::enterCritical();
+  while (len--)
+    fdv::HardwareSerial::getSerial(0)->write(fdv::getChar(str++));
+  fdv::exitCritical();
 }
 
-
-void FUNC_FLASHMEM debug(char c)
-{
-	fdv::enterCritical();
-	fdv::HardwareSerial::getSerial(0)->write(c);
-	fdv::exitCritical();
+void FUNC_FLASHMEM debug(char c) {
+  fdv::enterCritical();
+  fdv::HardwareSerial::getSerial(0)->write(c);
+  fdv::exitCritical();
 }
-
-

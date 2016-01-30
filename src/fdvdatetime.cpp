@@ -20,412 +20,345 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 */
 
-
-
-
 #include "fdv.h"
 
+namespace fdv {
 
+// static members
+int8_t DateTime::s_defaultTimezoneHours = 0;
+uint8_t DateTime::s_defaultTimezoneMinutes = 0;
+IPAddress DateTime::s_defaultNTPServer; // never initialize (no constructor is called here!)
+bool DateTime::s_synchingWithNTPServer = false;
 
+// a local copy of defaultNTPServer string is perfomed
+void MTD_FLASHMEM DateTime::setDefaults(int8_t timezoneHours, uint8_t timezoneMinutes, char const *defaultNTPServer) {
+  s_defaultNTPServer = NSLookup::lookup(defaultNTPServer);
+  s_defaultTimezoneHours = timezoneHours;
+  s_defaultTimezoneMinutes = timezoneMinutes;
+  if (s_defaultNTPServer != IPAddress(0, 0, 0, 0)) {
+    // this will force NTP synchronization
+    lastSyncMillis(true, 0);
+  }
+}
 
-namespace fdv
-{
+void MTD_FLASHMEM DateTime::setCurrentDateTime(DateTime const &dateTime) {
+  lastSyncDateTime(true, dateTime);
+  lastSyncMillis(true, millis());
+}
 
-    // static members
-    int8_t      DateTime::s_defaultTimezoneHours    = 0;
-    uint8_t     DateTime::s_defaultTimezoneMinutes  = 0;
-    IPAddress   DateTime::s_defaultNTPServer;   // never initialize (no constructor is called here!)
-    bool        DateTime::s_synchingWithNTPServer   = false;
+// 0=sunday...6=saturday
+uint8_t MTD_FLASHMEM DateTime::dayOfWeek() const { return (date2days(year, month, day) + 6) % 7; }
 
-    
-    // a local copy of defaultNTPServer string is perfomed
-    void MTD_FLASHMEM DateTime::setDefaults(int8_t timezoneHours, uint8_t timezoneMinutes, char const* defaultNTPServer)
-    {
-        s_defaultNTPServer       = NSLookup::lookup(defaultNTPServer);
-        s_defaultTimezoneHours   = timezoneHours;
-        s_defaultTimezoneMinutes = timezoneMinutes;
-        if (s_defaultNTPServer != IPAddress(0, 0, 0, 0))
-        {
-            // this will force NTP synchronization
-            lastSyncMillis(true, 0);
-        }
+uint16_t MTD_FLASHMEM DateTime::dayOfYear() const { return date2days(year, month, day) - date2days(year, 1, 1) + 1; }
+
+DateTime &MTD_FLASHMEM DateTime::setUnixDateTime(uint32_t unixTime) {
+  unixTime -= SECONDS_FROM_1970_TO_2000;
+  seconds = unixTime % 60;
+  unixTime /= 60;
+  minutes = unixTime % 60;
+  unixTime /= 60;
+  hours = unixTime % 24;
+  uint16_t days = unixTime / 24;
+  uint8_t leap;
+  for (year = 2000;; ++year) {
+    leap = year % 4 == 0;
+    if (days < 365u + leap)
+      break;
+    days -= 365 + leap;
+  }
+  for (month = 1;; ++month) {
+    uint8_t daysPerMonth = daysInMonth(month - 1);
+    if (leap && month == 2)
+      ++daysPerMonth;
+    if (days < daysPerMonth)
+      break;
+    days -= daysPerMonth;
+  }
+  day = days + 1;
+  return *this;
+}
+
+uint32_t MTD_FLASHMEM DateTime::getUnixDateTime() const {
+  uint16_t days = date2days(year, month, day);
+  return time2long(days, hours, minutes, seconds) + SECONDS_FROM_1970_TO_2000;
+}
+
+DateTime &MTD_FLASHMEM DateTime::setNTPDateTime(uint8_t const *datetimeField) {
+  uint32_t t = 0;
+  for (uint8_t i = 0; i < 4; ++i)
+    t = t << 8 | datetimeField[i];
+  float f = ((long)datetimeField[4] * 256 + datetimeField[5]) / 65535.0;
+  t -= 2208988800UL;
+  t += (timezoneHours * 3600L) + (timezoneMinutes * 60L);
+  if (f > 0.4)
+    ++t;
+  return setUnixDateTime(t);
+}
+
+// if serverIP = 0.0.0.0 then look into s_defaultNTPServer
+bool MTD_FLASHMEM DateTime::getFromNTPServer(IPAddress const &serverIP) {
+  IPAddress ip = (serverIP == IPAddress(0, 0, 0, 0) ? s_defaultNTPServer : serverIP);
+  if (ip != IPAddress(0, 0, 0, 0)) {
+    SNTPClient sntp(ip);
+    uint64_t v = 0;
+    if (sntp.query(&v)) {
+      setNTPDateTime((uint8_t *)&v);
+      return true;
     }
-    
-    
-    void MTD_FLASHMEM DateTime::setCurrentDateTime(DateTime const& dateTime)
-    {
-        lastSyncDateTime(true, dateTime);
-        lastSyncMillis(true, millis());
+  }
+  return false;
+}
+
+void STC_FLASHMEM DateTime::syncWithNTPServer() {
+  static uint32_t const MAXTRIES = 5;
+  static uint32_t const DELAY = 30000;
+  if (!s_synchingWithNTPServer) {
+    s_synchingWithNTPServer = true;
+    for (uint32_t i = 0; i != MAXTRIES; ++i) {
+      DateTime dt;
+      if (dt.getFromNTPServer()) {
+        DateTime::lastSyncDateTime(true, dt);
+        DateTime::lastSyncMillis(true, millis());
+        break;
+      }
+      Task::delay(DELAY);
     }
+    s_synchingWithNTPServer = false;
+  }
+}
 
+// if this is the first time calling now() or after 6 hours an NTP update is perfomed
+// warn: now() should be called within 50 days from the last call
+// warn: loses about 3 seconds every 10 hours
+DateTime MTD_FLASHMEM DateTime::now() {
+  uint32_t currentMillis = millis();
+  uint32_t locLastMillis = lastSyncMillis();
+  uint32_t diff =
+      (currentMillis < locLastMillis) ? (0xFFFFFFFF - locLastMillis + currentMillis) : (currentMillis - locLastMillis);
 
-    // 0=sunday...6=saturday
-    uint8_t MTD_FLASHMEM DateTime::dayOfWeek() const
+  // need to synch with NTP server?
+  if (locLastMillis == 0 || diff > 6 * 3600 * 1000) {
+    if (!s_synchingWithNTPServer)
+      asyncExec<syncWithNTPServer>();
+  }
+
+  DateTime result;
+  result.setUnixDateTime(lastSyncDateTime().getUnixDateTime() + (diff / 1000));
+
+  if (s_defaultNTPServer == IPAddress(0, 0, 0, 0)) {
+    // NTP synchronization is disabled. Take care for millis overflow.
+    if (diff > 10 * 24 * 3600 * 1000) // past 10 days?
     {
-        return (date2days(year, month, day) + 6) % 7;
-    }    
-    
-    
-    uint16_t MTD_FLASHMEM DateTime::dayOfYear() const
-    {
-        return date2days(year, month, day) - date2days(year, 1, 1) + 1;
+      // reset millis counter to avoid overflow (actually it overflows after 50 days)
+      lastSyncMillis(true, currentMillis);
+      lastSyncDateTime(true, result);
     }
+  }
 
+  return result;
+}
 
-    DateTime& MTD_FLASHMEM DateTime::setUnixDateTime(uint32_t unixTime)
-    {
-        unixTime      -= SECONDS_FROM_1970_TO_2000;
-        seconds        = unixTime % 60;
-        unixTime      /= 60;
-        minutes        = unixTime % 60;
-        unixTime      /= 60;
-        hours         = unixTime % 24;
-        uint16_t days = unixTime / 24;
-        uint8_t leap;
-        for (year = 2000; ; ++year)
-        {
-            leap = year % 4 == 0;
-            if (days < 365u + leap)
-                break;
-            days -= 365 + leap;
-        }
-        for (month = 1; ; ++month)
-        {
-            uint8_t daysPerMonth = daysInMonth(month - 1);
-            if (leap && month == 2)
-                ++daysPerMonth;
-            if (days < daysPerMonth)
-                break;
-            days -= daysPerMonth;
-        }
-        day = days + 1;    
-        return *this;
-    }
+DateTime MTD_FLASHMEM DateTime::lastSyncDateTime(bool set, DateTime const &value) {
+  static DateTime s_lastDateTime;
+  static bool s_init = false;
 
+  if (!s_init) {
+    // this is necessary because statics classes (like DateTime is not initializated automatically)
+    s_init = true;
+    s_lastDateTime = DateTime();
+  }
 
-    uint32_t MTD_FLASHMEM DateTime::getUnixDateTime() const
-    {
-        uint16_t days = date2days(year, month, day);
-        return time2long(days, hours, minutes, seconds) + SECONDS_FROM_1970_TO_2000;
-    }
+  if (set)
+    s_lastDateTime = value;
 
+  // Maybe this is the first right datetime we see. Setup boot time.
+  if (s_lastDateTime.year > 2000 && ConfigurationManager::getBootDateTime().year == 2000) {
+    ConfigurationManager::getBootDateTime(true, s_lastDateTime);
+  }
 
-    DateTime& MTD_FLASHMEM DateTime::setNTPDateTime(uint8_t const* datetimeField)
-    {
-        uint32_t t = 0;
-        for (uint8_t i = 0; i < 4; ++i)
-            t = t << 8 | datetimeField[i];
-        float f = ((long)datetimeField[4] * 256 + datetimeField[5]) / 65535.0; 
-        t -= 2208988800UL; 
-        t += (timezoneHours * 3600L) + (timezoneMinutes * 60L);
-        if (f > 0.4) 
-            ++t;
-        return setUnixDateTime(t);
-    }
-    
-    
-    // if serverIP = 0.0.0.0 then look into s_defaultNTPServer
-    bool MTD_FLASHMEM DateTime::getFromNTPServer(IPAddress const& serverIP)
-    {
-        IPAddress ip = (serverIP == IPAddress(0, 0, 0, 0)? s_defaultNTPServer : serverIP);
-        if (ip != IPAddress(0, 0, 0, 0))
-        {
-            SNTPClient sntp(ip);
-            uint64_t v = 0;
-            if (sntp.query(&v))
-            {
-                setNTPDateTime((uint8_t*)&v);
-                return true;
-            }
-        }
-        return false;
-    }
+  return s_lastDateTime;
+}
 
+uint32_t MTD_FLASHMEM DateTime::lastSyncMillis(bool set, uint32_t value) {
+  static uint32_t s_lastMillis = 0;
+  if (set)
+    s_lastMillis = value;
+  return s_lastMillis;
+}
 
-    
-    void STC_FLASHMEM DateTime::syncWithNTPServer()
-    {
-        static uint32_t const MAXTRIES = 5;
-        static uint32_t const DELAY    = 30000;
-        if (!s_synchingWithNTPServer)
-        {
-            s_synchingWithNTPServer = true;
-            for (uint32_t i = 0; i != MAXTRIES; ++i)
-            {
-                DateTime dt;
-                if (dt.getFromNTPServer())
-                {
-                    DateTime::lastSyncDateTime(true, dt);
-                    DateTime::lastSyncMillis(true, millis());
-                    break;
-                }
-                Task::delay(DELAY);
-            }
-            s_synchingWithNTPServer = false;
-        }
-    }
-    
-    
-    // if this is the first time calling now() or after 6 hours an NTP update is perfomed
-    // warn: now() should be called within 50 days from the last call
-    // warn: loses about 3 seconds every 10 hours
-    DateTime MTD_FLASHMEM DateTime::now()
-    {
-        uint32_t currentMillis = millis();
-        uint32_t locLastMillis = lastSyncMillis();
-        uint32_t diff = (currentMillis < locLastMillis) ? (0xFFFFFFFF - locLastMillis + currentMillis) : (currentMillis - locLastMillis);
-        
-        // need to synch with NTP server?
-        if (locLastMillis == 0 || diff > 6 * 3600 * 1000)
-        {
-            if (!s_synchingWithNTPServer)
-                asyncExec<syncWithNTPServer>();
-        }
-        
-        DateTime result;
-        result.setUnixDateTime( lastSyncDateTime().getUnixDateTime() + (diff / 1000) );
-        
-        if (s_defaultNTPServer == IPAddress(0, 0, 0, 0))
-        {
-            // NTP synchronization is disabled. Take care for millis overflow.
-            if (diff > 10 * 24 * 3600 * 1000)   // past 10 days?
-            {
-                // reset millis counter to avoid overflow (actually it overflows after 50 days)
-                lastSyncMillis(true, currentMillis);
-                lastSyncDateTime(true, result);
-            }
-        }
-        
-        return result;
-    }
+// inbuf can stay only in RAM
+// formatstr can stay in RAM or Flash
+// warn: doesn't check correctness and size of input string!
+// Format:
+//    '%d' : Day of the month, 2 digits with leading zeros (01..31)
+//    '%m' : Numeric representation of a month, with leading zeros (01..12)
+//    '%Y' : A full numeric representation of a year, 4 digits (1999, 2000...)
+//    '%H' : 24-hour format of an hour with leading zeros (00..23)
+//    '%M' : Minutes with leading zeros (00..59)
+//    '%S' : Seconds, with leading zeros (00..59)
+// Returns position of the next character to process
+char const *MTD_FLASHMEM DateTime::decode(char const *inbuf, char const *formatstr) {
+  for (; inbuf && getChar(formatstr); ++formatstr) {
+    if (getChar(formatstr) == '%') {
+      ++formatstr;
+      switch (getChar(formatstr)) {
+      case '%':
+        ++inbuf;
+        break;
+      case 'd':
+        day = (*inbuf++ - '0') * 10;
+        day += (*inbuf++ - '0');
+        break;
+      case 'm':
+        month = (*inbuf++ - '0') * 10;
+        month += (*inbuf++ - '0');
+        break;
+      case 'Y':
+        year = (*inbuf++ - '0') * 1000;
+        year += (*inbuf++ - '0') * 100;
+        year += (*inbuf++ - '0') * 10;
+        year += (*inbuf++ - '0');
+        break;
+      case 'H':
+        hours = (*inbuf++ - '0') * 10;
+        hours += (*inbuf++ - '0');
+        break;
+      case 'M':
+        minutes = (*inbuf++ - '0') * 10;
+        minutes += (*inbuf++ - '0');
+        break;
+      case 'S':
+        seconds = (*inbuf++ - '0') * 10;
+        seconds += (*inbuf++ - '0');
+        break;
+      default:
+        return inbuf; // error!
+      }
+    } else
+      ++inbuf;
+  }
+  return inbuf;
+}
 
+// Format:
+//    '%a' : Weekday abbreviated name (Sun, Mon, ..., Sat)
+//    '%A' : Weekday full name (Sunday, Monday, ..., Saturday)
+//    '%w' : Numeric representation of the day of the week (0 = Sunday, 6 = Saturday)
+//    '%d' : Day of the month, 2 digits with leading zeros (01..31)
+//    '%D' : Day of the month without leading zeros (1..31)
+//    '%b' : Month abbreviated name (Jan, Feb, ..., Dec)
+//    '%B' : Month full name (January, February, ..., December)
+//    '%m' : Numeric representation of a month, with leading zeros (01..12)
+//    '%y' : Two digits year (99, 00...)
+//    '%Y' : A full numeric representation of a year, 4 digits (1999, 2000...)
+//    '%H' : 24-hour format of an hour with leading zeros (00..23)
+//    '%I' : Hour (12-hour clock) as a zero-padded decimal number (01, 02, ..., 12)
+//    '%p' : AM or PM
+//    '%M' : Minutes with leading zeros (00..59)
+//    '%S' : Seconds, with leading zeros (00..59)
+//    '%z' : UTC offset in the form +HHMM or -HHMM (+0000, -0400, +1030, ...)
+//    '%j' : Day of the year as a zero-padded decimal number (001, 002, ..., 366)
+//    '%c' : Date and time representation (Tue Aug 16 2015 21:30:00 +0000)
+// Returns resulting string length without trailing zero.
+// Example:
+//   char str[50];
+//   datetime.format(str, "%a %b %d %Y %H:%M:%S %z");  // equivalent to "%c"
+uint16_t MTD_FLASHMEM DateTime::format(char *outbuf, char const *formatstr) {
+  static char const *DAYS[] = {FSTR("Sunday"),   FSTR("Monday"), FSTR("Tuesday"), FSTR("Wednesday"),
+                               FSTR("Thursday"), FSTR("Friday"), FSTR("Saturday")};
+  static char const *MONTHS[] = {FSTR("January"),   FSTR("February"), FSTR("March"),    FSTR("April"),
+                                 FSTR("May"),       FSTR("June"),     FSTR("July"),     FSTR("August"),
+                                 FSTR("September"), FSTR("October"),  FSTR("November"), FSTR("December")};
 
-    DateTime MTD_FLASHMEM DateTime::lastSyncDateTime(bool set, DateTime const& value)
-    {
-        static DateTime s_lastDateTime;        
-        static bool s_init = false;
-        
-        if (!s_init)
-        {
-            // this is necessary because statics classes (like DateTime is not initializated automatically)
-            s_init = true;
-            s_lastDateTime = DateTime();
-        }
+  char *outbuf_start = outbuf;
 
-        if (set)
-            s_lastDateTime = value;
-        
-        // Maybe this is the first right datetime we see. Setup boot time.
-        if (s_lastDateTime.year > 2000 && ConfigurationManager::getBootDateTime().year == 2000)
-        {
-            ConfigurationManager::getBootDateTime(true, s_lastDateTime);
-        }
-            
-        return s_lastDateTime;
-    }
+  for (; getChar(formatstr); ++formatstr) {
+    if (getChar(formatstr) == '%') {
+      ++formatstr;
+      switch (getChar(formatstr)) {
+      case '%':
+        *outbuf++ = '%';
+        break;
+      case 'a':
+        outbuf += sprintf(outbuf, FSTR("%.3s"), DAYS[dayOfWeek()]);
+        break;
+      case 'A':
+        outbuf += sprintf(outbuf, FSTR("%s"), DAYS[dayOfWeek()]);
+        break;
+      case 'w':
+        outbuf += sprintf(outbuf, FSTR("%d"), dayOfWeek());
+        break;
+      case 'd':
+        outbuf += sprintf(outbuf, FSTR("%02d"), day);
+        break;
+      case 'D':
+        outbuf += sprintf(outbuf, FSTR("%d"), day);
+        break;
+      case 'b':
+        outbuf += sprintf(outbuf, FSTR("%.3s"), MONTHS[month - 1]);
+        break;
+      case 'B':
+        outbuf += sprintf(outbuf, FSTR("%s"), MONTHS[month - 1]);
+        break;
+      case 'm':
+        outbuf += sprintf(outbuf, FSTR("%02d"), month);
+        break;
+      case 'y':
+        outbuf += sprintf(outbuf, FSTR("%02d"), year % 100);
+        break;
+      case 'Y':
+        outbuf += sprintf(outbuf, FSTR("%d"), year);
+        break;
+      case 'H':
+        outbuf += sprintf(outbuf, FSTR("%02d"), hours);
+        break;
+      case 'I':
+        outbuf += sprintf(outbuf, FSTR("%02d"), (hours == 0 || hours == 12) ? 12 : (hours % 12));
+        break;
+      case 'p':
+        outbuf += sprintf(outbuf, FSTR("%s"), hours > 11 ? FSTR("PM") : FSTR("AM"));
+        break;
+      case 'M':
+        outbuf += sprintf(outbuf, FSTR("%02d"), minutes);
+        break;
+      case 'S':
+        outbuf += sprintf(outbuf, FSTR("%02d"), seconds);
+        break;
+      case 'z':
+        outbuf += sprintf(outbuf, FSTR("%+03d%02d"), timezoneHours, timezoneMinutes);
+        break;
+      case 'j':
+        outbuf += sprintf(outbuf, FSTR("%03d"), dayOfYear());
+        break;
+      case 'c':
+        outbuf += format(outbuf, FSTR("%a %b %d %Y %H:%M:%S %z"));
+        break;
+      }
+    } else
+      *outbuf++ = getChar(formatstr);
+  }
+  *outbuf = 0;
+  return outbuf - outbuf_start;
+}
 
+uint8_t MTD_FLASHMEM DateTime::daysInMonth(uint8_t month) {
+  static uint8_t const DIMO[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  return DIMO[month];
+}
 
-    uint32_t MTD_FLASHMEM DateTime::lastSyncMillis(bool set, uint32_t value)
-    {
-        static uint32_t s_lastMillis = 0;
-        if (set)
-            s_lastMillis = value;
-        return s_lastMillis;
-    }
-    
-    
-    // inbuf can stay only in RAM
-    // formatstr can stay in RAM or Flash
-    // warn: doesn't check correctness and size of input string!
-    // Format:
-    //    '%d' : Day of the month, 2 digits with leading zeros (01..31)
-    //    '%m' : Numeric representation of a month, with leading zeros (01..12)
-    //    '%Y' : A full numeric representation of a year, 4 digits (1999, 2000...)
-    //    '%H' : 24-hour format of an hour with leading zeros (00..23)
-    //    '%M' : Minutes with leading zeros (00..59)
-    //    '%S' : Seconds, with leading zeros (00..59)
-    // Returns position of the next character to process
-    char const* MTD_FLASHMEM DateTime::decode(char const* inbuf, char const* formatstr)
-    {
-        for (; inbuf && getChar(formatstr); ++formatstr)
-        {
-            if (getChar(formatstr) == '%')
-            {
-                ++formatstr;
-                switch (getChar(formatstr))
-                {
-                    case '%':
-                        ++inbuf;
-                        break;
-                    case 'd':
-                        day =  (*inbuf++ - '0') * 10;
-                        day += (*inbuf++ - '0');
-                        break;
-                    case 'm':
-                        month =  (*inbuf++ - '0') * 10;
-                        month += (*inbuf++ - '0');
-                        break;
-                    case 'Y':
-                        year =  (*inbuf++ - '0') * 1000;
-                        year += (*inbuf++ - '0') * 100;
-                        year += (*inbuf++ - '0') * 10;
-                        year += (*inbuf++ - '0');
-                        break;
-                    case 'H':
-                        hours =  (*inbuf++ - '0') * 10;
-                        hours += (*inbuf++ - '0');
-                        break;
-                    case 'M':
-                        minutes =  (*inbuf++ - '0') * 10;
-                        minutes += (*inbuf++ - '0');
-                        break;
-                    case 'S':
-                        seconds =  (*inbuf++ - '0') * 10;
-                        seconds += (*inbuf++ - '0');
-                        break;
-                    default:
-                        return inbuf;   // error!
-                }
-            }
-            else
-                ++inbuf;
-        }
-        return inbuf;
-    }
-    
-    
-    // Format:
-    //    '%a' : Weekday abbreviated name (Sun, Mon, ..., Sat)
-    //    '%A' : Weekday full name (Sunday, Monday, ..., Saturday)
-    //    '%w' : Numeric representation of the day of the week (0 = Sunday, 6 = Saturday)
-    //    '%d' : Day of the month, 2 digits with leading zeros (01..31)
-    //    '%D' : Day of the month without leading zeros (1..31)
-    //    '%b' : Month abbreviated name (Jan, Feb, ..., Dec)
-    //    '%B' : Month full name (January, February, ..., December)
-    //    '%m' : Numeric representation of a month, with leading zeros (01..12)
-    //    '%y' : Two digits year (99, 00...)
-    //    '%Y' : A full numeric representation of a year, 4 digits (1999, 2000...)
-    //    '%H' : 24-hour format of an hour with leading zeros (00..23)
-    //    '%I' : Hour (12-hour clock) as a zero-padded decimal number (01, 02, ..., 12)
-    //    '%p' : AM or PM
-    //    '%M' : Minutes with leading zeros (00..59)
-    //    '%S' : Seconds, with leading zeros (00..59)
-    //    '%z' : UTC offset in the form +HHMM or -HHMM (+0000, -0400, +1030, ...)
-    //    '%j' : Day of the year as a zero-padded decimal number (001, 002, ..., 366)    
-    //    '%c' : Date and time representation (Tue Aug 16 2015 21:30:00 +0000)
-    // Returns resulting string length without trailing zero.
-    // Example:
-    //   char str[50];
-    //   datetime.format(str, "%a %b %d %Y %H:%M:%S %z");  // equivalent to "%c"
-    uint16_t MTD_FLASHMEM DateTime::format(char* outbuf, char const* formatstr)
-    {
-        static char const* DAYS[]   = {FSTR("Sunday"), FSTR("Monday"), FSTR("Tuesday"), FSTR("Wednesday"), FSTR("Thursday"), FSTR("Friday"), FSTR("Saturday")};
-        static char const* MONTHS[] = {FSTR("January"), FSTR("February"), FSTR("March"), FSTR("April"), FSTR("May"), FSTR("June"), FSTR("July"), FSTR("August"), FSTR("September"), FSTR("October"), FSTR("November"), FSTR("December")};
-        
-        char* outbuf_start = outbuf;
-        
-        for (; getChar(formatstr); ++formatstr)
-        {
-            if (getChar(formatstr) == '%')
-            {
-                ++formatstr;
-                switch (getChar(formatstr))
-                {
-                    case '%':
-                        *outbuf++ = '%';
-                        break;
-                    case 'a':
-                        outbuf += sprintf(outbuf, FSTR("%.3s"), DAYS[dayOfWeek()]);
-                        break;
-                    case 'A':
-                        outbuf += sprintf(outbuf, FSTR("%s"), DAYS[dayOfWeek()]);
-                        break;
-                    case 'w':
-                        outbuf += sprintf(outbuf, FSTR("%d"), dayOfWeek());
-                        break;
-                    case 'd':
-                        outbuf += sprintf(outbuf, FSTR("%02d"), day);
-                        break;
-                    case 'D':
-                        outbuf += sprintf(outbuf, FSTR("%d"), day);
-                        break;
-                    case 'b':
-                        outbuf += sprintf(outbuf, FSTR("%.3s"), MONTHS[month - 1]);
-                        break;
-                    case 'B':
-                        outbuf += sprintf(outbuf, FSTR("%s"), MONTHS[month - 1]);
-                        break;
-                    case 'm':
-                        outbuf += sprintf(outbuf, FSTR("%02d"), month);
-                        break;
-                    case 'y':
-                        outbuf += sprintf(outbuf, FSTR("%02d"), year % 100);
-                        break;
-                    case 'Y':
-                        outbuf += sprintf(outbuf, FSTR("%d"), year);
-                        break;
-                    case 'H':
-                        outbuf += sprintf(outbuf, FSTR("%02d"), hours);
-                        break;
-                    case 'I':
-                        outbuf += sprintf(outbuf, FSTR("%02d"), (hours == 0 || hours == 12)? 12 : (hours % 12));
-                        break;
-                    case 'p':
-                        outbuf += sprintf(outbuf, FSTR("%s"), hours > 11? FSTR("PM") : FSTR("AM"));
-                        break;
-                    case 'M':
-                        outbuf += sprintf(outbuf, FSTR("%02d"), minutes);
-                        break;
-                    case 'S':
-                        outbuf += sprintf(outbuf, FSTR("%02d"), seconds);
-                        break;
-                    case 'z':
-                        outbuf += sprintf(outbuf, FSTR("%+03d%02d"), timezoneHours, timezoneMinutes);
-                        break;
-                    case 'j':
-                        outbuf += sprintf(outbuf, FSTR("%03d"), dayOfYear());
-                        break;
-                    case 'c':
-                        outbuf += format(outbuf, FSTR("%a %b %d %Y %H:%M:%S %z"));
-                        break;
-                }
-            }
-            else
-                *outbuf++ = getChar(formatstr);
-        }
-        *outbuf = 0;
-        return outbuf - outbuf_start;
-    }
+long MTD_FLASHMEM DateTime::time2long(uint16_t days, uint8_t h, uint8_t m, uint8_t s) {
+  return ((days * 24L + h) * 60 + m) * 60 + s;
+}
 
-
-    uint8_t MTD_FLASHMEM DateTime::daysInMonth(uint8_t month)
-    {
-        static uint8_t const DIMO[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-        return DIMO[month];
-    }
-
-
-    long MTD_FLASHMEM DateTime::time2long(uint16_t days, uint8_t h, uint8_t m, uint8_t s)
-    {
-        return ((days * 24L + h) * 60 + m) * 60 + s;
-    }  
-
-
-    uint16_t MTD_FLASHMEM DateTime::date2days(uint16_t y, uint8_t m, uint8_t d)
-    {
-        if (y >= 2000)
-            y -= 2000;
-        uint16_t days = d;
-        for (uint8_t i = 1; i < m; ++i)
-            days += daysInMonth(i - 1);
-        if (m > 2 && y % 4 == 0)
-            ++days;
-        return days + 365 * y + (y + 3) / 4 - 1;
-    }
-
-
-
-
+uint16_t MTD_FLASHMEM DateTime::date2days(uint16_t y, uint8_t m, uint8_t d) {
+  if (y >= 2000)
+    y -= 2000;
+  uint16_t days = d;
+  for (uint8_t i = 1; i < m; ++i)
+    days += daysInMonth(i - 1);
+  if (m > 2 && y % 4 == 0)
+    ++days;
+  return days + 365 * y + (y + 3) / 4 - 1;
+}
 
 } // end of "fdv" namespace
-

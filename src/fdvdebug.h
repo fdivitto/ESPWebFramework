@@ -20,33 +20,18 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 */
 
-
 #ifndef _FDVDEBUG_H_
 #define _FDVDEBUG_H_
 
-
 #include "fdv.h"
 
-extern "C"
-{
-	#include <stdarg.h>
+extern "C" {
+#include <stdarg.h>
 }
 
-
-
 void debug(char const *fmt, ...);
-void debugstrn(char const* str, uint32_t len);
-void debugstr(char const* str);
+void debugstrn(char const *str, uint32_t len);
+void debugstr(char const *str);
 void debug(char c);
-
-
-
-
-
-
-
-
-
-
 
 #endif

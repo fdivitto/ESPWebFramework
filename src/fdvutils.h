@@ -20,41 +20,30 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 */
 
-
 #ifndef _FDVUTILS_H_
 #define _FDVUTILS_H_
 
-
 #include "fdv.h"
 
-
 // placement-new requires to be declared
-void* operator new(size_t size, void* ptr);
+void *operator new(size_t size, void *ptr);
 
-
-
-namespace fdv
-{
-
+namespace fdv {
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 // creates a task and reboot after specified time (ms)
 
-struct RebootTask : Task
-{
-    RebootTask(uint32_t time);
-    void exec();
+struct RebootTask : Task {
+  RebootTask(uint32_t time);
+  void exec();
 
-private:    
-    uint32_t m_time;
+private:
+  uint32_t m_time;
 };
-
 
 // Helper for RebootTask
 void reboot(uint32_t time);
-
-
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -76,7 +65,7 @@ void reboot(uint32_t time);
 // }
 //
 // void free(void* ptr)
-// {        
+// {
 //     enterCritical();
 //     s_memPool->free(ptr);
 //     exitCritical();
@@ -84,50 +73,42 @@ void reboot(uint32_t time);
 
 #if (FDV_INCLUDE_MEMPOOL == 1)
 
-class MemPool
-{
+class MemPool {
 public:
+  typedef uint16_t SIZE_T;
 
-    typedef uint16_t SIZE_T;
-    
-    MemPool(void* buffer, SIZE_T bufferLength);
-    
-    void* malloc(SIZE_T size);
-    void free(void const* ptr);
-    
-    void getStats(SIZE_T* largestFreeBlock, SIZE_T* totalFreeSize);
-    SIZE_T getLargestFreeBlock();   // just an helper of getStats()
-    
+  MemPool(void *buffer, SIZE_T bufferLength);
+
+  void *malloc(SIZE_T size);
+  void free(void const *ptr);
+
+  void getStats(SIZE_T *largestFreeBlock, SIZE_T *totalFreeSize);
+  SIZE_T getLargestFreeBlock(); // just an helper of getStats()
+
 private:
+  struct MemPoolBlock {
+    MemPoolBlock *next;
+    SIZE_T size;   // size not including this structure. This is a multiple of sizeof(MemPoolBlock)
+    uint8_t alloc; // 0 = free, 1 = allocated
+  };
 
-    struct MemPoolBlock
-    {
-        MemPoolBlock* next;
-        SIZE_T        size;  // size not including this structure. This is a multiple of sizeof(MemPoolBlock)
-        uint8_t       alloc; // 0 = free, 1 = allocated
-    };
-    
-    MemPoolBlock* findFreeBlock(SIZE_T minsize);
-    MemPoolBlock* findBlockFromPtr(void const* ptr);
-    void mergeFreeBlocks();
-    
-    MemPoolBlock* m_blocks;
+  MemPoolBlock *findFreeBlock(SIZE_T minsize);
+  MemPoolBlock *findBlockFromPtr(void const *ptr);
+  void mergeFreeBlocks();
+
+  MemPoolBlock *m_blocks;
 };
 
 #endif
-
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 // Memory
 
-struct Memory
-{        
-	static void* malloc(uint32_t size);
-	static void free(void* ptr);
+struct Memory {
+  static void *malloc(uint32_t size);
+  static void free(void *ptr);
 };
-
-
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -135,54 +116,31 @@ struct Memory
 // A very simple smart pointer (without copy or ref counting functionalities)
 // For arrays (new[]) use APtr
 
-template <typename T>
-class Ptr
-{	
+template <typename T> class Ptr {
 private:
-	Ptr(Ptr const& c);	// no copy constructor
-	
-public:
-	explicit Ptr(T* ptr)
-		: m_ptr(ptr)
-	{
-	}
-	
-	Ptr()
-		: m_ptr(NULL)
-	{
-	}
-	
-	
-	~Ptr()
-	{
-		delete m_ptr;
-	}
-	
-	T& TMTD_FLASHMEM operator*()
-	{
-		return *m_ptr;
-	}
-	
-	T* TMTD_FLASHMEM operator->()
-	{
-		return m_ptr;
-	}
-	
-	T* TMTD_FLASHMEM get()
-	{
-		return m_ptr;
-	}
-	
-	void TMTD_FLASHMEM reset(T* ptr)
-	{
-		delete m_ptr;
-		m_ptr = ptr;
-	}
-	
-private:
-	T* m_ptr;
-};
+  Ptr(Ptr const &c); // no copy constructor
 
+public:
+  explicit Ptr(T *ptr) : m_ptr(ptr) {}
+
+  Ptr() : m_ptr(NULL) {}
+
+  ~Ptr() { delete m_ptr; }
+
+  T &TMTD_FLASHMEM operator*() { return *m_ptr; }
+
+  T *TMTD_FLASHMEM operator->() { return m_ptr; }
+
+  T *TMTD_FLASHMEM get() { return m_ptr; }
+
+  void TMTD_FLASHMEM reset(T *ptr) {
+    delete m_ptr;
+    m_ptr = ptr;
+  }
+
+private:
+  T *m_ptr;
+};
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -190,79 +148,41 @@ private:
 // A very simple smart pointer (without copy or ref counting functionalities)
 // For single objects (new) use Ptr
 
-template <typename T>
-class APtr
-{	
+template <typename T> class APtr {
 private:
-	APtr(APtr const& c);	// no copy constructor
-	
+  APtr(APtr const &c); // no copy constructor
+
 public:
-	explicit APtr(T* ptr)
-		: m_ptr(ptr)
-	{
-	}
-	
-	APtr()
-		: m_ptr(NULL)
-	{
-	}
-	
-	~APtr()
-	{
-		delete[] m_ptr;
-	}
-	
-	T& TMTD_FLASHMEM operator*()
-	{
-		return *m_ptr;
-	}
-	
-	T* TMTD_FLASHMEM operator->()
-	{
-		return m_ptr;
-	}
-	
-	T* TMTD_FLASHMEM get()
-	{
-		return m_ptr;
-	}
-	
-	T& TMTD_FLASHMEM operator[](uint32_t index)
-	{
-		return m_ptr[index];
-	}
+  explicit APtr(T *ptr) : m_ptr(ptr) {}
 
-	void TMTD_FLASHMEM reset(T* ptr)
-	{
-		delete[] m_ptr;
-		m_ptr = ptr;
-	}
-	
+  APtr() : m_ptr(NULL) {}
+
+  ~APtr() { delete[] m_ptr; }
+
+  T &TMTD_FLASHMEM operator*() { return *m_ptr; }
+
+  T *TMTD_FLASHMEM operator->() { return m_ptr; }
+
+  T *TMTD_FLASHMEM get() { return m_ptr; }
+
+  T &TMTD_FLASHMEM operator[](uint32_t index) { return m_ptr[index]; }
+
+  void TMTD_FLASHMEM reset(T *ptr) {
+    delete[] m_ptr;
+    m_ptr = ptr;
+  }
+
 private:
-	T* m_ptr;
+  T *m_ptr;
 };
-
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 // min / max
 
-template <typename T>
-T TMTD_FLASHMEM min(T const& v1, T const& v2)
-{
-	return v1 < v2? v1 : v2;
+template <typename T> T TMTD_FLASHMEM min(T const &v1, T const &v2) { return v1 < v2 ? v1 : v2; }
+
+template <typename T> T TMTD_FLASHMEM max(T const &v1, T const &v2) { return v1 > v2 ? v1 : v2; }
 }
-
-template <typename T>
-T TMTD_FLASHMEM max(T const& v1, T const& v2)
-{
-	return v1 > v2? v1 : v2;
-}
-
-
-
-
-}
-
 
 #endif
