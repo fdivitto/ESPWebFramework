@@ -241,8 +241,11 @@ void MTD_FLASHMEM SerialConsole::cmd_free() {
                    4096 - flashDictUsedSpace, flashDictUsedSpace * 100 / 4096);
   m_serial->printf(FSTR("File System      : %7d  %7d  %7d  %3d%%\r\n"), fileSystemTot, fileSystemTot - fileSystemFree,
                    fileSystemFree, (fileSystemTot - fileSystemFree) * 100 / fileSystemTot);
-  m_serial->printf(FSTR("Flash            : %7d\r\n"), getFlashSize());
-  m_serial->printf(FSTR("Flash (detected) : %7d\r\n"), getActualFlashSize());
+  uint32_t const flashSize = getFlashSize();
+  uint32_t const flashDetected = getActualFlashSize();
+  m_serial->printf(FSTR("Flash            : %7d\r\n"), flashSize);
+  if (flashSize != flashDetected)
+    m_serial->printf(FSTR("Flash (detected) : %7d\r\n"), flashDetected);
 }
 
 void MTD_FLASHMEM SerialConsole::cmd_ifconfig() {
