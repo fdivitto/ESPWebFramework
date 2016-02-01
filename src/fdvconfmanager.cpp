@@ -972,9 +972,6 @@ void HTTPWizardConfigurationResponse::flush() {
     // set Routing
     HTTPHelperConfiguration::setRouting(this);
 
-    // set the wizard done flag
-    FlashDictionary::setInt(STR_wizdone, 1);
-
     // reboot
     HTTPTemplateResponse response(getHttpHandler(), FSTR("reboot.html"));
     reboot(3000); // reboot in 3s
@@ -1095,8 +1092,8 @@ void MTD_FLASHMEM DefaultHTTPHandler::dispatch() {
 }
 
 void MTD_FLASHMEM DefaultHTTPHandler::get_home() {
-  if (FlashDictionary::getInt(STR_wizdone, 0) == 0) {
-    // execute setup wizard instead of the home page
+  if (!FlashDictionary::isContentValid()) {
+    // no setting stored, execute setup wizard instead of the home page
     get_confwizard();
     return;
   }

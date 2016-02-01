@@ -95,7 +95,6 @@ static char const STR_CHTIMEAUT[] FLASHMEM = "CHTIMEAUT";
 static char const STR_srv0[] FLASHMEM = "srv0";
 static char const STR_srv1[] FLASHMEM = "srv1";
 static char const STR_srv2[] FLASHMEM = "srv2";
-static char const STR_wizdone[] FLASHMEM = "wizdone";
 static char const STR_gpio[] FLASHMEM = "gpio";
 static char const STR_0[] FLASHMEM = "0";
 static char const STR_1[] FLASHMEM = "1";
