@@ -1,0 +1,377 @@
+{%base.html%}
+
+{%title%}
+Configuration Wizard
+
+{%content%}
+
+    <script type="text/javascript">
+		
+		// wizard code 2015/2016 (c) by Fabrizio Di Vittorio (fdivitto2013@gmail.com)
+
+		var STEPS = ["SPAN_Mode",
+					 {
+                     	"RadioClientMode":
+						 	["SPAN_ClientModeWiFi", 
+    	                  	"SPAN_ClientModeIP",
+						  	"SPAN_DNS",
+						  	"SPAN_Time",
+                	      	{
+								"RadioManual": ["SPAN_TimeManual"],
+                    	   		"RadioAuto":   ["SPAN_TimeNTP"]
+							},
+				      		"SPAN_UART",
+                      		"SPAN_ApplyConfiguration"],
+					 	"RadioAPMode":
+		  				  	["SPAN_APModeWifi",
+    	                  	"SPAN_APModeIP",
+        	              	"SPAN_APModeDHCPServer",
+						  	"SPAN_DNS",
+					      	"SPAN_Time",
+                	      	{
+								"RadioManual": ["SPAN_TimeManual"],
+                    	   		"RadioAuto":   ["SPAN_TimeNTP"]
+							},
+				      		"SPAN_UART",
+                      		"SPAN_ApplyConfiguration"],
+					 	"RadioBoths":
+							["SPAN_APModeWifi",
+    	                  	"SPAN_APModeIP",
+        	              	"SPAN_APModeDHCPServer",
+						  	"SPAN_ClientModeWiFi", 
+                	      	"SPAN_ClientModeIP",					  
+						  	"SPAN_APModeRouting",
+                      		"SPAN_DNS",
+				      		"SPAN_Time",
+                	      	{
+								"RadioManual": ["SPAN_TimeManual"],
+                    	   		"RadioAuto":   ["SPAN_TimeNTP"]
+							},
+				      		"SPAN_UART",
+                      		"SPAN_ApplyConfiguration"]
+					 }
+				    ];
+
+		var currentSteps    = STEPS;
+   	    var currentStepIdx  = 0;
+		var upSteps         = [];
+		var currentVisible  = STEPS[0];
+
+        function handleWizardNext()
+        {
+			document.getElementById(currentVisible).style.display = 'none';
+			var nextStepIdx = currentStepIdx + 1;
+			if (nextStepIdx < currentSteps.length)
+			{
+				if (typeof(currentSteps[nextStepIdx]) == "object")
+				{
+					upSteps.push([currentSteps, currentStepIdx]);
+					Object.keys(currentSteps[nextStepIdx]).forEach(function(k)
+						{
+							if (document.getElementById(k).checked)
+							{
+								currentSteps = currentSteps[nextStepIdx][k];
+								currentStepIdx = 0;
+							}
+						});
+				}
+				else
+				{	
+					currentStepIdx = nextStepIdx;		
+				}
+				currentVisible = currentSteps[currentStepIdx];
+				document.getElementById(currentVisible).style.display = '';
+				var isLast = (currentStepIdx == currentSteps.length - 1 && upSteps.length == 1);
+				document.getElementById('ButtonApply').style.display = isLast? "" : "none";
+				document.getElementById('ButtonNext').disabled = isLast? "disabled" : "";
+				var isFirst = (currentStepIdx == 0 && upSteps.length == 0);
+				document.getElementById('ButtonPrevious').disabled = isFirst? "disabled" : "";
+			}
+			else
+			{
+				var prev = upSteps.pop();
+				currentSteps = prev[0];
+				currentStepIdx = prev[1] + 1;
+				handleWizardNext();
+			}
+        }
+
+        function handleWizardPrevious()
+        {
+			document.getElementById(currentVisible).style.display = 'none';
+			if (currentStepIdx == 0)
+			{
+				var prev = upSteps.pop();
+				currentSteps = prev[0];
+				currentStepIdx = prev[1] - 1;
+				handleWizardNext();
+			}
+			else
+			{
+				currentStepIdx -= 2;
+				handleWizardNext();
+			}
+        }
+
+		function CLIPMOD_onclick()
+		{
+			document.getElementById('staticip_fields').style.display = document.getElementById("RadioDynIP").checked? 'none' : '';
+		}
+
+		function DHCPD_onclick()
+		{
+			document.getElementById('dhcpd_fields').style.display = document.getElementById("DHCPD").checked? '' : 'none';
+		}
+
+        function SelSSID(el)
+        {
+            document.getElementById('CLSSID').value = el.value;
+        }        
+        
+		window.onload = function() 
+		{
+			CLIPMOD_onclick();
+			DHCPD_onclick();
+            
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function()
+            {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                {
+                    document.getElementById('TAB_scan').innerHTML = xmlhttp.responseText;
+                }
+            };
+            xmlhttp.open("GET", "/wifiscan", true);
+            xmlhttp.send();            
+		}
+
+    </script>
+
+
+<form method="POST">
+
+
+<span id="SPAN_Mode">
+    <p><h2>Welcome to ESP8266 Web Framework Setup Wizard!</h2></p>
+
+    <div id="subcontent">
+        <br>
+        This wizard will guide you to configure ESP8266 Web Framework as Access Point or as Client.
+        <br><br>
+        Please select the wireless mode:
+        <br>
+        <input type='radio' id='RadioClientMode' name='Mode' value='clientmode' {{clientmode}}> Client Mode <br>
+        <input type='radio' id='RadioAPMode' name='Mode' value='apmode' {{apmode}}> Access Point Mode <br>
+        <input type='radio' id='RadioBoths' name='Mode' value='bothsmode' {{bothsmode}}> Client and Access Point Mode <br>
+    </div>
+</span>
+
+
+<span id="SPAN_ClientModeWiFi" style="display:none">
+
+   <p><h2>Client Mode WiFi</h2></p>
+   
+   <div id="subcontent">
+  	  SSID: <input type='text' id='CLSSID' name='CLSSID' value='{{CLSSID}}'> <br>
+	  Password: <input type='text' name='CLPSW' value='{{CLPSW}}'> <br>
+   </div>      
+	
+   <div id="subcontent">
+       <table id="TAB_scan" class="tg">      
+       </table>
+   </div>
+    
+</span>
+
+
+<span id="SPAN_ClientModeIP" style="display:none">
+
+    <p><h2>Client mode IP</h2></p>
+   
+    <div id="subcontent">
+        <input type='radio' id='RadioDynIP' name='CLIPMOD' value='dynIP' onclick="CLIPMOD_onclick()" {{dynIP}}> Dynamic IP (use DHCP) <br>
+        <input type='radio' id='RadioStcIP' name='CLIPMOD' value='stcIP' onclick="CLIPMOD_onclick()" {{stcIP}}> Static IP <br>
+    </div>
+
+	<span id="staticip_fields" style="display:none">
+        <div id="subcontent">
+            IP: <input type='text' name='CLIP' value='{{CLIP}}'> <br>
+            Netmask: <input type='text' name='CLMSK' value='{{CLMSK}}'> <br>
+            Gateway: <input type='text' name='CLGTW' value='{{CLGTW}}'> <br>
+        </div>
+	</span>
+</span>
+
+
+<span id="SPAN_DNS" style="display:none">
+
+   <p><h2>Domain Name Server (DNS)</h2></p>
+	
+    <div id="subcontent">
+        Primary DNS: <input type='text' name='DNS1' value='{{DNS1}}'> <br>
+        Secondary DNS: <input type='text' name='DNS2' value='{{DNS2}}'> <br>
+    </div>
+
+</span>
+
+
+<span id="SPAN_Time" style="display:none">
+
+    <p><h2>Time settings</h2></p>
+    
+    <div id="subcontent">
+        <input type='radio' id='RadioManual' name='TimeMode' value='DateTimeManual' {{CHTIMEMAN}}> Set manually <br />
+        <input type='radio' id='RadioAuto' name='TimeMode' value='DateTimeAuto' {{CHTIMEAUT}}> Set automatically (NTP) <br />
+    </div>
+
+</span>
+
+
+<span id="SPAN_TimeManual" style="display:none">
+
+    <p><h2>Set date-time</h2></p>
+    
+    <div id="subcontent">
+        Date (DD/MM/YYYY): <input type='text' name='date' value='{{date}}' size=10> <br>
+        Time (HH:MM:SS): <input type='text' name='time' value='{{time}}' size=8> <br>
+    </div>
+
+</span>
+
+
+<span id="SPAN_TimeNTP" style="display:none">
+
+   <p><h2>Set time server (NTP)</h2></p>
+	
+   <div id="subcontent">
+       TimeZone Hours: <input type='text' name='tzh' value='{{tzh}}' size=2> <br>
+       TimeZone Minutes: <input type='text' name='tzm' value='{{tzm}}' size=2> <br>
+       NTP Server: <input type='text' name='ntpsrv' value='{{ntpsrv}}'> <br>
+   </div>
+
+</span>
+
+
+<span id="SPAN_UART" style="display:none">
+
+    <p><h2>UART configuration</h2></p>
+
+    <div id="subcontent">
+        Baud Rate: <input type='text' name='baud' value='{{baud}}'> <br>
+    </div>
+    
+    <div id="subcontent">
+        Service: <br>
+          <input type='radio' name='srv' value='0' {{srv0}}> None <br>
+          <input type='radio' name='srv' value='1' {{srv1}}> Console <br>
+          <input type='radio' name='srv' value='2' {{srv2}}> Binary bidirectional communication with Arduino Sketch<br>
+
+    </div>
+</span>
+
+
+<span id="SPAN_APModeWifi" style="display:none">
+
+   <p><h2>Access Point WiFi</h2></p>
+
+   <div id="subcontent">   
+  	  SSID: <input type='text' name='APSSID' value='{{APSSID}}'> <br>
+	  Password: <input type='text' name='APPSW' value='{{APPSW}}'> (minimum length 8 characters)<br>
+	  Channel: 
+		<select name="APCH">
+		  <option value="1" {{APCH1}}>1</option>
+		  <option value="2" {{APCH2}}>2</option>
+		  <option value="3" {{APCH3}}>3</option>
+		  <option value="4" {{APCH4}}>4</option>
+		  <option value="5" {{APCH5}}>5</option>
+		  <option value="6" {{APCH6}}>6</option>
+		  <option value="7" {{APCH7}}>7</option>
+		  <option value="8" {{APCH8}}>8</option>
+		  <option value="9" {{APCH9}}>9</option>
+		  <option value="10" {{APCH10}}>10</option>
+		  <option value="11" {{APCH11}}>11</option>
+		  <option value="12" {{APCH12}}>12</option>
+		  <option value="13" {{APCH13}}>13</option>
+		</select>
+		<br>
+	  Security protocol:
+		<select name="APSEC">
+		  <option value="0" {{APSEC0}}>Open</option>
+		  <option value="1" {{APSEC1}}>WEP</option>
+		  <option value="2" {{APSEC2}}>WPA PSK</option>
+		  <option value="3" {{APSEC3}}>WPA2 PSK</option>
+		  <option value="4" {{APSEC4}}>WPA_WPA2_PSK</option>
+		</select>
+		<br>
+	  Hidden SSID: <input type='checkbox' name='APHSSID' value='1' {{APHSSID}}> <br>
+    </div>
+</span>
+
+
+<span id="SPAN_APModeIP" style="display:none">
+
+    <p><h2>Access Point IP</h2></p>
+    
+    <div id="subcontent">
+	    IP: <input type='text' name='APIP' value='{{APIP}}'> <br>
+		Netmask: <input type='text' name='APMSK' value='{{APMSK}}'> <br>
+		Gateway: <input type='text' name='APGTW' value='{{APGTW}}'> <br>
+    </div>
+</span>
+
+
+<span id="SPAN_APModeDHCPServer" style="display:none">
+
+   <p><h2>DHCP Server</h2></p>
+
+   <div id="subcontent">
+	  <input id="DHCPD" type='checkbox' name='DHCPD' value='1' {{DHCPD}} onclick="DHCPD_onclick()"> Enable DHCP Server <br>	
+	  <span id="dhcpd_fields" style="display:none">
+	    Start IP: <input type='text' name='startIP' value='{{startIP}}'> <br>
+	    End IP: <input type='text' name='endIP' value='{{endIP}}'> <br>
+	  </span>
+   </div>
+	
+</span>
+
+
+<span id="SPAN_APModeRouting" style="display:none">
+
+    <p><h2>Routing</h2></p>
+
+    <div id="subcontent">
+        <input type='checkbox' name='ROUTING' value='1' {{ROUTING}}> Enable Routing (<a href="routinghelp.html">Help</a>) <br>	
+    </div>
+	
+</span>
+
+
+<span id="SPAN_ApplyConfiguration" style="display:none">
+
+   <p><h2>Configuration is complete. Press "Apply" to reboot.</h2></p>
+	
+</span>
+
+
+<br />    
+
+<table border="0" cellpadding="5" cellspacing="0">
+    <tr>
+        <td>
+            <input id="ButtonPrevious" type="button" class="button" value="Previous" disabled="disabled" name="" onclick="handleWizardPrevious()" />
+		</td>
+
+        <td>
+            <input id="ButtonNext" type="button" class="button" value="Next" name="Step2" onclick="handleWizardNext()" />
+		</td>
+
+        <td>
+            <input id="ButtonApply" type="submit" value="Apply" style="display:none"/>
+		</td>
+    </tr>
+
+</table>
+
+</form>
+
+
