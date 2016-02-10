@@ -57,26 +57,20 @@ Configuration Wizard
 		var upSteps         = [];
 		var currentVisible  = STEPS[0];
 
-        function handleWizardNext()
-        {
+        function handleWizardNext() {
 			document.getElementById(currentVisible).style.display = 'none';
 			var nextStepIdx = currentStepIdx + 1;
-			if (nextStepIdx < currentSteps.length)
-			{
-				if (typeof(currentSteps[nextStepIdx]) == "object")
-				{
+			if (nextStepIdx < currentSteps.length) {
+				if (typeof(currentSteps[nextStepIdx]) == "object") {
 					upSteps.push([currentSteps, currentStepIdx]);
-					Object.keys(currentSteps[nextStepIdx]).forEach(function(k)
-						{
-							if (document.getElementById(k).checked)
-							{
+					Object.keys(currentSteps[nextStepIdx]).forEach(function(k) {
+							if (document.getElementById(k).checked) {
 								currentSteps = currentSteps[nextStepIdx][k];
 								currentStepIdx = 0;
 							}
 						});
 				}
-				else
-				{	
+				else {	
 					currentStepIdx = nextStepIdx;		
 				}
 				currentVisible = currentSteps[currentStepIdx];
@@ -87,8 +81,7 @@ Configuration Wizard
 				var isFirst = (currentStepIdx == 0 && upSteps.length == 0);
 				document.getElementById('ButtonPrevious').disabled = isFirst? "disabled" : "";
 			}
-			else
-			{
+			else {
 				var prev = upSteps.pop();
 				currentSteps = prev[0];
 				currentStepIdx = prev[1] + 1;
@@ -96,48 +89,39 @@ Configuration Wizard
 			}
         }
 
-        function handleWizardPrevious()
-        {
+        function handleWizardPrevious() {
 			document.getElementById(currentVisible).style.display = 'none';
-			if (currentStepIdx == 0)
-			{
+			if (currentStepIdx == 0) {
 				var prev = upSteps.pop();
 				currentSteps = prev[0];
 				currentStepIdx = prev[1] - 1;
 				handleWizardNext();
 			}
-			else
-			{
+			else {
 				currentStepIdx -= 2;
 				handleWizardNext();
 			}
         }
 
-		function CLIPMOD_onclick()
-		{
+		function CLIPMOD_onclick() {
 			document.getElementById('staticip_fields').style.display = document.getElementById("RadioDynIP").checked? 'none' : '';
 		}
 
-		function DHCPD_onclick()
-		{
+		function DHCPD_onclick() {
 			document.getElementById('dhcpd_fields').style.display = document.getElementById("DHCPD").checked? '' : 'none';
 		}
 
-        function SelSSID(el)
-        {
+        function SelSSID(el) {
             document.getElementById('CLSSID').value = el.value;
         }        
         
-		window.onload = function() 
-		{
+		window.onload = function() {
 			CLIPMOD_onclick();
 			DHCPD_onclick();
             
             var xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function()
-            {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
-                {
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     document.getElementById('TAB_scan').innerHTML = xmlhttp.responseText;
                 }
             };
@@ -152,7 +136,7 @@ Configuration Wizard
 
 
 <span id="SPAN_Mode">
-    <p><h2>Welcome to ESP8266 Web Framework Setup Wizard!</h2></p>
+    <h2>Welcome to ESP8266 Web Framework Setup Wizard!</h2>
 
     <div id="subcontent">
         <br>
@@ -169,11 +153,11 @@ Configuration Wizard
 
 <span id="SPAN_ClientModeWiFi" style="display:none">
 
-   <p><h2>Client Mode WiFi</h2></p>
+   <h2>Client Mode WiFi</h2>
    
    <div id="subcontent">
   	  SSID: <input type='text' id='CLSSID' name='CLSSID' value='{{CLSSID}}'> <br>
-	  Password: <input type='text' name='CLPSW' value='{{CLPSW}}'> <br>
+      Password: <input type='text' name='CLPSW' value='{{CLPSW}}'> <br>
    </div>      
 	
    <div id="subcontent">
@@ -186,7 +170,7 @@ Configuration Wizard
 
 <span id="SPAN_ClientModeIP" style="display:none">
 
-    <p><h2>Client mode IP</h2></p>
+    <h2>Client mode IP</h2>
    
     <div id="subcontent">
         <input type='radio' id='RadioDynIP' name='CLIPMOD' value='dynIP' onclick="CLIPMOD_onclick()" {{dynIP}}> Dynamic IP (use DHCP) <br>
@@ -205,7 +189,7 @@ Configuration Wizard
 
 <span id="SPAN_DNS" style="display:none">
 
-   <p><h2>Domain Name Server (DNS)</h2></p>
+   <h2>Domain Name Server (DNS)</h2>
 	
     <div id="subcontent">
         Primary DNS: <input type='text' name='DNS1' value='{{DNS1}}'> <br>
@@ -217,7 +201,7 @@ Configuration Wizard
 
 <span id="SPAN_Time" style="display:none">
 
-    <p><h2>Time settings</h2></p>
+    <h2>Time settings</h2>
     
     <div id="subcontent">
         <input type='radio' id='RadioManual' name='TimeMode' value='DateTimeManual' {{CHTIMEMAN}}> Set manually <br />
@@ -229,7 +213,7 @@ Configuration Wizard
 
 <span id="SPAN_TimeManual" style="display:none">
 
-    <p><h2>Set date-time</h2></p>
+    <h2>Set date-time</h2>
     
     <div id="subcontent">
         Date (DD/MM/YYYY): <input type='text' name='date' value='{{date}}' size=10> <br>
@@ -241,7 +225,7 @@ Configuration Wizard
 
 <span id="SPAN_TimeNTP" style="display:none">
 
-   <p><h2>Set time server (NTP)</h2></p>
+   <h2>Set time server (NTP)</h2>
 	
    <div id="subcontent">
        TimeZone Hours: <input type='text' name='tzh' value='{{tzh}}' size=2> <br>
@@ -254,7 +238,7 @@ Configuration Wizard
 
 <span id="SPAN_UART" style="display:none">
 
-    <p><h2>UART configuration</h2></p>
+    <h2>UART configuration</h2>
 
     <div id="subcontent">
         Baud Rate: <input type='text' name='baud' value='{{baud}}'> <br>
@@ -272,57 +256,57 @@ Configuration Wizard
 
 <span id="SPAN_APModeWifi" style="display:none">
 
-   <p><h2>Access Point WiFi</h2></p>
+   <h2>Access Point WiFi</h2>
 
    <div id="subcontent">   
   	  SSID: <input type='text' name='APSSID' value='{{APSSID}}'> <br>
-	  Password: <input type='text' name='APPSW' value='{{APPSW}}'> (minimum length 8 characters)<br>
-	  Channel: 
-		<select name="APCH">
-		  <option value="1" {{APCH1}}>1</option>
-		  <option value="2" {{APCH2}}>2</option>
-		  <option value="3" {{APCH3}}>3</option>
-		  <option value="4" {{APCH4}}>4</option>
-		  <option value="5" {{APCH5}}>5</option>
-		  <option value="6" {{APCH6}}>6</option>
-		  <option value="7" {{APCH7}}>7</option>
-		  <option value="8" {{APCH8}}>8</option>
-		  <option value="9" {{APCH9}}>9</option>
-		  <option value="10" {{APCH10}}>10</option>
-		  <option value="11" {{APCH11}}>11</option>
-		  <option value="12" {{APCH12}}>12</option>
-		  <option value="13" {{APCH13}}>13</option>
-		</select>
-		<br>
-	  Security protocol:
-		<select name="APSEC">
-		  <option value="0" {{APSEC0}}>Open</option>
-		  <option value="1" {{APSEC1}}>WEP</option>
-		  <option value="2" {{APSEC2}}>WPA PSK</option>
-		  <option value="3" {{APSEC3}}>WPA2 PSK</option>
-		  <option value="4" {{APSEC4}}>WPA_WPA2_PSK</option>
-		</select>
-		<br>
-	  Hidden SSID: <input type='checkbox' name='APHSSID' value='1' {{APHSSID}}> <br>
+      Password: <input type='text' name='APPSW' value='{{APPSW}}'> (minimum length 8 characters)<br>
+      Channel: 
+      <select name="APCH">
+        <option value="1" {{APCH1}}>1</option>
+        <option value="2" {{APCH2}}>2</option>
+        <option value="3" {{APCH3}}>3</option>
+        <option value="4" {{APCH4}}>4</option>
+        <option value="5" {{APCH5}}>5</option>
+        <option value="6" {{APCH6}}>6</option>
+        <option value="7" {{APCH7}}>7</option>
+        <option value="8" {{APCH8}}>8</option>
+        <option value="9" {{APCH9}}>9</option>
+        <option value="10" {{APCH10}}>10</option>
+        <option value="11" {{APCH11}}>11</option>
+        <option value="12" {{APCH12}}>12</option>
+        <option value="13" {{APCH13}}>13</option>
+      </select>
+      <br>
+      Security protocol:
+      <select name="APSEC">
+        <option value="0" {{APSEC0}}>Open</option>
+        <option value="1" {{APSEC1}}>WEP</option>
+        <option value="2" {{APSEC2}}>WPA PSK</option>
+        <option value="3" {{APSEC3}}>WPA2 PSK</option>
+        <option value="4" {{APSEC4}}>WPA_WPA2_PSK</option>
+      </select>
+      <br>
+      Hidden SSID: <input type='checkbox' name='APHSSID' value='1' {{APHSSID}}> <br>
     </div>
 </span>
 
 
 <span id="SPAN_APModeIP" style="display:none">
 
-    <p><h2>Access Point IP</h2></p>
+    <h2>Access Point IP</h2>
     
     <div id="subcontent">
 	    IP: <input type='text' name='APIP' value='{{APIP}}'> <br>
-		Netmask: <input type='text' name='APMSK' value='{{APMSK}}'> <br>
-		Gateway: <input type='text' name='APGTW' value='{{APGTW}}'> <br>
+      Netmask: <input type='text' name='APMSK' value='{{APMSK}}'> <br>
+      Gateway: <input type='text' name='APGTW' value='{{APGTW}}'> <br>
     </div>
 </span>
 
 
 <span id="SPAN_APModeDHCPServer" style="display:none">
 
-   <p><h2>DHCP Server</h2></p>
+   <h2>DHCP Server</h2>
 
    <div id="subcontent">
 	  <input id="DHCPD" type='checkbox' name='DHCPD' value='1' {{DHCPD}} onclick="DHCPD_onclick()"> Enable DHCP Server <br>	
@@ -337,7 +321,7 @@ Configuration Wizard
 
 <span id="SPAN_APModeRouting" style="display:none">
 
-    <p><h2>Routing</h2></p>
+    <h2>Routing</h2>
 
     <div id="subcontent">
         <input type='checkbox' name='ROUTING' value='1' {{ROUTING}}> Enable Routing (<a href="routinghelp.html">Help</a>) <br>	
@@ -348,7 +332,7 @@ Configuration Wizard
 
 <span id="SPAN_ApplyConfiguration" style="display:none">
 
-   <p><h2>Configuration is complete. Press "Apply" to reboot.</h2></p>
+   <h2>Configuration is complete. Press "Apply" to reboot.</h2>
 	
 </span>
 

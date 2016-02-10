@@ -6,6 +6,36 @@ Network Configuration
 {%content%}
 
 
+<script type="text/javascript" src="utils.js"></script>
+
+
+<div id="routinghelp" class="popup-wrapper hide">
+    <div class="popup-content">
+        <div class="popup-title">
+            <h3>Routing Help</h3>
+        </div>
+        <div class="popup-body">
+			<p>Routing is an experimental feature. It allows communications between devices connected to ESP8266 Access Point and devices connected to the Client Mode network.</p>
+			<p>It may be very slow navigating complex web pages.</p>
+			<br>
+			<p>Requirements:</p>
+			<p>1. Devices connected to ESP8266 Access Point network needs to have DNS set manually (ie. 8.8.8.8 and 8.8.4.4)</p>
+			<p>2. You have to set a static route in the ADSL router. For example, if the ESP8266 Access Point IP is 192.168.4.1 (this is the default), and ClientMode IP is 192.168.1.99, then you should set a static route like this:</p>
+			<p>Destination IP Address: 192.168.4.0</p>
+			<p>Subnet mask: 255.255.255.0</p>
+			<p>Gateway: 192.168.1.99</p>
+
+			<button type="button" class="button" onclick="routinghelp.close()">OK</button>
+        </div>
+    </div>
+</div>
+
+<script>
+var routinghelp = new Popup(document.getElementById('routinghelp'), {width: 520, height: 625});
+</script>
+
+
+
 <script type="text/javascript">
   function enableFields() {
     document.getElementById('staticip_fields').style.display = document.getElementById("RadioStcIP").checked? '' : 'none';
@@ -19,7 +49,7 @@ Network Configuration
 <form method='POST'>
 
   <fieldset {{DISP_CLIPCONF}}>
-    <p><h3>Client Mode IP Configuration</h3></p>
+    <h3>Client Mode IP Configuration</h3>
     <div id="subcontent">
       <input type='radio' id='RadioDynIP' name='CLIPMOD' value='dynIP' onclick="enableFields()" {{dynIP}}> Dynamic IP (use DHCP) <br>
       <input type='radio' id='RadioStcIP' name='CLIPMOD' value='stcIP' onclick="enableFields()" {{stcIP}}> Static IP <br>      
@@ -32,7 +62,7 @@ Network Configuration
   </fieldset>
 
   <fieldset {{DISP_APIPCONF}}>
-    <p><h3>Access Point Mode IP Configuration</h3></p>
+    <h3>Access Point Mode IP Configuration</h3>
     <div id="subcontent">
 	    IP: <input type='text' name='APIP' value='{{APIP}}'> <br>
 		Netmask: <input type='text' name='APMSK' value='{{APMSK}}'> <br>
@@ -41,7 +71,7 @@ Network Configuration
   </fieldset>
   
   <fieldset {{DISP_DHCPD}}>
-    <p><h3>DHCP Server Configuration</h3></p>
+    <h3>DHCP Server Configuration</h3>
     <div id="subcontent">
 	  <input id="ch_dhcpd" type='checkbox' name='DHCPD' value='1' {{DHCPD}} onclick="enableFields()"> Enable DHCP Server <br>	
 	  <fieldset id="dhcpd_fields" style="display:none">
@@ -51,18 +81,18 @@ Network Configuration
     </div>
   </fieldset>
   
-  <p><h3>Domain Name Server (DNS) Address</h3></p>
+  <h3>Domain Name Server (DNS) Address</h3>
   <div id="subcontent">
     Primary DNS: <input type='text' name='DNS1' value='{{DNS1}}'> <br>
     Secondary DNS: <input type='text' name='DNS2' value='{{DNS2}}'> <br>
   </div>
 
-  <p><h3>Routing</h3></p>
+  <h3>Routing</h3>
   <div id="subcontent">
-    <input type='checkbox' name='ROUTING' value='1' {{ROUTING}}> Enable Routing (<a href="routinghelp.html">Help</a>) <br>	
+    <input type='checkbox' name='ROUTING' value='1' {{ROUTING}}> Enable Routing <button type="button" class="button" onclick="routinghelp.open()">Help</button> <br>
   </div>
   
   <input type='submit' value='Save'>
   
-  <br><br><p>System needs to be rebooted for the changes to take effect</p>
+  <br><br>System needs to be rebooted for the changes to take effect
 </form>

@@ -8,14 +8,12 @@ Time
 
 <script type="text/javascript">
   function enableFields() {
-    if (document.getElementById("RadioManual").checked)
-    {
+    if (document.getElementById("RadioManual").checked) {
         document.getElementById('manual_fields').style.display = '';
         document.getElementById('auto_fields').style.display   = 'none';
         document.getElementById('ntpsrv').value = '';
     }
-    else
-    {
+    else {
         document.getElementById('manual_fields').style.display = 'none';
         document.getElementById('auto_fields').style.display   = '';
         document.getElementById('ntpsrv').value = 'ntp1.inrim.it';
@@ -27,7 +25,7 @@ Time
 
 <form method='POST'>
 
-  <p><h3>Time settings</h3></p>
+  <h3>Time settings</h3>
   
   <div id="subcontent">		
   
