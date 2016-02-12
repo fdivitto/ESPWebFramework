@@ -70,6 +70,7 @@ extern "C" {
 #include "fdvgpio.h"
 #include "fdvserial.h"
 #include "fdvnetwork.h"
+#include "fdvhttp.h"
 #include "fdvdatetime.h"
 #include "fdvserialbinary.h"
 #include "fdvserialconsole.h"
