@@ -71,7 +71,8 @@ extern "C" {
 #include "fdvserial.h"
 #include "fdvnetwork.h"
 #include "fdvdatetime.h"
-#include "fdvserialserv.h"
+#include "fdvserialbinary.h"
+#include "fdvserialconsole.h"
 #include "fdvconfmanager.h"
 
 #endif

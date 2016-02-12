@@ -20,70 +20,13 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 */
 
-#ifndef _FDVSERIALSRV_H_
-#define _FDVSERIALSRV_H_
+#ifndef _FDVSERIALBINARY_H_
+#define _FDVSERIALBINARY_H_
 
 #include "fdv.h"
 
 namespace fdv {
 
-enum SerialService {
-  SerialService_None = 0,
-  SerialService_Console,
-  SerialService_BinaryProtocol,
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////
-// SerialConsole
-
-#if (FDV_INCLUDE_SERIALCONSOLE == 1)
-
-class SerialConsole : public Task {
-
-public:
-  SerialConsole() : Task(false, 300) {}
-
-  // destructor must be called outside This task
-  ~SerialConsole() { terminate(); }
-
-private:
-  static uint32_t const MAX_PARAMETERS = 6; // including command name
-
-  void exec();
-  void separateParameters();
-  void routeCommand();
-  bool hasParameter(uint32_t paramIndex, char const *str);
-
-public:
-  void cmd_help();
-  void cmd_reboot();
-  void cmd_restore();
-  void cmd_free();
-  void cmd_ifconfig();
-  void cmd_iwconfig();
-  void cmd_iwlist();
-  void cmd_date();
-  void cmd_ntpdate();
-  void cmd_nslookup();
-  void cmd_uptime();
-  void cmd_ping();
-  void cmd_router();
-  void cmd_ls();
-  void cmd_rm();
-  void cmd_cat();
-  void cmd_fixflash();
-  void cmd_test();
-
-private:
-  Serial *m_serial;
-  LinkedCharChunks m_receivedChunks;
-  uint32_t m_paramsCount;
-  CharChunksIterator m_params[MAX_PARAMETERS];
-  DateTime m_bootTime; // actually SerialConsole uptime!
-};
-
-#endif // FDV_INCLUDE_SERIALCONSOLE
 
 #if (FDV_INCLUDE_SERIALBINARY == 1)
 
@@ -417,4 +360,4 @@ private:
 #endif // FDV_INCLUDE_SERIALBINARY
 }
 
-#endif
+#endif	// _FDVSERIALBINARY_H_
