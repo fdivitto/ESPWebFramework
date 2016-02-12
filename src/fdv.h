@@ -65,7 +65,7 @@ extern "C" {
 #include "fdvtask.h"
 #include "fdvflash.h"
 #include "fdvutils.h"
-#include "fdvstrings.h"
+#include "fdvcstring.h"
 #include "fdvcollections.h"
 #include "fdvgpio.h"
 #include "fdvserial.h"

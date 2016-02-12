@@ -20,8 +20,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 */
 
-#ifndef _FDVSTRINGS_H_
-#define _FDVSTRINGS_H_
+#ifndef _FDVCSTRING_H_
+#define _FDVCSTRING_H_
 
 #include "fdv.h"
 
@@ -263,4 +263,4 @@ char *f_printf(char const *fmt, ...);
 char *inplaceURLDecode(char *str);
 }
 
-#endif
+#endif	// _FDVCSTRING_H_

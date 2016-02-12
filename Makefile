@@ -63,7 +63,7 @@ ELF_LIBDIR := -L$(SDKBASE)xtensa-lx106-elf/lib
 SDK_LDDIR   = $(SDKBASE)esp_iot_rtos_sdk-master/ld
 
 OBJ  			 := $(addprefix $(BUILD_DIR)/, user_main.o fdvserial.o fdvsync.o fdvutils.o fdvflash.o 						\
-																				 fdvprintf.o fdvdebug.o fdvstrings.o fdvnetwork.o fdvcollections.o 	\
+																				 fdvprintf.o fdvdebug.o fdvcstring.o fdvnetwork.o fdvcollections.o 	\
 																				 fdvconfmanager.o fdvdatetime.o fdvserialbinary.o fdvtask.o fdvgpio.o \
 																				 fdvserialconsole.o fdvhttp.o fdvwwwhandlers.o)
 WWW_ADDRS		= 0x6D000
