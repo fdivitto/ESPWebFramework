@@ -75,5 +75,6 @@ extern "C" {
 #include "fdvserialbinary.h"
 #include "fdvserialconsole.h"
 #include "fdvconfmanager.h"
+#include "fdvwwwhandlers.h"
 
 #endif
