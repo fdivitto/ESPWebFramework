@@ -40,7 +40,8 @@ void *STC_FLASHMEM Memory::malloc(uint32_t size) {
 }
 
 void STC_FLASHMEM Memory::free(void *ptr) {
-  vPortFree(ptr);
+  if (!isStoredInFlash(ptr))
+    vPortFree(ptr);
 }
 
 }
