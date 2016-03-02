@@ -45,21 +45,40 @@ void MTD_FLASHMEM VectorBase::operator=(VectorBase const &c) {
   m_itemSize = c.m_itemSize;
   m_itemsCount = c.m_itemsCount;
   allocate(m_itemsCount);
-  memcpy(m_data, c.m_data, m_itemSize * m_itemsCount);
+  if (m_itemsCount > 0)
+    memcpy(m_data, c.m_data, m_itemSize * m_itemsCount);
 }
 
 void MTD_FLASHMEM VectorBase::allocate(uint32_t itemsCount) {
-  void *newbuf = itemsCount > 0 ? Memory::malloc(m_itemSize * itemsCount) : NULL;
-  if (m_data) {
-    memcpy(newbuf, m_data, m_itemSize * itemsCount);
-    Memory::free(m_data);
+  if (itemsCount != m_itemsAllocated) {
+    uint8_t * newbuf = itemsCount > 0 ? new uint8_t[m_itemSize * itemsCount] : NULL;
+    if (m_data) {
+      memcpy(newbuf, m_data, m_itemSize * itemsCount);
+      delete[] m_data;
+    }
+    m_data = newbuf;
+    m_itemsAllocated = itemsCount;
   }
-  m_data = newbuf;
-  m_itemsAllocated = itemsCount;
 }
 
 void *MTD_FLASHMEM VectorBase::getItem(uint32_t position) {
-  return (uint8_t *)m_data + m_itemSize * position; 
+  return m_data + m_itemSize * position; 
+}
+
+void const *MTD_FLASHMEM VectorBase::getItem(uint32_t position) const {
+  return m_data + m_itemSize * position; 
+}
+
+void MTD_FLASHMEM VectorBase::setSize(uint32_t value) {
+  allocate(value);
+  m_itemsCount = value;
+}
+
+void MTD_FLASHMEM VectorBase::setData(void *data, uint16_t itemsCount){
+  clear();
+  m_data = (uint8_t *)data;
+  m_itemsCount = itemsCount;
+  m_itemsAllocated = itemsCount;
 }
 
 void MTD_FLASHMEM VectorBase::add(void const *item) {
@@ -80,7 +99,7 @@ void MTD_FLASHMEM VectorBase::remove(uint32_t position) {
 }
 
 // returns -1 if not found
-int32_t MTD_FLASHMEM VectorBase::indexof(void const *item) {
+int32_t MTD_FLASHMEM VectorBase::indexof(void const *item) const {
   for (uint32_t i = 0; i != m_itemsCount; ++i)
     if (memcmp(item, getItem(i), m_itemSize) == 0)
       return i;
@@ -89,15 +108,12 @@ int32_t MTD_FLASHMEM VectorBase::indexof(void const *item) {
 
 void MTD_FLASHMEM VectorBase::clear() {
   if (m_data)
-    Memory::free(m_data);
+    delete[] m_data;
   m_data = NULL;
   m_itemsCount = 0;
   m_itemsAllocated = 0;
 }
 
-uint32_t MTD_FLASHMEM VectorBase::size() {
-  return m_itemsCount; 
-}
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////

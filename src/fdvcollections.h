@@ -37,16 +37,22 @@ namespace fdv {
 class VectorBase {
 public:
   VectorBase(uint16_t itemSize);
-  VectorBase(VectorBase const &c);
+  VectorBase(VectorBase const & c);
   ~VectorBase();
-  void add(void const *item);
-  void insert(uint32_t position, void const *item);
+  void add(void const * item);
+  void insert(uint32_t position, void const * item);
   void remove(uint32_t position);
-  int32_t indexof(void const *item);
+  int32_t indexof(void const * item) const;
   void clear();
-  uint32_t size();
-  void *getItem(uint32_t position);
-  void operator=(VectorBase const &c);
+  uint32_t size() const { return m_itemsCount; }
+  void setSize(uint32_t value);
+  void setData(void * data, uint16_t itemsCount);
+  void * getItem(uint32_t position);
+  void const * getItem(uint32_t position) const;
+  void operator=(VectorBase const & c);
+  void * begin() { return m_data; }
+  void const * begin() const { return m_data; }
+  bool empty() const { return m_itemsCount == 0; }
 
 private:
   void allocate(uint32_t itemsCount);
@@ -55,42 +61,69 @@ private:
   uint16_t m_itemSize;
   uint16_t m_itemsCount;
   uint16_t m_itemsAllocated;
-  void *m_data;
+  uint8_t * m_data;
 };
 
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 // Generic vector based on VectorBase
 
-template <typename T> class Vector {
+template <typename T>
+class Vector {
 public:
   Vector() : m_data(sizeof(T)) {}
-
-  void add(T const &value) { m_data.add(&value); }
-
-  void insert(uint32_t position, T const &value) { m_data.insert(position, &value); }
-
+  void add(T const & value) { m_data.add(&value); }
+  void insert(uint32_t position, T const & value) { m_data.insert(position, &value); }
   void remove(uint32_t position) { m_data.remove(position); }
-
-  int32_t indexof(T const &value) { return m_data.indexof(&value); }
-
+  int32_t indexof(T const & value) const { return m_data.indexof(&value); }
   void clear() { m_data.clear(); }
-
-  uint32_t size() { return m_data.size(); }
-
-  T &operator[](uint32_t position) { return *static_cast<T *>(m_data.getItem(position)); }
-
-  T &last() { return operator[](size() - 1); }
+  uint32_t size() const { return m_data.size(); }
+  void setSize(uint32_t value) { m_data.setSize(value); }
+  void setData(T * data, uint32_t items) { m_data.setData(data, items); }
+  T & operator[](uint32_t position) { return *static_cast<T *>(m_data.getItem(position)); }
+  T const & operator[](uint32_t position) const { return *static_cast<T const *>(m_data.getItem(position)); }
+  T & last() { return operator[](size() - 1); }
+  T * begin() { return static_cast<T *>(m_data.begin()); }
+  T const * begin() const { return static_cast<T const *>(m_data.begin()); }
+  T * end() { return begin() + size(); }
+  T const * end() const { return begin() + size(); }
+  bool empty() const { m_data.empty(); }
+  int32_t compare(Vector<T> const &rhs) const {
+    T const * s1 = begin();
+    T const * s2 = rhs.begin();
+    while (s1 < end() && s2 < rhs.end()) {
+      if (*s1 != *s2)
+        return *s1 - *s2;
+      ++s1, ++s2;
+    }
+    return size() - rhs.size();
+  }
 
 private:
   VectorBase m_data;
 };
 
+template <typename T>
+inline bool operator==(Vector<T> const & lhs, Vector<T> const & rhs) {
+  if (lhs.size() != rhs.size())
+    return false;
+  T const * v1 = lhs.begin();
+  T const * v2 = rhs.begin();
+  while (v1 < lhs.end() && v2 < rhs.end()) {
+    if (*v1 != *v2)
+      return false;
+    ++v1, ++v2;
+  }
+  return true;
+}
+
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 // Generic stack based on Vector
 
-template <typename T> class Stack {
+template <typename T>
+class Stack {
 public:
   void push(T const &value) { m_data.add(value); }
 
@@ -115,7 +148,8 @@ private:
 //////////////////////////////////////////////////////////////////////
 // Generic list
 
-template <typename T> class List {
+template <typename T>
+class List {
 public:
   List() : m_first(NULL) {}
 
@@ -326,7 +360,8 @@ struct CharChunkFactory {
 // IterDict
 // A dictionary where key and value are iterators
 
-template <typename KeyIterator, typename ValueIterator> class IterDict {
+template <typename KeyIterator, typename ValueIterator>
+class IterDict {
 public:
   struct Item {
     Item *next;
@@ -454,7 +489,8 @@ private:
 //////////////////////////////////////////////////////////////////////
 // ObjectDict
 
-template <typename T> struct ObjectDict {
+template <typename T>
+struct ObjectDict {
   struct Item {
     Item *next;
     char const *key;
