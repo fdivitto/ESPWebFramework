@@ -22,6 +22,13 @@
 
 #include "fdv.h"
 
+extern "C" {
+#include <limits.h>
+#include <float.h>
+#include <math.h>
+}
+
+
 namespace fdv {
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -109,6 +116,31 @@ char const *FUNC_FLASHMEM f_strstr(char const *str, char const *strEnd, char con
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
+// f_strtol
+// str can be stored in Flash or/and RAM
+int32_t FUNC_FLASHMEM f_strtol(char const *str, int32_t base) {
+  return t_strtol(CharIterator(str), base);
+}
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// f_strtoul
+// str can be stored in Flash or/and RAM
+uint32_t FUNC_FLASHMEM f_strtoul(char const *str, int32_t base) {
+  return t_strtoul(CharIterator(str), base);
+}
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// f_strtod
+// str can be stored in Flash or/and RAM
+double FUNC_FLASHMEM f_strtod(char const *str) {
+  return t_strtod(CharIterator(str));
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 // isspace
 bool FUNC_FLASHMEM isspace(char c) {
   return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r');
@@ -154,6 +186,13 @@ bool FUNC_FLASHMEM isupper(char c) {
 // islower
 bool FUNC_FLASHMEM islower(char c) {
   return c >= 'a' && c <= 'z'; 
+}
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// isascii
+bool FUNC_FLASHMEM isascii(char c) {
+  return c >= 0 && c <= 127;
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -208,4 +247,240 @@ char *FUNC_FLASHMEM inplaceURLDecode(char *str) {
   *wpos = 0;
   return str;
 }
+
+
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// strtoul
+// 
+/*
+ * Copyright (c) 1990, 1993
+ *      The Regents of the University of California.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *        notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *        notice, this list of conditions and the following disclaimer in the
+ *        documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the University nor the names of its contributors
+ *        may be used to endorse or promote products derived from this software
+ *        without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.      IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+/*
+ * Convert a string to an unsigned long integer.
+ *
+ * Ignores `locale' stuff.  Assumes that the upper and lower case
+ * alphabets and digits are each contiguous.
+ */
+uint32_t FUNC_FLASHMEM strtoul(char const * nptr, char ** endptr, int base)
+{
+  const char    *s = nptr;
+  uint32_t      acc;
+  unsigned char c;
+  uint32_t      cutoff;
+  int32_t       neg = 0, any, cutlim;
+
+  /*
+   * See strtol for comments as to the logic used.
+   */
+  do {
+    c = *s++;
+  } while (isspace(c));
+  if (c == '-') {
+    neg = 1;
+    c = *s++;
+  } else if (c == '+')
+    c = *s++;
+  if ((base == 0 || base == 16) && c == '0' && (*s == 'x' || *s == 'X')) {
+    c = s[1];
+    s += 2;
+    base = 16;
+  }
+  if (base == 0)
+    base = c == '0' ? 8 : 10;
+  cutoff = (uint32_t) ULONG_MAX / (uint32_t) base;
+  cutlim = (uint32_t) ULONG_MAX % (uint32_t) base;
+  for (acc = 0, any = 0;; c = *s++) {
+    if (!isascii(c))
+      break;
+    if (isdigit(c))
+      c -= '0';
+    else if (isalpha(c))
+      c -= isupper(c) ? 'A' - 10 : 'a' - 10;
+    else
+      break;
+    if (c >= base)
+      break;
+    if (any < 0 || acc > cutoff || (acc == cutoff && c > cutlim))
+      any = -1;
+    else {
+      any = 1;
+      acc *= base;
+      acc += c;
+    }
+  }
+  if (any < 0) {
+    acc = ULONG_MAX;
+    errno = ERANGE;
+  } else if (neg)
+    acc = -acc;
+  if (endptr != 0)
+    *endptr = (char *) (any ? s - 1 : nptr);
+  return (acc);
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// strtod
+//
+// Copyright (C) 2002 Michael Ringgaard. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 
+// 1. Redistributions of source code must retain the above copyright 
+//    notice, this list of conditions and the following disclaimer.  
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.  
+// 3. Neither the name of the project nor the names of its contributors
+//    may be used to endorse or promote products derived from this software
+//    without specific prior written permission. 
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+// OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
+// SUCH DAMAGE.
+// 
+
+double FUNC_FLASHMEM strtod(const char *str, char **endptr) {
+  double number;
+  int exponent;
+  int negative;
+  char *p = (char *) str;
+  double p10;
+  int n;
+  int num_digits;
+  int num_decimals;
+
+  // Skip leading whitespace
+  while (isspace(*p)) p++;
+
+  // Handle optional sign
+  negative = 0;
+  switch (*p) {
+    case '-': negative = 1; // Fall through to increment position
+    case '+': p++;
+  }
+
+  number = 0.;
+  exponent = 0;
+  num_digits = 0;
+  num_decimals = 0;
+
+  // Process string of digits
+  while (isdigit(*p)) {
+    number = number * 10. + (*p - '0');
+    p++;
+    num_digits++;
+  }
+
+  // Process decimal part
+  if (*p == '.') {
+    p++;
+
+    while (isdigit(*p)) {
+      number = number * 10. + (*p - '0');
+      p++;
+      num_digits++;
+      num_decimals++;
+    }
+
+    exponent -= num_decimals;
+  }
+
+  if (num_digits == 0) {
+    errno = ERANGE;
+    return 0.0;
+  }
+
+  // Correct for sign
+  if (negative) number = -number;
+
+  // Process an exponent string
+  if (*p == 'e' || *p == 'E') {
+    // Handle optional sign
+    negative = 0;
+    switch (*++p) {
+      case '-': negative = 1;   // Fall through to increment pos
+      case '+': p++;
+    }
+
+    // Process string of digits
+    n = 0;
+    while (isdigit(*p)) {
+      n = n * 10 + (*p - '0');
+      p++;
+    }
+
+    if (negative) {
+      exponent -= n;
+    } else {
+      exponent += n;
+    }
+  }
+
+  if (exponent < DBL_MIN_EXP  || exponent > DBL_MAX_EXP) {
+    errno = ERANGE;
+    return HUGE_VAL;
+  }
+
+  // Scale the result
+  p10 = 10.;
+  n = exponent;
+  if (n < 0) n = -n;
+  while (n) {
+    if (n & 1) {
+      if (exponent < 0) {
+        number /= p10;
+      } else {
+        number *= p10;
+      }
+    }
+    n >>= 1;
+    p10 *= p10;
+  }
+
+  if (number == HUGE_VAL) errno = ERANGE;
+  if (endptr) *endptr = p;
+
+  return number;
+} 
+ 
 }

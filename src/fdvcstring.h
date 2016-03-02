@@ -31,6 +31,17 @@ extern "C" {
 
 namespace fdv {
 
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// strtoul
+uint32_t strtoul(char const * nptr, char ** endptr, int base);
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// strtod
+double strtod(const char *str, char **endptr);
+
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 // t_strstr
@@ -89,7 +100,8 @@ IteratorSTR TMTD_FLASHMEM t_strstr(IteratorSTR str, IteratorSTR strEnd, Iterator
 // t_strcmp
 // If s1 or s2 is in RAM or Flash use CharIterator
 // If s1 or s2 is in Chunk use ChunkBuffer<...>::Iterator
-template <typename IteratorS1, typename IteratorS2> int32 TMTD_FLASHMEM t_strcmp(IteratorS1 s1, IteratorS2 s2) {
+template <typename IteratorS1, typename IteratorS2>
+int32 TMTD_FLASHMEM t_strcmp(IteratorS1 s1, IteratorS2 s2) {
   while (*s1 && (*s1 == *s2))
     ++s1, ++s2;
   return (uint8_t)*s1 - (uint8_t)*s2;
@@ -133,7 +145,8 @@ int32 TMTD_FLASHMEM t_memcmp(IteratorS1 s1, IteratorS2 s2, uint32_t length) {
 // t_strcpy
 // If source is in RAM or Flash use CharIterator
 // If source is in Chunk use ChunkBuffer<...>::Iterator
-template <typename Iterator> char *TMTD_FLASHMEM t_strcpy(char *destination, Iterator source) {
+template <typename Iterator>
+char *TMTD_FLASHMEM t_strcpy(char *destination, Iterator source) {
   char *dest = destination;
   while (*dest++ = *source++)
     ;
@@ -145,7 +158,8 @@ template <typename Iterator> char *TMTD_FLASHMEM t_strcpy(char *destination, Ite
 // t_memcpy
 // If source is in RAM or Flash use ByteIterator
 // If source is in Chunk use ChunkBuffer<...>::Iterator
-template <typename Iterator> void *TMTD_FLASHMEM t_memcpy(void *destination, Iterator source, uint32_t length) {
+template <typename Iterator>
+void *TMTD_FLASHMEM t_memcpy(void *destination, Iterator source, uint32_t length) {
   uint8_t *dest = (uint8_t *)destination;
   while (length--)
     *dest++ = *source++;
@@ -157,7 +171,8 @@ template <typename Iterator> void *TMTD_FLASHMEM t_memcpy(void *destination, Ite
 // t_strlen
 // If str is in RAM or Flash use CharIterator
 // If str is in Chunk use ChunkBuffer<...>::Iterator
-template <typename Iterator> uint32_t TMTD_FLASHMEM t_strlen(Iterator str) {
+template <typename Iterator>
+uint32_t TMTD_FLASHMEM t_strlen(Iterator str) {
   uint32_t len = 0;
   for (; *str; ++str, ++len)
     ;
@@ -169,7 +184,8 @@ template <typename Iterator> uint32_t TMTD_FLASHMEM t_strlen(Iterator str) {
 // t_strnlen
 // If str is in RAM or Flash use CharIterator
 // If str is in Chunk use ChunkBuffer<...>::Iterator
-template <typename Iterator> uint32_t TMTD_FLASHMEM t_strnlen(Iterator str, uint32_t maxlen) {
+template <typename Iterator>
+uint32_t TMTD_FLASHMEM t_strnlen(Iterator str, uint32_t maxlen) {
   uint32_t len = 0;
   for (; len != maxlen && *str; ++str, ++len)
     ;
@@ -182,12 +198,14 @@ template <typename Iterator> uint32_t TMTD_FLASHMEM t_strnlen(Iterator str, uint
 // If source is in RAM or Flash use CharIterator
 // If source is in Chunk use ChunkBuffer<...>::Iterator
 // use delete[] to free memory
-template <typename Iterator> char *TMTD_FLASHMEM t_strdup(Iterator source) {
+template <typename Iterator>
+char *TMTD_FLASHMEM t_strdup(Iterator source) {
   return t_strcpy(new char[t_strlen(source) + 1], source);
 }
 
 // adds automatically ending zero
-template <typename Iterator> char *TMTD_FLASHMEM t_strdup(Iterator sourceStart, Iterator sourceEnd) {
+template <typename Iterator>
+char *TMTD_FLASHMEM t_strdup(Iterator sourceStart, Iterator sourceEnd) {
   uint32_t len = sourceEnd - sourceStart;
   char *str = new char[len + 1];
   t_memcpy(str, sourceStart, len);
@@ -201,16 +219,36 @@ template <typename Iterator> char *TMTD_FLASHMEM t_strdup(Iterator sourceStart, 
 // If source is in RAM or Flash use ByteIterator
 // If source is in Chunk use ChunkBuffer<...>::Iterator
 // use delete[] to free memory
-template <typename Iterator> void *TMTD_FLASHMEM t_memdup(Iterator source, uint32_t length) {
+template <typename Iterator>
+void *TMTD_FLASHMEM t_memdup(Iterator source, uint32_t length) {
   return t_memcpy(new uint8_t[length], source, length);
 }
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 // t_strtol
-template <typename Iterator> int32_t TMTD_FLASHMEM t_strtol(Iterator str, int32_t base) {
+template <typename Iterator>
+int32_t TMTD_FLASHMEM t_strtol(Iterator str, int32_t base) {
   APtr<char> tempbuf(t_strdup(str));
   return strtol(tempbuf.get(), NULL, base);
+}
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// t_strtoul
+template <typename Iterator>
+uint32_t TMTD_FLASHMEM t_strtoul(Iterator str, int32_t base) {
+  APtr<char> tempbuf(t_strdup(str));
+  return strtoul(tempbuf.get(), NULL, base);
+}
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// t_strtod
+template <typename Iterator>
+double TMTD_FLASHMEM t_strtod(Iterator str) {
+  APtr<char> tempbuf(t_strdup(str));
+  return strtod(tempbuf.get(), NULL);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -240,6 +278,9 @@ int32_t f_memcmp(void const *s1, void const *s2, uint32_t length);
 void *f_memcpy(void *destination, void const *source, uint32_t length);
 char const *f_strstr(char const *str, char const *substr);
 char const *f_strstr(char const *str, char const *strEnd, char const *substr);
+int32_t f_strtol(char const *str, int32_t base);
+uint32_t f_strtoul(char const *str, int32_t base);
+double f_strtod(char const *str);
 bool isspace(char c);
 bool isalpha(char c);
 bool isdigit(char c);
@@ -247,6 +288,7 @@ bool isalnum(char c);
 bool isxdigit(char c);
 bool isupper(char c);
 bool islower(char c);
+bool isascii(char c);
 uint32_t hexDigitToInt(char x);
 
 /////////////////////////////////////////////////////////////////////////
@@ -261,6 +303,9 @@ char *f_printf(char const *fmt, ...);
 // str can stay only in RAM
 
 char *inplaceURLDecode(char *str);
+
+
+
 }
 
 #endif	// _FDVCSTRING_H_
