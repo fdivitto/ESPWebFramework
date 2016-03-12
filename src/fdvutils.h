@@ -108,6 +108,8 @@ private:
 struct Memory {
   static void *malloc(uint32_t size);
   static void free(void *ptr);
+  static void *realloc(void *mem, uint32_t newsize);
+  static void *zalloc(uint32_t size);
 };
 
 /////////////////////////////////////////////////////////////////////////

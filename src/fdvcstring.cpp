@@ -57,6 +57,14 @@ char *FUNC_FLASHMEM f_strcpy(char *destination, char const *source) {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
+// f_strncpy
+// source can be stored in Flash or/and in RAM
+char *FUNC_FLASHMEM f_strncpy(char *destination, char const *source, uint32_t n) {
+  return t_strncpy(destination, CharIterator(source), n);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
 // f_strdup
 // use delete[] to free memory
 // str can be stored in Flash or/and in RAM
@@ -88,6 +96,14 @@ int32_t FUNC_FLASHMEM f_strcmp(char const *s1, char const *s2) {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
+// f_strncmp
+// both s1 and s2 can be stored in Flash or/and in RAM
+int32_t FUNC_FLASHMEM f_strncmp(char const *s1, char const *s2, uint32_t n) {
+  return t_strncmp(CharIterator(s1), CharIterator(s2), n); 
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
 // f_memcmp
 // both s1 and s2 can be stored in Flash or/and in RAM
 int32_t FUNC_FLASHMEM f_memcmp(void const *s1, void const *s2, uint32_t length) {
@@ -113,31 +129,6 @@ char const *FUNC_FLASHMEM f_strstr(char const *str, char const *substr) {
 char const *FUNC_FLASHMEM f_strstr(char const *str, char const *strEnd, char const *substr) {
   return t_strstr(CharIterator(str), CharIterator(strEnd), CharIterator(substr)).get();
 }
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// f_strtol
-// str can be stored in Flash or/and RAM
-int32_t FUNC_FLASHMEM f_strtol(char const *str, int32_t base) {
-  return t_strtol(CharIterator(str), base);
-}
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// f_strtoul
-// str can be stored in Flash or/and RAM
-uint32_t FUNC_FLASHMEM f_strtoul(char const *str, int32_t base) {
-  return t_strtoul(CharIterator(str), base);
-}
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// f_strtod
-// str can be stored in Flash or/and RAM
-double FUNC_FLASHMEM f_strtod(char const *str) {
-  return t_strtod(CharIterator(str));
-}
-
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -252,7 +243,8 @@ char *FUNC_FLASHMEM inplaceURLDecode(char *str) {
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
-// strtoul
+// f_strtoul
+// str can be stored in Flash or/and RAM
 // 
 /*
  * Copyright (c) 1990, 1993
@@ -281,6 +273,8 @@ char *FUNC_FLASHMEM inplaceURLDecode(char *str) {
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * 2016: Adapted by Fabrizio Di Vittorio 
  */
 
 /*
@@ -289,7 +283,7 @@ char *FUNC_FLASHMEM inplaceURLDecode(char *str) {
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-uint32_t FUNC_FLASHMEM strtoul(char const * nptr, char ** endptr, int base)
+uint32_t FUNC_FLASHMEM f_strtoul(char const *nptr, char **endptr, int base)
 {
   const char    *s = nptr;
   uint32_t      acc;
@@ -297,19 +291,16 @@ uint32_t FUNC_FLASHMEM strtoul(char const * nptr, char ** endptr, int base)
   uint32_t      cutoff;
   int32_t       neg = 0, any, cutlim;
 
-  /*
-   * See strtol for comments as to the logic used.
-   */
   do {
-    c = *s++;
+    c = getChar(s++);
   } while (isspace(c));
   if (c == '-') {
     neg = 1;
-    c = *s++;
+    c = getChar(s++);
   } else if (c == '+')
-    c = *s++;
-  if ((base == 0 || base == 16) && c == '0' && (*s == 'x' || *s == 'X')) {
-    c = s[1];
+    c = getChar(s++);
+  if ((base == 0 || base == 16) && c == '0' && (getChar(s) == 'x' || getChar(s) == 'X')) {
+    c = getChar(s, 1);
     s += 2;
     base = 16;
   }
@@ -317,7 +308,7 @@ uint32_t FUNC_FLASHMEM strtoul(char const * nptr, char ** endptr, int base)
     base = c == '0' ? 8 : 10;
   cutoff = (uint32_t) ULONG_MAX / (uint32_t) base;
   cutlim = (uint32_t) ULONG_MAX % (uint32_t) base;
-  for (acc = 0, any = 0;; c = *s++) {
+  for (acc = 0, any = 0;; c = getChar(s++)) {
     if (!isascii(c))
       break;
     if (isdigit(c))
@@ -347,9 +338,45 @@ uint32_t FUNC_FLASHMEM strtoul(char const * nptr, char ** endptr, int base)
 }
 
 
+
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
-// strtod
+// f_strtol
+// str can be stored in Flash or/and RAM
+// 
+/* 
+ * Copyright (c) 1988 The Regents of the University of California.
+ * Copyright (c) 1994 Sun Microsystems, Inc.
+ */
+
+int32_t FUNC_FLASHMEM f_strtol(const char *string, char **endPtr, int base) {
+  const char *p;
+  long result;
+
+  p = string;
+  while (isspace(getChar(p)))
+    ++p;
+
+  if (getChar(p) == '-') {
+    ++p;
+    result = -(f_strtoul(p, endPtr, base));
+  } else {
+    if (getChar(p) == '+') {
+      ++p;
+    }
+    result = f_strtoul(p, endPtr, base);
+  }
+  if ((result == 0) && (endPtr != 0) && (*endPtr == p)) {
+    *endPtr = (char *) string;
+  }
+  return result;
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// f_strtod
+// str can be stored in Flash or/and RAM
 //
 // Copyright (C) 2002 Michael Ringgaard. All rights reserved.
 //
@@ -377,9 +404,10 @@ uint32_t FUNC_FLASHMEM strtoul(char const * nptr, char ** endptr, int base)
 // LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
 // SUCH DAMAGE.
-// 
+//
+// 2016: Adapted by Fabrizio Di Vittorio 
 
-double FUNC_FLASHMEM strtod(const char *str, char **endptr) {
+double FUNC_FLASHMEM f_strtod(const char *str, char **endptr) {
   double number;
   int exponent;
   int negative;
@@ -390,11 +418,11 @@ double FUNC_FLASHMEM strtod(const char *str, char **endptr) {
   int num_decimals;
 
   // Skip leading whitespace
-  while (isspace(*p)) p++;
+  while (isspace(getChar(p))) p++;
 
   // Handle optional sign
   negative = 0;
-  switch (*p) {
+  switch (getChar(p)) {
     case '-': negative = 1; // Fall through to increment position
     case '+': p++;
   }
@@ -405,18 +433,18 @@ double FUNC_FLASHMEM strtod(const char *str, char **endptr) {
   num_decimals = 0;
 
   // Process string of digits
-  while (isdigit(*p)) {
-    number = number * 10. + (*p - '0');
+  while (isdigit(getChar(p))) {
+    number = number * 10. + (getChar(p) - '0');
     p++;
     num_digits++;
   }
 
   // Process decimal part
-  if (*p == '.') {
+  if (getChar(p) == '.') {
     p++;
 
-    while (isdigit(*p)) {
-      number = number * 10. + (*p - '0');
+    while (isdigit(getChar(p))) {
+      number = number * 10. + (getChar(p) - '0');
       p++;
       num_digits++;
       num_decimals++;
@@ -434,18 +462,18 @@ double FUNC_FLASHMEM strtod(const char *str, char **endptr) {
   if (negative) number = -number;
 
   // Process an exponent string
-  if (*p == 'e' || *p == 'E') {
+  if (getChar(p) == 'e' || getChar(p) == 'E') {
     // Handle optional sign
     negative = 0;
-    switch (*++p) {
+    switch (getChar(++p)) {
       case '-': negative = 1;   // Fall through to increment pos
       case '+': p++;
     }
 
     // Process string of digits
     n = 0;
-    while (isdigit(*p)) {
-      n = n * 10 + (*p - '0');
+    while (isdigit(getChar(p))) {
+      n = n * 10 + (getChar(p) - '0');
       p++;
     }
 

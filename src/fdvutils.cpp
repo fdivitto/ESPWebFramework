@@ -29,13 +29,18 @@ extern "C" {
 
 void *__dso_handle;
 
+extern "C" {
+void *pvPortRealloc(void *mem, size_t newsize);
+void *pvPortZalloc(size_t size);
+}
+
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 // Memory
 
 namespace fdv {
 
-void *STC_FLASHMEM Memory::malloc(uint32_t size) {
+void * STC_FLASHMEM Memory::malloc(uint32_t size) {
   return pvPortMalloc(size);
 }
 
@@ -43,6 +48,15 @@ void STC_FLASHMEM Memory::free(void *ptr) {
   if (!isStoredInFlash(ptr))
     vPortFree(ptr);
 }
+
+void * STC_FLASHMEM Memory::realloc(void *mem, uint32_t newsize) {
+  return pvPortRealloc(mem, newsize);
+}
+
+void * STC_FLASHMEM Memory::zalloc(uint32_t size) {
+  return pvPortZalloc(size);
+}
+
 
 }
 
@@ -74,7 +88,8 @@ extern "C" void __cxa_pure_virtual(void) __attribute__((__noreturn__));
 extern "C" void __cxa_deleted_virtual(void) __attribute__((__noreturn__));
 
 extern "C" void FUNC_FLASHMEM abort() {
-  while (true)
+  taskENTER_CRITICAL();
+  while (1)
     ; // enter an infinite loop and get reset by the WDT
 }
 

@@ -32,15 +32,61 @@ extern "C" {
 namespace fdv {
 
 
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// strtoul
-uint32_t strtoul(char const * nptr, char ** endptr, int base);
+
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+// String utilities to work with both Flash stored strings and RAM stored strings
+//
+// Example:
+//   static char const STR1[] FLASHMEM = "1234567890";
+//
+//   if (f_strcmp(STR1, otherstring) == 0)
+//     dosomething();
+//
+// Example:
+//   if (f_strcmp(FSTR("1234567890"), otherstring) == 0)
+//     dosomething();
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+
+uint32_t f_strlen(char const *str);
+uint32_t f_strnlen(char const *str, uint32_t maxlen);
+char *f_strcpy(char *destination, char const *source);
+char *f_strncpy(char *destination, char const *source, uint32_t n);
+char *f_strdup(char const *str);
+char *f_strdup(char const *sourceStart, char const *sourceEnd);
+void *f_memdup(void const *buffer, uint32_t length);
+int32_t f_strcmp(char const *s1, char const *s2);
+int32_t f_strncmp(char const *s1, char const *s2, uint32_t n);
+int32_t f_memcmp(void const *s1, void const *s2, uint32_t length);
+void *f_memcpy(void *destination, void const *source, uint32_t length);
+char const *f_strstr(char const *str, char const *substr);
+char const *f_strstr(char const *str, char const *strEnd, char const *substr);
+int32_t f_strtol(const char *string, char **endPtr, int base);
+uint32_t f_strtoul(char const *nptr, char **endptr, int base);
+double f_strtod(const char *str, char **endptr);
+bool isspace(char c);
+bool isalpha(char c);
+bool isdigit(char c);
+bool isalnum(char c);
+bool isxdigit(char c);
+bool isupper(char c);
+bool islower(char c);
+bool isascii(char c);
+uint32_t hexDigitToInt(char x);
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
-// strtod
-double strtod(const char *str, char **endptr);
+// f_printf
+// allocates a string. You should free it using delete[]
+char *f_printf(char const *fmt, ...);
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// inplaceURLDecode
+// str can stay only in RAM
+
+char *inplaceURLDecode(char *str);
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
@@ -109,6 +155,18 @@ int32 TMTD_FLASHMEM t_strcmp(IteratorS1 s1, IteratorS2 s2) {
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
+// t_strncmp
+// If s1 or s2 is in RAM or Flash use CharIterator
+// If s1 or s2 is in Chunk use ChunkBuffer<...>::Iterator
+template <typename IteratorS1, typename IteratorS2>
+int32 TMTD_FLASHMEM t_strncmp(IteratorS1 s1, IteratorS2 s2, uint32_t n) {
+  while (n && *s1 && (*s1 == *s2))
+    ++s1, ++s2, --n;
+  return n? ((uint8_t)*s1 - (uint8_t)*s2) : 0;
+}
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 // t_compare
 template <typename IteratorS1, typename IteratorS2>
 bool TMTD_FLASHMEM t_compare(IteratorS1 s1, IteratorS1 s1End, IteratorS2 s2, IteratorS2 s2End) {
@@ -149,6 +207,19 @@ template <typename Iterator>
 char *TMTD_FLASHMEM t_strcpy(char *destination, Iterator source) {
   char *dest = destination;
   while (*dest++ = *source++)
+    ;
+  return destination;
+}
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// t_strncpy
+// If source is in RAM or Flash use CharIterator
+// If source is in Chunk use ChunkBuffer<...>::Iterator
+template <typename Iterator>
+char *TMTD_FLASHMEM t_strncpy(char *destination, Iterator source, uint32_t n) {
+  char *dest = destination;
+  while (n-- && (*dest++ = *source++))
     ;
   return destination;
 }
@@ -230,7 +301,7 @@ void *TMTD_FLASHMEM t_memdup(Iterator source, uint32_t length) {
 template <typename Iterator>
 int32_t TMTD_FLASHMEM t_strtol(Iterator str, int32_t base) {
   APtr<char> tempbuf(t_strdup(str));
-  return strtol(tempbuf.get(), NULL, base);
+  return f_strtol(tempbuf.get(), NULL, base);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -239,7 +310,7 @@ int32_t TMTD_FLASHMEM t_strtol(Iterator str, int32_t base) {
 template <typename Iterator>
 uint32_t TMTD_FLASHMEM t_strtoul(Iterator str, int32_t base) {
   APtr<char> tempbuf(t_strdup(str));
-  return strtoul(tempbuf.get(), NULL, base);
+  return f_strtoul(tempbuf.get(), NULL, base);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -248,61 +319,8 @@ uint32_t TMTD_FLASHMEM t_strtoul(Iterator str, int32_t base) {
 template <typename Iterator>
 double TMTD_FLASHMEM t_strtod(Iterator str) {
   APtr<char> tempbuf(t_strdup(str));
-  return strtod(tempbuf.get(), NULL);
+  return f_strtod(tempbuf.get(), NULL);
 }
-
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-// String utilities to work with both Flash stored strings and RAM stored strings
-//
-// Example:
-//   static char const STR1[] FLASHMEM = "1234567890";
-//
-//   if (f_strcmp(STR1, otherstring) == 0)
-//     dosomething();
-//
-// Example:
-//   if (f_strcmp(FSTR("1234567890"), otherstring) == 0)
-//     dosomething();
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-
-uint32_t f_strlen(char const *str);
-uint32_t f_strnlen(char const *str, uint32_t maxlen);
-char *f_strcpy(char *destination, char const *source);
-char *f_strdup(char const *str);
-char *f_strdup(char const *sourceStart, char const *sourceEnd);
-void *f_memdup(void const *buffer, uint32_t length);
-int32_t f_strcmp(char const *s1, char const *s2);
-int32_t f_memcmp(void const *s1, void const *s2, uint32_t length);
-void *f_memcpy(void *destination, void const *source, uint32_t length);
-char const *f_strstr(char const *str, char const *substr);
-char const *f_strstr(char const *str, char const *strEnd, char const *substr);
-int32_t f_strtol(char const *str, int32_t base);
-uint32_t f_strtoul(char const *str, int32_t base);
-double f_strtod(char const *str);
-bool isspace(char c);
-bool isalpha(char c);
-bool isdigit(char c);
-bool isalnum(char c);
-bool isxdigit(char c);
-bool isupper(char c);
-bool islower(char c);
-bool isascii(char c);
-uint32_t hexDigitToInt(char x);
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// f_printf
-// allocates a string. You should free it using delete[]
-char *f_printf(char const *fmt, ...);
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// inplaceURLDecode
-// str can stay only in RAM
-
-char *inplaceURLDecode(char *str);
 
 
 
