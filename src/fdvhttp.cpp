@@ -232,11 +232,11 @@ void MTD_FLASHMEM HTTPTemplateResponse::addParamInt(char const *key, int32_t val
 void MTD_FLASHMEM HTTPTemplateResponse::addParamFmt(char const *key, char const *fmt, ...) {
   va_list args;
   va_start(args, fmt);
-  uint16_t len = vsprintf(NULL, fmt, args);
+  uint16_t len = f_vsprintf(NULL, fmt, args);
   va_end(args);
   char *buf = new char[len + 1];
   va_start(args, fmt);
-  vsprintf(buf, fmt, args);
+  f_vsprintf(buf, fmt, args);
   va_end(args);
 
   LinkedCharChunks *linkedCharChunks = m_params.add(key);

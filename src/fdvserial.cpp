@@ -119,13 +119,13 @@ uint16_t MTD_FLASHMEM Serial::printf(char const *fmt, ...) {
   va_list args;
 
   va_start(args, fmt);
-  uint16_t len = vsprintf(NULL, fmt, args);
+  uint16_t len = f_vsprintf(NULL, fmt, args);
   va_end(args);
 
   char buf[len + 1];
 
   va_start(args, fmt);
-  vsprintf(buf, fmt, args);
+  f_vsprintf(buf, fmt, args);
   va_end(args);
 
   write(buf);

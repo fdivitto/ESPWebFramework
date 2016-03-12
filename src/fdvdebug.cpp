@@ -31,13 +31,13 @@ void FUNC_FLASHMEM debug(char const *fmt, ...) {
   va_list args;
 
   va_start(args, fmt);
-  uint16_t len = fdv::vsprintf(NULL, fmt, args);
+  uint16_t len = fdv::f_vsprintf(NULL, fmt, args);
   va_end(args);
 
   char buf[len + 1];
 
   va_start(args, fmt);
-  fdv::vsprintf(buf, fmt, args);
+  fdv::f_vsprintf(buf, fmt, args);
   va_end(args);
 
   fdv::enterCritical();

@@ -521,10 +521,14 @@ static void FUNC_FLASHMEM flt(Str &str, double num, int size, int precision, cha
 
 #endif
 
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
 // buf can stay in RAM or Flash
 // "strings" of args can stay in RAM or Flash
 // buf = NULL -> just count required buffer length
-uint16_t FUNC_FLASHMEM vsprintf(char *buf, const char *fmt, va_list args) {
+uint16_t FUNC_FLASHMEM f_vsprintf(char *buf, const char *fmt, va_list args) {
   int len;
   unsigned long num;
   int i, base;
@@ -696,18 +700,41 @@ uint16_t FUNC_FLASHMEM vsprintf(char *buf, const char *fmt, va_list args) {
   return str.getLength();
 }
 
-uint16_t FUNC_FLASHMEM sprintf(char *str, char const *fmt, ...) {
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
+uint16_t FUNC_FLASHMEM f_sprintf(char *str, char const *fmt, ...) {
   va_list args;
 
   va_start(args, fmt);
-  uint16_t len = vsprintf(NULL, fmt, args);
+  uint16_t len = f_vsprintf(NULL, fmt, args);
   va_end(args);
 
   va_start(args, fmt);
-  vsprintf(str, fmt, args);
+  f_vsprintf(str, fmt, args);
   va_end(args);
 
   return len;
 }
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
+char *FUNC_FLASHMEM f_printf(char const *fmt, ...) {
+  va_list args;
+
+  va_start(args, fmt);
+  uint16_t len = f_vsprintf(NULL, fmt, args);
+  va_end(args);
+
+  char *buf = new char[len + 1];
+
+  va_start(args, fmt);
+  f_vsprintf(buf, fmt, args);
+  va_end(args);
+
+  return buf;
+}
+
 
 } // end of fdv namespace
