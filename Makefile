@@ -2,6 +2,7 @@
 SPEED 		= 115200
 BUILD_DIR 	= build
 SRCDIR 		= ./src/
+SRCLIBDIR = ./libs/
 SDKBASE  	= ./SDK/
 SCRIPT      = ./script/
 WWW_DIR		= ./www/
@@ -47,9 +48,10 @@ INCLUDES   := -I $(RTOS_BASE)
 INCLUDES   += $(addprefix -I $(RTOS_BASE)/, espressif lwip lwip/lwip lwip/ipv4 lwip/ipv6)
 INCLUDES   += -I $(SDKBASE)$(RTOS)/extra_include
 INCLUDES   += -I $(SDKBASE)$(XELF)/xtensa-lx106-elf/include
+INCLUDES   += -I $(SRCLIBDIR)
 
 # don't change -Os (or add other -O options) otherwise FLASHMEM and FSTR data will be duplicated in RAM
-CFLAGS      = -g -Os -Wpointer-arith -Wundef -Werror -Wl,-EL 	\
+CFLAGS      = -g -Os -Wpointer-arith -Wl,-EL 	\
               -nostdlib -mlongcalls -mtext-section-literals 							\
               -fno-exceptions -fno-rtti -fno-inline-functions             \
               -fno-threadsafe-statics -fno-use-cxa-atexit                 \
